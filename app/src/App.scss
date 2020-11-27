@@ -1,0 +1,28 @@
+@charset "utf-8";
+@import "node_modules/bulma/sass/utilities/initial-variables.sass";
+@import "node_modules/bulma/sass/utilities/functions.sass";
+@import "node_modules/bulma/sass/utilities/derived-variables.sass";
+@import "node_modules/sweetalert2/src/sweetalert2.scss";
+
+$footer-background-color: $scheme-main;
+
+body {
+  background-color: $scheme-main-bis;
+}
+
+@import
+  'styles/flex',
+  'styles/text',
+  'styles/cursor';
+
+@import "~bulma/bulma";
+
+#sapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+}
