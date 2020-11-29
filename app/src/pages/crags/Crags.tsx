@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
-import { useCrags } from "../../api/crags";
+import { getCrags } from "../../api/crags";
+import {Crag} from '../../../../core/types';
 
 function Crags() {
-  const { crags, getCrags } = useCrags();
+  const [crags, setCrags] = useState<Crag[]>([]);
 
   useEffect(() => {
     doGetCrags();
-  });
+  }, []);
 
   async function doGetCrags() {
-    getCrags();
+    try {
+      const crags = await getCrags()
+      setCrags(crags.Items);
+    } catch (error) {
+      console.error('Error loading crags', error);
+    }
   }
 
   return (
@@ -70,7 +76,6 @@ function Crags() {
                       <td>
                         <Link 
                           className="is-capitalized"
-                          rel='prefetch'
                           to={`/crag/${crag.slug}`}
                         >
                           { crag.title }
