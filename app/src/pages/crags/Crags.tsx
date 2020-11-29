@@ -1,32 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
-import { getCrags } from "../../api/crags";
+import { useCrags } from "../../api/crags";
 
 function Crags() {
-  const [crags, setCrags] = useState([]);
-  const [filteredCrags, setFilteredCrags] = useState([
-    {
-      title: 'almscliffe',
-      slug: 'almscliffe',
-      likeCount: 1,
-      tickCount: 1,
-      areaCount: 1,
-      climbCount: 1
-    }
-  ]);
-  const [filter, setFilter] = useState("");
+  const { crags, getCrags } = useCrags();
 
   useEffect(() => {
-    (async () => {
-      const crags = await getCrags()
-        .catch((error) => {
-          console.error('Error getting crags', error);
-        });
-      setCrags(crags.Items);
-    })();
-  }, []);
+    doGetCrags();
+  });
+
+  async function doGetCrags() {
+    getCrags();
+  }
 
   return (
     <React.Fragment>
@@ -42,7 +29,6 @@ function Crags() {
                 className="input is-rounded"
                 type="text"
                 placeholder="Search"
-                onChange={ e => setFilter(e.target.value) }
               />
             </div>
             <div className="control">
@@ -79,7 +65,7 @@ function Crags() {
               </thead>
               <tbody>
                 {
-                  filteredCrags.map(crag => (
+                  crags.map(crag => (
                     <tr key={ crag.slug }>
                       <td>
                         <Link 

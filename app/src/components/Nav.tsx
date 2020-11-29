@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function Nav() {
   const [navBarMenuClass, setNavBarMenuClass] = useState("");
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
 
   const btnBurgerMenuOnClick = () => {
     if (navBarMenuClass === "is-active") {
@@ -53,11 +55,22 @@ function Nav() {
 
         <div className="navbar-end">
           <div className="navbar-item">
-            <a className="button is-rounded is-white" href="profile">
-              <span className="icon">
-                <i className="fas fa-user fa-lg"></i>
-              </span>
-            </a>
+          { isAuthenticated 
+            ? <Link to="/profile">
+                <button className="button">
+                  <span className="icon">
+                    <i className="fas fa-user"></i>
+                  </span>
+                  <span>Profile</span>
+                </button>
+              </Link>
+            : <button className="button" onClick={ loginWithRedirect }>
+                <span className="icon">
+                  <i className="fas fa-user"></i>
+                </span>
+                <span>Login</span>
+              </button>
+          }
           </div>
         </div>
       </div>

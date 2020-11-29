@@ -1,4 +1,5 @@
 import express from 'express';
+import {checkJwt} from '../middleware/auth';
 
 import { crags } from '../services';
 
@@ -16,7 +17,7 @@ router
   })
 
 router
-  .post('/', async (req, res) => {
+  .post('/', checkJwt, async (req, res) => {
     try {
       const cragDetails = req.body;
       const resp = await crags.createCrag(cragDetails);

@@ -8,6 +8,8 @@ plugins:
   - serverless-offline
 
 custom:
+  serverless-offline:
+    httpPort: 3001
   tableName: 'climbing_topos_${self:provider.stage}'
   webpack:
     webpackConfig: 'webpack.config.js'

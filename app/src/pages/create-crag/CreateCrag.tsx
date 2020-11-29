@@ -1,7 +1,8 @@
 import React, {FormEvent, useState} from "react"
-import { createCrag } from "../../api/crags";
+import { useCrags } from "../../api/crags";
 
 function CreateCrag() {
+  const { createCrag } = useCrags();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [country, setCountry] = useState("");
