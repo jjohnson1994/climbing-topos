@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
@@ -7,6 +8,7 @@ import {Crag} from '../../../../core/types';
 
 function Crags() {
   const [crags, setCrags] = useState<Crag[]>([]);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     doGetCrags();

@@ -1,5 +1,5 @@
 import express from 'express';
-import {checkJwt} from '../middleware/auth';
+import { checkJwt } from '../middleware/auth';
 
 import { crags } from '../services';
 
@@ -7,6 +7,7 @@ const router = express.Router();
 
 router
   .get('/', async (req, res) => {
+    console.log('user', req.user);
     try {
       const allCrags = await crags.getAllCrags();
       res.status(200).json(allCrags);
@@ -17,7 +18,7 @@ router
   })
 
 router
-  .post('/', checkJwt, async (req, res) => {
+  .post('/', async (req, res) => {
     try {
       const cragDetails = req.body;
       const resp = await crags.createCrag(cragDetails);
