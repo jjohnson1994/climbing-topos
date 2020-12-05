@@ -13,18 +13,17 @@ const schema = yup.object().shape({
   tags: yup.array().min(1, "Select at least 1").of(
     yup.string()
   ),
-  latitude: yup.number().typeError("Must be a number").moreThan(-90, "Must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-  longitude: yup.number().typeError("Must be a number").moreThan(-180, "Must be a valid longitude").lessThan(180, "Must be a valid longitude"),
-  access: yup.string(),
-  accessDetails: yup.string().ensure(),
-  accessLink: yup.string().ensure(),
+  latitude: yup.number().typeError("Latitiude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
+  longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
+  access: yup.string().required(),
   carParks: yup.array().of(
     yup.object().shape({
       title: yup.string().required("Required"),
-      latitude: yup.number().typeError("Must be a number").moreThan(-90, "Must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-      longitude: yup.number().typeError("Must be a number").moreThan(-180, "Must be a valid longitude").lessThan(180, "Must be a valid longitude")
+      latitude: yup.number().typeError("Latitude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
+      longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude")
     })
-  ).min(2, "Add at least 1")
+  ).min(2, "Add at least 1"),
+  accessLink: yup.string().url().nullable()
 });
 
 type CarPark = {
@@ -122,6 +121,7 @@ function CreateCrag() {
   }
 
   const formOnSubmit = handleSubmit(async (formData) => {
+    console.log(formData);
     try {
       const osmData = await getCragNominatim(formData.latitude, formData.longitude);
       await crags.createCrag({ ...formData, osmData });
@@ -259,7 +259,7 @@ function CreateCrag() {
                     </div>
                   )}
                 </div>
-                <p className="help is-danger">{ errors.carParks && errors.carParks![index]?.title?.message }</p>
+                <p className="help is-danger">{ errors.carParks?.[index]?.title?.message }</p>
                 <div className="field has-addons">
                   <div className="control is-expanded has-icons-right">
                     <input
@@ -295,13 +295,11 @@ function CreateCrag() {
                     </button>
                   </div>
                 </div>
-                <div className="help is-danger">{ errors.carParks && errors.carParks![index]?.latitude?.message }</div>
-                <div className="help is-danger">{ errors.carParks && errors.carParks![index]?.longitude?.message }</div>
+                <div className="help is-danger">{ errors.carParks?.[index]?.latitude?.message }</div>
+                <div className="help is-danger">{ errors.carParks?.[index]?.longitude?.message }</div>
               </div>
             ))}
           </div>
-
-          <p>{ JSON.stringify(errors) }</p>
 
           <div className="field">
             <div className="control">
@@ -366,7 +364,6 @@ function CreateCrag() {
                 ref={ register }
               /> 
             </div>
-            <p className="help is-danger"></p>
           </div>
 
           <div className="field">
@@ -379,7 +376,7 @@ function CreateCrag() {
                 ref={ register }
               />
             </div>
-            <p className="help is-danger"></p>
+            <p className="help is-danger">{ errors.accessLink?.message }</p>
           </div>
 
           <div className="field">
