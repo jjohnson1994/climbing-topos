@@ -4,14 +4,18 @@ function CragClimbsTable() {
   const climbs: [] = [];
   return (
     <table>
-      <tr>
-        <th>1</th>
-      </tr>
-      {climbs.map(() => (
+      <thead>
         <tr>
-          <td>1</td>
+          <th>1</th>
         </tr>
-      ))}
+      </thead>
+      <tbody>
+        {climbs.map(() => (
+          <tr>
+            <td>1</td>
+          </tr>
+        ))}
+      </tbody>
     </table>
   );
 }

@@ -37,3 +37,12 @@ export async function getCragTags() {
     throw error;
   }
 }
+
+export async function getAreaTags() {
+  try {
+    const globals = await globalsGetter();
+    return globals.areaTags;
+  } catch(error) {
+    throw error;
+  }
+}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
 import { getCrags } from "../../api/crags";
-import {Crag} from '../../../../core/types';
+import { Crag } from '../../../../core/types';
 
 function Crags() {
   const [crags, setCrags] = useState<Crag[]>([]);
@@ -78,7 +78,7 @@ function Crags() {
                       <td>
                         <Link 
                           className="is-capitalized"
-                          to={`/crag/${crag.slug}`}
+                          to={`/crags/${crag.slug}`}
                         >
                           { crag.title }
                         </Link>

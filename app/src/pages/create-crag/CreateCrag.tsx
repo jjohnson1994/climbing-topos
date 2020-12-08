@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { crags, globals } from "../../api";
@@ -20,19 +21,21 @@ const schema = yup.object().shape({
     yup.object().shape({
       title: yup.string().required("Required"),
       latitude: yup.number().typeError("Latitude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-      longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude")
+      longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
     })
-  ).min(2, "Add at least 1"),
-  accessLink: yup.string().url().nullable()
+  ).required("Add at least 1").min(1, "Add at least 1"),
+  accessLink: yup.string().url("Not a valid URL").nullable(),
 });
 
 type CarPark = {
   title: string;
   latitude: string;
   longitude: string;
+  description: string;
 }
 
 function CreateCrag() {
+  const history = useHistory();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] = useState(-1);
   const [cragTags, setCragTags] = useState<string[]>([]);
   const [cragLocationLoading, setCragLocationLoading] = useState<boolean>(false);
@@ -47,10 +50,16 @@ function CreateCrag() {
       tags: [] as string[],
       latitude: "",
       longitude: "",
-      carParks: [] as CarPark[],
+      carParks: [{
+        title: "",
+        latitude: "",
+        longitude: "",
+        description: ""
+      }] as CarPark[],
       access: "unknown",
       accessLink: "",
-      accessDetails: ""
+      accessDetails: "",
+      approachNotes: ""
     }
   });
 
@@ -85,12 +94,8 @@ function CreateCrag() {
   }
 
   const getCragNominatim = async (latitude: string, longitude: string) => {
-    try {
-      const osmData = await reverseLookup(latitude, longitude);
-      setValue("osmData", osmData);
-    } catch(error) {
-      console.error("Error getting OSM Data for crag", error);
-    }
+    const osmData = await reverseLookup(latitude, longitude);
+    return osmData;
   }
 
   const btnAddCarParkOnClick = () => {
@@ -121,11 +126,11 @@ function CreateCrag() {
   }
 
   const formOnSubmit = handleSubmit(async (formData) => {
-    console.log(formData);
     try {
       const osmData = await getCragNominatim(formData.latitude, formData.longitude);
-      await crags.createCrag({ ...formData, osmData });
-      popupSuccess("Crag Created!");
+      const { slug } = await crags.createCrag({ ...formData, osmData });
+      await popupSuccess("Crag Created!");
+      history.push(`/crags/${slug}`);
     } catch (error) {
       console.error('Error creating crag', error);
       popupError("Ahh, something has gone wrong...");
@@ -166,6 +171,19 @@ function CreateCrag() {
           </div>
 
           <div className="field">
+            <label className="label" htmlFor="approachNotes">Approach Notes</label>
+            <div className="control">
+              <textarea
+                id="approachNotes"
+                className="textarea"
+                name="approachNotes"
+                ref={ register }
+              ></textarea> 
+            </div>
+            <p className="help is-danger">{ errors.approachNotes?.message }</p>
+          </div>
+
+          <div className="field">
             <label className="label">Tags</label>
             <div className="field is-grouped is-grouped-multiline">
               <div role="group" className="tags">
@@ -194,7 +212,7 @@ function CreateCrag() {
                   <input
                     disabled={ cragLocationLoading }
                     className="input"
-                    type="number"
+                    type="text"
                     placeholder="Latitude"
                     name="latitude"
                     ref={ register }
@@ -204,7 +222,7 @@ function CreateCrag() {
                   <input
                     disabled={ cragLocationLoading }
                     className="input"
-                    type="number"
+                    type="text"
                     placeholder="Logitude"
                     name="longitude"
                     ref={ register }
@@ -242,7 +260,7 @@ function CreateCrag() {
                       placeholder="Name"
                       className="input"
                       name={`carParks[${index}].title`}
-                      ref={ register }
+                      ref={ register({}) }
                     />
                   </div>
                   {carParks.length && (
@@ -294,9 +312,19 @@ function CreateCrag() {
                       <span>Find Me</span>
                     </button>
                   </div>
+                  <div className="help is-danger">{ errors.carParks?.[index]?.latitude?.message }</div>
+                  <div className="help is-danger">{ errors.carParks?.[index]?.longitude?.message }</div>
                 </div>
-                <div className="help is-danger">{ errors.carParks?.[index]?.latitude?.message }</div>
-                <div className="help is-danger">{ errors.carParks?.[index]?.longitude?.message }</div>
+                <div className="field">
+                  <div className="control">
+                    <textarea
+                      placeholder="description"
+                      className="textarea"
+                      name={`carParks[${index}].description`}
+                      ref={ register }
+                    ></textarea> 
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -310,6 +338,7 @@ function CreateCrag() {
                 <span>Add Car Park</span>
               </button>
             </div>
+            <div className="help is-danger">{ errors.carParks?.message }</div>
           </div>
 
           <div className="field">

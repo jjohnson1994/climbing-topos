@@ -6,6 +6,9 @@ import {
 } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
+import Area from './pages/area/Area';
+import CreateArea from "./pages/create-area/CreateArea";
+import CreateTopo from "./pages/create-topo/CreateTopo";
 import Crag from './pages/crag/Crag';
 import Crags from './pages/crags/Crags';
 import CreateCrag from "./pages/create-crag/CreateCrag";
@@ -28,7 +31,16 @@ function App() {
           <Nav />
           <Switch>
             <ProtectedRoute path="/profile" component={ Profile } />
-            <Route path='/crag/:slug'>
+            <Route path='/crags/:cragSlug/areas/:areaSlug/create-topo'>
+              <CreateTopo />
+            </Route>
+            <Route path='/crags/:cragSlug/areas/:areaSlug'>
+              <Area />
+            </Route>
+            <ProtectedRoute path="/crags/:cragSlug/create-area">
+              <CreateArea />
+            </ProtectedRoute>
+            <Route path='/crags/:cragSlug'>
               <Crag />
             </Route>
             <Route path='/crags'>

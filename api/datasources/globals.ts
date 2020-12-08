@@ -42,9 +42,21 @@ export default {
     "Long Walk-in",
     "Esoteric",
     "Family Friendly",
+    "Good Landings",
+    "Highballs",
+    "Lowballs"
+  ],
+  areaTags: [
+    "Quick Drying",
+    "Slow Drying",
+    "Easy Access",
+    "Hard to Find",
+    "Highballs",
+    "Lowballs",
+    "Needs a Brush",
+    "Bad Landings",
     "Good Landings"
   ],
-  areaTags: [],
   routeTags: [],
   rockTypes: [
     "Gritstone",

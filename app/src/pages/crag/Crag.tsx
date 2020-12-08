@@ -1,40 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import CragQuickActions from "../../components/CragQuickActions";
 import CragClimbsTable from "../../components/CragClimbsTable";
+import { getCragBySlug } from "../../api/crags";
+import { popupError } from "../../helpers/alerts";
+
+type CragDescription = {
+  access: string;
+  accessDescription: string;
+  accessLink: string;
+  approachNotes: string;
+  carParks: {
+    title: string;
+    latitude: string;
+    longitude: string;
+    description: string;
+  }[];
+  description: string;
+  latitude: string;
+  longitude: string;
+  tags: string[];
+  title: string;
+  areas: {
+    slug: string;
+    title: string;
+  }[];
+}
 
 function Crag() {
-  const { slug } = useParams<{ slug: string }>();
-  const [crag, setCrag] = useState({
-    details: {
-      title: '',
-      description: '',
-      approachNotes: ''
-    },
-    areas: [{
-      slug: '',
-      title: ''
-    }],
-    carParks: [
-      {
-        id: '',
-        title: '',
-        latitude: '',
-        longitude: '',
-        description: ''
+  const { cragSlug } = useParams<{ cragSlug: string }>();
+  const [loading, setLoading] = useState(false);
+  const [crag, setCrag] = useState<CragDescription | undefined>();
+  const [activeTab, setActiveTab] = useState('routes');
+
+  useEffect(() => {
+    const doGetCrag = async () => {
+      setLoading(true);
+
+      try {
+        const newCrag = await getCragBySlug(cragSlug);
+        setCrag(newCrag);
+      } catch (error) {
+        console.error("Error loading crag", error);
+        popupError("There was an error loading this crag. It's 90% your fault");
+      } finally {
+        setLoading(false);
       }
-    ]
-  });
-  const [activeTab, setActiveTab] = useState('routs');
+    };
+
+    doGetCrag();
+  }, []);
+
 
   return (
     <React.Fragment>
       <section className="section">
         <div className="container">
-          <h1 className="title is-spaced is-capitalized">{ crag.details.title }</h1>
-          <h5 className="subtitle">{ crag.details.description }</h5>
+          <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
+          <h5 className="subtitle">{ crag?.description }</h5>
           <CragQuickActions crag={ crag } /> 
         </div>
       </section>
@@ -76,25 +101,28 @@ function Crag() {
               `}
             >
               <table className="table is-fullwidth">
-                <tr>
-                  <th>Title</th>
-                </tr>
-                { crag.areas.map(area => (
-                  <tr key={ area.slug }>
-                    <td>
-                      <Link
-                        rel='prefetch'
-                        to='/crags/{crag.details.slug}/areas/{area.slug}'
-                        className="is-capitalized"
-                      >
-                        { area.title }
-                      </Link>
-                    </td>
+                <thead>
+                  <tr>
+                    <th>Title</th>
                   </tr>
-                )) }
+                </thead>
+                <tbody>
+                  { crag?.areas?.map(area => (
+                    <tr key={ area.slug }>
+                      <td>
+                        <Link
+                          to={ `/crags/${cragSlug}/areas/${area.slug}` }
+                          className="is-capitalized"
+                        >
+                          { area.title }
+                        </Link>
+                      </td>
+                    </tr>
+                  )) }
+                </tbody>
               </table>
               <div className="buttons is-centered">
-                <a className="button is-rounded" href="{$page.path}/create-area">
+                <a className="button is-rounded" href={ `/crags/${cragSlug}/create-area` }>
                   <span className="icon is-small">
                     <i className="fas fa-plus"></i>
                   </span>
@@ -111,8 +139,8 @@ function Crag() {
               `}>
               <div className="block">
                 <h3 className="title">Approach</h3>
-                {(crag.details.approachNotes &&
-                  <p>{ crag.details.approachNotes }</p>)
+                {(crag?.approachNotes &&
+                  <p>{ crag?.approachNotes }</p>)
                   ||
                   <p>No approach details have been given. Hopefully that means it's an easy walk in 🤷‍♂️</p>
                 }
@@ -120,9 +148,9 @@ function Crag() {
               <hr />
               <div className="block">
                 <h3 className="title">Parking</h3>
-                {crag.carParks.map(carPark => (
-                  <>
-                    <div key={ carPark.id } className="is-flex">
+                {crag?.carParks?.map((carPark, index) => (
+                  <React.Fragment key={ index }>
+                    <div className="is-flex">
                       <h4 className="title is-4 is-capitalized">{ carPark.title }</h4>
                       <span className="ml-2"></span>
                       <ButtonCopyCoordinates
@@ -133,7 +161,7 @@ function Crag() {
                     <p className={ carPark.description ? 'm-4' : '' }>
                       { carPark.description ? carPark.description : '' }
                     </p>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
