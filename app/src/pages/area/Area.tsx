@@ -5,9 +5,10 @@ import { popupError, toastSuccess } from '../../helpers/alerts';
 import { areas } from "../../api";
 import { Area } from "../../../../core/types";
 
-// import AreaTopoImage from '@/components/area/AreaTopoImage.svelte';
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
+
+import TopoImage from "../../components/TopoImage";
 
 function AreaView() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
@@ -66,36 +67,36 @@ function AreaView() {
 
       <section className="section">
         <div className="container">
-        {/**
-        {area?.topos.map((topo, index) => (
-            <div className="box block">
-              <div className="columns">
-                <div className="column is-half">
-                  <AreaTopoImage
-                    climbs={ area.climbs.filter(({ topo_id }) => topo_id === topo.id) }
-                    background={ topo.image_location }
-                  />
-                </div>
-                <div className="column">
-                  <CragClimbsTable
-                    climbs={ area.climbs.filter(({ topo_id }) => topo_id === topo.id) }
-                  />
-                  <div className="buttons is-centered">
-                    <a
-                      href="/crags/{$page.params.crag}/areas/{$page.params.area}/topos/{topo.id}/create-route"
-                      className="button is-rounded"
-                    >
-                      <span className="icon is-small">
-                        <i className="fas fa-plus"></i>
-                      </span>
-                      <span>Add Route</span>
-                    </a>
-                  </div>
+        {area?.topos && area?.topos.map((topo) => (
+          <div className="box block" key={ topo.slug }>
+            <div className="columns">
+              <div className="column is-half">
+                <TopoImage
+                  climbs={ area.climbs?.filter(({ topoSlug }) => topoSlug === topo.slug) }
+                  background={ topo.image }
+                />
+              </div>
+              <div className="column">
+                {/*
+                <CragClimbsTable
+                  climbs={ area.climbs.filter(({ topo_id }) => topo_id === topo.id) }
+                />
+                */}
+                <div className="buttons is-centered">
+                  <a
+                    href="/crags/{$page.params.crag}/areas/{$page.params.area}/topos/{topo.id}/create-route"
+                    className="button is-rounded"
+                  >
+                    <span className="icon is-small">
+                      <i className="fas fa-plus"></i>
+                    </span>
+                    <span>Add Route</span>
+                  </a>
                 </div>
               </div>
             </div>
-          ))}
-          */}
+          </div>
+        ))}
         </div>
       </section>
     </>

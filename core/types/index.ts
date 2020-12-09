@@ -50,10 +50,17 @@ export interface Crag {
   tags: string[];
 }
 
+export interface Climb {
+  title: string;
+  slug: string;
+  topoSlug: string;
+}
+
 export interface Area {
   access: string;
   accessDetails: string;
   approachNotes: string;
+  climbs?: Climb[];
   cragSlug: string;
   description: string;
   latitude: string;
@@ -61,12 +68,14 @@ export interface Area {
   slug?: string;
   tags: string[],
   title: string;
+  topos?: Topo[];
 }
 
 export interface Topo {
-  description: string;
-  orientation: string;
-  image: File | string | null;
   areaSlug: string;
   cragSlug: string;
+  description: string;
+  image: File | string | null;
+  orientation: string;
+  slug?: string;
 }

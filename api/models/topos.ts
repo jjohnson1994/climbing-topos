@@ -6,7 +6,7 @@ import { Topo } from "../../core/types";
 
 export async function createTopo(topoDetails: Topo) {
   const date = DateTime.utc().toString();
-  const slug = nanoid(5);
+  const slug = nanoid();
   const params = {
     TableName: String(process.env.DB),
     Item: {
