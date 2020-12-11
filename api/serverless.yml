@@ -61,6 +61,23 @@ resources:
       Type: 'AWS::S3::Bucket'
       Properties:
         BucketName: ${self:custom.imageBucketName}
+        CorsConfiguration: {
+          "CorsRules": [
+            {
+              "AllowedHeaders": [
+                "*"
+              ],
+              "AllowedMethods": [
+                "PUT",
+              ],
+              "AllowedOrigins": [
+                "http://localhost:3000",
+                "https://climbingtopos.com"
+              ],
+              "MaxAge": 300
+            }
+          ]
+        }
     DynamoDBClimbingTopos:
       Type: 'AWS::DynamoDB::Table'
       Properties:

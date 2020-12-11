@@ -1,4 +1,4 @@
-import { crags, areas } from '../models';
+import { areas, crags, routes } from '../models';
 import { Crag } from '../types';
 
 export const createCrag = async (cragDetails: Crag) => {
@@ -14,9 +14,11 @@ export const getAllCrags = async () => {
 export const getCragBySlug = async (slug: string) => {
   const crag = await crags.getCragBySlug(slug);
   const cragAreas = await areas.getAreasByCragSlug(crag.slug);
+  const cragRoutes = await routes.getRoutesByCragSlug(crag.slug);
 
   return {
     ...crag,
-    areas: cragAreas
+    areas: cragAreas,
+    routes: cragRoutes
   };
 }

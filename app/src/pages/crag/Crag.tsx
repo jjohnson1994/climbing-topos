@@ -3,9 +3,10 @@ import { useParams, Link } from "react-router-dom";
 
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import CragQuickActions from "../../components/CragQuickActions";
-import CragClimbsTable from "../../components/CragClimbsTable";
+import CragRoutesTable from "../../components/CragRoutesTable";
 import { getCragBySlug } from "../../api/crags";
 import { popupError } from "../../helpers/alerts";
+import { Route } from "../../../../core/types";
 
 type CragDescription = {
   access: string;
@@ -27,6 +28,7 @@ type CragDescription = {
     slug: string;
     title: string;
   }[];
+  routes: Route[],
 }
 
 function Crag() {
@@ -90,7 +92,7 @@ function Crag() {
                 ${activeTab !== 'routes' ? 'is-hidden' : '' }
               `}
             >
-              <CragClimbsTable />
+              <CragRoutesTable routes={ crag?.routes } />
             </div>
           
             <div

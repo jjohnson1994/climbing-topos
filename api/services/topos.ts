@@ -1,18 +1,12 @@
-import { images, topos } from "../models";
+import { topos } from "../models";
 import { Topo } from "../../core/types";
 
-export async function createTopo(topoDetails: Topo, imageFile) {
-  const imageMeta = imageFile
-    ? await images.newImage(imageFile)
-    : { Location: "no image" };
+export async function createTopo(topoDetails: Topo) {
+  await topos.createTopo(topoDetails)
+}
 
-  await topos.createTopo({ ...topoDetails, image: imageMeta.Location })
-    .catch((error) => {
-      if (imageMeta.Location !== "no image") {
-        images.deleteImage(imageMeta.Key);
-      }
+export const getTopoBySlug = async (slug: string) => {
+  const topo = await topos.getTopoBySlug(slug);
 
-      throw error;
-    });
-  return topos.createTopo(topoDetails);
+  return topo;
 }

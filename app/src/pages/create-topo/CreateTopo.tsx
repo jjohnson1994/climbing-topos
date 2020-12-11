@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+
 import { topos } from "../../api";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 
 const schema = yup.object().shape({
   orientation: yup.string().required("Required"),
-  image: yup.string().required("Required"),
 });
+
+let image: File;
 
 function CreateTopo() {
   const history = useHistory();
   const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageName, setImageName] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
 
   const { register, handleSubmit, setValue, errors } = useForm({
     resolver: yupResolver(schema),
@@ -28,18 +29,14 @@ function CreateTopo() {
     }
   });
 
-  useEffect(() => {
-    register({ name: "image" });
-  }, [register]);
-
   async function onImageSelected() {
     const files =
       (document.querySelector('input[type=file]') as HTMLInputElement).files;
 
     if (files) {
       const file = files.item(0);
-      setImage(file);
-      setValue("image", file);
+      console.log(file);
+      image = file as File;
       setImageName(file!.name);
     } else {
       setValue("image", "");

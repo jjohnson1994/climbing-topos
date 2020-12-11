@@ -6,7 +6,7 @@ export async function postArea(req, res) {
     const resp = await areas.createArea(areaDetails);
     res.status(200).json({ success: true, inserted: resp });
   } catch(error) {
-    console.error('Error creating crag', error);
+    console.error('Error creating area', error);
     res.status(500).json({ error: true });
   }
 }

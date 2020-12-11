@@ -22,7 +22,7 @@ export const createCrag = async (cragDetails: Crag) => {
     TableName: String(process.env.DB),
     Item: {
       hk: slug,
-      sk: `${country_code}#${state}#${county}#${city}`.toUpperCase(),
+      sk: `crag#${country_code}#${state}#${county}#${city}#`.toUpperCase(),
       access: cragDetails.access,
       accessDetails: cragDetails.accessDetails,
       accessLink: cragDetails.accessLink,

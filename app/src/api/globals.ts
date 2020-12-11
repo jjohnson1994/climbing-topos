@@ -11,11 +11,12 @@ async function getGlobals() {
 
 const GlobalsGetter = () => {
   let globals: {
+    areaTags: [],
     cragTags: [],
     gradingSystems: [],
-    areaTags: [],
+    rockTypes: [],
     routeTags: [],
-    rockTypes: []
+    routeTypes: [],
   };
 
   return async () => {
@@ -43,6 +44,33 @@ export async function getAreaTags() {
     const globals = await globalsGetter();
     return globals.areaTags;
   } catch(error) {
+    throw error;
+  }
+}
+
+export async function getRouteTags() {
+  try {
+    const globals = await globalsGetter();
+    return globals.routeTags;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getRouteTypes() {
+  try {
+    const globals = await globalsGetter();
+    return globals.routeTypes;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getGradingSystems() {
+  try {
+    const globals = await globalsGetter();
+    return globals.gradingSystems;
+  } catch (error) {
     throw error;
   }
 }

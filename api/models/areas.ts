@@ -7,12 +7,12 @@ import { createSlug } from "../helpers/slug";
 
 export async function createArea(areaDescription: Area) {
   const date = DateTime.utc().toString();
-  const slug = createSlug(`${areaDescription.title}#${nanoid(5)}`);
+  const slug = createSlug(`${areaDescription.title}-${nanoid(5)}`);
   const params = {
     TableName: String(process.env.DB),
     Item: {
       hk: areaDescription.cragSlug,
-      sk: `area#${slug}`,
+      sk: `area#${slug}#`,
       access: areaDescription.access,
       accessDetails: areaDescription.accessDetails,
       approachNotes: areaDescription.approachNotes,
@@ -39,13 +39,13 @@ export const getAreasByCragSlug = async (cragSlug: string) => {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames:{
+    ExpressionAttributeNames: {
       "#hk": "hk",
       "#sk": "sk"
     },
     ExpressionAttributeValues: {
-      ":sk": "area#",
-      ":hk": cragSlug
+      ":hk": cragSlug,
+      ":sk": "area#"
     }
   }
 

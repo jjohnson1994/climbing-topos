@@ -9,6 +9,7 @@ import { Area } from "../../../../core/types";
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
 
 import TopoImage from "../../components/TopoImage";
+import AreaRoutesTable from "../../components/AreaRoutesTable";
 
 function AreaView() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
@@ -26,7 +27,7 @@ function AreaView() {
     };
 
     doGetArea();
-  }, []);
+  }, [areaSlug]);
 
   const btnCoordsOnClick = async () => {
     if (!area) return;
@@ -72,7 +73,7 @@ function AreaView() {
             <div className="columns">
               <div className="column is-half">
                 <TopoImage
-                  climbs={ area.climbs?.filter(({ topoSlug }) => topoSlug === topo.slug) }
+                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
                   background={ topo.image }
                 />
               </div>
@@ -82,16 +83,17 @@ function AreaView() {
                   climbs={ area.climbs.filter(({ topo_id }) => topo_id === topo.id) }
                 />
                 */}
+                <AreaRoutesTable routes={ area.routes?.filter(route => route.topoSlug === topo.slug) } />
                 <div className="buttons is-centered">
-                  <a
-                    href="/crags/{$page.params.crag}/areas/{$page.params.area}/topos/{topo.id}/create-route"
+                  <Link
+                    to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
                     className="button is-rounded"
                   >
                     <span className="icon is-small">
                       <i className="fas fa-plus"></i>
                     </span>
                     <span>Add Route</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

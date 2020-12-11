@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react';
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 function Profile() {
   const { logout, user } = useAuth0();
   const { name, picture, email } = user;
-
-  console.log(user);
-
-  useEffect(() => {
-    // window.location.replace(`${window.location.origin}/sign-in`);
-  });
 
   return (
     <section className="section">

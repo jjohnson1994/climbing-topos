@@ -69,6 +69,7 @@ export interface Area {
   tags: string[],
   title: string;
   topos?: Topo[];
+  routes?: Route[];
 }
 
 export interface Topo {
@@ -78,4 +79,23 @@ export interface Topo {
   image: File | string | null;
   orientation: string;
   slug?: string;
+}
+
+export interface Route {
+  areaSlug: string;
+  cragSlug: string;
+  topoSlug: string;
+  title: string;
+  description: string;
+  routeType: string;
+  gradingSystem: string;
+  grade: string;
+  tags: string[],
+  rating?: number;
+  drawing?: object;
+}
+
+export interface GradingSystem {
+  title: string;
+  grades: string[];
 }

@@ -7,11 +7,12 @@ import {
 import { Helmet } from "react-helmet";
 
 import Area from './pages/area/Area';
-import CreateArea from "./pages/create-area/CreateArea";
-import CreateTopo from "./pages/create-topo/CreateTopo";
 import Crag from './pages/crag/Crag';
 import Crags from './pages/crags/Crags';
+import CreateArea from "./pages/create-area/CreateArea";
 import CreateCrag from "./pages/create-crag/CreateCrag";
+import CreateRoute from "./pages/create-route/CreateRoute";
+import CreateTopo from "./pages/create-topo/CreateTopo";
 import Home from './pages/home/Home';
 import Profile from './pages/profile/Profile';
 
@@ -33,6 +34,9 @@ function App() {
             <ProtectedRoute path="/profile" component={ Profile } />
             <Route path='/crags/:cragSlug/areas/:areaSlug/create-topo'>
               <CreateTopo />
+            </Route>
+            <Route path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'>
+              <CreateRoute />
             </Route>
             <Route path='/crags/:cragSlug/areas/:areaSlug'>
               <Area />
