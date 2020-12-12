@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Route } from "../../../core/types";
 
 function CragRoutesTable({ routes }: { routes: Route[] | undefined }) {
@@ -13,7 +14,14 @@ function CragRoutesTable({ routes }: { routes: Route[] | undefined }) {
       <tbody>
         {routes?.map(route => (
           <tr>
-            <td>{ route.title }</td>
+            <td>
+              <Link
+                to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}` }
+                className="is-capitalized"
+              >
+                { route.title }
+              </Link>
+            </td>
             <td>{ route.grade }</td>
           </tr>
         ))}

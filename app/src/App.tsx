@@ -32,12 +32,12 @@ function App() {
           <Nav />
           <Switch>
             <ProtectedRoute path="/profile" component={ Profile } />
-            <Route path='/crags/:cragSlug/areas/:areaSlug/create-topo'>
+            <ProtectedRoute path='/crags/:cragSlug/areas/:areaSlug/create-topo'>
               <CreateTopo />
-            </Route>
-            <Route path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'>
+            </ProtectedRoute>
+            <ProtectedRoute path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'>
               <CreateRoute />
-            </Route>
+            </ProtectedRoute>
             <Route path='/crags/:cragSlug/areas/:areaSlug'>
               <Area />
             </Route>

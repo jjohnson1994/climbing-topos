@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { globals, routes, topos } from "../../api";
+import { areas, globals, routes, topos } from "../../api";
 import { popupError, popupSuccess } from "../../helpers/alerts";
-import { GradingSystem } from "../../../../core/types";
+import { Area, GradingSystem } from "../../../../core/types";
 
 import TopoCanvas from "../../components/TopoCanvas";
 
@@ -29,6 +29,7 @@ function CreateRoute() {
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
   const [grades, setGrades] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [area, setArea] = useState<Area | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
   const [drawing, setDrawing] = useState({});
 
@@ -49,16 +50,27 @@ function CreateRoute() {
   const watchGradingSystem = watch("gradingSystem", "");
 
   useEffect(() => {
+    const doGetArea = async () => {
+      try {
+        const area = await areas.getArea(areaSlug);
+        setArea(area);
+      } catch (error) {
+        console.error("Error loading area", error);
+        popupError("Oh dear, there was a problem loading this area");
+      }
+    };
+
     const doGetTopo = async () => {
       const topo = await topos.getTopo(topoSlug);
       setBackgroundImageURL(`${topo.image}`);
     }
 
+    doGetArea();
     doGetTopo();
     doGetTags();
     doGetRouteTypes();
     doGetGradingSystem();
-  }, [topoSlug]);
+  }, [areaSlug, topoSlug]);
 
   const doGetTags = async () => {
     const routeTags = await globals.getRouteTags();
@@ -106,7 +118,11 @@ function CreateRoute() {
     <>
       <section className="section">
         <div className="container">
-          <TopoCanvas backgroundImageURL={ backgroundImageURL } onDrawingChanged={ onDrawingChanged } />
+          <TopoCanvas
+            routes={ area?.routes?.filter(route => route.topoSlug === topoSlug) }
+            backgroundImageURL={ backgroundImageURL }
+            onDrawingChanged={ onDrawingChanged }
+          />
         </div>
       </section>
       <section className="section">

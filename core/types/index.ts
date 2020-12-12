@@ -85,6 +85,7 @@ export interface Route {
   areaSlug: string;
   cragSlug: string;
   topoSlug: string;
+  slug?: string;
   title: string;
   description: string;
   routeType: string;
@@ -92,7 +93,9 @@ export interface Route {
   grade: string;
   tags: string[],
   rating?: number;
-  drawing?: object;
+  drawing?: {
+    path?: string
+  };
 }
 
 export interface GradingSystem {
