@@ -94,7 +94,7 @@ export interface Route {
   tags: string[],
   rating?: number;
   drawing?: {
-    path?: string
+    path?: number[][]
   };
 }
 
