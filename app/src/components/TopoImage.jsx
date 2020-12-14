@@ -1,5 +1,6 @@
 import React from "react";
 import "./TopoImage.css";
+import { pathCoordsToSmoothPath } from "../helpers/svg";
 
 function TopoImage({ routes, background }) {
   return (
@@ -10,7 +11,7 @@ function TopoImage({ routes, background }) {
           {routes?.map((route) => (
             <path
               key={ route.slug }
-              d={ route.drawing.path }
+              d={ pathCoordsToSmoothPath(route.drawing.path) }
               fill="transparent"
               stroke="yellow"
               strokeWidth="4"

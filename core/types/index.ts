@@ -98,6 +98,21 @@ export interface Route {
   };
 }
 
+export interface RouteDrawing {
+  path?: number[][];
+  linkFrom?: {
+    routeSlug: string,
+    x: number;
+    y: number;
+  },
+  linkTo?: {
+    routeSlug: string;
+    x: number;
+    y: number;
+  }
+}
+
+
 export interface GradingSystem {
   title: string;
   grades: string[];

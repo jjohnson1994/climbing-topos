@@ -4,7 +4,6 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import { Helmet } from "react-helmet";
 
 import Area from './pages/area/Area';
 import Crag from './pages/crag/Crag';
@@ -24,9 +23,6 @@ import ProtectedRoute from "./auth/protected-route";
 function App() {
   return (
     <>
-      <Helmet>
-        <script src="https://kit.fontawesome.com/4b877c229a.js" crossOrigin="anonymous"></script>
-      </Helmet>
       <Router>
         <Auth0ProviderWithHistory>
           <Nav />
