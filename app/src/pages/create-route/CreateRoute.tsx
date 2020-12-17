@@ -169,7 +169,13 @@ function CreateRoute() {
                         ${watchTags?.includes(tag) ? "is-primary" : ""}
                       `}
                     >
-                      <input type="checkbox" name="tags" value={ tag } ref={ register } style={{ display: "none" }} />
+                      <input
+                        type="checkbox"
+                        name="tags"
+                        value={ tag }
+                        ref={ register }
+                        style={{ display: "none" }}
+                      />
                       { tag }
                     </label>
                   ))} 

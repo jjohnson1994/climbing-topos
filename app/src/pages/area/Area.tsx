@@ -3,17 +3,21 @@ import { Link, useParams } from 'react-router-dom';
 import { clipboardWriteText } from '../../helpers/clipboard';
 import { popupError, toastSuccess } from '../../helpers/alerts';
 import { areas } from "../../api";
-import { Area } from "../../../../core/types";
+import { Area, Route } from "../../../../core/types";
 
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
 
 import TopoImage from "../../components/TopoImage";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
+import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 
 function AreaView() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area | undefined>();
+  const [selectMultiple, setSelectMultiple] = useState(false);
+  const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
+  const [showLogModal, setShowLogModal] = useState(false);
 
   useEffect(() => {
     const doGetArea = async () => {
@@ -40,8 +44,38 @@ function AreaView() {
     }
   }
 
+  const onInitSelectMultiple = (selectMultiple: boolean, routeSlug: string) => {
+    setSelectMultiple(selectMultiple);
+    setSelectedRoutes([ routeSlug ]);
+  }
+
+  const btnSaveMultipleToListOnClick = () => {
+  }
+
+  const btnDoneMultipleOnClick = () => {
+    setShowLogModal(true);
+  }
+
+  const onRouteSelected = (routeSlug: string) => {
+    const newSelectedRoutes = Array.from(new Set([ ...selectedRoutes, routeSlug ]));
+    setSelectedRoutes(newSelectedRoutes);
+  }
+  
+  const onRouteDeselected = (routeSlug: string) => {
+    const newSelectedRoutes = selectedRoutes.filter(_routeSlug => _routeSlug !== routeSlug)
+    setSelectedRoutes(newSelectedRoutes);
+
+    if (newSelectedRoutes.length === 0) {
+      setSelectMultiple(false);
+    }
+  } 
+
   return (
     <>
+      <RoutesAddToLogModal
+        routes={ area?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
+        visible={ showLogModal } 
+      />
       <section className="section">
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
@@ -78,12 +112,14 @@ function AreaView() {
                 />
               </div>
               <div className="column">
-                {/*
-                <CragClimbsTable
-                  climbs={ area.climbs.filter(({ topo_id }) => topo_id === topo.id) }
+                <AreaRoutesTable
+                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                  selectedRoutes={ selectedRoutes }
+                  isSelectingMultiple={ selectMultiple }
+                  onInitSelectMultiple={ onInitSelectMultiple }
+                  onRouteSelected={ onRouteSelected }
+                  onRouteDeselected={ onRouteDeselected }
                 />
-                */}
-                <AreaRoutesTable routes={ area.routes?.filter(route => route.topoSlug === topo.slug) } />
                 <div className="buttons is-centered">
                   <Link
                     to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
@@ -101,6 +137,30 @@ function AreaView() {
         ))}
         </div>
       </section>
+
+      {selectedRoutes.length && (
+        <nav
+          className="navbar has-shadow is-fixed-bottom"
+          role="navigation"
+        >
+          <div className="is-justify-content-flex-end navbar-item" style={{  width: "100%"  }}>
+            <div className="buttons">
+              <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
+                <span className="icon">
+                  <i className="fas fw fa-list"></i>
+                </span>
+                <span>Save to List</span>
+              </button>
+              <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
+                <span className="icon">
+                  <i className="fas fw fa-check"></i>
+                </span>
+                <span>Done</span>
+              </button>
+            </div>
+          </div>
+        </nav>
+      )}
     </>
   );
 }
