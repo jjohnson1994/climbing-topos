@@ -33,7 +33,6 @@ export async function createTopo(topoDetails: Topo) {
     },
     body: JSON.stringify({
       image: image,
-      description: topoDetails.description,
       orientation: topoDetails.orientation,
       areaSlug: topoDetails.areaSlug,
       cragSlug: topoDetails.cragSlug

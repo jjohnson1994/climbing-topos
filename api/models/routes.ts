@@ -38,7 +38,26 @@ export async function createRoute(routeDescription: Route) {
   };
 }
 
-export async function getRoutesByCragSlug(cragSlug: string) {
+export async function getRouteBySlug(routeSlug: string): Promise<Route> {
+  const params = {
+    TableName: String(process.env.DB),
+    IndexName: "gsi2",
+    KeyConditionExpression: "#model = :model AND #slug = :slug",
+    ExpressionAttributeNames:{
+      "#model": "model",
+      "#slug": "slug"
+    },
+    ExpressionAttributeValues: {
+      ":model": "route",
+      ":slug": routeSlug
+    }
+  }
+
+  const route = await dynamodb.query(params).promise()
+  return route?.Items?.[0] as Route;
+}
+
+export async function getRoutesByCragSlug(cragSlug: string): Promise<Route[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -52,7 +71,6 @@ export async function getRoutesByCragSlug(cragSlug: string) {
     }
   }
 
-  const crag = await dynamodb.query(params).promise()
-  return crag?.Items || [];
-
+  const response = await dynamodb.query(params).promise()
+  return response?.Items as Route[];
 }

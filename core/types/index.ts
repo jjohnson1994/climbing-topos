@@ -50,6 +50,12 @@ export interface Crag {
   tags: string[];
 }
 
+export interface CragView extends Crag {
+  routes: Route[];
+  areas: Area[];
+  logs: Log[];
+}
+
 export interface Climb {
   title: string;
   slug: string;
@@ -75,7 +81,6 @@ export interface Area {
 export interface Topo {
   areaSlug: string;
   cragSlug: string;
-  description: string;
   image: File | string | null;
   orientation: string;
   slug?: string;
@@ -84,18 +89,21 @@ export interface Topo {
 export interface Route {
   areaSlug: string;
   cragSlug: string;
-  topoSlug: string;
-  slug?: string;
-  title: string;
   description: string;
-  routeType: string;
-  gradingSystem: string;
+  drawing?: RouteDrawing;
   grade: string;
-  tags: string[],
+  gradingSystem: string;
   rating?: number;
-  drawing?: {
-    path?: number[][]
-  };
+  routeType: string;
+  slug?: string;
+  tags: string[],
+  title: string;
+  topoSlug: string;
+}
+
+export interface RouteView extends Route {
+  area: Area;
+  topo: Topo;
 }
 
 export interface RouteDrawing {
@@ -117,3 +125,22 @@ export interface GradingSystem {
   title: string;
   grades: string[];
 }
+
+export interface LogRequest {
+  areaSlug: string;
+  attempts: number;
+  comment: string;
+  cragSlug: string;
+  dateSent: string;
+  grade: string;
+  gradeTaken: string;
+  gradingSystem: string;
+  routeSlug: string;
+  routeTitle: string;
+  routeType: string;
+  stars: number;
+  tags: string[];
+}
+
+export interface Log extends LogRequest {
+};

@@ -63,7 +63,12 @@ function CreateCrag() {
     }
   });
 
-  const { fields: carParks, append: appendCarPark, remove: removeCarPark, insert: insertCarPark } = useFieldArray({
+  const {
+    fields: carParks,
+    append: appendCarPark,
+    remove: removeCarPark,
+    insert: insertCarPark
+  } = useFieldArray({
     control,
     name: "carParks"
   });
@@ -133,7 +138,12 @@ function CreateCrag() {
       history.push(`/crags/${slug}`);
     } catch (error) {
       console.error('Error creating crag', error);
-      popupError("Ahh, something has gone wrong...");
+
+      if (error.error === "Unable to geocode") {
+        popupError("Could not find geolocation data! Check the Crag location coordinates are correct and try again");
+      } else {
+        popupError("Ahh, something has gone wrong...");
+      }
     }
   });
 

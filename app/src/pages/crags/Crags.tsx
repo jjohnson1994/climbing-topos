@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
 import { getCrags } from "../../api/crags";
-import { Crag } from '../../../../core/types';
+import { CragView } from '../../../../core/types';
 
 function Crags() {
-  const [crags, setCrags] = useState<Crag[]>([]);
+  const [crags, setCrags] = useState<CragView[]>([]);
   const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ function Crags() {
   async function doGetCrags() {
     try {
       const crags = await getCrags()
-      setCrags(crags.Items);
+      setCrags(crags);
     } catch (error) {
       console.error('Error loading crags', error);
     }
@@ -68,7 +68,6 @@ function Crags() {
                   <td>Routes</td>
                   <td>Areas</td>
                   <td>Ticks</td>
-                  <td>Likes</td>
                 </tr>
               </thead>
               <tbody>
@@ -83,10 +82,9 @@ function Crags() {
                           { crag.title }
                         </Link>
                       </td>
-                      <td><span>{ crag.climbCount }</span></td>
-                      <td><span>{ crag.areaCount } </span></td>
-                      <td><span>{ crag.tickCount }</span></td>
-                      <td><span>{ crag.likeCount }</span></td>
+                      <td><span>{ crag.routes.length }</span></td>
+                      <td><span>{ crag.areas.length } </span></td>
+                      <td><span>{ crag.logs.length }</span></td>
                     </tr>
                   ))
                 }

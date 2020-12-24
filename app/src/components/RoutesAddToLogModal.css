@@ -1,0 +1,19 @@
+.log-route-review-dropdown > input {
+  display: none;
+}
+
+.log-route-review-dropdown > div {
+  margin: 10px 20px 20px 20px;
+}
+
+.log-route-review-dropdown > input:not(:checked) ~ div  {
+  display: none;
+}
+
+.log-route-review-dropdown > input:checked + label > i.not-checked {
+  display: none; 
+}
+
+.log-route-review-dropdown > input:not(:checked) + label > i.checked {
+  display: none; 
+}

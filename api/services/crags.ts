@@ -1,4 +1,5 @@
-import { areas, crags, routes } from '../models';
+import {CragView} from '../../core/types';
+import { areas, crags, logs, routes } from '../models';
 import { Crag } from '../types';
 
 export const createCrag = async (cragDetails: Crag) => {
@@ -6,12 +7,34 @@ export const createCrag = async (cragDetails: Crag) => {
   return newCrag;
 }
 
-export const getAllCrags = async () => {
-  const allCrags = await crags.getAllCrags();
+export async function getAllCrags(): Promise<CragView[]> {
+  const allCrags = await crags
+    .getAllCrags()
+    .then(async crags => {
+      const cragViews = await Promise.all(
+        crags.map(crag => new Promise<CragView>(async (resolve) => {
+          const [cragAreas, cragRoutes, cragLogs] = await Promise.all([
+            areas.getAreasByCragSlug(crag.slug),
+            routes.getRoutesByCragSlug(crag.slug),
+            logs.getLogsByCragSlug(crag.slug)
+          ]);
+
+          resolve({
+            ...crag,
+            areas: cragAreas,
+            routes: cragRoutes,
+            logs: cragLogs
+          });
+        }))
+      );
+
+      return cragViews;
+    });
+
   return allCrags;
 }
 
-export const getCragBySlug = async (slug: string) => {
+export async function getCragBySlug(slug: string) {
   const crag = await crags.getCragBySlug(slug);
   const cragAreas = await areas.getAreasByCragSlug(crag.slug);
   const cragRoutes = await routes.getRoutesByCragSlug(crag.slug);

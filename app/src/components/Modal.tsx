@@ -7,7 +7,7 @@ interface Props {
   btnCancelOnClick: Function;
   btnCancelText?: string;
   btnConfirmText?: string;
-  children: JSX.Element[];
+  children: JSX.Element | JSX.Element[];
 }
 
 function Modal({

@@ -23,7 +23,6 @@ function CreateTopo() {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      description: "",
       orientation: "unknown",
       image: "",
     }
@@ -112,18 +111,6 @@ function CreateTopo() {
               </div>
             </div>
             <p className="help is-danger">{ errors.orientation?.message }</p>
-          </div>
-
-          <div className="field">
-            <label className="label" htmlFor="description">Description</label>
-            <div className="control">
-              <textarea
-                className="textarea"
-                name="description"
-                ref={ register }
-              ></textarea> 
-            </div>
-            <p className="help is-danger">{ errors.description?.message }</p>
           </div>
 
           <div className="field">

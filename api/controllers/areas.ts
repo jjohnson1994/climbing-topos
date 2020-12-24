@@ -14,7 +14,6 @@ export async function postArea(req, res) {
 export async function getArea(req, res) {
   try {
     const { areaSlug } = req.params;
-
     const area = await areas.getAreaBySlug(areaSlug);
     res.status(200).json(area);
   } catch(error) {

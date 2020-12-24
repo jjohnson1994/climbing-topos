@@ -3,8 +3,6 @@ import { topos } from "../services";
 export async function postTopo(req, res) {
   try {
     const topoDetails = req.body;
-    console.log("controller", topoDetails);
-
     await topos.createTopo(topoDetails);
 
     res.status(200).send({ success: true });

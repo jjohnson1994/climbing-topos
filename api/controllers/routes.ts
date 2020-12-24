@@ -10,3 +10,14 @@ export async function postRoute(req, res) {
     res.status(500).json({ error: true });
   }   
 }
+
+export async function getRoute(req, res) {
+  try {
+    const { routeSlug } = req.params;
+    const route = await routes.getRouteBySlug(routeSlug);
+    res.status(200).json(route);
+  } catch(error) {
+    console.error("Error loading routes", error);
+    res.status(500).json({ error: true });
+  }
+}

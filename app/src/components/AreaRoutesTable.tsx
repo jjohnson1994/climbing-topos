@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import Tippy from '@tippyjs/react';
 import { Route } from "../../../core/types";
+import {Link} from "react-router-dom";
 
 interface Props {
   routes: Route[] | undefined,
@@ -41,7 +42,7 @@ function AreaRoutesTable({
       <tbody>
         {routes?.map(route => (
           <tr key={ route.title }>
-            <td>{ route.title }</td>
+            <td><Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}` }>{ route.title }</Link></td>
             <td>{ route.grade }</td>
             <td>{ route.rating }</td>
             <td> { isSelectingMultiple 

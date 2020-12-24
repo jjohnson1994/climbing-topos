@@ -5,7 +5,6 @@ import { dynamodb } from "../db";
 import { Topo } from "../../core/types";
 
 export async function createTopo(topoDetails: Topo) {
-  console.log("topo details", topoDetails);
   const date = DateTime.utc().toString();
   const slug = nanoid();
   const params = {
@@ -14,7 +13,6 @@ export async function createTopo(topoDetails: Topo) {
       hk: topoDetails.cragSlug,
       sk: `topo#${topoDetails.areaSlug}#${slug}`,
       model: "topo",
-      description: topoDetails.description,
       image: topoDetails.image,
       slug,
       orientation: topoDetails.orientation,
@@ -26,7 +24,7 @@ export async function createTopo(topoDetails: Topo) {
   await dynamodb.put(params).promise();
 }
 
-export async function getToposByCragArea(cragSlug: string, areaSlug: string) {
+export async function getToposByCragArea(cragSlug: string, areaSlug: string): Promise<Topo[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -41,10 +39,10 @@ export async function getToposByCragArea(cragSlug: string, areaSlug: string) {
   }
 
   const response = await dynamodb.query(params).promise()
-  return response?.Items || [];
+  return response?.Items as Topo[];
 }
 
-export const getTopoBySlug = async (slug: string) => {
+export async function getTopoBySlug(slug: string): Promise<Topo> {
   // TODO can be refactored out and replace with `hk = hk and begins_with(sk, sk)`
   const params = {
     TableName: String(process.env.DB),
@@ -61,5 +59,5 @@ export const getTopoBySlug = async (slug: string) => {
   }
 
   const crag = await dynamodb.query(params).promise()
-  return crag?.Items?.[0];
+  return crag?.Items?.[0] as Topo;
 }

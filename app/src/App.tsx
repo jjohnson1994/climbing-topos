@@ -14,6 +14,7 @@ import CreateRoute from "./pages/create-route/CreateRoute";
 import CreateTopo from "./pages/create-topo/CreateTopo";
 import Home from './pages/home/Home';
 import Profile from './pages/profile/Profile';
+import RoutePage from './pages/route/Route';
 
 import './App.scss';
 import Nav from "./components/Nav";
@@ -34,6 +35,9 @@ function App() {
             <ProtectedRoute path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'>
               <CreateRoute />
             </ProtectedRoute>
+            <Route path="/crags/:cragSlug/areas/:areaSlug/routes/:routeSlug">
+              <RoutePage />
+            </Route>
             <Route path='/crags/:cragSlug/areas/:areaSlug'>
               <Area />
             </Route>

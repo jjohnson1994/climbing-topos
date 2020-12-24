@@ -35,7 +35,7 @@ export async function createArea(areaDescription: Area) {
   };
 }
 
-export const getAreasByCragSlug = async (cragSlug: string) => {
+export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -50,10 +50,10 @@ export const getAreasByCragSlug = async (cragSlug: string) => {
   }
 
   const crag = await dynamodb.query(params).promise()
-  return crag?.Items;
+  return crag?.Items as Area[];
 }
 
-export const getAreaBySlug = async (slug: string) => {
+export async function getAreaBySlug(slug: string): Promise<Area> {
   // TODO can be refactored out and replace with `hk = hk and begins_with(sk, sk)`
   const params = {
     TableName: String(process.env.DB),
@@ -69,6 +69,6 @@ export const getAreaBySlug = async (slug: string) => {
     }
   }
 
-  const crag = await dynamodb.query(params).promise()
-  return crag?.Items?.[0];
+  const area = await dynamodb.query(params).promise()
+  return area?.Items?.[0] as Area;
 }
