@@ -62,7 +62,6 @@ function Crag() {
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
           <h5 className="subtitle">{ crag?.description }</h5>
-          <CragQuickActions crag={ crag } /> 
         </div>
       </section>
 

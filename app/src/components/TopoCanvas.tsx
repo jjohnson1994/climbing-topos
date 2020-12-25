@@ -160,55 +160,60 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
   }
 
   return (
-    <div id="canvas-container">
-      <img id="canvas-bg" src={backgroundImageURL} alt="topo drawing canvas" />
-      <div id="canvas">
-        <svg
-          ref={canvasElement}
-          width="100%"
-          height="100%"
-          viewBox="0 0 1000 1000"
-          onPointerUp={onPointerUp}
-          onPointerMove={e => onPointerMove(e as unknown as PointerEvent)}
-          onPointerDown={onPointerDown}
-        >
-          {existingRoutes && [...existingRoutes.keys()].map(key => (
-            <path
-              key={key}
-              d={pathCoordsToSmoothPath(existingRoutes.get(key) as number[][])}
-              strokeWidth={strokeWidth}
-              stroke={strokeColor}
-              strokeOpacity={0.5}
-              fill="none"
-            />
-          ))}
-          {routeDrawing?.path?.length && (
-            <path
-              d={pathCoordsToSmoothPath(completePath)}
-              stroke={strokeColor}
-              strokeWidth={strokeWidth}
-              fill="none"
-            />
-          )}
-          {finishXY[0] !== -1 && finishXY[1] !== -1 && routeDrawing?.path?.length && (
-            <foreignObject x={finishXY[0] - 15} y={finishXY[1] - 30} width="30px" height="30px">
-              <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
-                <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-flag"></i>
-              </div>
-            </foreignObject>
-          )}
-          {((linkFrom && pointerState === "up") || (linkTo && pointerState === "down")) && (
-            <foreignObject x={(pointerState === "up" ? linkFrom!.x : linkTo!.x) - 15} y={(pointerState === "up" ? linkFrom!.y : linkTo!.y) - 30} width="30px" height="30px">
-              <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
-                <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-link"></i>
-              </div>
-            </foreignObject>
-          )}
-        </svg>
+    <>
+      <div className="notification is-primary">
+        Make sure to draw route lines from <strong>start to finish</strong>
       </div>
-    </div>
+      <div id="canvas-container">
+        <img id="canvas-bg" src={backgroundImageURL} alt="topo drawing canvas" />
+        <div id="canvas">
+          <svg
+            ref={canvasElement}
+            width="100%"
+            height="100%"
+            viewBox="0 0 1000 1000"
+            onPointerUp={onPointerUp}
+            onPointerMove={e => onPointerMove(e as unknown as PointerEvent)}
+            onPointerDown={onPointerDown}
+          >
+            {existingRoutes && [...existingRoutes.keys()].map(key => (
+              <path
+                key={key}
+                d={pathCoordsToSmoothPath(existingRoutes.get(key) as number[][])}
+                strokeWidth={strokeWidth}
+                stroke={strokeColor}
+                strokeOpacity={0.5}
+                fill="none"
+              />
+            ))}
+            {routeDrawing?.path?.length && (
+              <path
+                d={pathCoordsToSmoothPath(completePath)}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+                fill="none"
+              />
+            )}
+            {finishXY[0] !== -1 && finishXY[1] !== -1 && routeDrawing?.path?.length && (
+              <foreignObject x={finishXY[0] - 15} y={finishXY[1] - 30} width="30px" height="30px">
+                <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
+                  <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-flag"></i>
+                </div>
+              </foreignObject>
+            )}
+            {((linkFrom && pointerState === "up") || (linkTo && pointerState === "down")) && (
+              <foreignObject x={(pointerState === "up" ? linkFrom!.x : linkTo!.x) - 15} y={(pointerState === "up" ? linkFrom!.y : linkTo!.y) - 30} width="30px" height="30px">
+                <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                  <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
+                  <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-link"></i>
+                </div>
+              </foreignObject>
+            )}
+          </svg>
+        </div>
+      </div>
+    </>
   );
 }
 
