@@ -1,9 +1,10 @@
 import express from "express";
 
 import { logs } from "../controllers";
+import { requireAuth } from "../middleware/auth";
 
 const route = express.Router();
 
-route.post("/", logs.postLogs);
+route.post("/", requireAuth, logs.postLogs);
 
 export default route;

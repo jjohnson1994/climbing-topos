@@ -84,7 +84,7 @@ function Crags() {
                       </td>
                       <td><span>{ crag.routes.length }</span></td>
                       <td><span>{ crag.areas.length } </span></td>
-                      <td><span>{ crag.logs.length }</span></td>
+                      <td><span>{ crag.logsCount }</span></td>
                     </tr>
                   ))
                 }

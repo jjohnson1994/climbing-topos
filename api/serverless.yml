@@ -3,6 +3,7 @@ app: climbing-topos
 service: climbing-topos
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-dynamodb-local
   - serverless-offline

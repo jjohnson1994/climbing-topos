@@ -13,10 +13,10 @@ function CragRoutesTable({ routes }: { routes: Route[] | undefined }) {
       </thead>
       <tbody>
         {routes?.map(route => (
-          <tr>
+          <tr key={ route.slug }>
             <td>
               <Link
-                to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}` }
+                to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}` }
                 className="is-capitalized"
               >
                 { route.title }

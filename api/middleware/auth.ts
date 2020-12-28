@@ -2,20 +2,54 @@ import jwt from 'express-jwt';
 import jwtAuthz from 'express-jwt-authz';
 import jwksRsa from 'jwks-rsa';
 
+function checkJwt (
+  req,
+  res,
+  next,
+  credentialsRequired = true,
+  audience: string,
+  domain: string
+) {
+  return jwt({
+    secret: jwksRsa.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: `${domain}.well-known/jwks.json`
+    }),
+    audience,
+    issuer: domain,
+    algorithms: ['RS256'],
+    credentialsRequired
+  })(req, res, next);
+}
 
-export const checkJwt = jwt({
-  // Dynamically provide a signing key
-  // based on the kid in the header and 
-  // the signing keys provided by the JWKS endpoint.
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
-  }),
+export const requireAuth = (req, res, next) => {
+  const domain = `${process.env.AUTH0_DOMAIN}`;
+  const audience = `${process.env.AUTH0_AUDIENCE}`;
+  const credentialsRequired = true;
 
-  // Validate the audience and the issuer.
-  audience: `${process.env.AUTH0_AUDIENCE}`,
-  issuer: `${process.env.AUTH0_DOMAIN}`,
-  algorithms: ['RS256']
-});
+  checkJwt(
+    req,
+    res,
+    next,
+    credentialsRequired,
+    audience,
+    domain
+  );
+}
+
+export const optionalAuth = (req, res, next) => {
+  const domain = `${process.env.AUTH0_DOMAIN}`;
+  const audience = `${process.env.AUTH0_AUDIENCE}`;
+  const credentialsRequired = false;
+
+  checkJwt(
+    req,
+    res,
+    next,
+    credentialsRequired,
+    audience,
+    domain
+  );
+}

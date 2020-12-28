@@ -69,7 +69,7 @@ export async function getAllCrags(): Promise<Crag[]> {
   return crags?.Items as Crag[];
 }
 
-export const getCragBySlug = async (slug: string) => {
+export const getCragBySlug = async (slug: string): Promise<Crag> => {
   const params = {
     TableName: String(process.env.DB),
     IndexName: "gsi2",
@@ -85,7 +85,7 @@ export const getCragBySlug = async (slug: string) => {
   }
 
   const crag = await dynamodb.query(params).promise()
-  return crag?.Items?.[0];
+  return crag?.Items?.[0] as Crag;
 }
 
 export const getAllCragsByCountry = async (countryCode: string) => {

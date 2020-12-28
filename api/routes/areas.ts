@@ -1,11 +1,11 @@
 import express from 'express';
-import { checkJwt } from '../middleware/auth';
+import { optionalAuth, requireAuth } from '../middleware/auth';
 
 import { areas } from "../controllers";
 
 const router = express.Router();
 
-router.post('/', areas.postArea)
-router.get('/:areaSlug/', areas.getArea);
+router.post('/', requireAuth, areas.postArea)
+router.get('/:areaSlug/', optionalAuth, areas.getArea);
 
 export default router;

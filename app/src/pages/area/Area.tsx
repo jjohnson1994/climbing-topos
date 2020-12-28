@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useAuth0 } from "@auth0/auth0-react";
+
 import { clipboardWriteText } from '../../helpers/clipboard';
 import { popupError, toastSuccess } from '../../helpers/alerts';
 import { areas } from "../../api";
 import { Area, Route } from "../../../../core/types";
-
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
-
 import TopoImage from "../../components/TopoImage";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 
 function AreaView() {
+  const { user, isAuthenticated, getAccessTokenWithPopup, loginWithRedirect } = useAuth0();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area | undefined>();
   const [selectMultiple, setSelectMultiple] = useState(false);
@@ -50,10 +51,19 @@ function AreaView() {
   }
 
   const btnSaveMultipleToListOnClick = () => {
+    if (isAuthenticated === false) {
+      loginWithRedirect();
+    } else {
+      // TODO
+    }
   }
 
-  const btnDoneMultipleOnClick = () => {
-    setShowLogModal(true);
+  const btnDoneMultipleOnClick = async () => {
+    if (isAuthenticated === false) {
+      loginWithRedirect();
+    } else {
+      setShowLogModal(true);
+    }
   }
 
   const onRouteSelected = (routeSlug: string) => {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import CragQuickActions from "../../components/CragQuickActions";
@@ -32,6 +33,7 @@ type CragDescription = {
 }
 
 function Crag() {
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(false);
   const [crag, setCrag] = useState<CragDescription | undefined>();
@@ -42,7 +44,10 @@ function Crag() {
       setLoading(true);
 
       try {
-        const newCrag = await getCragBySlug(cragSlug);
+        const token = isAuthenticated
+          ? await getAccessTokenSilently()
+          : "";
+        const newCrag = await getCragBySlug(cragSlug, token);
         setCrag(newCrag);
       } catch (error) {
         console.error("Error loading crag", error);

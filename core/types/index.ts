@@ -53,7 +53,7 @@ export interface Crag {
 export interface CragView extends Crag {
   routes: Route[];
   areas: Area[];
-  logs: Log[];
+  logsCount: number;
 }
 
 export interface Climb {

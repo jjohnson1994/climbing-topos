@@ -28,29 +28,38 @@ function App() {
         <Auth0ProviderWithHistory>
           <Nav />
           <Switch>
-            <ProtectedRoute path="/profile" component={ Profile } />
-            <ProtectedRoute path='/crags/:cragSlug/areas/:areaSlug/create-topo'>
-              <CreateTopo />
-            </ProtectedRoute>
-            <ProtectedRoute path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'>
-              <CreateRoute />
-            </ProtectedRoute>
+            <ProtectedRoute
+              path="/profile"
+              component={ Profile }
+            />
+            <ProtectedRoute
+              path='/crags/:cragSlug/areas/:areaSlug/create-topo'
+              component={ CreateTopo }
+            />
+            <ProtectedRoute
+              path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'
+              component={ CreateRoute }
+            />
             <Route path="/crags/:cragSlug/areas/:areaSlug/routes/:routeSlug">
               <RoutePage />
             </Route>
             <Route path='/crags/:cragSlug/areas/:areaSlug'>
               <Area />
             </Route>
-            <ProtectedRoute path="/crags/:cragSlug/create-area">
-              <CreateArea />
-            </ProtectedRoute>
+            <ProtectedRoute
+              path="/crags/:cragSlug/create-area"
+              component={ CreateArea }
+            />
             <Route path='/crags/:cragSlug'>
               <Crag />
             </Route>
             <Route path='/crags'>
               <Crags />
             </Route>
-            <ProtectedRoute path="/create-crag" component={ CreateCrag } />
+            <ProtectedRoute
+              path="/create-crag"
+              component={ CreateCrag }
+            />
             <Route path='/'>
               <Home />
             </Route>

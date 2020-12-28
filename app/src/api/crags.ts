@@ -25,8 +25,12 @@ export async function getCrags() {
   return json;
 }
 
-export async function getCragBySlug(slug: string) {
-  const res = await fetch(`http://localhost:3001/dev/crags/${slug}`);
+export async function getCragBySlug(slug: string, token: string) {
+  const res = await fetch(`http://localhost:3001/dev/crags/${slug}`, {
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` })
+    }
+  });
   const json = await res.json();
   if (res.status !== 200) {
     throw json;

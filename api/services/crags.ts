@@ -23,7 +23,7 @@ export async function getAllCrags(): Promise<CragView[]> {
             ...crag,
             areas: cragAreas,
             routes: cragRoutes,
-            logs: cragLogs
+            logsCount: cragLogs.length
           });
         }))
       );
@@ -36,8 +36,12 @@ export async function getAllCrags(): Promise<CragView[]> {
 
 export async function getCragBySlug(slug: string) {
   const crag = await crags.getCragBySlug(slug);
-  const cragAreas = await areas.getAreasByCragSlug(crag.slug);
-  const cragRoutes = await routes.getRoutesByCragSlug(crag.slug);
+
+  const [cragAreas, cragRoutes] = await Promise.all([
+    areas.getAreasByCragSlug(crag.slug),
+    routes.getRoutesByCragSlug(crag.slug),
+  ]);
+
 
   return {
     ...crag,
