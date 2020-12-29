@@ -1,13 +1,14 @@
-import { yupResolver } from "@hookform/resolvers/yup";
+import {useAuth0} from "@auth0/auth0-react";
+import {yupResolver} from "@hookform/resolvers/yup";
+import React, {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
 import * as yup from "yup";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-
-import { GradingSystem, Route, LogRequest } from "../../../core/types";
-import { popupError, toastSuccess } from "../helpers/alerts";
-import { globals, logs } from "../api";
+import {GradingSystem, LogRequest, Route} from "../../../core/types";
+import {globals, logs} from "../api";
+import {popupError, toastSuccess} from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
+
 
 interface Props {
   routes: Route[];
@@ -39,10 +40,11 @@ const schema = yup.object().shape({
 });
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
+  const { getAccessTokenSilently } = useAuth0();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
 
-  const { register,  handleSubmit, errors, getValues, watch } = useForm({
+  const { register,  handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange"
   });
@@ -70,7 +72,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
     return grades;
   }
 
-  const btnLogRoutesConfirmOnClick = () => {
+  const btnLogRoutesConfirmOnClick = async () => {
     handleSubmit(
       data => {
         logRoutes(data.logs as LogRequest[]);
@@ -86,7 +88,8 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
 
   const logRoutes = async (routes: LogRequest[]) => {
     try {
-      await logs.logRoutes(routes);
+      const token = await getAccessTokenSilently();
+      await logs.logRoutes(routes, token);
       toastSuccess("Routes Logged");
       onConfirm && onConfirm();
     } catch (error) {

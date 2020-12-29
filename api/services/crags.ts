@@ -7,23 +7,27 @@ export const createCrag = async (cragDetails: Crag) => {
   return newCrag;
 }
 
-export async function getAllCrags(): Promise<CragView[]> {
+export async function getAllCrags(user): Promise<CragView[]> {
   const allCrags = await crags
     .getAllCrags()
     .then(async crags => {
       const cragViews = await Promise.all(
         crags.map(crag => new Promise<CragView>(async (resolve) => {
-          const [cragAreas, cragRoutes, cragLogs] = await Promise.all([
+          const [cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
             areas.getAreasByCragSlug(crag.slug),
             routes.getRoutesByCragSlug(crag.slug),
-            logs.getLogsByCragSlug(crag.slug)
+            logs.getLogsByCragSlug(crag.slug),
+            user
+              ? logs.getLogsForUserAtCrag(user.sub, crag.slug)
+              : []
           ]);
 
           resolve({
             ...crag,
             areas: cragAreas,
             routes: cragRoutes,
-            logsCount: cragLogs.length
+            logsCount: cragLogs.length,
+            userLogs
           });
         }))
       );
@@ -34,18 +38,23 @@ export async function getAllCrags(): Promise<CragView[]> {
   return allCrags;
 }
 
-export async function getCragBySlug(slug: string) {
-  const crag = await crags.getCragBySlug(slug);
-
-  const [cragAreas, cragRoutes] = await Promise.all([
-    areas.getAreasByCragSlug(crag.slug),
-    routes.getRoutesByCragSlug(crag.slug),
+export async function getCragBySlug(slug: string, user): Promise<CragView> {
+  const [crag, cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
+    crags.getCragBySlug(slug),
+    areas.getAreasByCragSlug(slug),
+    routes.getRoutesByCragSlug(slug),
+    logs.getLogsByCragSlug(slug),
+    user
+      ? logs.getLogsForUserAtCrag(user.sub, slug)
+      : []
   ]);
 
 
   return {
     ...crag,
     areas: cragAreas,
-    routes: cragRoutes
+    routes: cragRoutes,
+    logsCount: cragLogs.length,
+    userLogs
   };
 }

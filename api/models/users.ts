@@ -1,10 +1,2 @@
-const userRegister = () => {
+export async function createRouteLog(user, logRequest: LogRequest) {
 }
-
-const userLogin = () => {
-}
-
-export default {
-  userRegister,
-  userLogin,
-};

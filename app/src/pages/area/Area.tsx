@@ -1,29 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useAuth0 } from "@auth0/auth0-react";
-
-import { clipboardWriteText } from '../../helpers/clipboard';
-import { popupError, toastSuccess } from '../../helpers/alerts';
-import { areas } from "../../api";
-import { Area, Route } from "../../../../core/types";
+import {useAuth0} from "@auth0/auth0-react";
+import React, {useEffect, useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
+import {AreaView, Route} from "../../../../core/types";
+import {areas} from "../../api";
+import {useLogRoutes} from '../../api/logs';
+import AreaRoutesTable from "../../components/AreaRoutesTable";
+import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
 import TopoImage from "../../components/TopoImage";
-import AreaRoutesTable from "../../components/AreaRoutesTable";
-import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
+import {popupError, toastSuccess} from '../../helpers/alerts';
+import {clipboardWriteText} from '../../helpers/clipboard';
 
-function AreaView() {
-  const { user, isAuthenticated, getAccessTokenWithPopup, loginWithRedirect } = useAuth0();
+
+function Area() {
+  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { 
+    selectedRoutes,
+    isSelectingMultipleRoutes,
+    onInitSelectMultipleRoutes,
+    onRouteSelected,
+    onRouteDeselected
+  } = useLogRoutes();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
-  const [area, setArea] = useState<Area | undefined>();
-  const [selectMultiple, setSelectMultiple] = useState(false);
-  const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
+  const [area, setArea] = useState<AreaView>();
   const [showLogModal, setShowLogModal] = useState(false);
 
   useEffect(() => {
     const doGetArea = async () => {
       try {
-        const area = await areas.getArea(areaSlug);
+        const token = isAuthenticated
+          ? await getAccessTokenSilently()
+          : "";
+        const area = await areas.getArea(areaSlug, token);
+        console.log({ area });
         setArea(area);
       } catch (error) {
         console.error("Error loading area", error);
@@ -32,7 +42,7 @@ function AreaView() {
     };
 
     doGetArea();
-  }, [areaSlug]);
+  }, [areaSlug, isAuthenticated]);
 
   const btnCoordsOnClick = async () => {
     if (!area) return;
@@ -43,11 +53,6 @@ function AreaView() {
     } catch (error) {
       console.error('Error saving area coords to clipboard', error);
     }
-  }
-
-  const onInitSelectMultiple = (selectMultiple: boolean, routeSlug: string) => {
-    setSelectMultiple(selectMultiple);
-    setSelectedRoutes([ routeSlug ]);
   }
 
   const btnSaveMultipleToListOnClick = () => {
@@ -65,20 +70,6 @@ function AreaView() {
       setShowLogModal(true);
     }
   }
-
-  const onRouteSelected = (routeSlug: string) => {
-    const newSelectedRoutes = Array.from(new Set([ ...selectedRoutes, routeSlug ]));
-    setSelectedRoutes(newSelectedRoutes);
-  }
-  
-  const onRouteDeselected = (routeSlug: string) => {
-    const newSelectedRoutes = selectedRoutes.filter(_routeSlug => _routeSlug !== routeSlug)
-    setSelectedRoutes(newSelectedRoutes);
-
-    if (newSelectedRoutes.length === 0) {
-      setSelectMultiple(false);
-    }
-  } 
 
   return (
     <>
@@ -126,9 +117,10 @@ function AreaView() {
               <div className="column">
                 <AreaRoutesTable
                   routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                  loggedRoutes={ area.userLogs }
                   selectedRoutes={ selectedRoutes }
-                  isSelectingMultiple={ selectMultiple }
-                  onInitSelectMultiple={ onInitSelectMultiple }
+                  isSelectingMultiple={ isSelectingMultipleRoutes }
+                  onInitSelectMultiple={ onInitSelectMultipleRoutes }
                   onRouteSelected={ onRouteSelected }
                   onRouteDeselected={ onRouteDeselected }
                 />
@@ -180,4 +172,4 @@ function AreaView() {
   );
 }
 
-export default AreaView;
+export default Area;

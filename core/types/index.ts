@@ -27,7 +27,7 @@ export interface OsmData {
 export interface CarPark {
   title: string;
   description: string;
-  latitidue: string;
+  latitude: string;
   longitude: string;
 }
 
@@ -54,6 +54,7 @@ export interface CragView extends Crag {
   routes: Route[];
   areas: Area[];
   logsCount: number;
+  userLogs: Log[];
 }
 
 export interface Climb {
@@ -66,7 +67,6 @@ export interface Area {
   access: string;
   accessDetails: string;
   approachNotes: string;
-  climbs?: Climb[];
   cragSlug: string;
   description: string;
   latitude: string;
@@ -74,8 +74,12 @@ export interface Area {
   slug?: string;
   tags: string[],
   title: string;
-  topos?: Topo[];
-  routes?: Route[];
+}
+
+export interface AreaView extends Area {
+  topos: Topo[];
+  routes: Route[];
+  userLogs: Log[];
 }
 
 export interface Topo {

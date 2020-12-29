@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
-import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useAuth0} from "@auth0/auth0-react";
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useHistory, useParams} from 'react-router-dom';
 import * as yup from "yup";
-import { areas, globals, routes, topos } from "../../api";
-import { popupError, popupSuccess } from "../../helpers/alerts";
-import { Area, GradingSystem } from "../../../../core/types";
-
+import {AreaView, GradingSystem} from "../../../../core/types";
+import {areas, globals, routes, topos} from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
+import {popupError, popupSuccess} from "../../helpers/alerts";
+
 
 const schema = yup.object().shape({
   title: yup.string().required("Required"),
@@ -23,13 +23,14 @@ const schema = yup.object().shape({
 
 function CreateRoute() {
   const history = useHistory();
+  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
   const { areaSlug, cragSlug, topoSlug } = useParams<{ areaSlug: string; cragSlug: string, topoSlug: string }>();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
   const [grades, setGrades] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [area, setArea] = useState<Area | undefined>();
+  const [area, setArea] = useState<AreaView | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
   const [drawing, setDrawing] = useState({});
 
@@ -52,7 +53,10 @@ function CreateRoute() {
   useEffect(() => {
     const doGetArea = async () => {
       try {
-        const area = await areas.getArea(areaSlug);
+        const token = isAuthenticated
+          ? await getAccessTokenSilently()
+          : "";
+        const area = await areas.getArea(areaSlug, token);
         setArea(area);
       } catch (error) {
         console.error("Error loading area", error);

@@ -72,15 +72,12 @@ export async function getAllCrags(): Promise<Crag[]> {
 export const getCragBySlug = async (slug: string): Promise<Crag> => {
   const params = {
     TableName: String(process.env.DB),
-    IndexName: "gsi2",
-    KeyConditionExpression: "#model = :entity AND #slug = :slug",
+    KeyConditionExpression: "#hk = :hk",
     ExpressionAttributeNames:{
-      "#model": "model",
-      "#slug": "slug"
+      "#hk": "hk",
     },
     ExpressionAttributeValues: {
-      ":entity": "crag",
-      ":slug": slug
+      ":hk": slug,
     }
   }
 

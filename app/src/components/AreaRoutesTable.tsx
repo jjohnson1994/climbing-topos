@@ -1,10 +1,11 @@
-import React, { ChangeEvent } from "react";
 import Tippy from '@tippyjs/react';
-import { Route } from "../../../core/types";
+import React, {ChangeEvent} from "react";
 import {Link} from "react-router-dom";
+import {Log, Route} from "../../../core/types";
 
 interface Props {
   routes: Route[] | undefined,
+  loggedRoutes: Log[],
   selectedRoutes: string[],
   isSelectingMultiple: Boolean | undefined,
   onInitSelectMultiple: Function,
@@ -14,6 +15,7 @@ interface Props {
 
 function AreaRoutesTable({
   routes,
+  loggedRoutes,
   selectedRoutes,
   isSelectingMultiple,
   onInitSelectMultiple,
@@ -29,6 +31,10 @@ function AreaRoutesTable({
     }
   }
 
+  const hasUserLoggedRoute = (routeSlug: string) => {
+    return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1;
+  }
+
   return (
     <table className="table is-fullwidth">
       <thead>
@@ -41,8 +47,10 @@ function AreaRoutesTable({
       </thead>
       <tbody>
         {routes?.map(route => (
-          <tr key={ route.title }>
-            <td><Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}` }>{ route.title }</Link></td>
+          <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
+            <td>
+              <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}` }>{ route.title }</Link>
+            </td>
             <td>{ route.grade }</td>
             <td>{ route.rating }</td>
             <td> { isSelectingMultiple 

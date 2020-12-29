@@ -1,43 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
-
+import {useAuth0} from "@auth0/auth0-react";
+import React, {useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
+import {CragView, Route} from "../../../../core/types";
+import {getCragBySlug} from "../../api/crags";
+import {useLogRoutes} from "../../api/logs";
+import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
-import CragQuickActions from "../../components/CragQuickActions";
-import CragRoutesTable from "../../components/CragRoutesTable";
-import { getCragBySlug } from "../../api/crags";
-import { popupError } from "../../helpers/alerts";
-import { Route } from "../../../../core/types";
+import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
+import {popupError} from "../../helpers/alerts";
 
-type CragDescription = {
-  access: string;
-  accessDescription: string;
-  accessLink: string;
-  approachNotes: string;
-  carParks: {
-    title: string;
-    latitude: string;
-    longitude: string;
-    description: string;
-  }[];
-  description: string;
-  latitude: string;
-  longitude: string;
-  tags: string[];
-  title: string;
-  areas: {
-    slug: string;
-    title: string;
-  }[];
-  routes: Route[],
-}
 
 function Crag() {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { 
+    selectedRoutes,
+    isSelectingMultipleRoutes,
+    onInitSelectMultipleRoutes,
+    onRouteSelected,
+    onRouteDeselected
+  } = useLogRoutes();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(false);
-  const [crag, setCrag] = useState<CragDescription | undefined>();
+  const [crag, setCrag] = useState<CragView>();
   const [activeTab, setActiveTab] = useState('routes');
+  const [showLogModal, setShowLogModal] = useState(false);
 
   useEffect(() => {
     const doGetCrag = async () => {
@@ -60,9 +46,32 @@ function Crag() {
     doGetCrag();
   }, []);
 
+  const btnSaveMultipleToListOnClick = () => {
+    // TODO repetition with Area.tsx
+    if (isAuthenticated === false) {
+      loginWithRedirect();
+    } else {
+      // TODO
+    }
+  }
+
+  const btnDoneMultipleOnClick = async () => {
+    // TODO repetition with Area.tsx
+    if (isAuthenticated === false) {
+      loginWithRedirect();
+    } else {
+      setShowLogModal(true);
+    }
+  }
 
   return (
-    <React.Fragment>
+    <>
+      <RoutesAddToLogModal
+        routes={ crag?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
+        visible={ showLogModal } 
+        onCancel={ () => setShowLogModal(false) }
+        onConfirm={ () => setShowLogModal(false) }
+      />
       <section className="section">
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
@@ -96,7 +105,15 @@ function Crag() {
                 ${activeTab !== 'routes' ? 'is-hidden' : '' }
               `}
             >
-              <CragRoutesTable routes={ crag?.routes } />
+              <AreaRoutesTable
+                routes={ crag?.routes }
+                loggedRoutes={ (crag && crag.userLogs) || [] }
+                selectedRoutes={ selectedRoutes }
+                isSelectingMultiple={ isSelectingMultipleRoutes }
+                onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                onRouteSelected={ onRouteSelected }
+                onRouteDeselected={ onRouteDeselected }
+              />
             </div>
           
             <div
@@ -184,7 +201,34 @@ function Crag() {
           </div>
         </div>
       </section>
-    </React.Fragment>
+ 
+      { /** TODO repetition with Area.tsx */ }
+      {selectedRoutes.length 
+        ? (
+          <nav
+            className="navbar has-shadow is-fixed-bottom"
+            role="navigation"
+          >
+            <div className="is-justify-content-flex-end navbar-item" style={{  width: "100%"  }}>
+              <div className="buttons">
+                <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
+                  <span className="icon">
+                    <i className="fas fw fa-list"></i>
+                  </span>
+                  <span>Save to List</span>
+                </button>
+                <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
+                  <span className="icon">
+                    <i className="fas fw fa-check"></i>
+                  </span>
+                  <span>Done</span>
+                </button>
+              </div>
+            </div>
+          </nav>
+        )
+        : ""
+      }   </>
   );
 };
 

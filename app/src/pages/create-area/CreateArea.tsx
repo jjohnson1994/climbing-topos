@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useAuth0} from "@auth0/auth0-react";
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useHistory, useParams} from "react-router-dom";
 import * as yup from "yup";
-import { areas, globals } from "../../api";
-import { popupError, popupSuccess } from "../../helpers/alerts";
-import { getCurrentPosition } from '../../helpers/geolocation';
-import { Area } from "../../../../core/types";
+import {Area} from "../../../../core/types";
+import {areas, globals} from "../../api";
+import {popupError, popupSuccess} from "../../helpers/alerts";
+import {getCurrentPosition} from '../../helpers/geolocation';
 
 const schema = yup.object().shape({
   title: yup.string().required("Required"),
@@ -21,6 +22,7 @@ const schema = yup.object().shape({
 
 function CreateArea() {
   const history = useHistory();
+  const { getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [tags, setTags] = useState<string[]>([]);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
@@ -70,7 +72,14 @@ function CreateArea() {
     setLoading(true);
 
     try {
-      const { slug: areaSlug } = await areas.createArea({ ...formData, cragSlug });
+      const token = await getAccessTokenSilently();
+      const { slug: areaSlug } = await areas.createArea(
+        {
+          ...formData,
+          cragSlug
+        },
+        token
+      );
       await popupSuccess("Area Created!");
       history.push(`/crags/${cragSlug}/area/${areaSlug}`);
     } catch (error) {
