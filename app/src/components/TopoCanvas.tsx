@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Route} from "../../../core/types";
-import { domToSvgPoint, pathCoordsToSmoothPath } from "../helpers/svg";
+import { domToSvgPoint, ReducePath, SmoothPath } from "../helpers/svg";
 import { RouteDrawing } from "../../../core/types";
 
 import "./TopoCanvas.css";
@@ -26,15 +26,17 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
   const canvasElement = useRef<SVGSVGElement>(document.querySelector("svg") as SVGSVGElement);
 
   useEffect(() => {
-    routes && routes.forEach(route => {
-      const existingRouteCoordinatesArray = route.drawing?.path;
+    if (routes) {
+      routes.forEach(route => {
+        const existingRouteCoordinatesArray = route.drawing?.path;
 
-      if (existingRouteCoordinatesArray) {
-        setExistingRoutes(
-          existingRoutes.set(`${route.slug}`, existingRouteCoordinatesArray)
-        );
-      }
-    });
+        if (existingRouteCoordinatesArray) {
+          const newExistingRoutes = new Map(existingRoutes);
+          newExistingRoutes.set(`${route.slug}`, existingRouteCoordinatesArray);
+          setExistingRoutes(newExistingRoutes);
+        }
+      });
+    }
   }, [routes]);
 
   function findRouteUnderPointer(x: number, y: number): {x: number; y: number; parentRouteSlug: string} | undefined {
@@ -51,6 +53,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
     return parentRoute;
   }
 
+  // TODO 99% the same as in TopoImage.tsx
   function joinLinkedRoutes(
     routePath: number[][],
     linkFrom: { routeSlug: string, x: number; y: number } | undefined,
@@ -90,7 +93,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
     setLinkTo(undefined);
     setRoutePath(undefined);
     setRouteDrawing({
-      path: undefined,
+      path: [],
       linkFrom,
       linkTo
     });
@@ -141,7 +144,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
     );
 
     setRouteDrawing({
-      path: routePath,
+      path: routePath || [],
       linkFrom: routeDrawing?.linkFrom,
       linkTo
     });
@@ -155,7 +158,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
       );
 
       setFinishXY(completePath.slice(-1)[0]);
-      setCompletePath(completePath);
+      setCompletePath(ReducePath(completePath));
     }
   }
 
@@ -179,7 +182,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
             {existingRoutes && [...existingRoutes.keys()].map(key => (
               <path
                 key={key}
-                d={pathCoordsToSmoothPath(existingRoutes.get(key) as number[][])}
+                d={SmoothPath(existingRoutes.get(key) as number[][])}
                 strokeWidth={strokeWidth}
                 stroke={strokeColor}
                 strokeOpacity={0.5}
@@ -188,7 +191,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
             ))}
             {routeDrawing?.path?.length && (
               <path
-                d={pathCoordsToSmoothPath(completePath)}
+                d={SmoothPath(completePath)}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
                 fill="none"

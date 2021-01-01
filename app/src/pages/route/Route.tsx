@@ -6,14 +6,14 @@ import { RouteView } from "../../../../core/types";
 import TopoImage from "../../components/TopoImage";
 
 function RoutePage() {
-  const { routeSlug } = useParams<{ routeSlug: string }>();
+  const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [route, setRoute] = useState<RouteView>();
 
   useEffect(() => {
     (async () => {
       try {
-        const _route = await routes.getRoute(routeSlug);
-        setRoute(_route);
+        const newRoute = await routes.getRoute(cragSlug, areaSlug, topoSlug, routeSlug);
+        setRoute(newRoute);
       } catch (error) {
       }
     })();
@@ -46,8 +46,9 @@ function RoutePage() {
         <div className="container box">
           { route?.drawing
             ? <TopoImage
-                routes={[route]}
-                background={ route?.topo?.image }
+                routes={[route, ...route.siblingRoutes]}
+                highlightedRouteSlug={ route.slug }
+                background={ `${route?.topo?.image}` }
               />
             : ""
           }

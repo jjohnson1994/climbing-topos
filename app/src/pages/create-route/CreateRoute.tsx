@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from 'react-router-dom';
 import * as yup from "yup";
-import {AreaView, GradingSystem} from "../../../../core/types";
+import {AreaView, GradingSystem, RouteDrawing} from "../../../../core/types";
 import {areas, globals, routes, topos} from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import {popupError, popupSuccess} from "../../helpers/alerts";
@@ -12,7 +12,7 @@ import {popupError, popupSuccess} from "../../helpers/alerts";
 
 const schema = yup.object().shape({
   title: yup.string().required("Required"),
-  description: yup.string().required("Required"),
+  description: yup.string(),
   tags: yup.array().min(1, "Select at least 1").of(
     yup.string()
   ),
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
 
 function CreateRoute() {
   const history = useHistory();
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const { areaSlug, cragSlug, topoSlug } = useParams<{ areaSlug: string; cragSlug: string, topoSlug: string }>();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
@@ -32,7 +32,7 @@ function CreateRoute() {
   const [loading, setLoading] = useState<boolean>(false);
   const [area, setArea] = useState<AreaView | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
-  const [drawing, setDrawing] = useState({});
+  const [drawing, setDrawing] = useState<RouteDrawing>({ path: [] });
 
   const { register, getValues, handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
@@ -96,20 +96,23 @@ function CreateRoute() {
     return grades;
   }
 
-  const onDrawingChanged = (drawing: object) => {
+  const onDrawingChanged = (drawing: RouteDrawing) => {
     setDrawing(drawing);
-    console.log(drawing);
   }
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
-      const { routeSlug } = await routes.createRoute({
-        ...formData,
-        drawing,
-        cragSlug,
-        areaSlug,
-        topoSlug
-      });
+      const token = await getAccessTokenSilently();
+      const { routeSlug } = await routes.createRoute(
+        {
+          ...formData,
+          drawing,
+          cragSlug,
+          areaSlug,
+          topoSlug
+        },
+        token
+      );
       await popupSuccess("Route Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}#${routeSlug}`);
     } catch (error) {

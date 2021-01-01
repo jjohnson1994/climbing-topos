@@ -11,7 +11,7 @@ import {getCurrentPosition} from '../../helpers/geolocation';
 
 const schema = yup.object().shape({
   title: yup.string().required("Required"),
-  description: yup.string().required("Required"),
+  description: yup.string(),
   tags: yup.array().min(1, "Select at least 1").of(
     yup.string()
   ),
@@ -22,7 +22,7 @@ const schema = yup.object().shape({
 
 function CreateArea() {
   const history = useHistory();
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenWithPopup } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [tags, setTags] = useState<string[]>([]);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
@@ -72,7 +72,7 @@ function CreateArea() {
     setLoading(true);
 
     try {
-      const token = await getAccessTokenSilently();
+      const token = await getAccessTokenWithPopup();
       const { slug: areaSlug } = await areas.createArea(
         {
           ...formData,

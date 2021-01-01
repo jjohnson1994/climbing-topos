@@ -12,7 +12,7 @@ export async function createRoute(routeDescription: Route) {
     TableName: String(process.env.DB),
     Item: {
       hk: routeDescription.cragSlug,
-      sk: `route#${slug}#`,
+      sk: `route#area#${routeDescription.areaSlug}#topo#${routeDescription.topoSlug}#${slug}`,
       areaSlug: routeDescription.areaSlug,
       cragSlug: routeDescription.cragSlug,
       description: routeDescription.description,
@@ -38,18 +38,17 @@ export async function createRoute(routeDescription: Route) {
   };
 }
 
-export async function getRouteBySlug(routeSlug: string): Promise<Route> {
+export async function getRouteBySlug(cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<Route> {
   const params = {
     TableName: String(process.env.DB),
-    IndexName: "gsi2",
-    KeyConditionExpression: "#model = :model AND #slug = :slug",
-    ExpressionAttributeNames:{
-      "#model": "model",
-      "#slug": "slug"
+    KeyConditionExpression: "#hk = :hk AND #sk = :sk",
+    ExpressionAttributeNames: {
+      "#hk": "hk",
+      "#sk": "sk"
     },
     ExpressionAttributeValues: {
-      ":model": "route",
-      ":slug": routeSlug
+      ":hk": cragSlug,
+      ":sk": `route#area#${areaSlug}#topo#${topoSlug}#${routeSlug}`
     }
   }
 
@@ -61,13 +60,31 @@ export async function getRoutesByCragSlug(cragSlug: string): Promise<Route[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames:{
+    ExpressionAttributeNames: {
       "#hk": "hk",
       "#sk": "sk"
     },
     ExpressionAttributeValues: {
       ":hk": cragSlug,
       ":sk": `route#`
+    }
+  }
+
+  const response = await dynamodb.query(params).promise()
+  return response?.Items as Route[];
+}
+
+export async function getRoutesByTopoSlug(cragSlug: string, areaSlug: string, topoSlug: string): Promise<Route[]> {
+  const params = {
+    TableName: String(process.env.DB),
+    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
+    ExpressionAttributeNames: {
+      "#hk": "hk",
+      "#sk": "sk"
+    },
+    ExpressionAttributeValues: {
+      ":hk": cragSlug,
+      ":sk": `route#area#${areaSlug}#topo#${topoSlug}`
     }
   }
 

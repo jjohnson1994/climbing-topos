@@ -3,11 +3,11 @@ import { uploads } from "../api";
 
 const imageIsFile = (image: File) => image && image.name && image.type && image.size;
 
-export async function createTopo(topoDetails: Topo) {
+export async function createTopo(topoDetails: Topo, token: string) {
   let image = undefined;
 
   if (imageIsFile(topoDetails.image as File)) {
-    const { url, objectUrl } = await uploads.getPresignedUploadURL();
+    const { url, objectUrl } = await uploads.getPresignedUploadURL(token);
 
     await fetch(url, {
       method: "PUT",
@@ -30,6 +30,7 @@ export async function createTopo(topoDetails: Topo) {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       image: image,
@@ -49,9 +50,7 @@ export async function createTopo(topoDetails: Topo) {
 }
 
 export async function getTopo(topoSlug: string): Promise<Topo> {
-  const res = await fetch(
-    `http://localhost:3001/dev/topos/${topoSlug}`
-  );
+  const res = await fetch( `http://localhost:3001/dev/topos/${topoSlug}`);
   const json = await res.json();
 
   if (res.status !== 200) {

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useAuth0} from "@auth0/auth0-react";
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useEffect, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useHistory} from "react-router-dom";
 import * as yup from "yup";
-import { crags, globals } from "../../api";
-import { popupError, popupSuccess } from "../../helpers/alerts";
-import { getCurrentPosition } from '../../helpers/geolocation';
-import { reverseLookup } from '../../helpers/nominatim';
+import {crags, globals} from "../../api";
+import {popupError, popupSuccess} from "../../helpers/alerts";
+import {getCurrentPosition} from '../../helpers/geolocation';
+import {reverseLookup} from '../../helpers/nominatim';
 
 const schema = yup.object().shape({
   title: yup.string().required("Required"),
@@ -36,12 +37,13 @@ type CarPark = {
 
 function CreateCrag() {
   const history = useHistory();
+  const { getAccessTokenSilently } = useAuth0();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] = useState(-1);
   const [cragTags, setCragTags] = useState<string[]>([]);
   const [cragLocationLoading, setCragLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { register, control, setValue, getValues, handleSubmit, errors, watch } = useForm({
+  const { register, control, setValue, handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
@@ -132,8 +134,9 @@ function CreateCrag() {
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
+      const token = await getAccessTokenSilently();
       const osmData = await getCragNominatim(formData.latitude, formData.longitude);
-      const { slug } = await crags.createCrag({ ...formData, osmData });
+      const { slug } = await crags.createCrag({ ...formData, osmData }, token);
       await popupSuccess("Crag Created!");
       history.push(`/crags/${slug}`);
     } catch (error) {
@@ -328,7 +331,7 @@ function CreateCrag() {
                 <div className="field">
                   <div className="control">
                     <textarea
-                      placeholder="description"
+                      placeholder="Description"
                       className="textarea"
                       name={`carParks[${index}].description`}
                       ref={ register }

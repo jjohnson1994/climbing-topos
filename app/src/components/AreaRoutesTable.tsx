@@ -23,7 +23,6 @@ function AreaRoutesTable({
   onRouteDeselected,
 }: Props) {
   const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, routeSlug: string) => {
-    console.log("chk on change", selectedRoutes, routeSlug);
     if (selectedRoutes.includes(routeSlug)) {
       onRouteDeselected(routeSlug);
     } else {
@@ -49,7 +48,7 @@ function AreaRoutesTable({
         {routes?.map(route => (
           <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
             <td>
-              <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}` }>{ route.title }</Link>
+              <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
             <td>{ route.grade }</td>
             <td>{ route.rating }</td>

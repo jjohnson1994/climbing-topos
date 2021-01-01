@@ -67,7 +67,8 @@ export default {
     "Family Friendly",
     "Good Landings",
     "Highballs",
-    "Lowballs"
+    "Lowballs",
+    "Public Transport"
   ],
   areaTags: [
     "Quick Drying",
@@ -80,7 +81,19 @@ export default {
     "Bad Landings",
     "Good Landings"
   ],
-  routeTags: ["Crimps", "Slopers", "Pockets", "Jugs", "Gaston", "Undercuts", "Highball", "Lowball", "Slab", "Overhanging", "Vert"],
+  routeTags: [
+    "Crimps",
+    "Slopers",
+    "Pockets",
+    "Jugs",
+    "Gaston",
+    "Undercuts",
+    "Highball",
+    "Lowball",
+    "Slab",
+    "Overhanging",
+    "Vert"
+  ],
   routeTypes: ["Sport Climb", "Trad", "Boulder"],
   rockTypes: [
     "Gritstone",

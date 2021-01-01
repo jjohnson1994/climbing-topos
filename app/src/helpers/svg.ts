@@ -43,7 +43,22 @@ const bezierCommand = (point: number[], i: number, a: number[][]) => {
   return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point[0]},${point[1]}`
 }
 
-export function pathCoordsToSmoothPath(points: number[][]) {
+export function ReducePath(points: number[][], increment = 10) {
+  const reducedPath: number[][] = []
+
+  let i;
+  for(i = 0; i < points.length; i += increment) {
+    reducedPath.push(points[i]);
+  }
+
+  if (points.length % increment === 0) {
+    reducedPath.push(points[points.length - 1]);
+  }
+
+  return reducedPath;
+}
+
+export function SmoothPath(points: number[][]) {
   const d = points.reduce((acc, point, i, a) => i === 0
     ? `M ${point[0]},${point[1]}`
     : `${acc} ${bezierCommand(point, i, a)}`

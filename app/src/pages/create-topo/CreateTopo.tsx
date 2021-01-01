@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useAuth0} from "@auth0/auth0-react";
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useState} from "react";
+import {useForm} from "react-hook-form";
+import {useHistory, useParams} from "react-router-dom";
 import * as yup from "yup";
-
-import { topos } from "../../api";
-import { popupError, popupSuccess } from "../../helpers/alerts";
+import {topos} from "../../api";
+import {popupError, popupSuccess} from "../../helpers/alerts";
 
 const schema = yup.object().shape({
   orientation: yup.string().required("Required"),
@@ -15,6 +15,7 @@ let image: File;
 
 function CreateTopo() {
   const history = useHistory();
+  const { getAccessTokenWithPopup } = useAuth0();
   const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageName, setImageName] = useState<string>("");
@@ -34,7 +35,6 @@ function CreateTopo() {
 
     if (files) {
       const file = files.item(0);
-      console.log(file);
       image = file as File;
       setImageName(file!.name);
     } else {
@@ -46,7 +46,8 @@ function CreateTopo() {
     setLoading(true);
 
     try {
-      await topos.createTopo({ ...formData, areaSlug, cragSlug, image });
+      const token = await getAccessTokenWithPopup();
+      await topos.createTopo({ ...formData, areaSlug, cragSlug, image }, token);
       await popupSuccess("Topo Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {

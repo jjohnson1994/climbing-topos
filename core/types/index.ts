@@ -85,7 +85,7 @@ export interface AreaView extends Area {
 export interface Topo {
   areaSlug: string;
   cragSlug: string;
-  image: File | string | null;
+  image: File | string;
   orientation: string;
   slug?: string;
 }
@@ -94,7 +94,7 @@ export interface Route {
   areaSlug: string;
   cragSlug: string;
   description: string;
-  drawing?: RouteDrawing;
+  drawing: RouteDrawing;
   grade: string;
   gradingSystem: string;
   rating?: number;
@@ -108,10 +108,11 @@ export interface Route {
 export interface RouteView extends Route {
   area: Area;
   topo: Topo;
+  siblingRoutes: Route[];
 }
 
 export interface RouteDrawing {
-  path?: number[][];
+  path: number[][];
   linkFrom?: {
     routeSlug: string,
     x: number;

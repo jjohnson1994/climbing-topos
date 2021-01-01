@@ -89,7 +89,7 @@ export const getAllCragsByCountry = async (countryCode: string) => {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: 'begins_with(PK, :entity) AND begins_with(SK, :countryCode)',
-    ExpressionAttributeValues: { ':entity': 'CRAG', ':countryCode': countryCode }
+    ExpressionAttributeValues: { ':entity': 'crag', ':countryCode': countryCode }
   }
 
   const crags = await dynamodb.query(params).promise()
@@ -100,7 +100,7 @@ export const getAllCragsByCountryAndRegion = async (countryCode: string, region:
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: 'begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)',
-    ExpressionAttributeValues: { ':entity': 'CRAG', ':countryCodeRegion': `${countryCode}#${region}` }
+    ExpressionAttributeValues: { ':entity': 'crag', ':countryCodeRegion': `${countryCode}#${region}` }
   }
 
   const crags = await dynamodb.query(params).promise()

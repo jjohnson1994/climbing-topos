@@ -33,7 +33,6 @@ function Area() {
           ? await getAccessTokenSilently()
           : "";
         const area = await areas.getArea(areaSlug, token);
-        console.log({ area });
         setArea(area);
       } catch (error) {
         console.error("Error loading area", error);
@@ -111,7 +110,7 @@ function Area() {
               <div className="column is-half">
                 <TopoImage
                   routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                  background={ topo.image }
+                  background={ `${topo.image}` }
                 />
               </div>
               <div className="column">

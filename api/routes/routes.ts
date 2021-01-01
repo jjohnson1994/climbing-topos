@@ -6,6 +6,6 @@ import { requireAuth, optionalAuth } from "../middleware/auth";
 const route = express.Router();
 
 route.post("/", requireAuth, routes.postRoute);
-route.get("/:routeSlug/", optionalAuth, routes.getRoute);
+route.get("/", optionalAuth, routes.getRoute);
 
 export default route;

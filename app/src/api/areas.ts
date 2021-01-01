@@ -20,7 +20,6 @@ export async function createArea(areaDescription: Area, token: string): Promise<
 }
 
 export async function getArea(areaSlug: string, token: string): Promise<AreaView> {
-  console.log({ token });
   const res = await fetch(`http://localhost:3001/dev/areas/${areaSlug}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })

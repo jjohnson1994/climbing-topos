@@ -1,10 +1,11 @@
 import {CragView} from "../../../core/types";
 
-export async function createCrag(cragDetails: object): Promise<{ hk: string, slug: string }> {
+export async function createCrag(cragDetails: object, token: string): Promise<{ hk: string, slug: string }> {
   const res = await fetch('http://localhost:3001/dev/crags', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify(cragDetails)
   });

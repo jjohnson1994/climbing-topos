@@ -40,7 +40,7 @@ function App() {
               path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'
               component={ CreateRoute }
             />
-            <Route path="/crags/:cragSlug/areas/:areaSlug/routes/:routeSlug">
+            <Route path="/crags/:cragSlug/areas/:areaSlug/topo/:topoSlug/routes/:routeSlug">
               <RoutePage />
             </Route>
             <Route path='/crags/:cragSlug/areas/:areaSlug'>

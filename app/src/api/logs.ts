@@ -2,7 +2,6 @@ import {useState} from "react";
 import {LogRequest} from "../../../core/types";
 
 export async function logRoutes(logs: LogRequest[], token: string) {
-  console.log("logging", logs);
   const res = await fetch('http://localhost:3001/dev/logs', {
     method: "POST",
     headers: {
