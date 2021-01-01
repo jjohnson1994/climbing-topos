@@ -38,6 +38,7 @@ function AreaRoutesTable({
     <table className="table is-fullwidth">
       <thead>
         <tr>
+          <th></th>
           <th>Route</th>
           <th>Grade</th>
           <th>Rating</th>
@@ -45,8 +46,9 @@ function AreaRoutesTable({
         </tr>
       </thead>
       <tbody>
-        {routes?.map(route => (
+        {routes?.map((route, index) => (
           <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
+            <td>{ index + 1 }</td>
             <td>
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
