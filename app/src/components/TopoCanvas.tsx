@@ -27,15 +27,17 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
 
   useEffect(() => {
     if (routes) {
+      const newExistingRoutes = new Map(existingRoutes);
+
       routes.forEach(route => {
         const existingRouteCoordinatesArray = route.drawing?.path;
 
         if (existingRouteCoordinatesArray) {
-          const newExistingRoutes = new Map(existingRoutes);
           newExistingRoutes.set(`${route.slug}`, existingRouteCoordinatesArray);
-          setExistingRoutes(newExistingRoutes);
         }
       });
+
+      setExistingRoutes(newExistingRoutes);
     }
   }, [routes]);
 

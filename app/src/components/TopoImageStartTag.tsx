@@ -1,23 +1,30 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 interface PropTypes {
-  content: string | number;
+  content: string;
   x: number;
   y: number;
 }
 
 function TopoImageStartTag({ content, x, y }: PropTypes) {
+  const [width, setWidth] = useState(30);
+  const [height] = useState(30);
+
+  useEffect(() => {
+    setWidth(Math.max(30, content.split(", ").length * 30));
+  }, [content]);
+
   return (
     <foreignObject
-      x={ x - 15 }
-      y={ y - 30 }
-      width="30px"
-      height="30px"
+      x={ x - width / 2 }
+      y={ y - height / 2 }
+      width={ `${width}` }
+      height={ `${height}px` }
     >
       <div
         style={{
-          width: "30px",
-          height: "30px",
+          width: `${width}px`,
+          height: `${height}px`,
           position: "relative",
           display: "flex",
           justifyContent: "center",
@@ -36,7 +43,7 @@ function TopoImageStartTag({ content, x, y }: PropTypes) {
             bottom: 0
           }}
         ></div>
-        <span style={{fontSize: "1rem", zIndex: 1, color: "#fff"}}>{ content }</span>
+        <span style={{fontSize: "1.5rem", zIndex: 1, color: "#fff"}}>{ content }</span>
       </div>
     </foreignObject>
   )
