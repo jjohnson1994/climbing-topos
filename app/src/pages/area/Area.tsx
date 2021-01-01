@@ -107,7 +107,7 @@ function Area() {
         {area?.topos && area?.topos.map((topo) => (
           <div className="box block" key={ topo.slug }>
             <div className="columns">
-              <div className="column is-half">
+              <div className="column is-two-thirds">
                 <TopoImage
                   routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
                   background={ `${topo.image}` }

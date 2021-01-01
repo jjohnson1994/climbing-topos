@@ -2,6 +2,7 @@ import React from "react";
 import "./TopoImage.css";
 import { SmoothPath } from "../helpers/svg";
 import { Route } from "../../../core/types";
+import TopoImageStartTag from "./TopoImageStartTag";
 
 interface PropTypes {
   routes: Route[];
@@ -66,6 +67,13 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
               stroke="yellow"
               strokeWidth="4"
               strokeOpacity={ getRouteStrokeOpacity(`${route.slug}`) }
+            />
+          ))}
+          {routes?.map((route, index) => (
+            <TopoImageStartTag
+              content={ index + 1 }
+              x={ route.drawing.path[0][0] }
+              y={ route.drawing.path[0][1] }
             />
           ))}
         </svg>
