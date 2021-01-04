@@ -14,7 +14,7 @@ import {clipboardWriteText} from '../../helpers/clipboard';
 import {usePageTitle} from "../../helpers/pageTitle";
 
 function Area() {
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
     selectedRoutes,
     isSelectingMultipleRoutes,
@@ -42,8 +42,10 @@ function Area() {
       }
     };
 
-    doGetArea();
-  }, [areaSlug, isAuthenticated]);
+    if (isLoading === false) {
+      doGetArea();
+    }
+  }, [areaSlug, isAuthenticated, isLoading]);
 
   const btnCoordsOnClick = async () => {
     if (!area) return;

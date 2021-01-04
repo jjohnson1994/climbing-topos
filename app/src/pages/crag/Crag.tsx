@@ -12,7 +12,7 @@ import {usePageTitle} from "../../helpers/pageTitle";
 
 
 function Crag() {
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
     selectedRoutes,
     isSelectingMultipleRoutes,
@@ -46,8 +46,10 @@ function Crag() {
       }
     };
 
-    doGetCrag();
-  }, []);
+    if (isLoading === false ) {
+      doGetCrag();
+    }
+  }, [cragSlug, isLoading, isAuthenticated]);
 
   const btnSaveMultipleToListOnClick = () => {
     // TODO repetition with Area.tsx

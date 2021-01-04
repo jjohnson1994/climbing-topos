@@ -68,7 +68,9 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
   }
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
+    console.log({ gradingSystem, gradingSystems });
     const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
+    console.log({ grades });
     return grades;
   }
 
@@ -91,7 +93,10 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
       const token = await getAccessTokenSilently();
       await logs.logRoutes(routes, token);
       toastSuccess("Routes Logged");
-      onConfirm && onConfirm();
+
+      if (onConfirm) {
+        onConfirm();
+      }
     } catch (error) {
       console.error("Error logging routes", error);
       popupError("Ah, there's been an error and those climbs could not be logged");
@@ -204,7 +209,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                     <div className="control">
                       <div className="select">
                         <select name={`logs.[${index}].gradeTaken`} ref={register({})}>
-                          {getGradesFromGradingSystem(route!.gradingSystem)!.map((grade) => (
+                          {getGradesFromGradingSystem(route!.gradingSystem)?.map((grade) => (
                             <option value={ grade } key={ grade }>
                               { grade }
                             </option>

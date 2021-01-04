@@ -20,9 +20,14 @@ export async function createRoute(routeDescription: Route, token: string): Promi
   return { routeSlug: json.routeSlug };
 }
 
-export async function getRoute(cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteView> {
+export async function getRoute(token: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteView> {
   const res = await fetch(
-    `http://localhost:3001/dev/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`
+    `http://localhost:3001/dev/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
+    {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` })
+      }
+    }
   );
   const json = await res.json();
 

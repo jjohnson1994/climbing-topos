@@ -1,28 +1,61 @@
+import {useAuth0} from "@auth0/auth0-react";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {RouteView} from "../../../../core/types";
+import {Route, RouteView} from "../../../../core/types";
 import {routes} from "../../api";
+import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import TopoImage from "../../components/TopoImage";
+import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
 
 
 function RoutePage() {
+  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [route, setRoute] = useState<RouteView>();
+  const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
+  const [showLogModal, setShowLogModal] = useState(false);
   usePageTitle(route?.title);
 
   useEffect(() => {
-    (async () => {
+    const doGetRoute = async () => {
       try {
-        const newRoute = await routes.getRoute(cragSlug, areaSlug, topoSlug, routeSlug);
+        const token = isAuthenticated
+          ? await getAccessTokenSilently()
+          : "";
+        const newRoute = await routes.getRoute(token, cragSlug, areaSlug, topoSlug, routeSlug);
         setRoute(newRoute);
       } catch (error) {
+        console.error("Error loading route", error);
+        popupError("Oh dear, there was a problem loading this route");
       }
-    })();
-  }, [routeSlug]);
+    }
+
+    if (isLoading === false) {
+      doGetRoute();
+    }
+  }, [routeSlug, isAuthenticated, isLoading]);
+
+  const btnDoneOnClick = () => {
+    setShowLogModal(true);
+  }
+
+  const onRouteLogged = () => {
+    setShowLogModal(false);
+    setRouteJustLogged(true);
+  }
 
   return (
     <>
+      { route ? (
+        <RoutesAddToLogModal
+          routes={ [route] as Route[] }
+          visible={ showLogModal } 
+          onCancel={ () => setShowLogModal(false) }
+          onConfirm={ onRouteLogged }
+        />
+        ) : ""
+      }
       <section className="section">
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
@@ -46,24 +79,26 @@ function RoutePage() {
             <div className="column is-flex is-justified-end">
               <div className="field has-addons">
                 <div className="control">
-                  { route?.userLogs.length
-                    ? ( 
-                      <button className="button is-rounded">
-                        <span className="icon is-small">
-                          <i className="fas fw fa-plus"></i>
-                        </span>
-                        <span>Log Book</span>
-                      </button>
-                    )
-                    : (
-                      <button className="button is-rounded">
-                        <span className="icon is-small">
-                          <i className="fas fw fa-check"></i>
-                        </span>
-                        <span>Done</span>
-                      </button>
-                    )
-                  }
+                  <button className="button is-rounded" onClick={ btnDoneOnClick }>
+                    { route?.userLogs.length || routeJustLogged
+                      ? (
+                        <>
+                          <span className="icon is-small">
+                            <i className="fas fw fa-check"></i>
+                          </span>
+                          <span>Done</span>
+                        </>
+                      )
+                      : (
+                        <>
+                          <span className="icon is-small">
+                            <i className="fas fw fa-plus"></i>
+                          </span>
+                          <span>Log Book</span>
+                        </>
+                      )
+                    }
+                  </button>
                 </div>
                 <div className="control">
                   <button className="button is-rounded">
