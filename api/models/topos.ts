@@ -13,6 +13,8 @@ export async function createTopo(topoDetails: Topo) {
       hk: topoDetails.cragSlug,
       sk: `topo#${topoDetails.areaSlug}#${slug}`,
       model: "topo",
+      areaSlug: topoDetails.areaSlug,
+      cragSlug: topoDetails.cragSlug,
       image: topoDetails.image,
       slug,
       orientation: topoDetails.orientation,

@@ -109,6 +109,7 @@ export interface RouteView extends Route {
   area: Area;
   topo: Topo;
   siblingRoutes: Route[];
+  userLogs: Log[];
 }
 
 export interface RouteDrawing {
@@ -145,6 +146,7 @@ export interface LogRequest {
   routeType: string;
   stars: number;
   tags: string[];
+  topoSlug: string;
 }
 
 export interface Log extends LogRequest {

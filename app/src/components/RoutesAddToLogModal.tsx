@@ -128,6 +128,13 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
             <div>
               <input
                 type="text"
+                name={ `logs.[${index}].cragSlug` }
+                ref={ register({}) }
+                defaultValue={ route.cragSlug }
+                style={{ display: "none" }}
+              />
+              <input
+                type="text"
                 name={ `logs.[${index}].areaSlug` }
                 ref={ register({}) }
                 defaultValue={ route.areaSlug }
@@ -135,9 +142,9 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
               />
               <input
                 type="text"
-                name={ `logs.[${index}].cragSlug` }
+                name={ `logs.[${index}].topoSlug` }
                 ref={ register({}) }
-                defaultValue={ route.cragSlug }
+                defaultValue={ route.topoSlug }
                 style={{ display: "none" }}
               />
               <input

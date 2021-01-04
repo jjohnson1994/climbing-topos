@@ -8,6 +8,7 @@ import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import {popupError} from "../../helpers/alerts";
+import {usePageTitle} from "../../helpers/pageTitle";
 
 
 function Crag() {
@@ -24,6 +25,8 @@ function Crag() {
   const [crag, setCrag] = useState<CragView>();
   const [activeTab, setActiveTab] = useState('routes');
   const [showLogModal, setShowLogModal] = useState(false);
+
+  usePageTitle(crag?.title);
 
   useEffect(() => {
     const doGetCrag = async () => {

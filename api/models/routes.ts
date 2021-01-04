@@ -5,7 +5,7 @@ import { dynamodb } from '../db';
 import { Route } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 
-export async function createRoute(routeDescription: Route) {
+export async function createRoute(routeDescription: Route, userId: string) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${routeDescription.title}-${nanoid(5)}`);
   const params = {
@@ -26,6 +26,7 @@ export async function createRoute(routeDescription: Route) {
       tags: routeDescription.tags,
       title: routeDescription.title,
       topoSlug: routeDescription.topoSlug,
+      createdBy: userId,
       createdAt: date,
       updatedAt: date
     }

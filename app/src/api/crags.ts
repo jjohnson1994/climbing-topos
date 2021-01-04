@@ -18,8 +18,12 @@ export async function createCrag(cragDetails: object, token: string): Promise<{ 
   return { hk: json.inserted.hk, slug: json.inserted.slug };
 }
 
-export async function getCrags() {
-  const res = await fetch('http://localhost:3001/dev/crags');
+export async function getCrags(token: string): Promise<CragView[]> {
+  const res = await fetch('http://localhost:3001/dev/crags', {
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` })
+    },
+  });
   const json = await res.json();
   if (res.status !== 200) {
     throw json;

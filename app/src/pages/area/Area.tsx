@@ -11,7 +11,7 @@ import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 import TopoImage from "../../components/TopoImage";
 import {popupError, toastSuccess} from '../../helpers/alerts';
 import {clipboardWriteText} from '../../helpers/clipboard';
-
+import {usePageTitle} from "../../helpers/pageTitle";
 
 function Area() {
   const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
@@ -25,6 +25,8 @@ function Area() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<AreaView>();
   const [showLogModal, setShowLogModal] = useState(false);
+
+  usePageTitle(area?.title);
 
   useEffect(() => {
     const doGetArea = async () => {
@@ -102,44 +104,52 @@ function Area() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-        {area?.topos && area?.topos.map((topo) => (
-          <div className="box block" key={ topo.slug }>
-            <div className="columns">
-              <div className="column is-two-thirds">
-                <TopoImage
-                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                  background={ `${topo.image}` }
-                />
-              </div>
-              <div className="column">
-                <AreaRoutesTable
-                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                  loggedRoutes={ area.userLogs }
-                  selectedRoutes={ selectedRoutes }
-                  isSelectingMultiple={ isSelectingMultipleRoutes }
-                  onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                  onRouteSelected={ onRouteSelected }
-                  onRouteDeselected={ onRouteDeselected }
-                />
-                <div className="buttons is-centered">
-                  <Link
-                    to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
-                    className="button is-rounded"
-                  >
-                    <span className="icon is-small">
-                      <i className="fas fa-plus"></i>
-                    </span>
-                    <span>Add Route</span>
-                  </Link>
+      {area?.topos && area?.topos.map((topo) => (
+        <>
+          <div className="is-hidden-tablet">
+            <TopoImage
+              routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+              background={ `${topo.image}` }
+            />
+          </div>
+          <section className="section">
+            <div className="container">
+              <div className="box block" key={ topo.slug }>
+                <div className="columns">
+                  <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
+                    <TopoImage
+                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                      background={ `${topo.image}` }
+                    />
+                  </div>
+                  <div className="column">
+                    <AreaRoutesTable
+                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                      loggedRoutes={ area.userLogs }
+                      selectedRoutes={ selectedRoutes }
+                      isSelectingMultiple={ isSelectingMultipleRoutes }
+                      onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                      onRouteSelected={ onRouteSelected }
+                      onRouteDeselected={ onRouteDeselected }
+                    />
+                    <div className="buttons is-centered">
+                      <Link
+                        to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
+                        className="button is-rounded"
+                      >
+                        <span className="icon is-small">
+                          <i className="fas fa-plus"></i>
+                        </span>
+                        <span>Add Route</span>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-        </div>
-      </section>
+          </section>
+        </>
+      ))}
 
       {selectedRoutes.length 
         ? (

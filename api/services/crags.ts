@@ -18,7 +18,7 @@ export async function getAllCrags(user): Promise<CragView[]> {
             routes.getRoutesByCragSlug(crag.slug),
             logs.getLogsByCragSlug(crag.slug),
             user
-              ? logs.getLogsForUserAtCrag(user.sub, crag.slug)
+              ? logs.getLogsForUser(user.sub, crag.slug)
               : []
           ]);
 
@@ -38,14 +38,14 @@ export async function getAllCrags(user): Promise<CragView[]> {
   return allCrags;
 }
 
-export async function getCragBySlug(slug: string, user): Promise<CragView> {
+export async function getCragBySlug(slug: string, userSub: string): Promise<CragView> {
   const [crag, cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
     areas.getAreasByCragSlug(slug),
     routes.getRoutesByCragSlug(slug),
     logs.getLogsByCragSlug(slug),
-    user
-      ? logs.getLogsForUserAtCrag(user.sub, slug)
+    userSub
+      ? logs.getLogsForUser(userSub, slug)
       : []
   ]);
 

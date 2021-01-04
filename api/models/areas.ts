@@ -16,6 +16,7 @@ export async function createArea(areaDescription: Area) {
       access: areaDescription.access,
       accessDetails: areaDescription.accessDetails,
       approachNotes: areaDescription.approachNotes,
+      cragSlug: areaDescription.cragSlug,
       description: areaDescription.description,
       latitude: areaDescription.latitude,
       longitude: areaDescription.longitude,

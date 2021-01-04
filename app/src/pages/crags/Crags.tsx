@@ -8,15 +8,20 @@ import { CragView } from '../../../../core/types';
 
 function Crags() {
   const [crags, setCrags] = useState<CragView[]>([]);
-  const { getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    doGetCrags();
-  }, []);
+    if (isLoading === false) {
+      doGetCrags();
+    }
+  }, [isLoading, isAuthenticated]);
 
   async function doGetCrags() {
     try {
-      const crags = await getCrags()
+      const token = isAuthenticated
+        ? await getAccessTokenSilently()
+        : "";
+      const crags = await getCrags(token).then(crags => crags.sort((cragA, cragB) => cragA.title > cragB.title ? 1 : -1));
       setCrags(crags);
     } catch (error) {
       console.error('Error loading crags', error);
@@ -38,14 +43,6 @@ function Crags() {
                 type="text"
                 placeholder="Search"
               />
-            </div>
-            <div className="control">
-              <button className="button is-rounded">
-                <span className="icon">
-                  <i className="fas fa-map-marker-alt"></i>
-                </span>
-                <span>Find Me</span>
-              </button>
             </div>
             <div className="control">
               <Link to="/create-crag" className="button is-rounded">

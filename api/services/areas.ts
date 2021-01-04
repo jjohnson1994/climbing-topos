@@ -5,14 +5,14 @@ export function createArea(areaDetails: Area) {
   return areas.createArea(areaDetails);
 }
 
-export async function getAreaBySlug(areaSlug: string, user): Promise<AreaView> {
+export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<AreaView> {
   const area = await areas.getAreaBySlug(areaSlug);
   const [areaTopos, areaRoutes, userLogs] = await Promise.all([
     topos.getToposByCragArea(area.hk, areaSlug),
     routes.getRoutesByCragSlug(area.hk)
       .then(routes => routes.filter(route => route.areaSlug === areaSlug)),
-    user
-      ? logs.getLogsForUserAtArea(user.sub, area.cragSlug, areaSlug)
+    userSub
+      ? logs.getLogsForUser(userSub, area.hk, areaSlug)
       : []
   ]);
 

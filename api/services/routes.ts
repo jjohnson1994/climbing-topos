@@ -1,11 +1,11 @@
-import { routes, areas, topos } from "../models";
-import { Route, RouteView } from "../../core/types";
+import {Route, RouteView} from "../../core/types";
+import {areas, logs, routes, topos} from "../models";
 
-export const createRoute = (routeDescription: Route) => {
-  return routes.createRoute(routeDescription);
+export const createRoute = (routeDescription: Route, userId: string) => {
+  return routes.createRoute(routeDescription, userId);
 }
 
-export async function getRouteBySlug(cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteView> {
+export async function getRouteBySlug(userSub: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteView> {
   const route = await routes.getRouteBySlug(
     cragSlug,
     areaSlug,
@@ -13,17 +13,21 @@ export async function getRouteBySlug(cragSlug: string, areaSlug: string, topoSlu
     routeSlug
   );
 
-  const [topo, area, siblingRoutes] = await Promise.all([
+  const [topo, area, siblingRoutes, userLogs] = await Promise.all([
     topos.getTopoBySlug(route.topoSlug),
     areas.getAreaBySlug(route.areaSlug),
     routes.getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
-      .then(res => res.filter(route => route.slug !== routeSlug))
+      .then(res => res.filter(route => route.slug !== routeSlug)),
+    userSub
+      ? logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug)
+      : [],
   ]);
 
   return {
     ...route,
     topo,
     area,
-    siblingRoutes
+    siblingRoutes,
+    userLogs
   };
 }

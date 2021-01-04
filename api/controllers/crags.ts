@@ -13,8 +13,9 @@ export async function getCrags(req, res) {
 export async function getCragBySlug(req, res) {
   try {
     const { slug } = req.params;
-    const user = req.user;
-    const crag = await crags.getCragBySlug(slug, user);
+    const { user } = req;
+    const userSub = user ? user.sub : false;
+    const crag = await crags.getCragBySlug(slug, userSub);
     res.status(200).json(crag);
   } catch (error) {
     console.error('Error getting crags', error);
