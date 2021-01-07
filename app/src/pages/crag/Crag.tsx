@@ -6,6 +6,7 @@ import {getCragBySlug} from "../../api/crags";
 import {useLogRoutes} from "../../api/logs";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
@@ -102,7 +103,8 @@ function Crag() {
           </ul>
         </div>
         <div className="container">
-          <div className="box">
+          { loading && <LoadingSpinner /> }
+          <div className={`box ${ loading ? "is-hidden" : ""}`}>
             <div
               id="routes"
               className={`
@@ -110,15 +112,19 @@ function Crag() {
                 ${activeTab !== 'routes' ? 'is-hidden' : '' }
               `}
             >
-              <AreaRoutesTable
-                routes={ crag?.routes }
-                loggedRoutes={ (crag && crag.userLogs) || [] }
-                selectedRoutes={ selectedRoutes }
-                isSelectingMultiple={ isSelectingMultipleRoutes }
-                onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                onRouteSelected={ onRouteSelected }
-                onRouteDeselected={ onRouteDeselected }
-              />
+              { crag?.routes.length ? (
+                <AreaRoutesTable
+                  routes={ crag?.routes }
+                  loggedRoutes={ (crag && crag.userLogs) || [] }
+                  selectedRoutes={ selectedRoutes }
+                  isSelectingMultiple={ isSelectingMultipleRoutes }
+                  onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                  onRouteSelected={ onRouteSelected }
+                  onRouteDeselected={ onRouteDeselected }
+                />
+              ) : (
+                <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
+              )}
             </div>
           
             <div
@@ -128,27 +134,31 @@ function Crag() {
                 ${activeTab !== 'areas' ? 'is-hidden' : ''}
               `}
             >
-              <table className="table is-fullwidth">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  { crag?.areas?.map(area => (
-                    <tr key={ area.slug }>
-                      <td>
-                        <Link
-                          to={ `/crags/${cragSlug}/areas/${area.slug}` }
-                          className="is-capitalized"
-                        >
-                          { area.title }
-                        </Link>
-                      </td>
+              { crag?.areas.length ? (
+                <table className="table is-fullwidth">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
                     </tr>
-                  )) }
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    { crag?.areas?.map(area => (
+                      <tr key={ area.slug }>
+                        <td>
+                          <Link
+                            to={ `/crags/${cragSlug}/areas/${area.slug}` }
+                            className="is-capitalized"
+                          >
+                            { area.title }
+                          </Link>
+                        </td>
+                      </tr>
+                    )) }
+                  </tbody>
+                </table>
+              ) : (
+                <p><b>This crag doesn't have any areas yet</b><br/>Click below to start adding one</p>
+              )}
               <div className="buttons is-centered">
                 <a className="button is-rounded" href={ `/crags/${cragSlug}/create-area` }>
                   <span className="icon is-small">

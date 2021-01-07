@@ -1,9 +1,9 @@
 import express from "express";
 import { users } from "../controllers";
-import { optionalAuth } from "../middleware/auth";
+import { requireAuth } from "../middleware/auth";
 
 const router = express.Router();
 
-router.get("/:userSub/logs", optionalAuth, users.getUserLogs);
+router.get("/logs", requireAuth, users.getProfileLogs);
 
 export default router;

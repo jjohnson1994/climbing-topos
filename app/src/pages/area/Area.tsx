@@ -5,6 +5,7 @@ import {AreaView, Route} from "../../../../core/types";
 import {areas} from "../../api";
 import {useLogRoutes} from '../../api/logs';
 import AreaRoutesTable from "../../components/AreaRoutesTable";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
 // import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
@@ -25,12 +26,14 @@ function Area() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<AreaView>();
   const [showLogModal, setShowLogModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   usePageTitle(area?.title);
 
   useEffect(() => {
     const doGetArea = async () => {
       try {
+        setLoading(true);
         const token = isAuthenticated
           ? await getAccessTokenSilently()
           : "";
@@ -39,6 +42,8 @@ function Area() {
       } catch (error) {
         console.error("Error loading area", error);
         popupError("Oh dear, there was a problem loading this area");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,7 +87,14 @@ function Area() {
         onCancel={ () => setShowLogModal(false) }
         onConfirm={ () => setShowLogModal(false) }
       />
-      <section className="section">
+      { loading && (
+        <section className="section">
+          <div className="container">
+            <LoadingSpinner />
+          </div>
+        </section>
+      )}
+      <section className={`section ${ loading ? "is-hidden" : "" }`}>
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
           <h5 className="subtitle">{ area?.description }</h5>
@@ -125,15 +137,17 @@ function Area() {
                     />
                   </div>
                   <div className="column">
-                    <AreaRoutesTable
-                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                      loggedRoutes={ area.userLogs }
-                      selectedRoutes={ selectedRoutes }
-                      isSelectingMultiple={ isSelectingMultipleRoutes }
-                      onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                      onRouteSelected={ onRouteSelected }
-                      onRouteDeselected={ onRouteDeselected }
-                    />
+                    { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                      <AreaRoutesTable
+                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                        loggedRoutes={ area.userLogs }
+                        selectedRoutes={ selectedRoutes }
+                        isSelectingMultiple={ isSelectingMultipleRoutes }
+                        onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                        onRouteSelected={ onRouteSelected }
+                        onRouteDeselected={ onRouteDeselected }
+                      />
+                    ) : ""}
                     <div className="buttons is-centered">
                       <Link
                         to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }

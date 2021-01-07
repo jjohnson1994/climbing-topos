@@ -9,25 +9,26 @@ import {popupError, popupSuccess} from "../../helpers/alerts";
 
 const schema = yup.object().shape({
   orientation: yup.string().required("Required"),
+  imageFileName: yup.string().required("Required"),
 });
 
 let image: File;
-
 function CreateTopo() {
   const history = useHistory();
-  const { getAccessTokenWithPopup } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [imageName, setImageName] = useState<string>("");
 
-  const { register, handleSubmit, setValue, errors } = useForm({
+  const { register, watch, handleSubmit, setValue, errors } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
       orientation: "unknown",
-      image: "",
+      imageFileName: "",
     }
   });
+
+  const watchImageFileName = watch("imageFileName");
 
   async function onImageSelected() {
     const files =
@@ -36,9 +37,9 @@ function CreateTopo() {
     if (files) {
       const file = files.item(0);
       image = file as File;
-      setImageName(file!.name);
+      setValue("imageFileName", file?.name);
     } else {
-      setValue("image", "");
+      setValue("imageFileName", "");
     }
   }
 
@@ -46,7 +47,7 @@ function CreateTopo() {
     setLoading(true);
 
     try {
-      const token = await getAccessTokenWithPopup();
+      const token = await getAccessTokenSilently();
       await topos.createTopo({ ...formData, areaSlug, cragSlug, image }, token);
       await popupSuccess("Topo Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
@@ -66,6 +67,12 @@ function CreateTopo() {
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
+          <input
+            type="text"
+            name="imageFileName"
+            ref={ register({}) }
+            className="is-hidden"
+          />
           <div className="field">
             <label className="label">Image</label>
             <div className="control">
@@ -86,12 +93,12 @@ function CreateTopo() {
                     </span>
                   </span>
                   <span className="file-name">
-                    { imageName }
+                    { watchImageFileName }
                   </span>
                 </label>
               </div>
             </div>
-            <p className="help is-danger">{ errors.image?.message }</p>
+            <p className="help is-danger">{ errors.imageFileName?.message }</p>
           </div>
 
           <div className="field">

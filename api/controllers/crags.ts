@@ -2,7 +2,9 @@ import { crags } from '../services';
 
 export async function getCrags(req, res) {
   try {
-    const allCrags = await crags.getAllCrags();
+    const { user } = req;
+    const userSub = user ? user.sub : false;
+    const allCrags = await crags.getAllCrags(userSub);
     res.status(200).json(allCrags);
   } catch (error) {
     console.error('Error getting crags', error);
@@ -26,7 +28,8 @@ export async function getCragBySlug(req, res) {
 export async function postCrag(req, res) {
   try {
     const cragDetails = req.body;
-    const resp = await crags.createCrag(cragDetails);
+    const user = req.user;
+    const resp = await crags.createCrag(cragDetails, user.sub);
     res.status(200).json({ success: true, inserted: resp });
   } catch(error) {
     console.error('Error creating crag', error);

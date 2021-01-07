@@ -429,7 +429,6 @@ function CreateCrag() {
                 </button>
               </div>
             </div>
-            <p className="help has-text-right">Don't worry, your topo won't be make public yet</p>
           </div>
         </form>
       </div>

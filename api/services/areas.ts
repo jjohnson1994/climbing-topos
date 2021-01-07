@@ -1,8 +1,8 @@
 import { areas, logs, routes, topos } from "../models";
 import { Area, AreaView } from "../../core/types";
 
-export function createArea(areaDetails: Area) {
-  return areas.createArea(areaDetails);
+export function createArea(areaDetails: Area, userSub: string) {
+  return areas.createArea(areaDetails, userSub);
 }
 
 export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<AreaView> {

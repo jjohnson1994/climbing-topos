@@ -5,7 +5,7 @@ import { dynamodb } from '../db';
 import { Crag } from '../../core/types';
 import { createSlug } from "../helpers/slug";
 
-export const createCrag = async (cragDetails: Crag) => {
+export const createCrag = async (cragDetails: Crag, ownerUserSub: string) => {
   const {
     place_id,
     address: {
@@ -41,6 +41,8 @@ export const createCrag = async (cragDetails: Crag) => {
       state,
       tags: cragDetails.tags,
       title: cragDetails.title,
+      owner: ownerUserSub,
+      createdBy: ownerUserSub,
       createdAt: date,
       updatedAt: date
     }

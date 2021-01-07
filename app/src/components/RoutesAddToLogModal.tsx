@@ -136,56 +136,56 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                 name={ `logs.[${index}].cragSlug` }
                 ref={ register({}) }
                 defaultValue={ route.cragSlug }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].areaSlug` }
                 ref={ register({}) }
                 defaultValue={ route.areaSlug }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].topoSlug` }
                 ref={ register({}) }
                 defaultValue={ route.topoSlug }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].grade` }
                 ref={ register({}) }
                 defaultValue={ route.grade }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].gradingSystem` }
                 ref={ register({}) }
                 defaultValue={ route.gradingSystem }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].routeSlug` }
                 ref={ register({}) }
                 defaultValue={ route.slug }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].routeTitle` }
                 ref={ register({}) }
                 defaultValue={ route.title }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <input
                 type="text"
                 name={ `logs.[${index}].routeType` }
                 ref={ register({}) }
                 defaultValue={ route.routeType }
-                style={{ display: "none" }}
+                className="is-hidden"
               />
               <div className="field is-grouped">
                 <div className="control">

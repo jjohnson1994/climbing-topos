@@ -6,25 +6,26 @@ import { Log, LogRequest } from "../../core/types";
 
 export async function createRouteLog(logRequest: LogRequest, user) {
   const date = DateTime.utc().toString();
-  const slug = nanoid();
+  const cragLogSlug = nanoid();
+  const userLogSlug = nanoid();
 
   const cragLogParams = {
     TableName: String(process.env.DB),
     Item: {
       hk: logRequest.cragSlug,
-      sk: `log#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${slug}`,
+      sk: `log#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${cragLogSlug}`,
       model: "log",
       areaSlug: logRequest.areaSlug,
       attempts: logRequest.attempts,
       comment: logRequest.comment,
       cragSlug: logRequest.cragSlug,
-      dateSend: logRequest.dateSent,
+      dateSent: logRequest.dateSent,
       grade: logRequest.grade,
       gradeTaken: logRequest.gradeTaken,
       gradingSystem: logRequest.gradingSystem,
       routeSlug: logRequest.routeSlug,
       routeType: logRequest.routeType,
-      slug,
+      slug: cragLogSlug,
       stars: logRequest.stars,
       tags: logRequest.tags,
       title: logRequest.routeTitle,
@@ -37,19 +38,19 @@ export async function createRouteLog(logRequest: LogRequest, user) {
     TableName: String(process.env.DB),
     Item: {
       hk: `user#${user.sub}`,
-      sk: `log#crag#${logRequest.cragSlug}#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${slug}`,
+      sk: `log#crag#${logRequest.cragSlug}#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${userLogSlug}`,
       model: "log",
       areaSlug: logRequest.areaSlug,
       attempts: logRequest.attempts,
       comment: logRequest.comment,
       cragSlug: logRequest.cragSlug,
-      dateSend: logRequest.dateSent,
+      dateSent: logRequest.dateSent,
       grade: logRequest.grade,
       gradeTaken: logRequest.gradeTaken,
       gradingSystem: logRequest.gradingSystem,
       routeSlug: logRequest.routeSlug,
       routeType: logRequest.routeType,
-      slug,
+      slug: userLogSlug,
       stars: logRequest.stars,
       tags: logRequest.tags,
       title: logRequest.routeTitle,
@@ -82,7 +83,8 @@ export async function getLogsByCragSlug(cragSlug: string): Promise<Log[]> {
   return response?.Items as Log[];
 }
 
-export async function getLogsForUser(userSub: string, cragSlug: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+export async function getLogsForUser(userSub: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+  console.log({ userSub, cragSlug, areaSlug, topoSlug, routeSlug });
   let queryString = `log#`;
 
   if (cragSlug) {
@@ -100,6 +102,8 @@ export async function getLogsForUser(userSub: string, cragSlug: string, areaSlug
   if (cragSlug && areaSlug && topoSlug && routeSlug) {
     queryString += `route#${routeSlug}#`;
   }
+
+  console.log({ queryString });
 
   const params = {
     TableName: String(process.env.DB),

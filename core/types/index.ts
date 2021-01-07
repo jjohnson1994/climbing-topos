@@ -150,4 +150,5 @@ export interface LogRequest {
 }
 
 export interface Log extends LogRequest {
+  title: string;
 };

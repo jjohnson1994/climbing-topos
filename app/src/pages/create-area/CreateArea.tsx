@@ -22,7 +22,7 @@ const schema = yup.object().shape({
 
 function CreateArea() {
   const history = useHistory();
-  const { getAccessTokenWithPopup } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [tags, setTags] = useState<string[]>([]);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
@@ -72,7 +72,7 @@ function CreateArea() {
     setLoading(true);
 
     try {
-      const token = await getAccessTokenWithPopup();
+      const token = await getAccessTokenSilently();
       const { slug: areaSlug } = await areas.createArea(
         {
           ...formData,
@@ -264,7 +264,6 @@ function CreateArea() {
                 </button>
               </div>
             </div>
-            <p className="help has-text-right">Don't worry, your topo won't be make public yet</p>
           </div>
         </form>
       </div>

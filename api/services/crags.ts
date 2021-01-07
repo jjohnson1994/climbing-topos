@@ -1,13 +1,13 @@
 import {CragView} from '../../core/types';
 import { areas, crags, logs, routes } from '../models';
-import { Crag } from '../types';
+import { Crag } from '../../core/types';
 
-export const createCrag = async (cragDetails: Crag) => {
-  const newCrag = await crags.createCrag(cragDetails);
+export const createCrag = async (cragDetails: Crag, userSub: string) => {
+  const newCrag = await crags.createCrag(cragDetails, userSub);
   return newCrag;
 }
 
-export async function getAllCrags(user): Promise<CragView[]> {
+export async function getAllCrags(user: string): Promise<CragView[]> {
   const allCrags = await crags
     .getAllCrags()
     .then(async crags => {

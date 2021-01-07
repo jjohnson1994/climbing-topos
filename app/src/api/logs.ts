@@ -1,5 +1,6 @@
 import {useState} from "react";
-import {LogRequest} from "../../../core/types";
+import {Log, LogRequest} from "../../../core/types";
+import {queryStringFromObject} from "../helpers/queryString";
 
 export async function logRoutes(logs: LogRequest[], token: string) {
   const res = await fetch('http://localhost:3001/dev/logs', {
@@ -18,6 +19,44 @@ export async function logRoutes(logs: LogRequest[], token: string) {
   }
 
   return json
+}
+
+export async function getProfileLogs(token: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+  const queryString = queryStringFromObject({
+    cragSlug,
+    areaSlug,
+    topoSlug,
+    routeSlug
+  });
+
+  const res = await fetch(`http://localhost:3001/dev/profile/logs${queryString}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
+}
+
+export async function getUserLogs(userSub: string, token: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+  const res = await fetch(`http://localhost:3001/dev/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`, {
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` })
+    }
+  });
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
 }
 
 export function useLogRoutes() {

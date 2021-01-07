@@ -3,7 +3,9 @@ import { topos } from "../services";
 export async function postTopo(req, res) {
   try {
     const topoDetails = req.body;
-    await topos.createTopo(topoDetails);
+    const { user } = req;
+    const userSub = user ? user.sub : false;
+    await topos.createTopo(topoDetails, userSub);
 
     res.status(200).send({ success: true });
   } catch(error) {

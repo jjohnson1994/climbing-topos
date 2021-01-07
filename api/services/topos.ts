@@ -1,8 +1,8 @@
 import { topos } from "../models";
 import { Topo } from "../../core/types";
 
-export function createTopo(topoDetails: Topo) {
-  return topos.createTopo(topoDetails)
+export function createTopo(topoDetails: Topo, userSub: string) {
+  return topos.createTopo(topoDetails, userSub)
 }
 
 export const getTopoBySlug = async (slug: string) => {

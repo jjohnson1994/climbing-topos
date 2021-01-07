@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import { dynamodb } from "../db";
 import { Topo } from "../../core/types";
 
-export async function createTopo(topoDetails: Topo) {
+export async function createTopo(topoDetails: Topo, userSub: string) {
   const date = DateTime.utc().toString();
   const slug = nanoid();
   const params = {
@@ -18,6 +18,7 @@ export async function createTopo(topoDetails: Topo) {
       image: topoDetails.image,
       slug,
       orientation: topoDetails.orientation,
+      createdBy: userSub,
       createdAt: date,
       updatedAt: date
     }

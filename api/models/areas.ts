@@ -5,7 +5,7 @@ import { dynamodb } from '../db';
 import { Area } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 
-export async function createArea(areaDescription: Area) {
+export async function createArea(areaDescription: Area, userSub: string) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${areaDescription.title}-${nanoid(5)}`);
   const params = {
@@ -24,6 +24,7 @@ export async function createArea(areaDescription: Area) {
       slug,
       tags: areaDescription.tags,
       title: areaDescription.title,
+      createdBy: userSub,
       createdAt: date,
       updatedAt: date
     }

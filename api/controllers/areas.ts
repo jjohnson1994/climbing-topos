@@ -3,7 +3,9 @@ import { areas } from "../services";
 export async function postArea(req, res) {
   try {
     const areaDetails = req.body;
-    const resp = await areas.createArea(areaDetails);
+    const { user } = req;
+    const userSub = user ? user.sub : false;
+    const resp = await areas.createArea(areaDetails, userSub);
     res.status(200).json({ success: true, inserted: resp });
   } catch(error) {
     console.error('Error creating area', error);

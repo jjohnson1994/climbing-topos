@@ -5,9 +5,11 @@ import { Link } from 'react-router-dom';
 import CragQuickActions from "../../components/CragQuickActions";
 import { getCrags } from "../../api/crags";
 import { CragView } from '../../../../core/types';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 function Crags() {
   const [crags, setCrags] = useState<CragView[]>([]);
+  const [loading, setLoading] = useState(false);
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
@@ -18,6 +20,7 @@ function Crags() {
 
   async function doGetCrags() {
     try {
+      setLoading(true);
       const token = isAuthenticated
         ? await getAccessTokenSilently()
         : "";
@@ -25,6 +28,8 @@ function Crags() {
       setCrags(crags);
     } catch (error) {
       console.error('Error loading crags', error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -86,6 +91,7 @@ function Crags() {
                   ))
                 }
               </tbody>
+              { loading && <LoadingSpinner /> }
             </table>
           </div>
         </div>
