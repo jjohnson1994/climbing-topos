@@ -5,6 +5,7 @@ import {AreaView, Route} from "../../../../core/types";
 import {areas} from "../../api";
 import {useLogRoutes} from '../../api/logs';
 import AreaRoutesTable from "../../components/AreaRoutesTable";
+import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 // import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
@@ -26,7 +27,7 @@ function Area() {
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<AreaView>();
   const [showLogModal, setShowLogModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   usePageTitle(area?.title);
 
@@ -98,23 +99,24 @@ function Area() {
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
           <h5 className="subtitle">{ area?.description }</h5>
-          <div className="buttons has-addons is-right">
-            <Link
-              to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
-              className="button is-rounded"
-            >
-              <span className="icon is-small">
-                <i className="fas fa-plus"></i>
-              </span>
-              <span>Add Topo</span>
-            </Link>
+          <div className="is-flex is-justify-content-flex-end">
+            <ButtonCopyCoordinates
+              latitude={ `${area?.latitude}` }
+              longitude={ `${area?.longitude}` }
+            />
+            <span className="mr-2"></span>
+            <div className="buttons has-addons is-right">
+              <Link
+                to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
+                className="button is-rounded"
+              >
+                <span className="icon is-small">
+                  <i className="fas fa-plus"></i>
+                </span>
+                <span>Add Topo</span>
+              </Link>
+            </div>
           </div>
-          {/**
-          <ButtonCopyCoordinates
-            latitude={ area?.latitude }
-            longitude={ area?.longitude }
-          />
-          */}
         </div>
       </section>
 

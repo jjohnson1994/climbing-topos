@@ -1,14 +1,14 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {yupResolver} from "@hookform/resolvers/yup";
-import React, {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import { useAuth0} from "@auth0/auth0-react";
+import { yupResolver} from "@hookform/resolvers/yup";
+import React, { useEffect, useState } from "react";
+import { useForm} from "react-hook-form";
 import * as yup from "yup";
-import {GradingSystem, LogRequest, Route} from "../../../core/types";
-import {globals, logs} from "../api";
-import {popupError, toastSuccess} from "../helpers/alerts";
+import { GradingSystem, LogRequest, Route } from "../../../core/types";
+import { NewLogsSchema } from "../../../core/schemas";
+import { globals, logs} from "../api";
+import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
-
 
 interface Props {
   routes: Route[];
@@ -17,27 +17,7 @@ interface Props {
   onConfirm?: Function;
 }
 
-const schema = yup.object().shape({
-  logs: yup.array().of(
-    yup.object().shape({
-      areaSlug: yup.string(),
-      attempts: yup.string().required("Required"),
-      comment: yup.string(),
-      cragSlug: yup.string(),
-      dateSent: yup.string().required("Required"),
-      grade: yup.string(),
-      gradeTaken: yup.string().required("Required"),
-      gradingSystem: yup.string(),
-      routeSlug: yup.string(),
-      routeTitle: yup.string(),
-      routeType: yup.string(),
-      stars: yup.string(),
-      tags: yup.array().min(1, "Select at least 1").of(
-        yup.string()
-      ),
-    })
-  )
-});
+const schema = NewLogsSchema(yup);
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
   const { getAccessTokenSilently } = useAuth0();

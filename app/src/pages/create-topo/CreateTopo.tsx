@@ -125,7 +125,7 @@ function CreateTopo() {
             <div className="field is-flex is-justified-end">
               <div className="control">
                 <button type="submit" className={`button is-primary ${loading ? "is-loading" : ""}`}>
-                  <span>Continue</span>
+                  <span>Create Topo</span>
                 </button>
               </div>
             </div>
