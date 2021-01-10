@@ -274,9 +274,6 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                 <p className="help is-danger">{ errors.logs?.[index]?.tags?.message }</p>
               </div>
             </div>
-            { errors.logs?.[index]?.tags.map((tag: any) => (
-              <p className="help is-danger">{ tag?.message }</p>
-            ))}
           </div>
         ))}
       </form>
