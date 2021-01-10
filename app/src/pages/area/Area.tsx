@@ -1,7 +1,7 @@
 import {useAuth0} from "@auth0/auth0-react";
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {AreaView, Route} from "../../../../core/types";
+import { AreaView, Route } from "core/types";
 import {areas} from "../../api";
 import {useLogRoutes} from '../../api/logs';
 import AreaRoutesTable from "../../components/AreaRoutesTable";

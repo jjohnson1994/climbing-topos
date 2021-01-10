@@ -1,13 +1,15 @@
 export function validateBody(schema) {
-  return ({ req, res, next }) => {
-    schema
-      .isValid(req.body)
-      .then((valid: Boolean) => {
+  return async (req, res, next) => {
+    try {
+      const valid = await schema.isValid(req.body);
         if (valid) {
           next();
         } else {
           res.status(400).json({ error: true });
         }
-      });
+    } catch (error) {
+      console.error("Error validating schema", error);
+      res.status(500).json({ error: true });
+    }
   }
 }

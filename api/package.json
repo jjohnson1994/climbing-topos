@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
+    "start": "serverless offline start",
     "dynamodb-admin": "DYNAMO_ENDPOINT=http://localhost:8000 dynamodb-admin",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

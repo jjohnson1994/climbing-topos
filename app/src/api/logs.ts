@@ -9,7 +9,7 @@ export async function logRoutes(logs: LogRequest[], token: string) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify(logs),
+    body: JSON.stringify({ logs }),
   });
 
   const json = await res.json();

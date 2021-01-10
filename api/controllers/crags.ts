@@ -1,9 +1,11 @@
 import { crags } from '../services';
 
 export async function getCrags(req, res) {
+  console.log("get crags");
   try {
     const { user } = req;
     const userSub = user ? user.sub : false;
+    console.log("user", { userSub });
     const allCrags = await crags.getAllCrags(userSub);
     res.status(200).json(allCrags);
   } catch (error) {

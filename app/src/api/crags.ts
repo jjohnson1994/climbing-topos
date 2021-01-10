@@ -1,4 +1,4 @@
-import {CragView} from "../../../core/types";
+import {CragView} from "core/types";
 
 export async function createCrag(cragDetails: object, token: string): Promise<{ hk: string, slug: string }> {
   const res = await fetch('http://localhost:3001/dev/crags', {
@@ -19,12 +19,15 @@ export async function createCrag(cragDetails: object, token: string): Promise<{ 
 }
 
 export async function getCrags(token: string): Promise<CragView[]> {
+  console.log("getting crags", token, fetch('http://localhost:3001/dev/crags'));
   const res = await fetch('http://localhost:3001/dev/crags', {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     },
   });
+  console.log("res", { res });
   const json = await res.json();
+  console.log("json", { json });
   if (res.status !== 200) {
     throw json;
   }

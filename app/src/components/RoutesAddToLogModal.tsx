@@ -3,8 +3,8 @@ import { yupResolver} from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
 import { useForm} from "react-hook-form";
 import * as yup from "yup";
-import { GradingSystem, LogRequest, Route } from "../../../core/types";
-import { NewLogsSchema } from "../../../core/schemas";
+import { GradingSystem, LogRequest, Route } from "core/types";
+import { NewLogsSchema } from "core/schemas";
 import { globals, logs} from "../api";
 import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
@@ -18,6 +18,7 @@ interface Props {
 }
 
 const schema = NewLogsSchema(yup);
+console.log({ schema });
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
   const { getAccessTokenSilently } = useAuth0();
@@ -48,9 +49,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
   }
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
-    console.log({ gradingSystem, gradingSystems });
     const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
-    console.log({ grades });
     return grades;
   }
 
@@ -275,6 +274,9 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                 <p className="help is-danger">{ errors.logs?.[index]?.tags?.message }</p>
               </div>
             </div>
+            { errors.logs?.[index]?.tags.map((tag: any) => (
+              <p className="help is-danger">{ tag?.message }</p>
+            ))}
           </div>
         ))}
       </form>

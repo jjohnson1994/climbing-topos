@@ -351,7 +351,9 @@ function CreateCrag() {
                 <span>Add Car Park</span>
               </button>
             </div>
-            <div className="help is-danger">{ errors.carParks?.message }</div>
+            {/**
+              <div className="help is-danger">{ errors.carParks?.message }</div>
+            */}
           </div>
 
           <div className="field">
