@@ -18,7 +18,6 @@ interface Props {
 }
 
 const schema = NewLogsSchema(yup);
-console.log({ schema });
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
   const { getAccessTokenSilently } = useAuth0();

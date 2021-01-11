@@ -34,6 +34,7 @@ export async function createTopo(topoDetails: Topo, token: string) {
     },
     body: JSON.stringify({
       image: image,
+      imageFileName: topoDetails.imageFileName,
       orientation: topoDetails.orientation,
       areaSlug: topoDetails.areaSlug,
       cragSlug: topoDetails.cragSlug

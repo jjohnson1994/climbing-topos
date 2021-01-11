@@ -122,50 +122,52 @@ function Area() {
 
       {area?.topos && area?.topos.map((topo) => (
         <>
-          <div className="is-hidden-tablet">
-            <TopoImage
-              routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-              background={ `${topo.image}` }
-            />
-          </div>
-          <section className="section">
-            <div className="container">
-              <div className="box block" key={ topo.slug }>
-                <div className="columns">
-                  <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
-                    <TopoImage
-                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                      background={ `${topo.image}` }
-                    />
-                  </div>
-                  <div className="column">
-                    { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
-                      <AreaRoutesTable
+          <div key={ topo.slug }>
+            <div className="is-hidden-tablet">
+              <TopoImage
+                routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                background={ `${topo.image}` }
+              />
+            </div>
+            <section className="section">
+              <div className="container">
+                <div className="box block" key={ topo.slug }>
+                  <div className="columns">
+                    <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
+                      <TopoImage
                         routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                        loggedRoutes={ area.userLogs }
-                        selectedRoutes={ selectedRoutes }
-                        isSelectingMultiple={ isSelectingMultipleRoutes }
-                        onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                        onRouteSelected={ onRouteSelected }
-                        onRouteDeselected={ onRouteDeselected }
+                        background={ `${topo.image}` }
                       />
-                    ) : ""}
-                    <div className="buttons is-centered">
-                      <Link
-                        to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
-                        className="button is-rounded"
-                      >
-                        <span className="icon is-small">
-                          <i className="fas fa-plus"></i>
-                        </span>
-                        <span>Add Route</span>
-                      </Link>
+                    </div>
+                    <div className="column">
+                      { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                        <AreaRoutesTable
+                          routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                          loggedRoutes={ area.userLogs }
+                          selectedRoutes={ selectedRoutes }
+                          isSelectingMultiple={ isSelectingMultipleRoutes }
+                          onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                          onRouteSelected={ onRouteSelected }
+                          onRouteDeselected={ onRouteDeselected }
+                        />
+                      ) : ""}
+                      <div className="buttons is-centered">
+                        <Link
+                          to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
+                          className="button is-rounded"
+                        >
+                          <span className="icon is-small">
+                            <i className="fas fa-plus"></i>
+                          </span>
+                          <span>Add Route</span>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </>
       ))}
 

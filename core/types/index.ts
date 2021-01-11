@@ -86,6 +86,7 @@ export interface Topo {
   areaSlug: string;
   cragSlug: string;
   image: File | string;
+  imageFileName: string;
   orientation: string;
   slug?: string;
 }

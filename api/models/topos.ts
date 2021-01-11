@@ -45,6 +45,24 @@ export async function getToposByCragArea(cragSlug: string, areaSlug: string): Pr
   return response?.Items as Topo[];
 }
 
+export async function getTopo(cragSlug: string, areaSlug: string, topoSlug: string): Promise<Topo> {
+  const params = {
+    TableName: String(process.env.DB),
+    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
+    ExpressionAttributeNames:{
+      "#hk": "hk",
+      "#sk": "sk"
+    },
+    ExpressionAttributeValues: {
+      ":hk": cragSlug,
+      ":sk": `topo#${areaSlug}#${topoSlug}`
+    }
+  }
+
+  const topo = await dynamodb.query(params).promise()
+  return topo?.Items?.[0] as Topo;
+}
+
 export async function getTopoBySlug(slug: string): Promise<Topo> {
   // TODO can be refactored out and replace with `hk = hk and begins_with(sk, sk)`
   const params = {

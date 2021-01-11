@@ -12,7 +12,7 @@ function ButtonCopyCoordinates({ latitude, longitude }: Props) {
   const copyCoordinatedToClipboard = async () => {
     try {
       await clipboardWriteText(`${latitude}, ${longitude}`);
-      toastSuccess("Coordinates copied");
+      toastSuccess("Coordinates Copied");
     } catch (error) {
       console.error("Error copying crag coordinates to clipboard", error);
       popupError("Coordinates could not be copied. Check permissions and try again");

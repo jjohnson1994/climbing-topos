@@ -1,5 +1,6 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {yupResolver} from '@hookform/resolvers/yup';
+import {NewAreaSchema} from "core/schemas";
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from "react-router-dom";
@@ -9,16 +10,7 @@ import {areas, globals} from "../../api";
 import {popupError, popupSuccess} from "../../helpers/alerts";
 import {getCurrentPosition} from '../../helpers/geolocation';
 
-const schema = yup.object().shape({
-  title: yup.string().required("Required"),
-  description: yup.string(),
-  tags: yup.array().min(1, "Select at least 1").of(
-    yup.string()
-  ),
-  latitude: yup.number().typeError("Latitiude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-  longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
-  access: yup.string().required(),
-});
+const schema = NewAreaSchema(yup);
 
 function CreateArea() {
   const history = useHistory();
@@ -81,7 +73,7 @@ function CreateArea() {
         token
       );
       await popupSuccess("Area Created!");
-      history.push(`/crags/${cragSlug}/area/${areaSlug}`);
+      history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {
       console.error('Error creating crag', error);
       popupError("Ahh, something has gone wrong...");
@@ -148,7 +140,13 @@ function CreateArea() {
                       ${watchTags?.includes(tag) ? "is-primary" : ""}
                     `}
                   >
-                    <input type="checkbox" name="tags" value={ tag } ref={ register } style={{ display: "none" }} />
+                    <input
+                      type="checkbox"
+                      name="tags"
+                      value={ tag }
+                      ref={ register }
+                      style={{ display: "none" }}
+                    />
                     { tag }
                   </label>
                 ))} 

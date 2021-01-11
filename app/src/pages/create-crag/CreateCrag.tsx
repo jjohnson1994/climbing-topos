@@ -1,5 +1,6 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {yupResolver} from '@hookform/resolvers/yup';
+import {NewCragSchema} from "core/schemas";
 import React, {useEffect, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useHistory} from "react-router-dom";
@@ -9,24 +10,7 @@ import {popupError, popupSuccess} from "../../helpers/alerts";
 import {getCurrentPosition} from '../../helpers/geolocation';
 import {reverseLookup} from '../../helpers/nominatim';
 
-const schema = yup.object().shape({
-  title: yup.string().required("Required"),
-  description: yup.string().required("Required"),
-  tags: yup.array().min(1, "Select at least 1").of(
-    yup.string()
-  ),
-  latitude: yup.number().typeError("Latitiude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-  longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
-  access: yup.string().required(),
-  carParks: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Required"),
-      latitude: yup.number().typeError("Latitude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
-      longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
-    })
-  ).required("Add at least 1").min(1, "Add at least 1"),
-  accessLink: yup.string().url("Not a valid URL").nullable(),
-});
+const schema = NewCragSchema(yup);
 
 type CarPark = {
   title: string;

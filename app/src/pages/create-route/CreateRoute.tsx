@@ -1,5 +1,6 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {yupResolver} from '@hookform/resolvers/yup';
+import {NewRouteScheme} from "core/schemas";
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from 'react-router-dom';
@@ -9,17 +10,7 @@ import {areas, globals, routes, topos} from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import {popupError, popupSuccess} from "../../helpers/alerts";
 
-
-const schema = yup.object().shape({
-  title: yup.string().required("Required"),
-  description: yup.string(),
-  tags: yup.array().min(1, "Select at least 1").of(
-    yup.string()
-  ),
-  routeType: yup.string().required("Required"),
-  gradingSystem: yup.string().required("Required"),
-  grade: yup.string().required("Required"),
-});
+const schema = NewRouteScheme(yup);
 
 function CreateRoute() {
   const history = useHistory();
@@ -28,26 +19,30 @@ function CreateRoute() {
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
-  const [grades, setGrades] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [area, setArea] = useState<AreaView | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
-  const [drawing, setDrawing] = useState<RouteDrawing>({ path: [] });
 
-  const { register, getValues, handleSubmit, errors, watch } = useForm({
+  const { register, getValues, setValue, handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      title: "",
+      areaSlug,
+      cragSlug,
       description: "",
-      tags: [] as string[],
-      routeType: "",
+      drawing: {
+        path: []
+      },
+      grade: "",
       gradingSystem: "",
-      grade: ""
+      routeType: "",
+      tags: [] as string[],
+      title: "",
+      topoSlug,
     }
   });
 
-  const watchTags = watch("tags", []);
+  const watchTags = watch("tags");
   const watchGradingSystem = watch("gradingSystem", "");
 
   useEffect(() => {
@@ -74,7 +69,7 @@ function CreateRoute() {
     doGetTags();
     doGetRouteTypes();
     doGetGradingSystem();
-  }, [areaSlug, topoSlug]);
+  }, [areaSlug, isAuthenticated, topoSlug]);
 
   const doGetTags = async () => {
     const routeTags = await globals.getRouteTags();
@@ -97,20 +92,15 @@ function CreateRoute() {
   }
 
   const onDrawingChanged = (drawing: RouteDrawing) => {
-    setDrawing(drawing);
+    setValue("drawing", JSON.stringify(drawing));
   }
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
+      setLoading(true);
       const token = await getAccessTokenSilently();
       const { routeSlug } = await routes.createRoute(
-        {
-          ...formData,
-          drawing,
-          cragSlug,
-          areaSlug,
-          topoSlug
-        },
+        formData,
         token
       );
       await popupSuccess("Route Created!");
@@ -118,6 +108,8 @@ function CreateRoute() {
     } catch (error) {
       console.error('Error creating crag', error);
       popupError("Ahh, something has gone wrong...");
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -139,6 +131,29 @@ function CreateRoute() {
             style={{ display: "flex", flexDirection: "column" }}
             autoComplete="off"
           >
+            <input
+              className="is-hidden"
+              name="cragSlug"
+              defaultValue={ cragSlug }
+              ref={ register }
+            />
+            <input
+              className="is-hidden"
+              name="areaSlug"
+              defaultValue={ areaSlug }
+              ref={ register }
+            />
+            <input
+              className="is-hidden"
+              name="topoSlug"
+              defaultValue={ topoSlug }
+              ref={ register }
+            />
+            <input
+              className="is-hidden"
+              name="drawing"
+              ref={ register }
+            />
             <div className="field">
               <label className="label" htmlFor="title">Title</label>
               <div className="control">
@@ -236,7 +251,11 @@ function CreateRoute() {
             <div className="field">
               <div className="field is-flex is-justified-end">
                 <div className="control">
-                  <button className="button is-primary">Create Route</button>
+                  <button
+                    className={ `button is-primary ${ loading ? "is-loading" : "" }` }
+                  >
+                    Create Route
+                  </button>
                 </div>
               </div>
             </div>

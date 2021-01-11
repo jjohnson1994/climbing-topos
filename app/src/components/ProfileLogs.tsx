@@ -15,7 +15,6 @@ function ProfileLogs() {
         const token = await getAccessTokenSilently();
         const newLoggedRoutes = await logs.getProfileLogs(token);
         setLoggedRoutes(newLoggedRoutes); 
-        console.log(newLoggedRoutes);
       } catch (error) {
         console.error("Error loading user profile", error);
         popupError("Something has gone wrong, your profile couldn't be loaded. sorry");

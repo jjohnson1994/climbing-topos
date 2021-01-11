@@ -6,7 +6,7 @@ export async function postArea(req, res) {
     const { user } = req;
     const userSub = user ? user.sub : false;
     const resp = await areas.createArea(areaDetails, userSub);
-    res.status(200).json({ success: true, inserted: resp });
+    res.status(200).json({ success: true, ...resp });
   } catch(error) {
     console.error('Error creating area', error);
     res.status(500).json({ error: true });

@@ -84,7 +84,6 @@ export async function getLogsByCragSlug(cragSlug: string): Promise<Log[]> {
 }
 
 export async function getLogsForUser(userSub: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
-  console.log({ userSub, cragSlug, areaSlug, topoSlug, routeSlug });
   let queryString = `log#`;
 
   if (cragSlug) {
@@ -102,8 +101,6 @@ export async function getLogsForUser(userSub: string, cragSlug?: string, areaSlu
   if (cragSlug && areaSlug && topoSlug && routeSlug) {
     queryString += `route#${routeSlug}#`;
   }
-
-  console.log({ queryString });
 
   const params = {
     TableName: String(process.env.DB),

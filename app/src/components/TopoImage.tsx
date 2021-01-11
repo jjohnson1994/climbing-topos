@@ -65,7 +65,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
   ) => {
     let joinedPathPoints: number[][] = [];
 
-    if (routeDrawing.linkFrom) {
+    if (routeDrawing.linkFrom?.routeSlug) {
       const linkFromPath = routes.find(route => route.slug === routeDrawing!.linkFrom!.routeSlug)!.drawing.path;
       const joinIndex = linkFromPath?.findIndex(([x, y]) => {
         return Math.abs(x - routeDrawing!.linkFrom!.x) <= 5 && Math.abs(y - routeDrawing!.linkFrom!.y) <= 5;
@@ -77,7 +77,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
 
     joinedPathPoints = [...joinedPathPoints, ...routeDrawing.path];
 
-    if (routeDrawing.linkTo) {
+    if (routeDrawing.linkTo?.routeSlug) {
       const linkToPath = routes.find(route => route.slug === routeDrawing!.linkTo!.routeSlug)!.drawing.path;
       const joinIndex = linkToPath?.findIndex(([x, y]) => {
         return Math.abs(x - routeDrawing!.linkTo!.x) <= 5 && Math.abs(y - routeDrawing!.linkTo!.y) <= 5;

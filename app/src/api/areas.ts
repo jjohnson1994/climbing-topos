@@ -16,7 +16,7 @@ export async function createArea(areaDescription: Area, token: string): Promise<
     throw json;
   }
 
-  return { slug: "" };
+  return json;
 }
 
 export async function getArea(areaSlug: string, token: string): Promise<AreaView> {

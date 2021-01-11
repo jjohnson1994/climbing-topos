@@ -1,5 +1,6 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {yupResolver} from '@hookform/resolvers/yup';
+import {NewTopoSchema} from "core/schemas";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from "react-router-dom";
@@ -7,12 +8,10 @@ import * as yup from "yup";
 import {topos} from "../../api";
 import {popupError, popupSuccess} from "../../helpers/alerts";
 
-const schema = yup.object().shape({
-  orientation: yup.string().required("Required"),
-  imageFileName: yup.string().required("Required"),
-});
+const schema = NewTopoSchema(yup);
 
 let image: File;
+
 function CreateTopo() {
   const history = useHistory();
   const { getAccessTokenSilently } = useAuth0();
@@ -25,6 +24,8 @@ function CreateTopo() {
     defaultValues: {
       orientation: "unknown",
       imageFileName: "",
+      areaSlug,
+      cragSlug
     }
   });
 
@@ -48,7 +49,7 @@ function CreateTopo() {
 
     try {
       const token = await getAccessTokenSilently();
-      await topos.createTopo({ ...formData, areaSlug, cragSlug, image }, token);
+      await topos.createTopo({ ...formData, image }, token);
       await popupSuccess("Topo Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {
@@ -67,6 +68,20 @@ function CreateTopo() {
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
+          <input
+            type="text"
+            name="cragSlug"
+            value={ cragSlug }
+            ref={ register() }
+            className="is-hidden"
+          />
+          <input
+            type="text"
+            name="areaSlug"
+            value={ areaSlug }
+            ref={ register() }
+            className="is-hidden"
+          />
           <input
             type="text"
             name="imageFileName"

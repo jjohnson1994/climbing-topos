@@ -49,7 +49,7 @@ function AreaRoutesTable({
         {routes?.map((route, index) => (
           <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
             <td>{ index + 1 }</td>
-            <td>
+            <td className="is-capitalized">
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
             <td>{ route.grade }</td>
