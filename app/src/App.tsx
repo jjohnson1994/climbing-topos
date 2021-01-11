@@ -8,6 +8,7 @@ import {
 import Area from './pages/area/Area';
 import Crag from './pages/crag/Crag';
 import Crags from './pages/crags/Crags';
+import CragsMap from "./pages/crags-map/CragsMap";
 import CreateArea from "./pages/create-area/CreateArea";
 import CreateCrag from "./pages/create-crag/CreateCrag";
 import CreateRoute from "./pages/create-route/CreateRoute";
@@ -55,6 +56,9 @@ function App() {
             </Route>
             <Route path='/crags'>
               <Crags />
+            </Route>
+            <Route path="/crags-map">
+              <CragsMap />
             </Route>
             <ProtectedRoute
               path="/create-crag"

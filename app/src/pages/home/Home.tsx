@@ -6,7 +6,7 @@ function Home() {
       <section className="section">
         <div className="container">
           <h1 className="title">Welcome to ClimbingTopos.com</h1>
-          <h2 className="subtitle">All the topos, all the rocks, all free</h2>
+          <h2 className="subtitle">Made in Yorkshire</h2>
         </div>
       </section>
 
