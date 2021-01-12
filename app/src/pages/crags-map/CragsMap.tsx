@@ -12,7 +12,6 @@ import "leaflet-defaulticon-compatibility";
 import { crags } from "../../api";
 import {Crag} from "core/types";
 import LeafletMap from "../../components/LeafletMap";
-import LoadingSpinner from "../../components/LoadingSpinner";
 
 function CragsMap() {
   const [allCrags, setCrags] = useState<Crag[]>();

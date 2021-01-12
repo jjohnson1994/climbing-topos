@@ -135,112 +135,106 @@ function Crag() {
                 </li>
               </ul>
             </div>
-            <div className="container">
-              <div className={`box ${ loading ? "is-hidden" : ""}`}>
-
-                { activeTab === "routes" && (
-                  <div id="routes" className="tab-content">
-                    { crag?.routes.length ? (
-                      <AreaRoutesTable
-                        routes={ crag?.routes }
-                        loggedRoutes={ (crag && crag.userLogs) || [] }
-                        selectedRoutes={ selectedRoutes }
-                        isSelectingMultiple={ isSelectingMultipleRoutes }
-                        onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                        onRouteSelected={ onRouteSelected }
-                        onRouteDeselected={ onRouteDeselected }
-                      />
-                    ) : (
-                      <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
-                    )}
-                  </div>
-                )}
-
-              
-                { activeTab === "areas" && (
-                  <div id="areas" className="tab-content">
-                    { crag?.areas.length ? (
-                      <table className="table is-fullwidth">
-                        <thead>
-                          <tr>
-                            <th>Title</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          { crag?.areas?.map(area => (
-                            <tr key={ area.slug }>
-                              <td>
-                                <Link
-                                  to={ `/crags/${cragSlug}/areas/${area.slug}` }
-                                  className="is-capitalized"
-                                >
-                                  { area.title }
-                                </Link>
-                              </td>
-                            </tr>
-                          )) }
-                        </tbody>
-                      </table>
-                    ) : (
-                      <p><b>This crag doesn't have any areas yet</b><br/>Click below to start adding one</p>
-                    )}
-                    <div className="buttons is-centered">
-                      <a className="button is-rounded" href={ `/crags/${cragSlug}/create-area` }>
-                        <span className="icon is-small">
-                          <i className="fas fa-plus"></i>
-                        </span>
-                        <span>Add Area</span>
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                { activeTab === "approach" && (
-                  <div id="approach" className="tab-content">
-                    <div className="block">
-                      <h3 className="title">Approach</h3>
-                      {(crag?.approachNotes &&
-                        <p>{ crag?.approachNotes }</p>)
-                        ||
-                        <p>No approach details have been given. Hopefully that means it's an easy walk in 🤷‍♂️</p>
-                      }
-                    </div>
-                    <hr />
-                    <div className="block">
-                      <h3 className="title">Parking</h3>
-                      {crag?.carParks?.map((carPark, index) => (
-                        <React.Fragment key={ index }>
-                          <div className="is-flex">
-                            <h4 className="title is-4 is-capitalized">{ carPark.title }</h4>
-                            <span className="ml-2"></span>
-                            <ButtonCopyCoordinates
-                              latitude={ carPark.latitude }
-                              longitude={ carPark.longitude }
-                            />
-                          </div>
-                          <p className={ carPark.description ? 'm-4' : '' }>
-                            { carPark.description ? carPark.description : '' }
-                          </p>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                { activeTab === "map" && (
-                  <div id="map" className="tab-content" >
-                    <LeafletMap
-                      markers={ createMapMarkers() }
-                      center={[
-                        parseFloat(`${crag?.latitude}`),
-                        parseFloat(`${crag?.longitude}`)
-                      ]}
-                      zoom={ 15 }
-                    />
-                  </div>
+            { activeTab === "routes" && (
+              <div id="routes" className="container box">
+                { crag?.routes.length ? (
+                  <AreaRoutesTable
+                    routes={ crag?.routes }
+                    loggedRoutes={ (crag && crag.userLogs) || [] }
+                    selectedRoutes={ selectedRoutes }
+                    isSelectingMultiple={ isSelectingMultipleRoutes }
+                    onInitSelectMultiple={ onInitSelectMultipleRoutes }
+                    onRouteSelected={ onRouteSelected }
+                    onRouteDeselected={ onRouteDeselected }
+                  />
+                ) : (
+                  <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
                 )}
               </div>
-            </div>
+            )}
+
+            { activeTab === "areas" && (
+              <div id="areas" className="container box">
+                { crag?.areas.length ? (
+                  <table className="table is-fullwidth">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      { crag?.areas?.map(area => (
+                        <tr key={ area.slug }>
+                          <td>
+                            <Link
+                              to={ `/crags/${cragSlug}/areas/${area.slug}` }
+                              className="is-capitalized"
+                            >
+                              { area.title }
+                            </Link>
+                          </td>
+                        </tr>
+                      )) }
+                    </tbody>
+                  </table>
+                ) : (
+                  <p><b>This crag doesn't have any areas yet</b><br/>Click below to start adding one</p>
+                )}
+                <div className="buttons is-centered">
+                  <a className="button is-rounded" href={ `/crags/${cragSlug}/create-area` }>
+                    <span className="icon is-small">
+                      <i className="fas fa-plus"></i>
+                    </span>
+                    <span>Add Area</span>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            { activeTab === "approach" && (
+              <div id="approach" className="container box">
+                <div className="block">
+                  <h3 className="title">Approach</h3>
+                  {(crag?.approachNotes &&
+                    <p>{ crag?.approachNotes }</p>)
+                    ||
+                    <p>No approach details have been given. Hopefully that means it's an easy walk in 🤷‍♂️</p>
+                  }
+                </div>
+                <hr />
+                <div className="block">
+                  <h3 className="title">Parking</h3>
+                  {crag?.carParks?.map((carPark, index) => (
+                    <React.Fragment key={ index }>
+                      <div className="is-flex">
+                        <h4 className="title is-4 is-capitalized">{ carPark.title }</h4>
+                        <span className="ml-2"></span>
+                        <ButtonCopyCoordinates
+                          latitude={ carPark.latitude }
+                          longitude={ carPark.longitude }
+                        />
+                      </div>
+                      <p className={ carPark.description ? 'm-4' : '' }>
+                        { carPark.description ? carPark.description : '' }
+                      </p>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            { activeTab === "map" && (
+              <div>
+                <LeafletMap
+                  markers={ createMapMarkers() }
+                  center={[
+                    parseFloat(`${crag?.latitude}`),
+                    parseFloat(`${crag?.longitude}`)
+                  ]}
+                  zoom={ 15 }
+                />
+              </div>
+            )}
           </section>
         </>
       )}

@@ -63,7 +63,8 @@ function Crags() {
       <section className="section">
         <div className="container">
           <div className="box">
-            <table className="table is-hoverable is-fullwidth">
+            { loading && <LoadingSpinner /> }
+            <table className={ `table is-hoverable is-fullwidth ${ loading ? "is-hidden" : "" }` }>
               <thead>
                 <tr>
                   <td>Crag</td>
@@ -91,7 +92,6 @@ function Crags() {
                   ))
                 }
               </tbody>
-              { loading && <LoadingSpinner /> }
             </table>
           </div>
         </div>
