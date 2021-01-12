@@ -7,5 +7,5 @@ export function usePageTitle(pageTitle: string | undefined) {
     return () => {
       document.title = "Climbing Topos"
     };
-  });
+  }, [pageTitle]);
 }

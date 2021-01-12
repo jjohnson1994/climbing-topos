@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css'; // Re-uses images from ~leaflet package
@@ -10,39 +10,36 @@ import "leaflet.markercluster";
 import "leaflet-defaulticon-compatibility";
 
 import { crags } from "../../api";
+import {Crag} from "core/types";
+import LeafletMap from "../../components/LeafletMap";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function CragsMap() {
+  const [allCrags, setCrags] = useState<Crag[]>();
 
   useEffect(() => {
-    (async () => {
-      const allCrags = await crags.getCrags("");
+    const getCrags = async () => {
+      const newCrags = await crags.getCrags("");
+      setCrags(newCrags);
+    };
 
-      const tiles = leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      });
-      const map = leaflet.map('map', { layers: [tiles] }).fitWorld();
-      const markers = leaflet.markerClusterGroup();
+    getCrags();
+  }, []);
 
-      allCrags.forEach(crag => {
-        const marker = leaflet
+  const createMapMarkers = () => {
+    const markers = [
+     ...(allCrags ? allCrags?.map(crag => {
+        return leaflet
           .marker([parseFloat(crag.latitude), parseFloat(crag.longitude)])
           .bindPopup(`<a href="/crags/${crag.slug}"><h2>${crag.title}</h2></a>`);
+      }) : [])
+    ];
 
-        markers.addLayer(marker);
-      });
-
-      map.addLayer(markers);
-    })();
-  });
+    return markers;
+  }
 
   return (
-    <div
-      id="map"
-      style={{
-        width: "100%",
-        height: "calc(100vh - 52px)"
-      }}
-    ></div>
+    <LeafletMap markers={ createMapMarkers() } height="calc(100vh - 56px)"></LeafletMap>
   );
 }
 
