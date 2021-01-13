@@ -37,6 +37,7 @@
     "@babel/preset-typescript": "^7.12.1",
     "@types/node-fetch": "^2.5.7",
     "babel-loader": "^8.2.1",
+    "dynamodb-admin": "^4.0.0",
     "serverless-dotenv-plugin": "^3.1.0",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-offline": "^6.8.0",

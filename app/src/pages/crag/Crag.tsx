@@ -1,20 +1,20 @@
-import {useAuth0} from "@auth0/auth0-react";
-import React, {useEffect, useState} from "react";
-import {Link, useParams} from "react-router-dom";
-import {CragView, Route} from "../../../../core/types";
-import {getCragBySlug} from "../../api/crags";
-import {useLogRoutes} from "../../api/logs";
+import { useAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Crag, Route } from "../../../../core/types";
+import { getCragBySlug } from "../../api/crags";
+import { useLogRoutes } from "../../api/logs";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import LeafletMap from "../../components/LeafletMap";
-import {popupError} from "../../helpers/alerts";
-import {usePageTitle} from "../../helpers/pageTitle";
+import { popupError } from "../../helpers/alerts";
+import { usePageTitle } from "../../helpers/pageTitle";
 
 import leaflet from "leaflet";
 
-function Crag() {
+function CragView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
     selectedRoutes,
@@ -25,7 +25,7 @@ function Crag() {
   } = useLogRoutes();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
-  const [crag, setCrag] = useState<CragView>();
+  const [crag, setCrag] = useState<Crag>();
   const [activeTab, setActiveTab] = useState('routes');
   const [showLogModal, setShowLogModal] = useState(false);
 
@@ -94,7 +94,7 @@ function Crag() {
             className: "icon"
           })
         })
-        .bindPopup(`<a href="${''}">${area.title}</a>`)
+        .bindPopup(`<a href="/crags/${area.cragSlug}/areas/${area.slug}">${area.title}</a>`)
       ) : [])
     ]
 
@@ -280,4 +280,4 @@ function Crag() {
   );
 };
 
-export default Crag;
+export default CragView;

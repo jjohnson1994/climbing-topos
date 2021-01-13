@@ -2,10 +2,10 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { Crag } from '../../core/types';
+import { Crag, CragRequest } from '../../core/types';
 import { createSlug } from "../helpers/slug";
 
-export const createCrag = async (cragDetails: Crag, ownerUserSub: string) => {
+export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string) => {
   const {
     place_id,
     address: {
@@ -18,29 +18,34 @@ export const createCrag = async (cragDetails: Crag, ownerUserSub: string) => {
   } = cragDetails.osmData;
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
+
+  const cragData: CragRequest = {
+    access: cragDetails.access,
+    accessDetails: cragDetails.accessDetails,
+    accessLink: cragDetails.accessLink,
+    approachNotes: cragDetails.approachNotes,
+    carParks: cragDetails.carParks,
+    description: cragDetails.description,
+    latitude: cragDetails.latitude,
+    longitude: cragDetails.longitude,
+    osmData: cragDetails.osmData,
+    tags: cragDetails.tags,
+    title: cragDetails.title,
+  };
+
   const params = {
     TableName: String(process.env.DB),
     Item: {
       hk: slug,
       sk: `crag#${country_code}#${state}#${county}#${city}#`.toUpperCase(),
-      access: cragDetails.access,
-      accessDetails: cragDetails.accessDetails,
-      accessLink: cragDetails.accessLink,
-      approachNotes: cragDetails.approachNotes,
-      carParks: cragDetails.carParks,
-      city,
-      country,
-      countryCode: country_code,
-      county,
-      description: cragDetails.description,
-      latitude: cragDetails.latitude,
-      longitude: cragDetails.longitude,
-      model: 'crag',
-      osmPlaceId: place_id,
+      ...cragData,
+      city: cragDetails.osmData.address.city,
+      country: cragDetails.osmData.address.country,
+      countryCode: cragDetails.osmData.address.country_code,
+      county: cragDetails.osmData.address.county,
+      state: cragDetails.osmData.address.state,
       slug,
-      state,
-      tags: cragDetails.tags,
-      title: cragDetails.title,
+      model: 'crag',
       owner: ownerUserSub,
       createdBy: ownerUserSub,
       createdAt: date,

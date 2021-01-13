@@ -1,14 +1,14 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {yupResolver} from '@hookform/resolvers/yup';
-import {NewAreaSchema} from "core/schemas";
-import React, {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useHistory, useParams} from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewAreaSchema } from "core/schemas";
+import { Crag } from "core/types";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
 import * as yup from "yup";
-import {Area} from "../../../../core/types";
-import {areas, globals} from "../../api";
-import {popupError, popupSuccess} from "../../helpers/alerts";
-import {getCurrentPosition} from '../../helpers/geolocation';
+import { areas, crags, globals } from "../../api";
+import { popupError, popupSuccess } from "../../helpers/alerts";
+import { getCurrentPosition } from '../../helpers/geolocation';
 
 const schema = NewAreaSchema(yup);
 
@@ -19,29 +19,42 @@ function CreateArea() {
   const [tags, setTags] = useState<string[]>([]);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [crag, setCrag] = useState<Crag>();
 
-  const { register, setValue, handleSubmit, errors, watch } = useForm<Area>({
+  const { register, setValue, handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      title: "",
-      description: "",
-      tags: [] as string[],
-      latitude: "",
-      longitude: "",
       access: "unknown",
       accessDetails: "",
       approachNotes: "",
+      description: "",
+      latitude: "",
+      longitude: "",
+      rockType: "unknown",
+      tags: [] as string[],
+      title: "",
     }
   });
 
   const watchTags = watch("tags", []);
 
   useEffect(() => {
-    doGetTags();
-  }, []);
+    const getCrag = async () => {
+      try {
+        const token = await getAccessTokenSilently();
+        const newCrag = await crags.getCragBySlug(cragSlug, token);
+        setCrag(newCrag);
+      } catch(error) {
+        console.error("Error getting area crag", error);
+      }
+    }
 
-  const doGetTags = async () => {
+    getCrag();
+    getTags();
+  }, [cragSlug]);
+
+  const getTags = async () => {
     const tags = await globals.getAreaTags();
     setTags(tags);
   }
@@ -64,11 +77,20 @@ function CreateArea() {
     setLoading(true);
 
     try {
+      if (!crag) {
+        throw new Error("Cannot create new route, crag not found");
+      }
+
       const token = await getAccessTokenSilently();
       const { slug: areaSlug } = await areas.createArea(
         {
           ...formData,
-          cragSlug
+          country: crag.osmData.address.country,
+          countryCode: crag.osmData.address.country_code,
+          county: crag.osmData.address.county,
+          cragSlug,
+          cragTitle: crag.title,
+          state: crag.osmData.address.state,
         },
         token
       );

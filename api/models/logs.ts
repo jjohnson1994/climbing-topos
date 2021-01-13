@@ -9,26 +9,39 @@ export async function createRouteLog(logRequest: LogRequest, user) {
   const cragLogSlug = nanoid();
   const userLogSlug = nanoid();
 
+  const logData: LogRequest = {
+    areaSlug: logRequest.areaSlug,
+    areaTitle: logRequest.areaTitle,
+    attempts: logRequest.attempts,
+    comment: logRequest.comment,
+    country: logRequest.country,
+    countryCode: logRequest.countryCode,
+    county: logRequest.county,
+    cragSlug: logRequest.cragSlug,
+    cragTitle: logRequest.cragTitle,
+    dateSent: logRequest.dateSent,
+    grade: logRequest.grade,
+    gradeTaken: logRequest.gradeTaken,
+    gradingSystem: logRequest.gradingSystem,
+    region: logRequest.region,
+    rockType: logRequest.rockType,
+    routeSlug: logRequest.routeSlug,
+    routeTitle: logRequest.routeTitle,
+    routeType: logRequest.routeType,
+    stars: logRequest.stars,
+    state: logRequest.state,
+    tags: logRequest.tags,
+    topoSlug: logRequest.topoSlug,
+  };
+
   const cragLogParams = {
     TableName: String(process.env.DB),
     Item: {
       hk: logRequest.cragSlug,
       sk: `log#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${cragLogSlug}`,
+      ...logData,
       model: "log",
-      areaSlug: logRequest.areaSlug,
-      attempts: logRequest.attempts,
-      comment: logRequest.comment,
-      cragSlug: logRequest.cragSlug,
-      dateSent: logRequest.dateSent,
-      grade: logRequest.grade,
-      gradeTaken: logRequest.gradeTaken,
-      gradingSystem: logRequest.gradingSystem,
-      routeSlug: logRequest.routeSlug,
-      routeType: logRequest.routeType,
-      slug: cragLogSlug,
-      stars: logRequest.stars,
-      tags: logRequest.tags,
-      title: logRequest.routeTitle,
+      slug: userLogSlug,
       createdAt: date,
       updatedAt: date
     }
@@ -39,21 +52,9 @@ export async function createRouteLog(logRequest: LogRequest, user) {
     Item: {
       hk: `user#${user.sub}`,
       sk: `log#crag#${logRequest.cragSlug}#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${userLogSlug}`,
+      ...logData,
       model: "log",
-      areaSlug: logRequest.areaSlug,
-      attempts: logRequest.attempts,
-      comment: logRequest.comment,
-      cragSlug: logRequest.cragSlug,
-      dateSent: logRequest.dateSent,
-      grade: logRequest.grade,
-      gradeTaken: logRequest.gradeTaken,
-      gradingSystem: logRequest.gradingSystem,
-      routeSlug: logRequest.routeSlug,
-      routeType: logRequest.routeType,
       slug: userLogSlug,
-      stars: logRequest.stars,
-      tags: logRequest.tags,
-      title: logRequest.routeTitle,
       createdAt: date,
       updatedAt: date
     }

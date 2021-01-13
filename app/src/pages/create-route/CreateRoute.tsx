@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from 'react-router-dom';
 import * as yup from "yup";
-import {AreaView, GradingSystem, RouteDrawing} from "../../../../core/types";
+import {Area, GradingSystem, RouteDrawing} from "../../../../core/types";
 import {areas, globals, routes, topos} from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import {popupError, popupSuccess} from "../../helpers/alerts";
@@ -20,7 +20,7 @@ function CreateRoute() {
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [area, setArea] = useState<AreaView | undefined>();
+  const [area, setArea] = useState<Area | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
 
   const { register, getValues, setValue, handleSubmit, errors, watch } = useForm({
@@ -30,11 +30,10 @@ function CreateRoute() {
       areaSlug,
       cragSlug,
       description: "",
-      drawing: {
-        path: []
-      },
+      drawing: { path: [] },
       grade: "",
       gradingSystem: "",
+      rating: -1,
       routeType: "",
       tags: [] as string[],
       title: "",
@@ -98,9 +97,26 @@ function CreateRoute() {
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
+
+      if (!area) {
+        throw new Error("Error creating route, area not found");
+      }
+
       const token = await getAccessTokenSilently();
       const { routeSlug } = await routes.createRoute(
-        formData,
+        {
+          ...formData,
+          areaTitle: area.title,
+          country: area.country,
+          countryCode: area.countryCode,
+          county: area.county,
+          cragTitle: area.cragTitle,
+          latitude: area.latitude,
+          longitude: area.longitude,
+          rating: -1,
+          rockType: area.rockType,
+          state: area.state,
+        },
         token
       );
       await popupSuccess("Route Created!");
@@ -115,6 +131,7 @@ function CreateRoute() {
 
   return (
     <>
+      <p>{ JSON.stringify(errors) }</p>
       <section className="section">
         <div className="container">
           <TopoCanvas

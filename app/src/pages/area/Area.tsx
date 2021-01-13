@@ -1,21 +1,19 @@
-import {useAuth0} from "@auth0/auth0-react";
-import React, {useEffect, useState} from 'react';
-import {Link, useParams} from 'react-router-dom';
-import { AreaView, Route } from "core/types";
-import {areas} from "../../api";
-import {useLogRoutes} from '../../api/logs';
+import { useAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Area, Route } from "core/types";
+import { areas } from "../../api";
+import { useLogRoutes } from '../../api/logs';
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
-// import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates.svelte';
-// import CragClimbsTable from "@/components/crag/CragClimbsTable.svelte";
 import TopoImage from "../../components/TopoImage";
-import {popupError, toastSuccess} from '../../helpers/alerts';
-import {clipboardWriteText} from '../../helpers/clipboard';
-import {usePageTitle} from "../../helpers/pageTitle";
+import { popupError, toastSuccess } from '../../helpers/alerts';
+import { clipboardWriteText } from '../../helpers/clipboard';
+import { usePageTitle } from "../../helpers/pageTitle";
 
-function Area() {
+function AreaView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
     selectedRoutes,
@@ -25,7 +23,7 @@ function Area() {
     onRouteDeselected
   } = useLogRoutes();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
-  const [area, setArea] = useState<AreaView>();
+  const [area, setArea] = useState<Area>();
   const [showLogModal, setShowLogModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -201,4 +199,4 @@ function Area() {
   );
 }
 
-export default Area;
+export default AreaView;

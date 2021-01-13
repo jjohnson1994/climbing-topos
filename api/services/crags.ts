@@ -1,4 +1,3 @@
-import {CragView} from '../../core/types';
 import { areas, crags, logs, routes } from '../models';
 import { Crag } from '../../core/types';
 
@@ -7,12 +6,12 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
   return newCrag;
 }
 
-export async function getAllCrags(user: string): Promise<CragView[]> {
+export async function getAllCrags(user: string): Promise<Crag[]> {
   const allCrags = await crags
     .getAllCrags()
     .then(async crags => {
       const cragViews = await Promise.all(
-        crags.map(crag => new Promise<CragView>(async (resolve) => {
+        crags.map(crag => new Promise<Crag>(async (resolve) => {
           const [cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
             areas.getAreasByCragSlug(crag.slug),
             routes.getRoutesByCragSlug(crag.slug),
@@ -38,7 +37,7 @@ export async function getAllCrags(user: string): Promise<CragView[]> {
   return allCrags;
 }
 
-export async function getCragBySlug(slug: string, userSub: string): Promise<CragView> {
+export async function getCragBySlug(slug: string, userSub: string): Promise<Crag> {
   const [crag, cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
     areas.getAreasByCragSlug(slug),

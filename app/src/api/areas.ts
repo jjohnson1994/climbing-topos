@@ -1,6 +1,6 @@
-import { Area, AreaView } from "../../../core/types";
+import { AreaRequest, Area } from "../../../core/types";
 
-export async function createArea(areaDescription: Area, token: string): Promise<{ slug: string }> {
+export async function createArea(areaDescription: AreaRequest, token: string): Promise<{ slug: string }> {
   const res = await fetch('http://localhost:3001/dev/areas',
     {
       method: 'POST',
@@ -19,7 +19,7 @@ export async function createArea(areaDescription: Area, token: string): Promise<
   return json;
 }
 
-export async function getArea(areaSlug: string, token: string): Promise<AreaView> {
+export async function getArea(areaSlug: string, token: string): Promise<Area> {
   const res = await fetch(`http://localhost:3001/dev/areas/${areaSlug}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })

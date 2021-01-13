@@ -1,14 +1,14 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {yupResolver} from '@hookform/resolvers/yup';
-import {NewCragSchema} from "core/schemas";
-import React, {useEffect, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useHistory} from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewCragSchema } from "core/schemas";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 import * as yup from "yup";
-import {crags, globals} from "../../api";
-import {popupError, popupSuccess} from "../../helpers/alerts";
-import {getCurrentPosition} from '../../helpers/geolocation';
-import {reverseLookup} from '../../helpers/nominatim';
+import { crags, globals } from "../../api";
+import { popupError, popupSuccess } from "../../helpers/alerts";
+import { getCurrentPosition } from '../../helpers/geolocation';
+import { reverseLookup } from '../../helpers/nominatim';
 
 const schema = NewCragSchema(yup);
 
@@ -31,21 +31,21 @@ function CreateCrag() {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      title: "",
-      description: "",
-      tags: [] as string[],
-      latitude: "",
-      longitude: "",
+      access: "unknown",
+      accessDetails: "",
+      accessLink: "",
+      approachNotes: "",
       carParks: [{
         title: "",
         latitude: "",
         longitude: "",
         description: ""
       }] as CarPark[],
-      access: "unknown",
-      accessLink: "",
-      accessDetails: "",
-      approachNotes: ""
+      description: "",
+      latitude: "",
+      longitude: "",
+      tags: [] as string[],
+      title: "",
     }
   });
 
@@ -118,6 +118,7 @@ function CreateCrag() {
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
+      setLoading(true);
       const token = await getAccessTokenSilently();
       const osmData = await getCragNominatim(formData.latitude, formData.longitude);
       const { slug } = await crags.createCrag({ ...formData, osmData }, token);
@@ -131,6 +132,8 @@ function CreateCrag() {
       } else {
         popupError("Ahh, something has gone wrong...");
       }
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -411,7 +414,7 @@ function CreateCrag() {
             <div className="field is-flex is-justified-end">
               <div className="control">
                 <button type="submit" className={`button is-primary ${loading ? "is-loading" : ""}`}>
-                  <span>Continue</span>
+                  <span>Create Crag</span>
                 </button>
               </div>
             </div>

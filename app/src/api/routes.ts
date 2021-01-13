@@ -1,6 +1,6 @@
-import { Route, RouteView } from "../../../core/types";
+import { RouteRequest, Route } from "../../../core/types";
 
-export async function createRoute(routeDescription: Route, token: string): Promise<{ routeSlug: string }> {
+export async function createRoute(routeDescription: RouteRequest, token: string): Promise<{ routeSlug: string }> {
   const res = await fetch('http://localhost:3001/dev/routes',
     {
       method: 'POST',
@@ -20,7 +20,7 @@ export async function createRoute(routeDescription: Route, token: string): Promi
   return { routeSlug: json.routeSlug };
 }
 
-export async function getRoute(token: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteView> {
+export async function getRoute(token: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<Route> {
   const res = await fetch(
     `http://localhost:3001/dev/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
     {

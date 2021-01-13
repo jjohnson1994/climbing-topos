@@ -7,17 +7,23 @@ import { Topo } from "../../core/types";
 export async function createTopo(topoDetails: Topo, userSub: string) {
   const date = DateTime.utc().toString();
   const slug = nanoid();
+
+  const topoData: Topo = {
+    areaSlug: topoDetails.areaSlug,
+    cragSlug: topoDetails.cragSlug,
+    orientation: topoDetails.orientation,
+    image: topoDetails.image,
+    imageFileName: topoDetails.imageFileName,
+  }
+
   const params = {
     TableName: String(process.env.DB),
     Item: {
       hk: topoDetails.cragSlug,
       sk: `topo#${topoDetails.areaSlug}#${slug}`,
+      ...topoData,
       model: "topo",
-      areaSlug: topoDetails.areaSlug,
-      cragSlug: topoDetails.cragSlug,
-      image: topoDetails.image,
       slug,
-      orientation: topoDetails.orientation,
       createdBy: userSub,
       createdAt: date,
       updatedAt: date

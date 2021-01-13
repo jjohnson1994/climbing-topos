@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 import CragQuickActions from "../../components/CragQuickActions";
 import { getCrags } from "../../api/crags";
-import { CragView } from '../../../../core/types';
+import { Crag } from '../../../../core/types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 function Crags() {
-  const [crags, setCrags] = useState<CragView[]>([]);
+  const [crags, setCrags] = useState<Crag[]>([]);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 

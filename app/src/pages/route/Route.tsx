@@ -1,7 +1,7 @@
 import {useAuth0} from "@auth0/auth0-react";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {Route, RouteView} from "../../../../core/types";
+import {Route} from "../../../../core/types";
 import {routes} from "../../api";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import TopoImage from "../../components/TopoImage";
@@ -12,7 +12,7 @@ import {usePageTitle} from "../../helpers/pageTitle";
 function RoutePage() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
-  const [route, setRoute] = useState<RouteView>();
+  const [route, setRoute] = useState<Route>();
   const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
   const [showLogModal, setShowLogModal] = useState(false);
   usePageTitle(route?.title);

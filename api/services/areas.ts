@@ -1,11 +1,11 @@
 import { areas, logs, routes, topos } from "../models";
-import { Area, AreaView } from "../../core/types";
+import { AreaRequest, Area } from "../../core/types";
 
-export function createArea(areaDetails: Area, userSub: string) {
+export function createArea(areaDetails: AreaRequest, userSub: string) {
   return areas.createArea(areaDetails, userSub);
 }
 
-export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<AreaView> {
+export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<Area> {
   const area = await areas.getAreaBySlug(areaSlug);
   const [areaTopos, areaRoutes, userLogs] = await Promise.all([
     topos.getToposByCragArea(area.hk, areaSlug),

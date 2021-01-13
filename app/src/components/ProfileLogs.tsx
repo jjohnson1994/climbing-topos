@@ -39,7 +39,7 @@ function ProfileLogs() {
       <tbody>
         { loggedRoutes.map(log => (
           <tr>
-            <td>{ log.title }</td>
+            <td>{ log.routeTitle }</td>
             <td>{ log.gradeTaken }</td>
             <td>{ log.stars }</td>
             <td>{ log.dateSent }</td>

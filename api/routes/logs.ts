@@ -5,7 +5,7 @@ import { logs } from "../controllers";
 import { requireAuth } from "../middleware/auth";
 import { validateBody } from "../middleware/validate";
 import { NewLogsSchema } from "../../core/schemas";
-import { LogRequest, Route } from "../../core/types";
+import { LogRequest, RouteRequest } from "../../core/types";
 import { routes } from "../models";
 
 const route = express.Router();
@@ -13,7 +13,7 @@ const newLogsSchema = NewLogsSchema(yup);
 
 async function ensureRoutesExists(req, res, next) {
   const logRequests = req.body.logs as LogRequest[];
-  const loggingRoutes: Route[] = await Promise.all(logRequests.map(
+  const loggingRoutes: RouteRequest[] = await Promise.all(logRequests.map(
     log => routes.getRouteBySlug(
       log.cragSlug,
       log.areaSlug,

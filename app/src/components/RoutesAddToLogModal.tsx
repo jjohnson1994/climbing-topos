@@ -125,9 +125,37 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
               />
               <input
                 type="text"
-                name={ `logs.[${index}].topoSlug` }
+                name={ `logs.[${index}].areaTitle` }
                 ref={ register({}) }
-                defaultValue={ route.topoSlug }
+                defaultValue={ route.areaTitle }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].country` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].countryCode` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].county` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].cragTitle` }
+                ref={ register({}) }
+                defaultValue={ route.cragTitle }
                 className="is-hidden"
               />
               <input
@@ -142,6 +170,13 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                 name={ `logs.[${index}].gradingSystem` }
                 ref={ register({}) }
                 defaultValue={ route.gradingSystem }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].rockType` }
+                ref={ register({}) }
+                defaultValue={ route.rockType }
                 className="is-hidden"
               />
               <input
@@ -163,6 +198,20 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
                 name={ `logs.[${index}].routeType` }
                 ref={ register({}) }
                 defaultValue={ route.routeType }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].state` }
+                ref={ register({}) }
+                defaultValue={ route.state }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].topoSlug` }
+                ref={ register({}) }
+                defaultValue={ route.topoSlug }
                 className="is-hidden"
               />
               <div className="field is-grouped">

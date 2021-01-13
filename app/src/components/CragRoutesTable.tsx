@@ -2,7 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Route } from "../../../core/types";
 
-function CragRoutesTable({ routes }: { routes: Route[] | undefined }) {
+interface Props {
+  routes?: Route[]
+}
+
+function CragRoutesTable({ routes }: Props) {
   return (
     <table className="table is-full-width">
       <thead>

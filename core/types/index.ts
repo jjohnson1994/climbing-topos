@@ -25,19 +25,13 @@ export interface OsmData {
 }
 
 export interface CarPark {
-  title: string;
   description: string;
   latitude: string;
   longitude: string;
+  title: string;
 }
 
-export interface Crag {
-  slug: string; 
-  title: string; 
-  climbCount: number; 
-  areaCount: number; 
-  tickCount: number; 
-  likeCount: number;
+export interface CragRequest {
   access: string;
   accessDetails: string;
   accessLink: string;
@@ -48,13 +42,20 @@ export interface Crag {
   longitude: string;
   osmData: OsmData;
   tags: string[];
+  title: string; 
 }
 
-export interface CragView extends Crag {
-  routes: Route[];
+export interface Crag extends CragRequest {
+  areaCount: number; 
   areas: Area[];
+  climbCount: number; 
+  likeCount: number;
   logsCount: number;
+  routes: Route[];
+  slug: string; 
+  tickCount: number; 
   userLogs: Log[];
+  owner: string;
 }
 
 export interface Climb {
@@ -63,23 +64,29 @@ export interface Climb {
   topoSlug: string;
 }
 
-export interface Area {
+export interface AreaRequest {
   access: string;
   accessDetails: string;
   approachNotes: string;
+  country: string;
+  countryCode: string;
+  county: string;
   cragSlug: string;
+  cragTitle: string;
   description: string;
   latitude: string;
   longitude: string;
-  slug?: string;
+  rockType: string;
+  state: string;
   tags: string[],
   title: string;
 }
 
-export interface AreaView extends Area {
+export interface Area extends AreaRequest {
   topos: Topo[];
   routes: Route[];
   userLogs: Log[];
+  slug: string;
 }
 
 export interface Topo {
@@ -91,25 +98,34 @@ export interface Topo {
   slug?: string;
 }
 
-export interface Route {
+export interface RouteRequest {
   areaSlug: string;
+  areaTitle: string;
+  country: string;
+  countryCode: string;
+  county: string;
   cragSlug: string;
+  cragTitle: string;
   description: string;
   drawing: RouteDrawing;
   grade: string;
   gradingSystem: string;
-  rating?: number;
+  latitude: string;
+  longitude: string;
+  rating: number;
+  rockType: string;
   routeType: string;
-  slug?: string;
+  state: string;
   tags: string[],
   title: string;
   topoSlug: string;
 }
 
-export interface RouteView extends Route {
+export interface Route extends RouteRequest {
   area: Area;
-  topo: Topo;
   siblingRoutes: Route[];
+  slug: string;
+  topo: Topo;
   userLogs: Log[];
 }
 
@@ -127,7 +143,6 @@ export interface RouteDrawing {
   }
 }
 
-
 export interface GradingSystem {
   title: string;
   grades: string[];
@@ -135,17 +150,25 @@ export interface GradingSystem {
 
 export interface LogRequest {
   areaSlug: string;
+  areaTitle: string;
   attempts: number;
   comment: string;
+  country: string;
+  countryCode: string;
+  county: string;
   cragSlug: string;
+  cragTitle: string;
   dateSent: string;
   grade: string;
   gradeTaken: string;
   gradingSystem: string;
+  region: string;
+  rockType: string;
   routeSlug: string;
   routeTitle: string;
   routeType: string;
   stars: number;
+  state: string;
   tags: string[];
   topoSlug: string;
 }

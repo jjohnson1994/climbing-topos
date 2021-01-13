@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Route} from "../../../core/types";
+import React, { useEffect, useRef, useState } from "react";
+import { Route } from "../../../core/types";
 import { domToSvgPoint, ReducePath, SmoothPath } from "../helpers/svg";
 import { RouteDrawing } from "../../../core/types";
 

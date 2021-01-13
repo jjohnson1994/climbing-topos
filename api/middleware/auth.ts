@@ -53,7 +53,6 @@ export const requireAuth = (req, res, next) => {
 
       const userInfo = await userInfoResponse.json();
 
-      console.log(userInfo);
       req.user = userInfo;
 
       next();
