@@ -36,16 +36,19 @@ function LeafletMap({ markers, height = "600px", center, zoom }: Props) {
       }
 
       const tiles = leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxNativeZoom: 19,
+        maxZoom: 20,
       });
 
-      const timestamp = await getTimeStamp();
-      const precipitationNow = leaflet.tileLayer(
-        `https://tilecache.rainviewer.com/v2/radar/${timestamp}/256/{z}/{x}/{y}/2/1_1.png`
-      );
+      // const timestamp = await getTimeStamp();
+      // const precipitationNow = leaflet.tileLayer(`https://tilecache.rainviewer.com/v2/radar/${timestamp}/256/{z}/{x}/{y}/2/1_1.png`, {
+      //   maxNativeZoom: 19,
+      //   maxZoom: 20,
+      // });
 
       map = leaflet.map('map', {
-        layers: [tiles, precipitationNow],
+        layers: [tiles],
         ...(center && { center }),
         ...(zoom && { zoom })
       });

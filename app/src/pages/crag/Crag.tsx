@@ -81,10 +81,21 @@ function Crag() {
           icon: leaflet.divIcon({
             html: '<i class="fas fa-parking fa-2x"></i>',
             iconSize: [20, 20],
+            className: "icon"
           })
         })
         .bindPopup(`<span>${carPark.title}</span><br/><span>${carPark.latitude}, ${crag.longitude}</span>`);
-      }) : [])
+      }) : []),
+      ...(crag?.areas ? crag.areas.map(area => leaflet
+        .marker([parseFloat(area.latitude), parseFloat(area.longitude)], {
+          icon: leaflet.divIcon({
+            html: '<i class="fas fa-mountain fa-2x"></i>',
+            iconSize: [20, 20],
+            className: "icon"
+          })
+        })
+        .bindPopup(`<a href="${''}">${area.title}</a>`)
+      ) : [])
     ]
 
     return markers;
