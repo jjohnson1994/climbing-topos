@@ -97,22 +97,35 @@ function AreaView() {
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
           <h5 className="subtitle">{ area?.description }</h5>
-          <div className="is-flex is-justify-content-flex-end">
-            <ButtonCopyCoordinates
-              latitude={ `${area?.latitude}` }
-              longitude={ `${area?.longitude}` }
-            />
-            <span className="mr-2"></span>
-            <div className="buttons has-addons is-right">
-              <Link
-                to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
-                className="button is-rounded"
-              >
-                <span className="icon is-small">
-                  <i className="fas fa-plus"></i>
-                </span>
-                <span>Add Topo</span>
-              </Link>
+          <div className="columns">
+            <div className="column">
+              <div role="group" className="tags">
+                {area?.tags.map(tag => (
+                  <label key={ tag } className="tag is-primary">
+                    { tag }
+                  </label>
+                ))} 
+              </div>
+            </div>
+            <div className="column is-flex is-justified-end">
+              <div className="is-flex is-justify-content-flex-end">
+                <ButtonCopyCoordinates
+                  latitude={ `${area?.latitude}` }
+                  longitude={ `${area?.longitude}` }
+                />
+                <span className="mr-2"></span>
+                <div className="buttons has-addons is-right">
+                  <Link
+                    to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
+                    className="button is-rounded"
+                  >
+                    <span className="icon is-small">
+                      <i className="fas fa-plus"></i>
+                    </span>
+                    <span>Add Topo</span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -138,6 +151,12 @@ function AreaView() {
                       />
                     </div>
                     <div className="column">
+                      <span className="icon-text">
+                        <span className="icon">
+                          <i className="fas fa-compass"></i>
+                        </span>
+                        <span className="is-capitalized">{ topo.orientation }</span>
+                      </span>
                       { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
                         <AreaRoutesTable
                           routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }

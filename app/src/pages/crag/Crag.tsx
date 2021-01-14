@@ -118,14 +118,30 @@ function CragView() {
       ) : (
         <>
           <section className="section">
+            { crag && crag.access === "banned" && (
+              <div className="notification is-danger">
+                Climbing at this crag is <b>banned</b>, probably best to find somewhere else
+              </div>
+            )}
             <div className="container">
               <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
               <h5 className="subtitle">{ crag?.description }</h5>
-              <div className="is-flex is-justify-content-flex-end">
-                <ButtonCopyCoordinates
-                  latitude={ `${crag?.latitude}` }
-                  longitude={ `${crag?.longitude}` }
-                />
+              <div className="columns">
+                <div className="column">
+                  <div role="group" className="tags">
+                    {crag?.tags.map(tag => (
+                      <label key={ tag } className="tag is-primary">
+                        { tag }
+                      </label>
+                    ))} 
+                  </div>
+                </div>
+                <div className="column is-flex is-justified-end">
+                    <ButtonCopyCoordinates
+                      latitude={ `${crag?.latitude}` }
+                      longitude={ `${crag?.longitude}` }
+                    />
+                </div>
               </div>
             </div>
           </section>
@@ -203,8 +219,8 @@ function CragView() {
             )}
 
             { activeTab === "approach" && (
-              <div id="approach" className="container box">
-                <div className="block">
+              <div id="approach" className="container">
+                <div className="box">
                   <h3 className="title">Approach</h3>
                   {(crag?.approachNotes &&
                     <p>{ crag?.approachNotes }</p>)
@@ -212,8 +228,7 @@ function CragView() {
                     <p>No approach details have been given. Hopefully that means it's an easy walk in 🤷‍♂️</p>
                   }
                 </div>
-                <hr />
-                <div className="block">
+                <div className="box">
                   <h3 className="title">Parking</h3>
                   {crag?.carParks?.map((carPark, index) => (
                     <React.Fragment key={ index }>
@@ -230,6 +245,12 @@ function CragView() {
                       </p>
                     </React.Fragment>
                   ))}
+                </div>
+                <div className="box">
+                  <h3 className="title">Access</h3>
+                  <span className="tag is-primary is-capitalized">{ crag?.access }</span>
+                  <p>{ crag?.accessDetails }</p>
+                  <p>{ crag?.accessLink }</p>
                 </div>
               </div>
             )}

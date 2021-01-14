@@ -6,7 +6,7 @@ export async function createArea(areaDetails: AreaRequest, userSub: string) {
   const newArea = await areas.createArea(areaDetails, userSub);
 
   algolaIndex
-    .saveObject({ objectID: newArea.slug, ...newArea, model: "area" })
+    .saveObject({ objectID: newArea.slug, ...areaDetails, model: "area" })
     .catch(error => {
       console.error("Error saving new area to algolia", error);
     });

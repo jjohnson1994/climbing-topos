@@ -65,7 +65,6 @@ function RoutePage() {
             { route?.routeType }
           </h5>
           <p>{ route?.description }</p>
-          <br />
           <div className="columns">
             <div className="column">
               <div role="group" className="tags">

@@ -125,7 +125,6 @@ function CreateRoute() {
 
   return (
     <>
-      <p>{ JSON.stringify(errors) }</p>
       <section className="section">
         <div className="container">
           <TopoCanvas
