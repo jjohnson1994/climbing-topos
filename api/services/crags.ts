@@ -6,7 +6,12 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
   const newCrag = await crags.createCrag(cragDetails, userSub);
 
   algolaIndex
-    .saveObject({ objectID: newCrag.slug, ...cragDetails, model: "crag" })
+    .saveObject({
+      ...cragDetails,
+      model: "crag" ,
+      objectID: newCrag.slug,
+      slug: newCrag.slug
+    })
     .catch(error => {
       console.error("Error saving new crag to algolia", error);
     });

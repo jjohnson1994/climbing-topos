@@ -1,15 +1,16 @@
-import React from "react";
 import {popupError, toastSuccess} from "../helpers/alerts";
 import {clipboardWriteText} from "../helpers/clipboard";
 
 interface Props {
   latitude: string;
   longitude: string;
+  className?: string;
 }
 
-function ButtonCopyCoordinates({ latitude, longitude }: Props) {
+function ButtonCopyCoordinates({ latitude, longitude, className = "" }: Props) {
 
   const copyCoordinatedToClipboard = async () => {
+    console.log("copy");
     try {
       await clipboardWriteText(`${latitude}, ${longitude}`);
       toastSuccess("Coordinates Copied");
@@ -20,7 +21,7 @@ function ButtonCopyCoordinates({ latitude, longitude }: Props) {
   }
 
   return (
-    <button className="button is-rounded" onClick={ copyCoordinatedToClipboard }>
+    <button className={ `button is-rounded ${className}` } onClick={ copyCoordinatedToClipboard }>
       <span>{ `${latitude}`.substring(0, 9) }, { `${longitude}`.substring(0, 9) }</span>
       <span className="icon is-small">
         <i className="far fa-copy"></i>

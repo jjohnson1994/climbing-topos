@@ -6,7 +6,12 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
   const newRoute = await routes.createRoute(routeDescription, userId);
 
   algolaIndex
-    .saveObject({ objectID: newRoute.slug, ...routeDescription, model: "route" })
+    .saveObject({
+      ...routeDescription,
+      model: "route",
+      objectID: newRoute.slug,
+      slug: newRoute.slug,
+    })
     .catch(error => {
       console.error("Error saving new route to algolia", error);
     });

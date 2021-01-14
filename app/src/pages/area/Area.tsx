@@ -96,10 +96,15 @@ function AreaView() {
       <section className={`section ${ loading ? "is-hidden" : "" }`}>
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
-          <h5 className="subtitle">{ area?.description }</h5>
+          <h5 className="subtitle is-5">{ area?.description }</h5>
+          <h5 className="subtitle is-5">{ area?.approachNotes }</h5>
+          <h5 className="subtitle is-5">{ area?.accessDetails }</h5>
           <div className="columns">
             <div className="column">
               <div role="group" className="tags">
+                <label className={ `tag is-capitalized ${ area?.access === "banned" ? "is-danger " : "is-primary" }` }>
+                  Access { area?.access }
+                </label>
                 {area?.tags.map(tag => (
                   <label key={ tag } className="tag is-primary">
                     { tag }
@@ -151,12 +156,14 @@ function AreaView() {
                       />
                     </div>
                     <div className="column">
-                      <span className="icon-text">
-                        <span className="icon">
-                          <i className="fas fa-compass"></i>
+                      <div className="is-flex is-justify-content-flex-end">
+                        <span className="icon-text">
+                          <span className="icon">
+                            <i className="fas fa-compass"></i>
+                          </span>
+                          <span className="is-capitalized">{ topo.orientation }</span>
                         </span>
-                        <span className="is-capitalized">{ topo.orientation }</span>
-                      </span>
+                      </div>
                       { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
                         <AreaRoutesTable
                           routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }

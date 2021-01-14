@@ -59,12 +59,12 @@ function RoutePage() {
       <section className="section">
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
-          <h5 className="subtitle">
+          <h5 className="subtitle is-5">
             { route?.grade }
             <span> </span>
             { route?.routeType }
           </h5>
-          <p>{ route?.description }</p>
+          <h5 className="subtitle is-5">{ route?.description }</h5>
           <div className="columns">
             <div className="column">
               <div role="group" className="tags">

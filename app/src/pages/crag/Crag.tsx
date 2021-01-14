@@ -1,18 +1,18 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import leaflet from "leaflet";
 import React, { useEffect, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Link, useParams } from "react-router-dom";
 import { Crag, Route } from "../../../../core/types";
 import { getCragBySlug } from "../../api/crags";
 import { useLogRoutes } from "../../api/logs";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
+import MapMarkerClusterGroup from "../../components/LeafletMapMarkerClusterGroup";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
-import LeafletMap from "../../components/LeafletMap";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
-
-import leaflet from "leaflet";
 
 function CragView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
@@ -72,33 +72,20 @@ function CragView() {
     }
   }
 
-  const createMapMarkers = () => {
-    const markers = [
-      leaflet.marker([parseFloat(`${crag?.latitude}`), parseFloat(`${crag?.longitude}`)]),
-      ...(crag?.carParks ? crag?.carParks.map(carPark => {
-        return leaflet
-        .marker([parseFloat(carPark.latitude), parseFloat(carPark.longitude)], {
-          icon: leaflet.divIcon({
-            html: '<i class="fas fa-parking fa-2x"></i>',
-            iconSize: [20, 20],
-            className: "icon"
-          })
-        })
-        .bindPopup(`<span>${carPark.title}</span><br/><span>${carPark.latitude}, ${crag.longitude}</span>`);
-      }) : []),
-      ...(crag?.areas ? crag.areas.map(area => leaflet
-        .marker([parseFloat(area.latitude), parseFloat(area.longitude)], {
-          icon: leaflet.divIcon({
-            html: '<i class="fas fa-mountain fa-2x"></i>',
-            iconSize: [20, 20],
-            className: "icon"
-          })
-        })
-        .bindPopup(`<a href="/crags/${area.cragSlug}/areas/${area.slug}">${area.title}</a>`)
-      ) : [])
-    ]
+  const areaIcon = () => {
+    return leaflet.divIcon({
+      html: '<i class="fas fa-mountain fa-2x"></i>',
+      iconSize: [20, 20],
+      className: "icon"
+    })
+  }
 
-    return markers;
+  const carParkIcon = () => {
+    return leaflet.divIcon({
+      html: '<i class="fas fa-parking fa-2x"></i>',
+      iconSize: [20, 20],
+      className: "icon"
+    })
   }
 
   return (
@@ -125,11 +112,14 @@ function CragView() {
             )}
             <div className="container">
               <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
-              <h5 className="subtitle">{ crag?.description }</h5>
+              <h5 className="subtitle is-5">{ crag?.description }</h5>
               <div className="columns">
                 <div className="column">
                   <div role="group" className="tags">
-                    {crag?.tags.map(tag => (
+                    <label className={ `tag is-capitalized ${ crag?.access === "banned" ? "is-danger " : "is-primary" }` }>
+                      Access { crag?.access }
+                    </label>
+                    { crag?.tags?.map(tag => (
                       <label key={ tag } className="tag is-primary">
                         { tag }
                       </label>
@@ -229,24 +219,6 @@ function CragView() {
                   }
                 </div>
                 <div className="box">
-                  <h3 className="title">Parking</h3>
-                  {crag?.carParks?.map((carPark, index) => (
-                    <React.Fragment key={ index }>
-                      <div className="is-flex">
-                        <h4 className="title is-4 is-capitalized">{ carPark.title }</h4>
-                        <span className="ml-2"></span>
-                        <ButtonCopyCoordinates
-                          latitude={ carPark.latitude }
-                          longitude={ carPark.longitude }
-                        />
-                      </div>
-                      <p className={ carPark.description ? 'm-4' : '' }>
-                        { carPark.description ? carPark.description : '' }
-                      </p>
-                    </React.Fragment>
-                  ))}
-                </div>
-                <div className="box">
                   <h3 className="title">Access</h3>
                   <span className="tag is-primary is-capitalized">{ crag?.access }</span>
                   <p>{ crag?.accessDetails }</p>
@@ -256,16 +228,75 @@ function CragView() {
             )}
 
             { activeTab === "map" && (
-              <div>
-                <LeafletMap
-                  markers={ createMapMarkers() }
-                  center={[
-                    parseFloat(`${crag?.latitude}`),
-                    parseFloat(`${crag?.longitude}`)
-                  ]}
-                  zoom={ 15 }
+              <MapContainer
+                className="markercluster-map"
+                center={[
+                  parseFloat(`${crag?.latitude}`),
+                  parseFloat(`${crag?.longitude}`)
+                ]}
+                zoom={ 16 }
+                scrollWheelZoom={false}
+                style={{ height: "600px" }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  maxZoom={ 20 }
+                  maxNativeZoom={ 19 }
                 />
-              </div>
+                <MapMarkerClusterGroup>
+                  <Marker
+                    position={[
+                      parseFloat(`${crag?.latitude}`),
+                      parseFloat(`${crag?.longitude}`)
+                    ]}
+                  />
+                  { crag?.carParks.map((carPark, index) => (
+                    <Marker
+                      key={ index }
+                      icon={ carParkIcon() }
+                      position={[
+                        parseFloat(`${carPark.latitude}`),
+                        parseFloat(`${carPark.longitude}`)
+                      ]}
+                    >
+                      <Popup>
+                        <h6 className="subtitle is-6">{ carPark.title }</h6>
+                        <p className="subtitle">{ carPark.description }</p>
+                        <ButtonCopyCoordinates
+                          className="is-small"
+                          latitude={ carPark.latitude }
+                          longitude={ carPark.longitude }
+                        />
+                      </Popup>
+                    </Marker>
+                  ))}
+                  { crag?.areas.map(area => (
+                    <Marker
+                      key={ area.slug }
+                      icon={ areaIcon() }
+                      position={[
+                        parseFloat(`${area?.latitude}`),
+                        parseFloat(`${area?.longitude}`)
+                      ]}>
+                      <Popup>
+                        <h5 className="subtitle is-5">{ area.title }</h5>
+                        <ButtonCopyCoordinates
+                          className="is-small is-fullwidth"
+                          latitude={ area.latitude }
+                          longitude={ area.longitude }
+                        />
+                        <Link
+                          className="button mt-1 is-small is-rounded is-fullwidth"
+                          to={ `/crags/${area.cragSlug}/areas/${area.slug}` }
+                        >
+                          Open
+                        </Link>
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapMarkerClusterGroup>
+              </MapContainer>
             )}
           </section>
         </>

@@ -1,23 +1,20 @@
 import { connectHits } from 'react-instantsearch-dom';
+import SearchResultCrag from "../components/SearchResultCrag";
+import SearchResultArea from "../components/SearchResultArea";
+import SearchResultRoute from "../components/SearchResultRoute";
 
 const Hits = ({ hits }: { hits: any }) => (
   <>
     {hits.map((hit: any) => (
       <>
         { hit.model === "crag" && (
-          <div key={ hit.objectID } className ="box">
-            { JSON.stringify(hit) }
-          </div>
+          <SearchResultCrag key={ hit.objectID } crag={ hit } />
         )}
         { hit.model === "area" && (
-          <div key={ hit.objectID } className="box">
-            { JSON.stringify(hit) }
-          </div>
+          <SearchResultArea key={ hit.objectID } area={ hit } />
         )}
         { hit.model === "route" && (
-          <div key={ hit.objectID } className="box">
-            { JSON.stringify(hit) }
-          </div>
+          <SearchResultRoute key={ hit.objectID } route={ hit } />
         )}
       </>
     ))}
