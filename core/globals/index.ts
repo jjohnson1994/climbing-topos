@@ -1,7 +1,3 @@
-export const CragTags = {
-  quickDrying: "Quick Drying"
-};
-
 export const gradingSystems = [
   {
     title: "Font",
@@ -106,5 +102,8 @@ export const routeTypes = ["Sport Climb", "Trad", "Boulder"];
 export const rockTypes = [
   "Gritstone",
   "Limestone",
+  "Plastic",
+  "Sandstone",
+  "Wood",
 ];
 

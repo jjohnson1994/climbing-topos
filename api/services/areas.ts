@@ -1,8 +1,17 @@
 import { areas, logs, routes, topos } from "../models";
 import { AreaRequest, Area } from "../../core/types";
+import { algolaIndex } from "../db/algolia";
 
-export function createArea(areaDetails: AreaRequest, userSub: string) {
-  return areas.createArea(areaDetails, userSub);
+export async function createArea(areaDetails: AreaRequest, userSub: string) {
+  const newArea = await areas.createArea(areaDetails, userSub);
+
+  algolaIndex
+    .saveObject({ objectID: newArea.slug, ...newArea, model: "area" })
+    .catch(error => {
+      console.error("Error saving new area to algolia", error);
+    });
+
+  return newArea;
 }
 
 export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<Area> {

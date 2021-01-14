@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { SearchBox } from "react-instantsearch-dom";
 
 function Nav() {
   const [navBarMenuClass, setNavBarMenuClass] = useState("");
@@ -54,6 +55,11 @@ function Nav() {
         </div>
 
         <div className="navbar-end">
+          <div className="navbar-item">
+            <Link to="/search" className="navbar-item">
+              <i className="fas fa-search"></i>
+            </Link>
+          </div>
           <div className="navbar-item">
           { isAuthenticated 
             ? <Link to="/profile">

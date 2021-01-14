@@ -2,11 +2,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NewAreaSchema } from "core/schemas";
 import { Crag } from "core/types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import * as yup from "yup";
-import { areas, crags, globals } from "../../api";
+import { areas, crags } from "../../api";
+import { areaTags as tags, rockTypes } from "core/globals";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 
@@ -16,7 +17,6 @@ function CreateArea() {
   const history = useHistory();
   const { getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
-  const [tags, setTags] = useState<string[]>([]);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [crag, setCrag] = useState<Crag>();
@@ -31,7 +31,7 @@ function CreateArea() {
       description: "",
       latitude: "",
       longitude: "",
-      rockType: "unknown",
+      rockType: "",
       tags: [] as string[],
       title: "",
     }
@@ -51,13 +51,7 @@ function CreateArea() {
     }
 
     getCrag();
-    getTags();
   }, [cragSlug]);
-
-  const getTags = async () => {
-    const tags = await globals.getAreaTags();
-    setTags(tags);
-  }
 
   const btnFindMeOnClick = async () => {
     setLocationLoading(true);
@@ -176,6 +170,21 @@ function CreateArea() {
             </div>
             <p className="help is-danger">{ (errors.tags as any)?.message }</p>
           </div>
+
+          <div className="field">
+            <label className="label">Rock Type</label>
+            <div className="control is-expanded">
+              <div className="select is-fullwidth">
+                <select name="rockType" ref={ register }>
+                  {rockTypes.map(rockType => (
+                    <option key={ rockType } value={ rockType }>{ rockType }</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <p className="help is-danger">{ errors.rockType?.message }</p>
+          </div>
+
 
           <div className="field">
             <div className="field">

@@ -1,14 +1,15 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {yupResolver} from '@hookform/resolvers/yup';
-import {NewRouteScheme} from "core/schemas";
-import React, {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useHistory, useParams} from 'react-router-dom';
+import { useAuth0 } from "@auth0/auth0-react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewRouteScheme } from "core/schemas";
+import { Area, RouteDrawing } from "core/types";
+import { gradingSystems } from "core/globals";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from 'react-router-dom';
 import * as yup from "yup";
-import {Area, GradingSystem, RouteDrawing} from "../../../../core/types";
-import {areas, globals, routes, topos} from "../../api";
+import { areas, globals, routes, topos } from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
-import {popupError, popupSuccess} from "../../helpers/alerts";
+import { popupError, popupSuccess } from "../../helpers/alerts";
 
 const schema = NewRouteScheme(yup);
 
@@ -18,7 +19,6 @@ function CreateRoute() {
   const { areaSlug, cragSlug, topoSlug } = useParams<{ areaSlug: string; cragSlug: string, topoSlug: string }>();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
-  const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [area, setArea] = useState<Area | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
@@ -67,7 +67,6 @@ function CreateRoute() {
     doGetTopo();
     doGetTags();
     doGetRouteTypes();
-    doGetGradingSystem();
   }, [areaSlug, isAuthenticated, topoSlug]);
 
   const doGetTags = async () => {
@@ -78,11 +77,6 @@ function CreateRoute() {
   const doGetRouteTypes = async () => {
     const routeTypes = await globals.getRouteTypes();
     setRouteTypes(routeTypes);
-  }
-
-  const doGetGradingSystem = async () => {
-    const gradingSystem = await globals.getGradingSystems();
-    setGradingSystems(gradingSystem);
   }
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {

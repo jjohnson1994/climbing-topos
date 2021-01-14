@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { RouteRequest } from "../../core/types";
+import { Route, RouteRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 
 export async function createRoute(routeDescription: RouteRequest, userId: string) {
@@ -53,7 +53,12 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
   };
 }
 
-export async function getRouteBySlug(cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<RouteRequest> {
+export async function getRouteBySlug(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+): Promise<Route> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND #sk = :sk",
@@ -68,10 +73,12 @@ export async function getRouteBySlug(cragSlug: string, areaSlug: string, topoSlu
   }
 
   const route = await dynamodb.query(params).promise()
-  return route?.Items?.[0] as RouteRequest;
+  return route?.Items?.[0] as Route;
 }
 
-export async function getRoutesByCragSlug(cragSlug: string): Promise<RouteRequest[]> {
+export async function getRoutesByCragSlug(
+  cragSlug: string
+): Promise<Route[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -86,10 +93,14 @@ export async function getRoutesByCragSlug(cragSlug: string): Promise<RouteReques
   }
 
   const response = await dynamodb.query(params).promise()
-  return response?.Items as RouteRequest[];
+  return response?.Items as Route[];
 }
 
-export async function getRoutesByTopoSlug(cragSlug: string, areaSlug: string, topoSlug: string): Promise<RouteRequest[]> {
+export async function getRoutesByTopoSlug(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string
+): Promise<Route[]> {
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -104,5 +115,5 @@ export async function getRoutesByTopoSlug(cragSlug: string, areaSlug: string, to
   }
 
   const response = await dynamodb.query(params).promise()
-  return response?.Items as RouteRequest[];
+  return response?.Items as Route[];
 }

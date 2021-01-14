@@ -17,6 +17,7 @@
     "@types/express": "^4.17.9",
     "@types/luxon": "^1.25.0",
     "@types/multer": "^1.4.4",
+    "algoliasearch": "^4.8.3",
     "aws-sdk": "^2.791.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",

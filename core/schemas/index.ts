@@ -1,4 +1,4 @@
-import { gradingSystems, cragTags, routeTags, areaTags } from "../globals";
+import { gradingSystems, cragTags, routeTags, areaTags, rockTypes } from "../globals";
 
 const validateGrade = (yup, message) => yup.string().required()
   .required("Required")
@@ -47,6 +47,7 @@ export const NewAreaSchema = yup => yup.object().shape({
   latitude: yup.number().typeError("Latitiude must be a number").moreThan(-90, "Latitude must be a valid latitude").lessThan(90, "Must be a valid latitude"),
   longitude: yup.number().typeError("Longitude must be a number").moreThan(-180, "Longitude must be a valid longitude").lessThan(180, "Must be a valid longitude"),
   access: yup.string().required(),
+  rockType: yup.string().required("Required").oneOf(rockTypes, "Invalid Rock Type"),
 });
 
 export const NewTopoSchema = yup => yup.object().shape({
