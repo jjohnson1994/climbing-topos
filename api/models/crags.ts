@@ -37,8 +37,9 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
     TableName: String(process.env.DB),
     Item: {
       hk: slug,
-      sk: `crag#${country_code}#${state}#${county}#${city}#`.toUpperCase(),
+      sk: "metadata#",
       ...cragData,
+      areaCount: 0,
       city: cragDetails.osmData.address.city,
       country: cragDetails.osmData.address.country,
       countryCode: cragDetails.osmData.address.country_code,
@@ -79,12 +80,14 @@ export async function getAllCrags(): Promise<Crag[]> {
 export const getCragBySlug = async (slug: string): Promise<Crag> => {
   const params = {
     TableName: String(process.env.DB),
-    KeyConditionExpression: "#hk = :hk",
+    KeyConditionExpression: "#hk = :hk AND #sk = :sk",
     ExpressionAttributeNames:{
       "#hk": "hk",
+      "#sk": "sk"
     },
     ExpressionAttributeValues: {
       ":hk": slug,
+      ":sk": "metadata#"
     }
   }
 
@@ -112,4 +115,30 @@ export const getAllCragsByCountryAndRegion = async (countryCode: string, region:
 
   const crags = await dynamodb.query(params).promise()
   return crags;
+}
+
+export async function incrementCragAreaCount(cragSlug: string) {
+  console.log("inc", cragSlug);
+
+  const params = {
+    TableName: String(process.env.DB),
+    Key: {
+      "hk": cragSlug,
+      "sk": "metadata"
+    },
+    UpdateExpression: "set #areaCount = #areaCount + :inc",
+    ExpressionAttributeNames: { 
+      "#areaCount": "areaCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1,
+    },
+  }
+
+  return dynamodb.update(params, (err, data) => {
+    console.log("update done");
+    if (err) {
+      console.error(err);
+    }
+  });
 }

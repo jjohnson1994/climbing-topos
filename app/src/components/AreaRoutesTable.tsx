@@ -43,7 +43,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
             <td>{ route.grade }</td>
-            <td>{ route.rating }</td>
+            <td>{ route.rating !== -1 ? route.rating : "" }</td>
             <td> { context.isSelectingMultiple
               ? (
                   <input

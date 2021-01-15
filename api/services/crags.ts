@@ -61,7 +61,6 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
       : []
   ]);
 
-
   return {
     ...crag,
     areas: cragAreas,
@@ -69,4 +68,8 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
     logsCount: cragLogs.length,
     userLogs
   };
+}
+
+export async function incrementAreaCount(cragSlug: string) {
+  return crags.incrementCragAreaCount(cragSlug);
 }

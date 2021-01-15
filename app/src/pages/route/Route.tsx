@@ -1,6 +1,6 @@
 import {useAuth0} from "@auth0/auth0-react";
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {Route} from "../../../../core/types";
 import {routes} from "../../api";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
@@ -60,9 +60,7 @@ function RoutePage() {
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
           <h5 className="subtitle is-5">
-            { route?.grade }
-            <span> </span>
-            { route?.routeType }
+            { route?.grade } <span> </span> { route?.routeType }
           </h5>
           <h5 className="subtitle is-5">{ route?.description }</h5>
           <div className="columns">

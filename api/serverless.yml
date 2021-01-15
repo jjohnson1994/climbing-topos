@@ -101,17 +101,6 @@ resources:
           - AttributeName: sk
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: hkModel
-            KeySchema:
-              - AttributeName: hk
-                KeyType: HASH
-              - AttributeName: model
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-                ReadCapacityUnits: 5
-                WriteCapacityUnits: 5
           - IndexName: gsi1
             KeySchema:
               - AttributeName: model

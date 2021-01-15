@@ -10,7 +10,6 @@ interface Props {
 function ButtonCopyCoordinates({ latitude, longitude, className = "" }: Props) {
 
   const copyCoordinatedToClipboard = async () => {
-    console.log("copy");
     try {
       await clipboardWriteText(`${latitude}, ${longitude}`);
       toastSuccess("Coordinates Copied");

@@ -1,11 +1,18 @@
-import { areas } from "../services";
+import { AreaRequest } from "../../core/types";
+import { areas, crags } from "../services";
 
 export async function postArea(req, res) {
   try {
-    const areaDetails = req.body;
+    const areaDetails = req.body as AreaRequest;
     const { user } = req;
     const userSub = user ? user.sub : false;
     const resp = await areas.createArea(areaDetails, userSub);
+
+    crags.incrementAreaCount(areaDetails.cragSlug)
+      .catch(error => {
+        console.error("Error updating crag area count", error);
+      });
+
     res.status(200).json({ success: true, ...resp });
   } catch(error) {
     console.error('Error creating area', error);
