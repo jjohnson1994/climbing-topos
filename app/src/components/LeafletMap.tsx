@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { DateTime } from "luxon";
 
 import "leaflet/dist/leaflet.css";
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
@@ -18,13 +17,6 @@ interface Props {
 }
 
 let map: leaflet.Map;
-
-const getTimeStamp = async () => {
-  const res = await fetch("https://tilecache.rainviewer.com/api/maps.json");
-  const dates = await res.json();
-
-  return dates.pop();
-}
 
 function LeafletMap({ markers, height = "600px", center, zoom }: Props) {
 

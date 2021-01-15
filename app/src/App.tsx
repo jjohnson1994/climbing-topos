@@ -1,16 +1,21 @@
+import algoliasearch from 'algoliasearch/lite';
+import "leaflet-defaulticon-compatibility";
 import React from "react";
+import { InstantSearch } from 'react-instantsearch-dom';
 import {
   BrowserRouter as Router,
-  Switch,
-  Route
+  Route,
+  Switch
 } from "react-router-dom";
-import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch } from 'react-instantsearch-dom';
-
+import './App.scss';
+import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
+import ProtectedRoute from "./auth/protected-route";
+import Nav from "./components/Nav";
+import RouteLogContext from "./components/RouteLogContext";
 import Area from './pages/area/Area';
 import Crag from './pages/crag/Crag';
-import Crags from './pages/crags/Crags';
 import CragsMap from "./pages/crags-map/CragsMap";
+import Crags from './pages/crags/Crags';
 import CreateArea from "./pages/create-area/CreateArea";
 import CreateCrag from "./pages/create-crag/CreateCrag";
 import CreateRoute from "./pages/create-route/CreateRoute";
@@ -20,10 +25,7 @@ import Profile from './pages/profile/Profile';
 import RoutePage from './pages/route/Route';
 import Search from "./pages/search/Search";
 
-import './App.scss';
-import Nav from "./components/Nav";
-import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
-import ProtectedRoute from "./auth/protected-route";
+
 
 const searchClient = algoliasearch(
   `${process.env.REACT_APP_ALGOLIA_APP_ID}`,
@@ -61,9 +63,11 @@ function App() {
                 path="/crags/:cragSlug/create-area"
                 component={ CreateArea }
               />
-              <Route path='/crags/:cragSlug'>
-                <Crag />
-              </Route>
+              <RouteLogContext>
+                <Route path='/crags/:cragSlug'>
+                  <Crag />
+                </Route>
+              </RouteLogContext>
               <Route path='/crags'>
                 <Crags />
               </Route>

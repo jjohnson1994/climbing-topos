@@ -16,11 +16,13 @@ import { usePageTitle } from "../../helpers/pageTitle";
 function AreaView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
-    selectedRoutes,
+    clearSelectedRoutes,
     isSelectingMultipleRoutes,
     onInitSelectMultipleRoutes,
+    onRouteDeselected,
     onRouteSelected,
-    onRouteDeselected
+    onSingleRouteDone,
+    selectedRoutes,
   } = useLogRoutes();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area>();
@@ -83,8 +85,8 @@ function AreaView() {
       <RoutesAddToLogModal
         routes={ area?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
         visible={ showLogModal } 
-        onCancel={ () => setShowLogModal(false) }
-        onConfirm={ () => setShowLogModal(false) }
+        onCancel={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
+        onConfirm={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
       />
       { loading && (
         <section className="section">
@@ -173,6 +175,10 @@ function AreaView() {
                           onInitSelectMultiple={ onInitSelectMultipleRoutes }
                           onRouteSelected={ onRouteSelected }
                           onRouteDeselected={ onRouteDeselected }
+                          onSingleRouteDone={ (slug: string) => {
+                            onSingleRouteDone(slug);
+                            setShowLogModal(true); 
+                          }}
                         />
                       ) : ""}
                       <div className="buttons is-centered">

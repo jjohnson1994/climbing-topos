@@ -1,17 +1,11 @@
-import { useEffect, useState } from "react";
-
-import "leaflet/dist/leaflet.css";
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css'; // Re-uses images from ~leaflet package
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-
+import { Crag } from "core/types";
 import leaflet from "leaflet";
-import "leaflet.markercluster";
-import "leaflet-defaulticon-compatibility";
-
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { Link } from "react-router-dom";
 import { crags } from "../../api";
-import {Crag} from "core/types";
-import LeafletMap from "../../components/LeafletMap";
+import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
+import MapMarkerClusterGroup from "../../components/LeafletMapMarkerClusterGroup";
 
 function CragsMap() {
   const [allCrags, setCrags] = useState<Crag[]>();
@@ -25,20 +19,55 @@ function CragsMap() {
     getCrags();
   }, []);
 
-  const createMapMarkers = () => {
-    const markers = [
-     ...(allCrags ? allCrags?.map(crag => {
-        return leaflet
-          .marker([parseFloat(crag.latitude), parseFloat(crag.longitude)])
-          .bindPopup(`<a href="/crags/${crag.slug}"><h2>${crag.title}</h2></a>`);
-      }) : [])
-    ];
-
-    return markers;
+  const cragIcon = () => {
+    return leaflet.divIcon({
+      html: '<i class="fas fa-mountain fa-2x"></i>',
+      iconSize: [20, 20],
+      className: "icon"
+    })
   }
 
   return (
-    <LeafletMap markers={ createMapMarkers() } height="calc(100vh - 56px)"></LeafletMap>
+    <MapContainer
+      className="markercluster-map"
+      scrollWheelZoom={false}
+      style={{ height: "calc(100vh - 64px" }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        maxZoom={ 20 }
+        maxNativeZoom={ 19 }
+      />
+      <MapMarkerClusterGroup>
+        { allCrags?.map(crag => (
+          <Marker
+            key={ crag.slug }
+            icon={ cragIcon() }
+            position={[
+              parseFloat(`${crag.latitude}`),
+              parseFloat(`${crag.longitude}`)
+            ]}
+          >
+            <Popup>
+              <h5 className="subtitle is-5">{ crag.title }</h5>
+              <p className="subtitle">{ crag.description }</p>
+              <ButtonCopyCoordinates
+                className="is-small"
+                latitude={ crag.latitude }
+                longitude={ crag.longitude }
+              />
+              <Link
+                className="button mt-1 is-small is-rounded is-fullwidth"
+                to={ `/crags/${crag.slug}` }
+              >
+                Open
+              </Link>
+            </Popup>
+          </Marker>
+        ))}
+      </MapMarkerClusterGroup>
+    </MapContainer>
   );
 }
 

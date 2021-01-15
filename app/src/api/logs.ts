@@ -63,6 +63,10 @@ export function useLogRoutes() {
   const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
   const [isSelectingMultipleRoutes, setIsSelectingMultipleRoutes] = useState(false);
 
+  const clearSelectedRoutes = () => {
+    setSelectedRoutes([]);
+  }
+
   const onInitSelectMultipleRoutes = (selectMultiple: boolean, routeSlug: string) => {
     setIsSelectingMultipleRoutes(selectMultiple);
     setSelectedRoutes([ routeSlug ]);
@@ -82,11 +86,18 @@ export function useLogRoutes() {
     }
   } 
 
+  const onSingleRouteDone = (routeSlug: string) => {
+    const newSelectedRoutes = [ routeSlug ];
+    setSelectedRoutes(newSelectedRoutes);
+  }
+
   return {
+    clearSelectedRoutes,
     selectedRoutes,
     isSelectingMultipleRoutes,
     onInitSelectMultipleRoutes,
     onRouteSelected,
-    onRouteDeselected
+    onRouteDeselected,
+    onSingleRouteDone
   }
 }

@@ -1,14 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import leaflet from "leaflet";
 import React, { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Link, useParams } from "react-router-dom";
 import { Crag, Route } from "../../../../core/types";
 import { getCragBySlug } from "../../api/crags";
 import { useLogRoutes } from "../../api/logs";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
-import MapMarkerClusterGroup from "../../components/LeafletMapMarkerClusterGroup";
+import CragMap from "../../components/CragMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import { popupError } from "../../helpers/alerts";
@@ -17,11 +15,13 @@ import { usePageTitle } from "../../helpers/pageTitle";
 function CragView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { 
+    clearSelectedRoutes,
     selectedRoutes,
     isSelectingMultipleRoutes,
     onInitSelectMultipleRoutes,
     onRouteSelected,
-    onRouteDeselected
+    onRouteDeselected,
+    onSingleRouteDone,
   } = useLogRoutes();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
@@ -72,29 +72,13 @@ function CragView() {
     }
   }
 
-  const areaIcon = () => {
-    return leaflet.divIcon({
-      html: '<i class="fas fa-mountain fa-2x"></i>',
-      iconSize: [20, 20],
-      className: "icon"
-    })
-  }
-
-  const carParkIcon = () => {
-    return leaflet.divIcon({
-      html: '<i class="fas fa-parking fa-2x"></i>',
-      iconSize: [20, 20],
-      className: "icon"
-    })
-  }
-
   return (
     <>
       <RoutesAddToLogModal
         routes={ crag?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
         visible={ showLogModal } 
-        onCancel={ () => setShowLogModal(false) }
-        onConfirm={ () => setShowLogModal(false) }
+        onCancel={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
+        onConfirm={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
       />
       { loading ? (
         <section className="section">
@@ -163,6 +147,10 @@ function CragView() {
                     onInitSelectMultiple={ onInitSelectMultipleRoutes }
                     onRouteSelected={ onRouteSelected }
                     onRouteDeselected={ onRouteDeselected }
+                    onSingleRouteDone={ (slug: string) => {
+                      onSingleRouteDone(slug);
+                      setShowLogModal(true); 
+                    }}
                   />
                 ) : (
                   <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
@@ -227,76 +215,8 @@ function CragView() {
               </div>
             )}
 
-            { activeTab === "map" && (
-              <MapContainer
-                className="markercluster-map"
-                center={[
-                  parseFloat(`${crag?.latitude}`),
-                  parseFloat(`${crag?.longitude}`)
-                ]}
-                zoom={ 16 }
-                scrollWheelZoom={false}
-                style={{ height: "600px" }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  maxZoom={ 20 }
-                  maxNativeZoom={ 19 }
-                />
-                <MapMarkerClusterGroup>
-                  <Marker
-                    position={[
-                      parseFloat(`${crag?.latitude}`),
-                      parseFloat(`${crag?.longitude}`)
-                    ]}
-                  />
-                  { crag?.carParks.map((carPark, index) => (
-                    <Marker
-                      key={ index }
-                      icon={ carParkIcon() }
-                      position={[
-                        parseFloat(`${carPark.latitude}`),
-                        parseFloat(`${carPark.longitude}`)
-                      ]}
-                    >
-                      <Popup>
-                        <h6 className="subtitle is-6">{ carPark.title }</h6>
-                        <p className="subtitle">{ carPark.description }</p>
-                        <ButtonCopyCoordinates
-                          className="is-small"
-                          latitude={ carPark.latitude }
-                          longitude={ carPark.longitude }
-                        />
-                      </Popup>
-                    </Marker>
-                  ))}
-                  { crag?.areas.map(area => (
-                    <Marker
-                      key={ area.slug }
-                      icon={ areaIcon() }
-                      position={[
-                        parseFloat(`${area?.latitude}`),
-                        parseFloat(`${area?.longitude}`)
-                      ]}>
-                      <Popup>
-                        <h5 className="subtitle is-5">{ area.title }</h5>
-                        <ButtonCopyCoordinates
-                          className="is-small is-fullwidth"
-                          latitude={ area.latitude }
-                          longitude={ area.longitude }
-                        />
-                        <Link
-                          className="button mt-1 is-small is-rounded is-fullwidth"
-                          to={ `/crags/${area.cragSlug}/areas/${area.slug}` }
-                        >
-                          Open
-                        </Link>
-                      </Popup>
-                    </Marker>
-                  ))}
-                </MapMarkerClusterGroup>
-              </MapContainer>
+            { activeTab === "map" && crag && (
+              <CragMap crag={ crag } />
             )}
           </section>
         </>

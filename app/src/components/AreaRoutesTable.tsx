@@ -4,13 +4,14 @@ import {Link} from "react-router-dom";
 import {Log, Route} from "../../../core/types";
 
 interface Props {
-  routes: Route[] | undefined,
-  loggedRoutes: Log[],
-  selectedRoutes: string[],
-  isSelectingMultiple: Boolean | undefined,
-  onInitSelectMultiple: Function,
-  onRouteSelected: Function
-  onRouteDeselected: Function
+  routes: Route[] | undefined;
+  loggedRoutes: Log[];
+  selectedRoutes: string[];
+  isSelectingMultiple: Boolean | undefined;
+  onInitSelectMultiple: Function;
+  onRouteSelected: Function;
+  onRouteDeselected: Function;
+  onSingleRouteDone: Function;
 }
 
 function AreaRoutesTable({
@@ -21,6 +22,7 @@ function AreaRoutesTable({
   onInitSelectMultiple,
   onRouteSelected,
   onRouteDeselected,
+  onSingleRouteDone,
 }: Props) {
   const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, routeSlug: string) => {
     if (selectedRoutes.includes(routeSlug)) {
@@ -75,7 +77,7 @@ function AreaRoutesTable({
                           <div className="dropdown-content">
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => { onRouteSelected(route.slug) } }
+                              onClick={ () => { onSingleRouteDone(route.slug) } }
                             >
                               <span className="icon">
                                 <i className="fas fw fa-check"></i>

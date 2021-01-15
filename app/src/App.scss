@@ -3,8 +3,9 @@
 @import "node_modules/bulma/sass/utilities/functions.sass";
 @import "node_modules/bulma/sass/utilities/derived-variables.sass";
 @import "~sweetalert2/src/sweetalert2.scss";
-@import '~leaflet/dist/leaflet.css'; // sass
-@import '~react-leaflet-markercluster/dist/styles.min.css'; // sass
+@import '~leaflet/dist/leaflet.css';
+@import '~react-leaflet-markercluster/dist/styles.min.css';
+@import '~leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
 
 $footer-background-color: $scheme-main;
 
