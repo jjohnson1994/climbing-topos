@@ -25,7 +25,6 @@ function CragMap({ crag }: { crag: Crag }) {
 
   return (
     <MapContainer
-      className="markercluster-map"
       center={[
         parseFloat(`${crag?.latitude}`),
         parseFloat(`${crag?.longitude}`)

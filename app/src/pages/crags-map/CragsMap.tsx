@@ -29,9 +29,10 @@ function CragsMap() {
 
   return (
     <MapContainer
-      className="markercluster-map"
       scrollWheelZoom={false}
-      style={{ height: "calc(100vh - 64px" }}
+      style={{ width: "100%", height: "calc(100vh - 64px)" }}
+      center={[51.505, -0.09]}
+      zoom={ 3 }
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -51,7 +52,6 @@ function CragsMap() {
           >
             <Popup>
               <h5 className="subtitle is-5">{ crag.title }</h5>
-              <p className="subtitle">{ crag.description }</p>
               <ButtonCopyCoordinates
                 className="is-small"
                 latitude={ crag.latitude }

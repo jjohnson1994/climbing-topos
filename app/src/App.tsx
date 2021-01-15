@@ -37,6 +37,7 @@ function App() {
   return (
     <>
       <Router>
+        <RouteLogContext>
         <InstantSearch searchClient={ searchClient } indexName={ algoliaIndexName }>
           <Auth0ProviderWithHistory>
             <Nav />
@@ -63,11 +64,9 @@ function App() {
                 path="/crags/:cragSlug/create-area"
                 component={ CreateArea }
               />
-              <RouteLogContext>
                 <Route path='/crags/:cragSlug'>
                   <Crag />
                 </Route>
-              </RouteLogContext>
               <Route path='/crags'>
                 <Crags />
               </Route>
@@ -87,6 +86,7 @@ function App() {
             </Switch>
           </Auth0ProviderWithHistory>
         </InstantSearch>
+              </RouteLogContext>
       </Router>
     </>
   );

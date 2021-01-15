@@ -1,34 +1,22 @@
 import Tippy from '@tippyjs/react';
-import React, {ChangeEvent} from "react";
+import React, {ChangeEvent, useContext} from "react";
 import {Link} from "react-router-dom";
 import {Log, Route} from "../../../core/types";
+import { RouteLogContext } from './RouteLogContext';
 
 interface Props {
   routes: Route[] | undefined;
   loggedRoutes: Log[];
-  selectedRoutes: string[];
-  isSelectingMultiple: Boolean | undefined;
-  onInitSelectMultiple: Function;
-  onRouteSelected: Function;
-  onRouteDeselected: Function;
-  onSingleRouteDone: Function;
 }
 
-function AreaRoutesTable({
-  routes,
-  loggedRoutes,
-  selectedRoutes,
-  isSelectingMultiple,
-  onInitSelectMultiple,
-  onRouteSelected,
-  onRouteDeselected,
-  onSingleRouteDone,
-}: Props) {
-  const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, routeSlug: string) => {
-    if (selectedRoutes.includes(routeSlug)) {
-      onRouteDeselected(routeSlug);
+function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
+  const context = useContext(RouteLogContext);
+
+  const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, route: Route) => {
+    if (context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) > -1) {
+      context.onRouteDeselected(route);
     } else {
-      onRouteSelected(routeSlug);
+      context.onRouteSelected(route);
     }
   }
 
@@ -56,12 +44,12 @@ function AreaRoutesTable({
             </td>
             <td>{ route.grade }</td>
             <td>{ route.rating }</td>
-            <td> { isSelectingMultiple 
+            <td> { context.isSelectingMultiple
               ? (
                   <input
                     type="checkbox"
-                    checked={ selectedRoutes.includes(String(route.slug)) }
-                    onChange={ (e) => chkRouteOnChange(e, String(route.slug)) }
+                    checked={ context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) !== -1 }
+                    onChange={ (e) => chkRouteOnChange(e, route) }
                   />
                 )
               : (
@@ -77,7 +65,7 @@ function AreaRoutesTable({
                           <div className="dropdown-content">
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => { onSingleRouteDone(route.slug) } }
+                              onClick={ () => { context.onSingleRouteDone(route) } }
                             >
                               <span className="icon">
                                 <i className="fas fw fa-check"></i>
@@ -96,7 +84,7 @@ function AreaRoutesTable({
                             <hr className="dropdown-divider" />
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => onInitSelectMultiple(true, route.slug) }
+                              onClick={ () => context.onInitSelectMultiple(true, route) }
                             >
                               <span className="icon">
                                 <i className="far fw fa-check-square"></i>

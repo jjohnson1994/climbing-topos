@@ -1,32 +1,19 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Area, Route } from "core/types";
+import { Area } from "core/types";
 import { areas } from "../../api";
-import { useLogRoutes } from '../../api/logs';
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import RoutesAddToLogModal from '../../components/RoutesAddToLogModal';
 import TopoImage from "../../components/TopoImage";
-import { popupError, toastSuccess } from '../../helpers/alerts';
-import { clipboardWriteText } from '../../helpers/clipboard';
+import { popupError } from '../../helpers/alerts';
 import { usePageTitle } from "../../helpers/pageTitle";
 
 function AreaView() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
-  const { 
-    clearSelectedRoutes,
-    isSelectingMultipleRoutes,
-    onInitSelectMultipleRoutes,
-    onRouteDeselected,
-    onRouteSelected,
-    onSingleRouteDone,
-    selectedRoutes,
-  } = useLogRoutes();
+  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area>();
-  const [showLogModal, setShowLogModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   usePageTitle(area?.title);
@@ -53,41 +40,8 @@ function AreaView() {
     }
   }, [areaSlug, isAuthenticated, isLoading]);
 
-  const btnCoordsOnClick = async () => {
-    if (!area) return;
-
-    try {
-      await clipboardWriteText(`${area.latitude}, ${area.longitude}`);
-      toastSuccess('Coordinates have been saved to your clipboard');
-    } catch (error) {
-      console.error('Error saving area coords to clipboard', error);
-    }
-  }
-
-  const btnSaveMultipleToListOnClick = () => {
-    if (isAuthenticated === false) {
-      loginWithRedirect();
-    } else {
-      // TODO
-    }
-  }
-
-  const btnDoneMultipleOnClick = async () => {
-    if (isAuthenticated === false) {
-      loginWithRedirect();
-    } else {
-      setShowLogModal(true);
-    }
-  }
-
   return (
     <>
-      <RoutesAddToLogModal
-        routes={ area?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
-        visible={ showLogModal } 
-        onCancel={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
-        onConfirm={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
-      />
       { loading && (
         <section className="section">
           <div className="container">
@@ -170,15 +124,6 @@ function AreaView() {
                         <AreaRoutesTable
                           routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
                           loggedRoutes={ area.userLogs }
-                          selectedRoutes={ selectedRoutes }
-                          isSelectingMultiple={ isSelectingMultipleRoutes }
-                          onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                          onRouteSelected={ onRouteSelected }
-                          onRouteDeselected={ onRouteDeselected }
-                          onSingleRouteDone={ (slug: string) => {
-                            onSingleRouteDone(slug);
-                            setShowLogModal(true); 
-                          }}
                         />
                       ) : ""}
                       <div className="buttons is-centered">
@@ -200,33 +145,6 @@ function AreaView() {
           </div>
         </>
       ))}
-
-      {selectedRoutes.length 
-        ? (
-          <nav
-            className="navbar has-shadow is-fixed-bottom"
-            role="navigation"
-          >
-            <div className="is-justify-content-flex-end navbar-item" style={{  width: "100%"  }}>
-              <div className="buttons">
-                <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
-                  <span className="icon">
-                    <i className="fas fw fa-list"></i>
-                  </span>
-                  <span>Save to List</span>
-                </button>
-                <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
-                  <span className="icon">
-                    <i className="fas fw fa-check"></i>
-                  </span>
-                  <span>Done</span>
-                </button>
-              </div>
-            </div>
-          </nav>
-        )
-        : ""
-      }
     </>
   );
 }

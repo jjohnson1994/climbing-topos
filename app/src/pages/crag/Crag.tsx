@@ -1,33 +1,21 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Crag, Route } from "../../../../core/types";
+import { Crag } from "../../../../core/types";
 import { getCragBySlug } from "../../api/crags";
-import { useLogRoutes } from "../../api/logs";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import CragMap from "../../components/CragMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 
 function CragView() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
-  const { 
-    clearSelectedRoutes,
-    selectedRoutes,
-    isSelectingMultipleRoutes,
-    onInitSelectMultipleRoutes,
-    onRouteSelected,
-    onRouteDeselected,
-    onSingleRouteDone,
-  } = useLogRoutes();
+  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [crag, setCrag] = useState<Crag>();
   const [activeTab, setActiveTab] = useState('routes');
-  const [showLogModal, setShowLogModal] = useState(false);
 
   usePageTitle(crag?.title);
 
@@ -54,32 +42,8 @@ function CragView() {
     }
   }, [cragSlug, isLoading, isAuthenticated]);
 
-  const btnSaveMultipleToListOnClick = () => {
-    // TODO repetition with Area.tsx
-    if (isAuthenticated === false) {
-      loginWithRedirect();
-    } else {
-      // TODO
-    }
-  }
-
-  const btnDoneMultipleOnClick = async () => {
-    // TODO repetition with Area.tsx
-    if (isAuthenticated === false) {
-      loginWithRedirect();
-    } else {
-      setShowLogModal(true);
-    }
-  }
-
   return (
     <>
-      <RoutesAddToLogModal
-        routes={ crag?.routes?.filter(route => selectedRoutes.includes(`${route.slug}`)) as Route[] }
-        visible={ showLogModal } 
-        onCancel={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
-        onConfirm={ () => { setShowLogModal(false); clearSelectedRoutes(); } }
-      />
       { loading ? (
         <section className="section">
           <div className="container">
@@ -142,15 +106,6 @@ function CragView() {
                   <AreaRoutesTable
                     routes={ crag?.routes }
                     loggedRoutes={ (crag && crag.userLogs) || [] }
-                    selectedRoutes={ selectedRoutes }
-                    isSelectingMultiple={ isSelectingMultipleRoutes }
-                    onInitSelectMultiple={ onInitSelectMultipleRoutes }
-                    onRouteSelected={ onRouteSelected }
-                    onRouteDeselected={ onRouteDeselected }
-                    onSingleRouteDone={ (slug: string) => {
-                      onSingleRouteDone(slug);
-                      setShowLogModal(true); 
-                    }}
                   />
                 ) : (
                   <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
@@ -221,34 +176,7 @@ function CragView() {
           </section>
         </>
       )}
-
-      { /** TODO repetition with Area.tsx */ }
-      {selectedRoutes.length 
-        ? (
-          <nav
-            className="navbar has-shadow is-fixed-bottom"
-            role="navigation"
-          >
-            <div className="is-justify-content-flex-end navbar-item" style={{  width: "100%"  }}>
-              <div className="buttons">
-                <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
-                  <span className="icon">
-                    <i className="fas fw fa-list"></i>
-                  </span>
-                  <span>Save to List</span>
-                </button>
-                <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
-                  <span className="icon">
-                    <i className="fas fw fa-check"></i>
-                  </span>
-                  <span>Done</span>
-                </button>
-              </div>
-            </div>
-          </nav>
-        )
-        : ""
-      }   </>
+    </>
   );
 };
 
