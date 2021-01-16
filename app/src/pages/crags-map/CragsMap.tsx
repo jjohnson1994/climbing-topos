@@ -1,4 +1,4 @@
-import { Crag } from "core/types";
+import { CragBrief } from "core/types";
 import leaflet from "leaflet";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -8,7 +8,7 @@ import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import MapMarkerClusterGroup from "../../components/LeafletMapMarkerClusterGroup";
 
 function CragsMap() {
-  const [allCrags, setCrags] = useState<Crag[]>();
+  const [allCrags, setCrags] = useState<CragBrief[]>();
 
   useEffect(() => {
     const getCrags = async () => {

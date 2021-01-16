@@ -1,4 +1,4 @@
-import {Crag, CragRequest} from "core/types";
+import {Crag, CragBrief, CragRequest} from "core/types";
 
 export async function createCrag(cragDetails: CragRequest, token: string): Promise<{ hk: string, slug: string }> {
   const res = await fetch('http://localhost:3001/dev/crags', {
@@ -18,7 +18,7 @@ export async function createCrag(cragDetails: CragRequest, token: string): Promi
   return { hk: json.inserted.hk, slug: json.inserted.slug };
 }
 
-export async function getCrags(token: string): Promise<Crag[]> {
+export async function getCrags(token: string): Promise<CragBrief[]> {
   const res = await fetch('http://localhost:3001/dev/crags', {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })

@@ -93,57 +93,55 @@ function AreaView() {
       </section>
 
       {area?.topos && area?.topos.map((topo) => (
-        <>
-          <div key={ topo.slug }>
-            <div className="is-hidden-tablet">
-              <TopoImage
-                routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                background={ `${topo.image}` }
-              />
-            </div>
-            <section className="section">
-              <div className="container">
-                <div className="box block" key={ topo.slug }>
-                  <div className="columns">
-                    <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
-                      <TopoImage
-                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                        background={ `${topo.image}` }
-                      />
-                    </div>
-                    <div className="column">
-                      <div className="is-flex is-justify-content-flex-end">
-                        <span className="icon-text">
-                          <span className="icon">
-                            <i className="fas fa-compass"></i>
-                          </span>
-                          <span className="is-capitalized">{ topo.orientation }</span>
+        <div key={ topo.slug }>
+          <div className="is-hidden-tablet">
+            <TopoImage
+              routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+              background={ `${topo.image}` }
+            />
+          </div>
+          <section className="section">
+            <div className="container">
+              <div className="box block" key={ topo.slug }>
+                <div className="columns">
+                  <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
+                    <TopoImage
+                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                      background={ `${topo.image}` }
+                    />
+                  </div>
+                  <div className="column">
+                    <div className="is-flex is-justify-content-flex-end">
+                      <span className="icon-text">
+                        <span className="icon">
+                          <i className="fas fa-compass"></i>
                         </span>
-                      </div>
-                      { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
-                        <AreaRoutesTable
-                          routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                          loggedRoutes={ area.userLogs }
-                        />
-                      ) : ""}
-                      <div className="buttons is-centered">
-                        <Link
-                          to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
-                          className="button is-rounded"
-                        >
-                          <span className="icon is-small">
-                            <i className="fas fa-plus"></i>
-                          </span>
-                          <span>Add Route</span>
-                        </Link>
-                      </div>
+                        <span className="is-capitalized">{ topo.orientation }</span>
+                      </span>
+                    </div>
+                    { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                      <AreaRoutesTable
+                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                        loggedRoutes={ area.userLogs }
+                      />
+                    ) : ""}
+                    <div className="buttons is-centered">
+                      <Link
+                        to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
+                        className="button is-rounded"
+                      >
+                        <span className="icon is-small">
+                          <i className="fas fa-plus"></i>
+                        </span>
+                        <span>Add Route</span>
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
-        </>
+            </div>
+          </section>
+        </div>
       ))}
     </>
   );

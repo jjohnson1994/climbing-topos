@@ -45,17 +45,19 @@ export interface CragRequest {
   title: string; 
 }
 
-export interface Crag extends CragRequest {
-  areaCount: number; 
-  areas: Area[];
-  climbCount: number; 
-  likeCount: number;
-  logsCount: number;
-  routes: Route[];
+export interface CragBrief extends CragRequest {
+  areaCount: number;
+  logCount: number; 
+  routeCount: number;
   slug: string; 
-  tickCount: number; 
-  userLogs: Log[];
+  userLogCount: number;
+}
+
+export interface Crag extends CragBrief {
+  areas: Area[];
   owner: string;
+  routes: Route[];
+  userLogs: Log[];
 }
 
 export interface Climb {
@@ -83,8 +85,10 @@ export interface AreaRequest {
 }
 
 export interface Area extends AreaRequest {
-  topos: Topo[];
+  routeCount: number;
+  logCount: number;
   routes: Route[];
+  topos: Topo[];
   userLogs: Log[];
   slug: string;
 }
@@ -123,6 +127,7 @@ export interface RouteRequest {
 
 export interface Route extends RouteRequest {
   area: Area;
+  logCount: number;
   siblingRoutes: Route[];
   slug: string;
   topo: Topo;
@@ -175,4 +180,5 @@ export interface LogRequest {
 
 export interface Log extends LogRequest {
   title: string;
+  slug: string;
 };

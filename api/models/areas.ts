@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import { dynamodb } from '../db';
 import { Area, AreaRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
+import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
 export async function createArea(areaDescription: AreaRequest, userSub: string) {
   const date = DateTime.utc().toString();
@@ -33,7 +34,9 @@ export async function createArea(areaDescription: AreaRequest, userSub: string) 
       hk: areaDescription.cragSlug,
       sk: `area#${slug}#`,
       ...areaData,
+      logCount: 0,
       model: "area",
+      routeCount: 0,
       slug,
       createdBy: userSub,
       createdAt: date,
@@ -84,4 +87,29 @@ export async function getAreaBySlug(slug: string): Promise<Area> {
 
   const area = await dynamodb.query(params).promise()
   return area?.Items?.[0] as Area;
+}
+
+export async function update(
+  cragSlug: string,
+  areaSlug: string,
+  updateProps: {
+    UpdateExpression: UpdateExpression;
+    ExpressionAttributeNames: ExpressionAttributeNameMap;
+    ExpressionAttributeValues: { [key: string]: any };
+  }
+) {
+  const params = {
+    TableName: String(process.env.DB),
+    Key: {
+      "hk": cragSlug,
+      "sk": `area#${areaSlug}#`,
+    },
+    ...updateProps
+  }
+
+  return dynamodb.update(params, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 }

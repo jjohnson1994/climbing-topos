@@ -37,56 +37,56 @@ function App() {
   return (
     <>
       <Router>
-        <RouteLogContext>
-        <InstantSearch searchClient={ searchClient } indexName={ algoliaIndexName }>
-          <Auth0ProviderWithHistory>
-            <Nav />
-            <Switch>
-              <ProtectedRoute
-                path="/profile"
-                component={ Profile }
-              />
-              <ProtectedRoute
-                path='/crags/:cragSlug/areas/:areaSlug/create-topo'
-                component={ CreateTopo }
-              />
-              <ProtectedRoute
-                path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'
-                component={ CreateRoute }
-              />
-              <Route path="/crags/:cragSlug/areas/:areaSlug/topo/:topoSlug/routes/:routeSlug">
-                <RoutePage />
-              </Route>
-              <Route path='/crags/:cragSlug/areas/:areaSlug'>
-                <Area />
-              </Route>
-              <ProtectedRoute
-                path="/crags/:cragSlug/create-area"
-                component={ CreateArea }
-              />
+        <Auth0ProviderWithHistory>
+          <InstantSearch searchClient={ searchClient } indexName={ algoliaIndexName }>
+            <RouteLogContext>
+              <Nav />
+              <Switch>
+                <ProtectedRoute
+                  path="/profile"
+                  component={ Profile }
+                />
+                <ProtectedRoute
+                  path='/crags/:cragSlug/areas/:areaSlug/create-topo'
+                  component={ CreateTopo }
+                />
+                <ProtectedRoute
+                  path='/crags/:cragSlug/areas/:areaSlug/topos/:topoSlug/create-route'
+                  component={ CreateRoute }
+                />
+                <Route path="/crags/:cragSlug/areas/:areaSlug/topo/:topoSlug/routes/:routeSlug">
+                  <RoutePage />
+                </Route>
+                <Route path='/crags/:cragSlug/areas/:areaSlug'>
+                  <Area />
+                </Route>
+                <ProtectedRoute
+                  path="/crags/:cragSlug/create-area"
+                  component={ CreateArea }
+                />
                 <Route path='/crags/:cragSlug'>
                   <Crag />
                 </Route>
-              <Route path='/crags'>
-                <Crags />
-              </Route>
-              <Route path="/crags-map">
-                <CragsMap />
-              </Route>
-              <ProtectedRoute
-                path="/create-crag"
-                component={ CreateCrag }
-              />
-              <Route path='/search'>
-                <Search />
-              </Route>
-              <Route path='/'>
-                <Home />
-              </Route>
-            </Switch>
-          </Auth0ProviderWithHistory>
-        </InstantSearch>
-              </RouteLogContext>
+                <Route path='/crags'>
+                  <Crags />
+                </Route>
+                <Route path="/crags-map">
+                  <CragsMap />
+                </Route>
+                <ProtectedRoute
+                  path="/create-crag"
+                  component={ CreateCrag }
+                />
+                <Route path='/search'>
+                  <Search />
+                </Route>
+                <Route path='/'>
+                  <Home />
+                </Route>
+              </Switch>
+            </RouteLogContext>
+          </InstantSearch>
+        </Auth0ProviderWithHistory>
       </Router>
     </>
   );

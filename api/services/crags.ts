@@ -1,5 +1,5 @@
 import { areas, crags, logs, routes } from '../models';
-import { Crag } from '../../core/types';
+import { Crag, CragBrief } from '../../core/types';
 import { algolaIndex } from "../db/algolia";
 
 export const createCrag = async (cragDetails: Crag, userSub: string) => {
@@ -19,16 +19,13 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
   return newCrag;
 }
 
-export async function getAllCrags(user: string): Promise<Crag[]> {
+export async function getAllCrags(user: string): Promise<CragBrief[]> {
   const allCrags = await crags
     .getAllCrags()
     .then(async crags => {
       const cragViews = await Promise.all(
-        crags.map(crag => new Promise<Crag>(async (resolve) => {
-          const [cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
-            areas.getAreasByCragSlug(crag.slug),
-            routes.getRoutesByCragSlug(crag.slug),
-            logs.getLogsByCragSlug(crag.slug),
+        crags.map(crag => new Promise<CragBrief>(async (resolve) => {
+          const [userLogs] = await Promise.all([
             user
               ? logs.getLogsForUser(user.sub, crag.slug)
               : []
@@ -36,10 +33,7 @@ export async function getAllCrags(user: string): Promise<Crag[]> {
 
           resolve({
             ...crag,
-            areas: cragAreas,
-            routes: cragRoutes,
-            logsCount: cragLogs.length,
-            userLogs
+            userLogCount: userLogs.length,
           });
         }))
       );
@@ -51,11 +45,10 @@ export async function getAllCrags(user: string): Promise<Crag[]> {
 }
 
 export async function getCragBySlug(slug: string, userSub: string): Promise<Crag> {
-  const [crag, cragAreas, cragRoutes, cragLogs, userLogs] = await Promise.all([
+  const [crag, cragAreas, cragRoutes, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
     areas.getAreasByCragSlug(slug),
     routes.getRoutesByCragSlug(slug),
-    logs.getLogsByCragSlug(slug),
     userSub
       ? logs.getLogsForUser(userSub, slug)
       : []
@@ -65,11 +58,42 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
     ...crag,
     areas: cragAreas,
     routes: cragRoutes,
-    logsCount: cragLogs.length,
     userLogs
   };
 }
 
 export async function incrementAreaCount(cragSlug: string) {
-  return crags.incrementCragAreaCount(cragSlug);
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #areaCount = #areaCount + :inc",
+    ExpressionAttributeNames: { 
+      "#areaCount": "areaCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
+}
+
+export async function incrementRouteCount(cragSlug: string) {
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #routeCount = #routeCount + :inc",
+    ExpressionAttributeNames: { 
+      "#routeCount": "routeCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
+}
+
+export async function incrementLogCount(cragSlug: string) {
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #logCount = #logCount + :inc",
+    ExpressionAttributeNames: { 
+      "#logCount": "logCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
 }

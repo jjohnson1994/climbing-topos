@@ -1,9 +1,10 @@
-import { nanoid } from "nanoid";
+import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
-
-import { dynamodb } from '../db';
+import { nanoid } from "nanoid";
 import { Crag, CragRequest } from '../../core/types';
+import { dynamodb } from '../db';
 import { createSlug } from "../helpers/slug";
+
 
 export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string) => {
   const {
@@ -44,12 +45,14 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
       country: cragDetails.osmData.address.country,
       countryCode: cragDetails.osmData.address.country_code,
       county: cragDetails.osmData.address.county,
-      state: cragDetails.osmData.address.state,
-      slug,
+      createdAt: date,
+      createdBy: ownerUserSub,
+      logCount: 0,
       model: 'crag',
       owner: ownerUserSub,
-      createdBy: ownerUserSub,
-      createdAt: date,
+      routeCount: 0,
+      slug,
+      state: cragDetails.osmData.address.state,
       updatedAt: date
     }
   }
@@ -117,26 +120,24 @@ export const getAllCragsByCountryAndRegion = async (countryCode: string, region:
   return crags;
 }
 
-export async function incrementCragAreaCount(cragSlug: string) {
-  console.log("inc", cragSlug);
-
+export async function update(
+  cragSlug: string,
+  updateProps: {
+    UpdateExpression: UpdateExpression;
+    ExpressionAttributeNames: ExpressionAttributeNameMap;
+    ExpressionAttributeValues: { [key: string]: any };
+  }
+) {
   const params = {
     TableName: String(process.env.DB),
     Key: {
       "hk": cragSlug,
-      "sk": "metadata"
+      "sk": "metadata#"
     },
-    UpdateExpression: "set #areaCount = #areaCount + :inc",
-    ExpressionAttributeNames: { 
-      "#areaCount": "areaCount",
-    },
-    ExpressionAttributeValues: {
-      ":inc": 1,
-    },
+    ...updateProps
   }
 
-  return dynamodb.update(params, (err, data) => {
-    console.log("update done");
+  return dynamodb.update(params, (err) => {
     if (err) {
       console.error(err);
     }

@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import { dynamodb } from '../db';
 import { Route, RouteRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
+import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
 export async function createRoute(routeDescription: RouteRequest, userId: string) {
   const date = DateTime.utc().toString();
@@ -38,8 +39,9 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
       hk: routeDescription.cragSlug,
       sk: `route#area#${routeDescription.areaSlug}#topo#${routeDescription.topoSlug}#${slug}`,
       ...routeData,
-      slug,
+      logCount: 0,
       model: "route",
+      slug,
       createdBy: userId,
       createdAt: date,
       updatedAt: date
@@ -116,4 +118,31 @@ export async function getRoutesByTopoSlug(
 
   const response = await dynamodb.query(params).promise()
   return response?.Items as Route[];
+}
+
+export async function update(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string,
+  updateProps: {
+    UpdateExpression: UpdateExpression;
+    ExpressionAttributeNames: ExpressionAttributeNameMap;
+    ExpressionAttributeValues: { [key: string]: any };
+  }
+) {
+  const params = {
+    TableName: String(process.env.DB),
+    Key: {
+      "hk": cragSlug,
+      "sk": `route#area#${areaSlug}#topo#${topoSlug}#${routeSlug}`
+    },
+    ...updateProps
+  }
+
+  return dynamodb.update(params, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 }

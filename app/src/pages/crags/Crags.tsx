@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from 'react-router-dom';
 
-import CragQuickActions from "../../components/CragQuickActions";
 import { getCrags } from "../../api/crags";
-import { Crag } from '../../../../core/types';
+import { CragBrief } from '../../../../core/types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 function Crags() {
-  const [crags, setCrags] = useState<Crag[]>([]);
+  const [crags, setCrags] = useState<CragBrief[]>([]);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
@@ -85,9 +84,9 @@ function Crags() {
                           { crag.title }
                         </Link>
                       </td>
-                      <td><span>{ crag.routes.length }</span></td>
-                      <td><span>{ crag.areas.length } </span></td>
-                      <td><span>{ crag.logsCount }</span></td>
+                      <td><span>{ crag.routeCount }</span></td>
+                      <td><span>{ crag.areaCount } </span></td>
+                      <td><span>{ crag.logCount }</span></td>
                     </tr>
                   ))
                 }

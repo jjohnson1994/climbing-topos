@@ -120,6 +120,8 @@ function CragView() {
                     <thead>
                       <tr>
                         <th>Title</th>
+                        <th>Routes</th>
+                        <th>Logs</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -133,6 +135,8 @@ function CragView() {
                               { area.title }
                             </Link>
                           </td>
+                          <td>{ area.routeCount }</td>
+                          <td>{ area.logCount }</td>
                         </tr>
                       )) }
                     </tbody>

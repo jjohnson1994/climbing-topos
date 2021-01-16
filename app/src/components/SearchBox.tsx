@@ -45,6 +45,7 @@ const MySearchBox = ({ currentRefinement, refine }: Props) => (
     type="text"
     value={currentRefinement}
     onChange={e => refine(e.currentTarget.value)}
+    placeholder="Try: crimpy 7A yorkshire, highball 6C or public transport"
   />
 );
 
