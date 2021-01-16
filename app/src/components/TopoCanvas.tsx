@@ -26,6 +26,14 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
   const canvasElement = useRef<SVGSVGElement>(document.querySelector("svg") as SVGSVGElement);
 
   useEffect(() => {
+    if (canvasElement.current) {
+      canvasElement.current.addEventListener("touchstart", event => {
+        event.preventDefault();
+      });
+    }
+  }, [canvasElement]);
+
+  useEffect(() => {
     if (routes) {
       const newExistingRoutes = new Map(existingRoutes);
 
@@ -178,7 +186,7 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
             height="100%"
             viewBox="0 0 1000 1000"
             onPointerUp={onPointerUp}
-            onPointerMove={e => onPointerMove(e as unknown as PointerEvent)}
+            onPointerMove={ event => onPointerMove(event as unknown as PointerEvent)}
             onPointerDown={onPointerDown}
           >
             {existingRoutes && [...existingRoutes.keys()].map(key => (

@@ -143,6 +143,14 @@ function AreaView() {
           </section>
         </div>
       ))}
+
+      { loading === false && area?.topos.length === 0 && (
+        <section className="section">
+          <div className="container box">
+            <p><b>There's nothing here... YET!</b><br/>Click "Add Topo" above to start uploding images and drawing routes</p>
+          </div>
+        </section>
+      )}
     </>
   );
 }

@@ -9,6 +9,7 @@ function SearchResultCrag({ crag }: { crag: Crag }) {
         <div className="media-content">
           <div className="content">
             <p>
+              <span className="tag is-pulled-right">Crag</span>
               <b>{ crag.title } </b>
               <br />
               <small>{ crag.osmData.address.county }, { crag.osmData.address.country }</small>

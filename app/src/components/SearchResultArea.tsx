@@ -9,6 +9,7 @@ function SearchResultCrag({ area }: { area: Area }) {
         <div className="media-content">
           <div className="content">
             <p>
+              <span className="tag is-pulled-right">Area</span>
               <b>{ area.title } </b>
               <span>{ area.cragTitle }</span>
               <br />

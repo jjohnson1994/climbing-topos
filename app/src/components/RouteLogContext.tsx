@@ -99,20 +99,23 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
           className="navbar has-shadow is-fixed-bottom"
           role="navigation"
         >
-          <div className="is-justify-content-flex-end navbar-item" style={{  width: "100%"  }}>
-            <div className="buttons">
-              <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
-                <span className="icon">
-                  <i className="fas fw fa-list"></i>
-                </span>
-                <span>Save to List</span>
-              </button>
-              <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
-                <span className="icon">
-                  <i className="fas fw fa-check"></i>
-                </span>
-                <span>Done</span>
-              </button>
+          <div className="is-flex is-flex-grow-1 is-justify-content-space-between">
+            <span className="is-flex is-flex-column is-justify-content-center ml-3">{ selectedRoutes.length } Routes Selected</span>
+            <div className="is-justify-content-flex-end navbar-item">
+              <div className="buttons">
+                <button className="button is-outlined" onClick={ btnSaveMultipleToListOnClick }>
+                  <span className="icon">
+                    <i className="fas fw fa-list"></i>
+                  </span>
+                  <span>Save to List</span>
+                </button>
+                <button className="button is-primary" onClick={ btnDoneMultipleOnClick }>
+                  <span className="icon">
+                    <i className="fas fw fa-check"></i>
+                  </span>
+                  <span>Done</span>
+                </button>
+              </div>
             </div>
           </div>
         </nav>

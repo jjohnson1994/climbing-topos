@@ -9,6 +9,7 @@ function SearchResultsRoute({ route }: { route: Route }) {
         <div className="media-content">
           <div className="content">
             <p>
+              <span className="tag is-pulled-right">Route</span>
               <b>{ route.title } </b> { route.cragTitle }
               <br />
               <small>{ route.grade } { route.routeType }</small>

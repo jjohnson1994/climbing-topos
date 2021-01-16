@@ -112,6 +112,9 @@ function CragView() {
                 )}
               </div>
             )}
+            { activeTab === "routes" && crag?.routes.length ? (
+              <p className="has-text-centered"><b>Hint: </b>Routes can be added from an <b>Areas</b> page</p>
+            ) : ""}
 
             { activeTab === "areas" && (
               <div id="areas" className="container box">
