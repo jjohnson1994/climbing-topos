@@ -10,6 +10,7 @@ interface RouteLogContextType {
   onRouteSelected: (route: Route) => void;
   onSingleRouteAddToList: (route: Route) => void;
   onSingleRouteDone: (route: Route) => void;
+  routesJustLogged: Route[];
   selectedRoutes: Route[];
 }
 
@@ -20,6 +21,7 @@ export const RouteLogContext = createContext<RouteLogContextType>({
   onRouteSelected: () => {},
   onSingleRouteAddToList: () => {},
   onSingleRouteDone: () => {},
+  routesJustLogged: [],
   selectedRoutes: [],
 });
 
@@ -28,6 +30,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const [isSelectingMultiple, setIsSelectingMultiple] = useState<boolean>(false);
   const [showLogModal, setShowLogModal] = useState<boolean>(false);
   const [showAddToListModal, setShowAddToListModal] = useState<boolean>(false);
+  const [routesJustLogged, setRoutedJustLogged] = useState<Route[]>([]);
 
   const onRouteSelected = (route: Route) => {
     const newSelectedRoutes = Array.from(new Set([ ...selectedRoutes, route ]));
@@ -80,6 +83,10 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
     setIsSelectingMultiple(isSelectingMultiple);
     setSelectedRoutes([route]);
   }
+
+  const onRoutesLogged = () => {
+    setRoutedJustLogged([...routesJustLogged, ...selectedRoutes]);
+  }
   
   const onSingleRouteDone = (route: Route) => {
     setSelectedRoutes([route]);
@@ -101,6 +108,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
         onSingleRouteAddToList,
         onRouteSelected,
         onRouteDeselected,
+        routesJustLogged,
       }}
     >
       { children }
@@ -109,6 +117,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
         visible={ showLogModal } 
         onConfirm={ addToLogModalOnConfirm }
         onCancel={ addToLogModalOnCancel }
+        onRoutesLogged={ onRoutesLogged }
       />
       <RoutesAddToListModal
         routes={ selectedRoutes }

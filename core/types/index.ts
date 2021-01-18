@@ -57,6 +57,7 @@ export interface Crag extends CragBrief {
   areas: Area[];
   owner: string;
   routes: Route[];
+  topos: Topo[];
   userLogs: Log[];
 }
 

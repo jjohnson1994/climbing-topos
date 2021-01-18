@@ -1,7 +1,7 @@
 import Tippy from '@tippyjs/react';
-import React, {ChangeEvent, useContext} from "react";
-import {Link} from "react-router-dom";
-import {Log, Route} from "../../../core/types";
+import React, { ChangeEvent, useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { Log, Route } from "../../../core/types";
 import { RouteLogContext } from './RouteLogContext';
 
 interface Props {
@@ -21,7 +21,8 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
   }
 
   const hasUserLoggedRoute = (routeSlug: string) => {
-    return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1;
+    return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1
+      || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
   }
 
   return (

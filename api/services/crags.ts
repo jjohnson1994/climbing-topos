@@ -1,4 +1,4 @@
-import { areas, crags, logs, routes } from '../models';
+import { areas, crags, logs, routes, topos } from '../models';
 import { Crag, CragBrief } from '../../core/types';
 import { algolaIndex } from "../db/algolia";
 
@@ -45,10 +45,11 @@ export async function getAllCrags(user: string): Promise<CragBrief[]> {
 }
 
 export async function getCragBySlug(slug: string, userSub: string): Promise<Crag> {
-  const [crag, cragAreas, cragRoutes, userLogs] = await Promise.all([
+  const [crag, cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
     areas.getAreasByCragSlug(slug),
     routes.getRoutesByCragSlug(slug),
+    topos.getToposByCragSlug(slug),
     userSub
       ? logs.getLogsForUser(userSub, slug)
       : []
@@ -58,6 +59,7 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
     ...crag,
     areas: cragAreas,
     routes: cragRoutes,
+    topos: cragTopos,
     userLogs
   };
 }

@@ -30,11 +30,7 @@ export async function patchList(req, res) {
     const userSub = req.user.sub;
     const listSlug = req.query.listSlug;
     const newRoutes = req.body.routes as ListAddRouteRequest[];
-
     const list = await lists.getListBySlug(userSub, listSlug);
-
-    console.log(listSlug);
-    console.log(list);
 
     const routesToList = await Promise.all(
       newRoutes.map(async routeReq => routes.getRouteBySlug(
@@ -45,8 +41,6 @@ export async function patchList(req, res) {
         routeReq.routeSlug
       )),
     );
-
-    console.log(routesToList)
 
     const updateResponse = await lists.addRoutesToList(
       userSub,

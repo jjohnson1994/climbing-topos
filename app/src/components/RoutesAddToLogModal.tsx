@@ -15,11 +15,12 @@ interface Props {
   visible: boolean;
   onCancel?: Function;
   onConfirm?: Function;
+  onRoutesLogged?: Function
 }
 
 const schema = NewLogsSchema(yup);
 
-function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
+function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLogged }: Props) {
   const { getAccessTokenSilently } = useAuth0();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
@@ -52,13 +53,13 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm }: Props) {
     return grades;
   }
 
-  const btnLogRoutesConfirmOnClick = async () => {
-    handleSubmit(
-      data => {
-        logRoutes(data.logs as LogRequest[]);
-      }
-    )();
-  }
+  const btnLogRoutesConfirmOnClick = handleSubmit(async data => {
+    await logRoutes(data.logs as LogRequest[]);
+
+    if (onRoutesLogged) {
+      onRoutesLogged();
+    }
+  });
 
   const btnLogRoutesCancelOnClick = () => {
     if (onCancel) {

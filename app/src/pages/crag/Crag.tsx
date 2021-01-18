@@ -1,12 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Crag } from "../../../../core/types";
+import { Area, Crag, Topo } from "core/types";
 import { getCragBySlug } from "../../api/crags";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import CragMap from "../../components/CragMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import TopoImage from "../../components/TopoImage";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 
@@ -15,7 +16,7 @@ function CragView() {
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [crag, setCrag] = useState<Crag>();
-  const [activeTab, setActiveTab] = useState('routes');
+  const [activeTab, setActiveTab] = useState('guide');
 
   usePageTitle(crag?.title);
 
@@ -41,6 +42,14 @@ function CragView() {
       doGetCrag();
     }
   }, [cragSlug, isLoading, isAuthenticated]);
+
+  const areaTopos = (area: Area) => {
+    return crag?.topos.filter(topo => topo.areaSlug === area.slug);
+  }
+
+  const topoRoutes = (topo: Topo) => {
+    return crag?.routes.filter(route => route.topoSlug === topo.slug) || [];
+  }
 
   return (
     <>
@@ -86,6 +95,9 @@ function CragView() {
           <section className="section">
             <div className="tabs">
               <ul>
+                <li className={ activeTab === 'guide' ? 'is-active' : '' }>
+                  <a onClick={ () => setActiveTab('guide') }>Guide</a>
+                </li>
                 <li className={ activeTab === 'routes' ? 'is-active' : '' }>
                   <a onClick={ () => setActiveTab('routes') }>Routes</a>
                 </li>
@@ -100,6 +112,56 @@ function CragView() {
                 </li>
               </ul>
             </div>
+
+            { activeTab === "guide" && crag?.areas?.map(area => (
+              <div className="container">
+                <div className="block is-flex is-justify-content-space-between is-flex-wrap-wrap">
+                  <div>
+                    <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
+                    <p className="subtitle is-6">{ area.description }</p>
+                  </div>
+                  <ButtonCopyCoordinates
+                    latitude={ area.latitude }
+                    longitude={ area.longitude }
+                  />
+                </div>
+                <div className="block">
+                  <div className="tags">
+                    { area.tags.map(tag => (
+                      <label key={ tag } className="tag">{ tag }</label>
+                    ))}
+                  </div>
+                </div>
+                <div className="block">
+                  { areaTopos(area)?.filter(topo => topo.areaSlug === area.slug).map(topo =>(
+                    <div key={ topo.slug } className="columns">
+                      <div className="column">
+                        <TopoImage
+                          routes={ topoRoutes(topo) }
+                          background={ String(topo.image) }
+                        />
+                      </div>
+                      <div className="column">
+                        <span className="icon-text mb-1">
+                          <span className="icon">
+                            <i className="fas fa-compass"></i>
+                          </span>
+                          <span className="is-capitalized">{ topo.orientation }</span>
+                        </span>
+                        <div className="box">
+                          <AreaRoutesTable
+                            routes={ topoRoutes(topo) }
+                            loggedRoutes= { crag.userLogs }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <hr />
+              </div>
+            ))}
+
             { activeTab === "routes" && (
               <div id="routes" className="container box">
                 { crag?.routes.length ? (
