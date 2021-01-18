@@ -182,3 +182,43 @@ export interface Log extends LogRequest {
   title: string;
   slug: string;
 };
+
+export interface ListRequest {
+  title?: string;
+}
+
+export interface ListAddRouteRequest {
+  cragSlug: string;
+  areaSlug: string;
+  topoSlug: string;
+  routeSlug: string;
+}
+
+export interface ListRoutePartial extends ListAddRouteRequest {
+  areaTitle: string;
+  country: string;
+  countryCode: string;
+  county: string;
+  cragTitle: string;
+  grade: string;
+  gradingSystem: string;
+  latitude: string;
+  listSlug: string;
+  listTitle: string;
+  longitude: string;
+  rockType: string;
+  routeType: string;
+  state: string;
+  title: string;
+}
+
+export interface ListRoute extends ListRoutePartial {
+  listSlug: string;
+  slug: string;
+}
+
+export interface List {
+  title: string;
+  slug: string;
+  routes: ListRoute[];
+}

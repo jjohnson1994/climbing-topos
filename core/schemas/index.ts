@@ -116,3 +116,18 @@ export const NewLogsSchema = yup => yup.object().shape({
     })
   )
 });
+
+export const NewListSchema = yup => yup.object().shape({
+  title: yup.string().required("Required"),
+});
+
+export const UpdateListSchema = yup => yup.object().shape({
+  routes: yup.array().of(
+    yup.object().shape({
+      cragSlug: yup.string().required(),
+      areaSlug: yup.string().required(),
+      topoSlug: yup.string().required(),
+      routeSlug: yup.string().required(),
+    })
+  ).min(1, "Not routes provided"),
+});

@@ -36,7 +36,6 @@ function Crags() {
     <React.Fragment>
       <section className="section">
         <div className="container">
-          <h1 className="title">Find a Crag</h1>
           <div className="field is-grouped">
             <div className="control is-expanded has-icons-left">
               <span className="icon is-icon-left">
@@ -45,7 +44,7 @@ function Crags() {
               <input
                 className="input is-rounded"
                 type="text"
-                placeholder="Search"
+                placeholder="Filter"
               />
             </div>
             <div className="control">

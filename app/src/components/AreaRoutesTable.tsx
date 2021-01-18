@@ -74,7 +74,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
                             </button>
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => {} }
+                              onClick={ () => { context.onSingleRouteAddToList(route) } }
                             >
                               <span className="icon">
                                 <i className="fas fw fa-list"></i>

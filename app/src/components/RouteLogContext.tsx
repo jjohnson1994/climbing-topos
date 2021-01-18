@@ -1,5 +1,6 @@
 import { Route } from "core/types";
 import React, { createContext, useState } from "react";
+import RoutesAddToListModal from "./RoutesAddToListModal";
 import RoutesAddToLogModal from "./RoutesAddToLogModal";
 
 interface RouteLogContextType {
@@ -26,6 +27,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const [selectedRoutes, setSelectedRoutes] = useState<Route[]>([]);
   const [isSelectingMultiple, setIsSelectingMultiple] = useState<boolean>(false);
   const [showLogModal, setShowLogModal] = useState<boolean>(false);
+  const [showAddToListModal, setShowAddToListModal] = useState<boolean>(false);
 
   const onRouteSelected = (route: Route) => {
     const newSelectedRoutes = Array.from(new Set([ ...selectedRoutes, route ]));
@@ -42,8 +44,36 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
     }
   }
 
+  const addToLogModalOnConfirm = () => {
+    setShowLogModal(false);
+    setSelectedRoutes([]);
+  }
+
+  const addToLogModalOnCancel = () => {
+    setShowLogModal(false);
+    if (isSelectingMultiple === false) {
+      setSelectedRoutes([]);
+    }
+  }
+
+  const addToListModalOnConfirm = () => {
+    setShowAddToListModal(false);
+    setSelectedRoutes([]);
+  }
+
+  const addToListModalOnCancel = () => {
+    setShowAddToListModal(false);
+    if (isSelectingMultiple === false) {
+      setSelectedRoutes([]);
+    }
+  }
+
   const btnDoneMultipleOnClick = () => {
     setShowLogModal(true);
+  }
+
+  const btnSaveMultipleToListOnClick = () => {
+    setShowAddToListModal(true);
   }
 
   const onInitSelectMultiple = (isSelectingMultiple: boolean, route: Route) => {
@@ -58,21 +88,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
 
   const onSingleRouteAddToList = (route: Route) => {
     setSelectedRoutes([route]);
-  }
-
-  const btnSaveMultipleToListOnClick = () => {
-  }
-
-  const addToLogModalOnConfirm = () => {
-    setShowLogModal(false);
-    setSelectedRoutes([]);
-  }
-
-  const addToLogModalOnCancel = () => {
-    setShowLogModal(false);
-    if (isSelectingMultiple === false) {
-      setSelectedRoutes([]);
-    }
+    setShowAddToListModal(true);
   }
 
   return (
@@ -91,8 +107,14 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
       <RoutesAddToLogModal
         routes={ selectedRoutes }
         visible={ showLogModal } 
-        onCancel={ addToLogModalOnCancel }
         onConfirm={ addToLogModalOnConfirm }
+        onCancel={ addToLogModalOnCancel }
+      />
+      <RoutesAddToListModal
+        routes={ selectedRoutes }
+        visible={ showAddToListModal }
+        onConfirm={ addToListModalOnConfirm }
+        onCancel={ addToListModalOnCancel }
       />
       { selectedRoutes.length ? (
         <nav

@@ -4,8 +4,7 @@ import { areas, crags } from "../services";
 export async function postArea(req, res) {
   try {
     const areaDetails = req.body as AreaRequest;
-    const { user } = req;
-    const userSub = user ? user.sub : false;
+    const userSub = req.user.sub;
     const resp = await areas.createArea(areaDetails, userSub);
 
     crags.incrementAreaCount(areaDetails.cragSlug)

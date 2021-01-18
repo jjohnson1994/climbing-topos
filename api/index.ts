@@ -3,6 +3,7 @@ import express from "express";
 
 import areas from "./routes/areas";
 import crags from "./routes/crags";
+import lists from "./routes/lists";
 import logs from "./routes/logs";
 import profile from "./routes/profile";
 import routes from "./routes/routes";
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/areas", areas);
 app.use("/crags", crags);
+app.use("/lists", lists);
 app.use("/logs", logs);
 app.use("/profile", profile);
 app.use("/topos", topos);

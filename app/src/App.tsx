@@ -10,9 +10,11 @@ import {
 import './App.scss';
 import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
 import ProtectedRoute from "./auth/protected-route";
+import Footer from './components/Footer';
 import Nav from "./components/Nav";
 import RouteLogContext from "./components/RouteLogContext";
 import Area from './pages/area/Area';
+import About from './pages/about/About';
 import Crag from './pages/crag/Crag';
 import CragsMap from "./pages/crags-map/CragsMap";
 import Crags from './pages/crags/Crags';
@@ -24,8 +26,6 @@ import Home from './pages/home/Home';
 import Profile from './pages/profile/Profile';
 import RoutePage from './pages/route/Route';
 import Search from "./pages/search/Search";
-
-
 
 const searchClient = algoliasearch(
   `${process.env.REACT_APP_ALGOLIA_APP_ID}`,
@@ -77,6 +77,9 @@ function App() {
                   path="/create-crag"
                   component={ CreateCrag }
                 />
+                <Route path='/about'>
+                  <About />
+                </Route>
                 <Route path='/search'>
                   <Search />
                 </Route>
@@ -84,6 +87,7 @@ function App() {
                   <Home />
                 </Route>
               </Switch>
+              <Footer />
             </RouteLogContext>
           </InstantSearch>
         </Auth0ProviderWithHistory>
