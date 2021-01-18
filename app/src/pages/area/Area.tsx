@@ -52,9 +52,9 @@ function AreaView() {
       <section className={`section ${ loading ? "is-hidden" : "" }`}>
         <div className="container">
           <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
-          <h5 className="subtitle is-5">{ area?.description }</h5>
-          <h5 className="subtitle is-5">{ area?.approachNotes }</h5>
-          <h5 className="subtitle is-5">{ area?.accessDetails }</h5>
+          <h6 className="subtitle is-6">{ area?.description }</h6>
+          <h6 className="subtitle is-6">{ area?.approachNotes }</h6>
+          <h6 className="subtitle is-6">{ area?.accessDetails }</h6>
           <div className="columns">
             <div className="column">
               <div role="group" className="tags">
@@ -92,57 +92,47 @@ function AreaView() {
         </div>
       </section>
 
-      {area?.topos && area?.topos.map((topo) => (
-        <div key={ topo.slug }>
-          <div className="is-hidden-tablet">
-            <TopoImage
-              routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-              background={ `${topo.image}` }
-            />
-          </div>
-          <section className="section">
-            <div className="container">
-              <div className="box block" key={ topo.slug }>
-                <div className="columns">
-                  <div className="column is-half-table is-two-thirds-desktop is-hidden-mobile">
-                    <TopoImage
+      <section className="section">
+        {area?.topos && area?.topos.map((topo) => (
+          <div key={ topo.slug } className="container block">
+            <div className="columns">
+              <div className="column">
+                <TopoImage
+                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                  background={ `${topo.image}` }
+                />
+              </div>
+              <div className="column">
+                <div className="block is-flex is-justify-content-space-between">
+                  <span className="icon-text">
+                    <span className="icon">
+                      <i className="fas fa-compass"></i>
+                    </span>
+                    <span className="is-capitalized">{ topo.orientation }</span>
+                  </span>
+                  <Link
+                    to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
+                    className="button is-rounded"
+                  >
+                    <span className="icon is-small">
+                      <i className="fas fa-plus"></i>
+                    </span>
+                    <span>Add Route</span>
+                  </Link>
+                </div>
+                <div className="block box">
+                  { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                    <AreaRoutesTable
                       routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                      background={ `${topo.image}` }
+                      loggedRoutes={ area.userLogs }
                     />
-                  </div>
-                  <div className="column">
-                    <div className="is-flex is-justify-content-flex-end">
-                      <span className="icon-text">
-                        <span className="icon">
-                          <i className="fas fa-compass"></i>
-                        </span>
-                        <span className="is-capitalized">{ topo.orientation }</span>
-                      </span>
-                    </div>
-                    { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
-                      <AreaRoutesTable
-                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                        loggedRoutes={ area.userLogs }
-                      />
-                    ) : ""}
-                    <div className="buttons is-centered">
-                      <Link
-                        to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
-                        className="button is-rounded"
-                      >
-                        <span className="icon is-small">
-                          <i className="fas fa-plus"></i>
-                        </span>
-                        <span>Add Route</span>
-                      </Link>
-                    </div>
-                  </div>
+                  ) : ""}
                 </div>
               </div>
             </div>
-          </section>
-        </div>
-      ))}
+          </div>
+        ))}
+      </section>
 
       { loading === false && area?.topos.length === 0 && (
         <section className="section">
