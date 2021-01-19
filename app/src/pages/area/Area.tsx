@@ -51,11 +51,13 @@ function AreaView() {
       )}
       <section className={`section ${ loading ? "is-hidden" : "" }`}>
         <div className="container">
-          <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
-          <h6 className="subtitle is-6">{ area?.description }</h6>
-          <h6 className="subtitle is-6">{ area?.approachNotes }</h6>
-          <h6 className="subtitle is-6">{ area?.accessDetails }</h6>
           <div className="columns">
+            <div className="column is-two-thirds">
+              <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
+              <h6 className="subtitle is-6">{ area?.description }</h6>
+              <h6 className="subtitle is-6">{ area?.approachNotes }</h6>
+              <h6 className="subtitle is-6">{ area?.accessDetails }</h6>
+            </div>
             <div className="column">
               <div role="group" className="tags">
                 <label className={ `tag is-capitalized ${ area?.access === "banned" ? "is-danger " : "is-primary" }` }>
@@ -67,25 +69,20 @@ function AreaView() {
                   </label>
                 ))} 
               </div>
-            </div>
-            <div className="column is-flex is-justified-end">
-              <div className="is-flex is-justify-content-flex-end">
+              <div className="buttons has-addons is-right">
                 <ButtonCopyCoordinates
                   latitude={ `${area?.latitude}` }
                   longitude={ `${area?.longitude}` }
                 />
-                <span className="mr-2"></span>
-                <div className="buttons has-addons is-right">
-                  <Link
-                    to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
-                    className="button is-rounded"
-                  >
-                    <span className="icon is-small">
-                      <i className="fas fa-plus"></i>
-                    </span>
-                    <span>Add Topo</span>
-                  </Link>
-                </div>
+                <Link
+                  to={ `/crags/${cragSlug}/areas/${areaSlug}/create-topo` }
+                  className="button is-rounded"
+                >
+                  <span className="icon is-small">
+                    <i className="fas fa-plus"></i>
+                  </span>
+                  <span>Add Topo</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -94,7 +91,7 @@ function AreaView() {
 
       <section className="section">
         {area?.topos && area?.topos.map((topo) => (
-          <div key={ topo.slug } className="container block">
+          <div key={ topo.slug } id={ topo.slug } className="container block">
             <div className="columns">
               <div className="column">
                 <TopoImage
@@ -103,7 +100,7 @@ function AreaView() {
                 />
               </div>
               <div className="column">
-                <div className="block is-flex is-justify-content-space-between">
+                <div className="block is-flex is-justify-content-space-between is-align-items-center">
                   <span className="icon-text">
                     <span className="icon">
                       <i className="fas fa-compass"></i>
@@ -120,14 +117,14 @@ function AreaView() {
                     <span>Add Route</span>
                   </Link>
                 </div>
-                <div className="block box">
-                  { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                  <div className="block box">
                     <AreaRoutesTable
                       routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
                       loggedRoutes={ area.userLogs }
                     />
-                  ) : ""}
-                </div>
+                  </div>
+                ) : "" }
               </div>
             </div>
           </div>

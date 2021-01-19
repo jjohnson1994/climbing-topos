@@ -22,9 +22,11 @@ function Profile() {
                   <br />
                   <span><b>Email </b> { email } </span>
                 </div>
-                <button className="button" onClick={ () => logout() }>
-                  Logout
-                </button>
+                <div>
+                  <button className="button" onClick={ () => logout() }>
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>

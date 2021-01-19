@@ -1,6 +1,7 @@
 import {useAuth0} from "@auth0/auth0-react";
 import React from "react";
 import {useEffect, useState} from "react";
+import { Link } from "react-router-dom";
 import {Log} from "../../../core/types";
 import {logs} from "../api";
 import {popupError} from "../helpers/alerts";
@@ -39,7 +40,11 @@ function ProfileLogs() {
       <tbody>
         { loggedRoutes.map(log => (
           <tr key={ log.slug } >
-            <td>{ log.routeTitle }</td>
+            <td>
+              <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topos/${log.topoSlug}/routes/${log.routeSlug}` }>
+                { log.routeTitle }
+              </Link>
+            </td>
             <td>{ log.gradeTaken }</td>
             <td>{ log.stars }</td>
             <td>{ log.dateSent }</td>

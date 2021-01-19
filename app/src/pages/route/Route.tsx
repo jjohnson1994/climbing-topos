@@ -1,9 +1,10 @@
 import {useAuth0} from "@auth0/auth0-react";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {Route} from "../../../../core/types";
 import {routes} from "../../api";
 import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
+import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
 import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
@@ -14,7 +15,8 @@ function RoutePage() {
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [route, setRoute] = useState<Route>();
   const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
-  const [showLogModal, setShowLogModal] = useState(false);
+  const context = useContext(RouteLogContext);
+
   usePageTitle(route?.title);
 
   useEffect(() => {
@@ -37,33 +39,38 @@ function RoutePage() {
   }, [routeSlug, isAuthenticated, isLoading]);
 
   const btnDoneOnClick = () => {
-    setShowLogModal(true);
+    if (route) {
+      context.onSingleRouteDone(route);
+    }
   }
 
-  const onRouteLogged = () => {
-    setShowLogModal(false);
-    setRouteJustLogged(true);
+  const btnSaveToListOnClick = () => {
+    if (route) {
+      context.onSingleRouteAddToList(route);
+    }
+  }
+
+  const hasUserLoggedRoute = () => {
+    if (route) {
+      return route.userLogs.length
+        || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
+    }
+
+    return false;
   }
 
   return (
     <>
-      { route ? (
-        <RoutesAddToLogModal
-          routes={ [route] as Route[] }
-          visible={ showLogModal } 
-          onCancel={ () => setShowLogModal(false) }
-          onConfirm={ onRouteLogged }
-        />
-        ) : ""
-      }
       <section className="section">
         <div className="container">
-          <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
-          <h6 className="subtitle is-6">
-            { route?.grade } <span> </span> { route?.routeType }
-          </h6>
-          <h6 className="subtitle is-6">{ route?.description }</h6>
           <div className="columns">
+            <div className="column is-two-thirds">
+              <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
+              <h6 className="subtitle is-6">
+                { route?.grade } <span> </span> { route?.routeType }
+              </h6>
+              <h6 className="subtitle is-6">{ route?.description }</h6>
+            </div>
             <div className="column">
               <div role="group" className="tags">
                 {route?.tags.map(tag => (
@@ -72,39 +79,33 @@ function RoutePage() {
                   </label>
                 ))} 
               </div>
-            </div>
-            <div className="column is-flex is-justified-end">
-              <div className="field has-addons">
-                <div className="control">
-                  <button className="button is-rounded" onClick={ btnDoneOnClick }>
-                    { route?.userLogs.length || routeJustLogged
-                      ? (
-                        <>
-                          <span className="icon is-small">
-                            <i className="fas fw fa-check"></i>
-                          </span>
-                          <span>Done</span>
-                        </>
-                      )
-                      : (
-                        <>
-                          <span className="icon is-small">
-                            <i className="fas fw fa-plus"></i>
-                          </span>
-                          <span>Log Book</span>
-                        </>
-                      )
-                    }
-                  </button>
-                </div>
-                <div className="control">
-                  <button className="button is-rounded">
-                    <span className="icon is-small">
-                      <i className="fas fw fa-list"></i>
-                    </span>
-                    <span>Save to List</span>
-                  </button>
-                </div>
+              <div className="buttons has-addons is-right">
+                <button className="button is-rounded" onClick={ btnDoneOnClick }>
+                  { hasUserLoggedRoute()
+                    ? (
+                      <>
+                        <span className="icon is-small">
+                          <i className="fas fw fa-check"></i>
+                        </span>
+                        <span>Done</span>
+                      </>
+                    )
+                    : (
+                      <>
+                        <span className="icon is-small">
+                          <i className="fas fw fa-plus"></i>
+                        </span>
+                        <span>Log Book</span>
+                      </>
+                    )
+                  }
+                </button>
+                <button className="button is-rounded" onClick={ btnSaveToListOnClick }>
+                  <span className="icon is-small">
+                    <i className="fas fw fa-list"></i>
+                  </span>
+                  <span>Save to List</span>
+                </button>
               </div>
             </div>
           </div>

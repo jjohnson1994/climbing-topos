@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 import { Area, Crag, Topo } from "core/types";
 import { getCragBySlug } from "../../api/crags";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
@@ -68,9 +69,11 @@ function CragView() {
               </div>
             )}
             <div className="container">
-              <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
-              <h5 className="subtitle is-5">{ crag?.description }</h5>
               <div className="columns">
+                <div className="column is-two-thirds">
+                  <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
+                  <h5 className="subtitle is-5">{ crag?.description }</h5>
+                </div>
                 <div className="column">
                   <div role="group" className="tags">
                     <label className={ `tag is-capitalized ${ crag?.access === "banned" ? "is-danger " : "is-primary" }` }>
@@ -82,12 +85,12 @@ function CragView() {
                       </label>
                     ))} 
                   </div>
-                </div>
-                <div className="column is-flex is-justified-end">
+                  <div className="buttons is-right">
                     <ButtonCopyCoordinates
                       latitude={ `${crag?.latitude}` }
                       longitude={ `${crag?.longitude}` }
                     />
+                  </div>
                 </div>
               </div>
             </div>
@@ -117,7 +120,9 @@ function CragView() {
               <div className="container">
                 <div className="block is-flex is-justify-content-space-between is-flex-wrap-wrap">
                   <div>
-                    <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
+                    <Link to={ `/crags/${area.cragSlug}/areas/${area.slug}` }>
+                      <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
+                    </Link>
                     <p className="subtitle is-6">{ area.description }</p>
                   </div>
                   <ButtonCopyCoordinates
@@ -134,12 +139,14 @@ function CragView() {
                 </div>
                 <div className="block">
                   { areaTopos(area)?.filter(topo => topo.areaSlug === area.slug).map(topo =>(
-                    <div key={ topo.slug } className="columns">
+                    <div key={ topo.slug } className={ `columns ${ topoRoutes(topo).length ? "" : "is-hidden" }` }>
                       <div className="column">
-                        <TopoImage
-                          routes={ topoRoutes(topo) }
-                          background={ String(topo.image) }
-                        />
+                        <HashLink to={ `/crags/${area.cragSlug}/areas/${area.slug}#${topo.slug}` }>
+                          <TopoImage
+                            routes={ topoRoutes(topo) }
+                            background={ String(topo.image) }
+                          />
+                        </HashLink>
                       </div>
                       <div className="column">
                         <span className="icon-text mb-1">

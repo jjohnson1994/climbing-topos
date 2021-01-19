@@ -1,19 +1,34 @@
+import Compressor from 'compressorjs';
 import { Topo } from "../../../core/types";
 import { uploads } from "../api";
 
 const imageIsFile = (image: File) => image && image.name && image.type && image.size;
 
 export async function createTopo(topoDetails: Topo, token: string) {
+  const file = topoDetails.image as File;
   let image = undefined;
 
-  if (imageIsFile(topoDetails.image as File)) {
+  if (imageIsFile(file)) {
     const { url, objectUrl } = await uploads.getPresignedUploadURL(token);
+
+    const compressedFile = await new Promise<Blob>((resolve, reject) => {
+      new Compressor(file, {
+        quality: 0.6,
+        success(result) {
+          resolve(result);
+        },
+        error(error) {
+          console.error("Error compressing topo image", error);
+          reject(error);
+        },
+      });
+    });
 
     await fetch(url, {
       method: "PUT",
-      body: topoDetails.image,
+      body: compressedFile,
       headers: new Headers({
-        'Content-Type': (topoDetails.image as File).type,
+        'Content-Type': file.type,
       })
     })
       .then(async res => {
