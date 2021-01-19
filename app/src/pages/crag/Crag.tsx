@@ -62,12 +62,12 @@ function CragView() {
         </section>
       ) : (
         <>
+          { crag && crag.access === "banned" && (
+            <div className="notification is-danger">
+              Climbing at this crag is <b>banned</b>, probably best to find somewhere else
+            </div>
+          )}
           <section className="section">
-            { crag && crag.access === "banned" && (
-              <div className="notification is-danger">
-                Climbing at this crag is <b>banned</b>, probably best to find somewhere else
-              </div>
-            )}
             <div className="container">
               <div className="columns">
                 <div className="column is-two-thirds">
@@ -98,9 +98,11 @@ function CragView() {
           <section className="section">
             <div className="tabs">
               <ul>
-                <li className={ activeTab === 'guide' ? 'is-active' : '' }>
-                  <a onClick={ () => setActiveTab('guide') }>Guide</a>
-                </li>
+                { crag?.routes.length ? (
+                  <li className={ activeTab === 'guide' ? 'is-active' : '' }>
+                    <a onClick={ () => setActiveTab('guide') }>Guide</a>
+                  </li>
+                ): "" }
                 <li className={ activeTab === 'routes' ? 'is-active' : '' }>
                   <a onClick={ () => setActiveTab('routes') }>Routes</a>
                 </li>
@@ -118,23 +120,27 @@ function CragView() {
 
             { activeTab === "guide" && crag?.areas?.map(area => (
               <div className="container">
-                <div className="block is-flex is-justify-content-space-between is-flex-wrap-wrap">
-                  <div>
-                    <Link to={ `/crags/${area.cragSlug}/areas/${area.slug}` }>
-                      <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
-                    </Link>
-                    <p className="subtitle is-6">{ area.description }</p>
-                  </div>
-                  <ButtonCopyCoordinates
-                    latitude={ area.latitude }
-                    longitude={ area.longitude }
-                  />
-                </div>
                 <div className="block">
-                  <div className="tags">
-                    { area.tags.map(tag => (
-                      <label key={ tag } className="tag">{ tag }</label>
-                    ))}
+                  <div className="columns">
+                    <div className="column is-two-thirds">
+                      <Link to={ `/crags/${area.cragSlug}/areas/${area.slug}` }>
+                        <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
+                      </Link>
+                      <p className="subtitle is-6">{ area.description }</p>
+                    </div>
+                    <div className="column">
+                      <div className="tags">
+                        { area.tags.map(tag => (
+                          <label key={ tag } className="tag">{ tag }</label>
+                        ))}
+                      </div>
+                      <div className="buttons is-right">
+                        <ButtonCopyCoordinates
+                          latitude={ area.latitude }
+                          longitude={ area.longitude }
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="block">
@@ -149,13 +155,15 @@ function CragView() {
                         </HashLink>
                       </div>
                       <div className="column">
-                        <span className="icon-text mb-1">
-                          <span className="icon">
-                            <i className="fas fa-compass"></i>
+                        <div className="is-flex is-justify-content-flex-end">
+                          <span className="icon-text">
+                            <span className="icon">
+                              <i className="fas fa-compass"></i>
+                            </span>
+                            <span className="is-capitalized">{ topo.orientation }</span>
                           </span>
-                          <span className="is-capitalized">{ topo.orientation }</span>
-                        </span>
-                        <div className="box">
+                        </div>
+                        <div className="box mt-1">
                           <AreaRoutesTable
                             routes={ topoRoutes(topo) }
                             loggedRoutes= { crag.userLogs }

@@ -63,74 +63,64 @@ function RoutePage() {
     <>
       <section className="section">
         <div className="container">
-          <div className="columns">
-            <div className="column is-two-thirds">
-              <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
-              <h6 className="subtitle is-6">
-                { route?.grade } <span> </span> { route?.routeType }
-              </h6>
-              <h6 className="subtitle is-6">{ route?.description }</h6>
-            </div>
-            <div className="column">
-              <div role="group" className="tags">
-                {route?.tags.map(tag => (
-                  <label key={ tag } className="tag is-primary">
-                    { tag }
-                  </label>
-                ))} 
+          <div className="block">
+            <div className="columns">
+              <div className="column is-two-thirds">
+                <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
+                <h6 className="subtitle is-6">
+                  { route?.grade } <span> </span> { route?.routeType }
+                </h6>
+                <h6 className="subtitle is-6">{ route?.description }</h6>
               </div>
-              <div className="buttons has-addons is-right">
-                <button className="button is-rounded" onClick={ btnDoneOnClick }>
-                  { hasUserLoggedRoute()
-                    ? (
-                      <>
-                        <span className="icon is-small">
-                          <i className="fas fw fa-check"></i>
-                        </span>
-                        <span>Done</span>
-                      </>
-                    )
-                    : (
-                      <>
-                        <span className="icon is-small">
-                          <i className="fas fw fa-plus"></i>
-                        </span>
-                        <span>Log Book</span>
-                      </>
-                    )
-                  }
-                </button>
-                <button className="button is-rounded" onClick={ btnSaveToListOnClick }>
-                  <span className="icon is-small">
-                    <i className="fas fw fa-list"></i>
-                  </span>
-                  <span>Save to List</span>
-                </button>
+              <div className="column">
+                <div role="group" className="tags">
+                  {route?.tags.map(tag => (
+                    <label key={ tag } className="tag is-primary">
+                      { tag }
+                    </label>
+                  ))} 
+                </div>
+                <div className="buttons has-addons is-right">
+                  <button className="button is-rounded" onClick={ btnDoneOnClick }>
+                    { hasUserLoggedRoute()
+                      ? (
+                        <>
+                          <span className="icon is-small">
+                            <i className="fas fw fa-check"></i>
+                          </span>
+                          <span>Done</span>
+                        </>
+                      )
+                      : (
+                        <>
+                          <span className="icon is-small">
+                            <i className="fas fw fa-plus"></i>
+                          </span>
+                          <span>Log Book</span>
+                        </>
+                      )
+                    }
+                  </button>
+                  <button className="button is-rounded" onClick={ btnSaveToListOnClick }>
+                    <span className="icon is-small">
+                      <i className="fas fw fa-list"></i>
+                    </span>
+                    <span>Save to List</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section className="is-hidden-tablet">
-        { route?.drawing
-          ? <TopoImage
-              routes={[route, ...route.siblingRoutes]}
-              highlightedRouteSlug={ route.slug }
-              background={ `${route?.topo?.image}` }
-            />
-          : ""
-        }
-      </section>
-      <section className="section is-hidden-mobile">
-        <div className="container box">
-          { route?.drawing
-            ? <TopoImage
-                routes={[route, ...route.siblingRoutes]}
-                highlightedRouteSlug={ route.slug }
-                background={ `${route?.topo?.image}` }
-              />
-            : ""
-          }
+          <div className="block">
+            { route?.drawing
+              ? <TopoImage
+                  routes={[route, ...route.siblingRoutes]}
+                  highlightedRouteSlug={ route.slug }
+                  background={ `${route?.topo?.image}` }
+                />
+              : ""
+            }
+          </div>
         </div>
       </section>
     </>

@@ -59,38 +59,28 @@ function Crags() {
             </div>
           </div>
           <div className="block">
-            <div className="box">
-              { loading && <LoadingSpinner /> }
-              <table className={ `table is-hoverable is-fullwidth ${ loading ? "is-hidden" : "" }` }>
-                <thead>
-                  <tr>
-                    <td>Crag</td>
-                    <td>Routes</td>
-                    <td>Areas</td>
-                    <td>Ticks</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    crags.map(crag => (
-                      <tr key={ crag.slug }>
-                        <td>
-                          <Link 
-                            className="is-capitalized"
-                            to={`/crags/${crag.slug}`}
-                          >
-                            { crag.title }
-                          </Link>
-                        </td>
-                        <td><span>{ crag.routeCount }</span></td>
-                        <td><span>{ crag.areaCount } </span></td>
-                        <td><span>{ crag.logCount }</span></td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
-            </div>
+            { loading && <LoadingSpinner /> }
+            { crags.map(crag => (
+              <Link key={ crag.slug } to={ `/crags/${crag.slug}` }>
+                <div className="block box">
+                  <div className="is-flex is-flex-column">
+                    <p className="is-capitalized"><b>{ crag.title }</b></p>
+                    <div className="columns">
+                      <div className="column">
+                        <p className="is-capitalized">{ crag.description }</p>
+                      </div>
+                      <div className="column">
+                        <div className="tags is-justify-content-flex-end">
+                          <span className="tag">Routes { crag.routeCount }</span>
+                          <span className="tag">Areas { crag.areaCount }</span>
+                          <span className="tag">Logs { crag.logCount }</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
