@@ -58,9 +58,13 @@ function Crags() {
               </div>
             </div>
           </div>
-          <div className="block">
-            { loading && <LoadingSpinner /> }
-            { crags.map(crag => (
+          { loading && (
+            <div className="block">
+              <LoadingSpinner />
+            </div>
+          )}
+          { crags.map(crag => (
+            <div className="block">
               <Link key={ crag.slug } to={ `/crags/${crag.slug}` }>
                 <div className="block box">
                   <div className="is-flex is-flex-column">
@@ -80,8 +84,8 @@ function Crags() {
                   </div>
                 </div>
               </Link>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
     </React.Fragment>

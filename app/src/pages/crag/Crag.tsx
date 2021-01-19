@@ -17,7 +17,7 @@ function CragView() {
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [crag, setCrag] = useState<Crag>();
-  const [activeTab, setActiveTab] = useState('guide');
+  const [activeTab, setActiveTab] = useState("routes");
 
   usePageTitle(crag?.title);
 
@@ -31,6 +31,12 @@ function CragView() {
           : "";
         const newCrag = await getCragBySlug(cragSlug, token);
         setCrag(newCrag);
+
+        if (newCrag.routes.length) {
+          setActiveTab("guide");
+        } else {
+          setActiveTab("routes");
+        }
       } catch (error) {
         console.error("Error loading crag", error);
         popupError("There was an error loading this crag. It's 90% your fault");
