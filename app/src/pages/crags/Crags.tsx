@@ -71,7 +71,7 @@ function Crags() {
                     <p className="is-capitalized"><b>{ crag.title }</b></p>
                     <div className="columns">
                       <div className="column">
-                        <p className="is-capitalized">{ crag.description }</p>
+                        <p className="is-capitalized">{ crag.osmData.address.county }, { crag.osmData.address.country }</p>
                       </div>
                       <div className="column">
                         <div className="tags is-justify-content-flex-end">
