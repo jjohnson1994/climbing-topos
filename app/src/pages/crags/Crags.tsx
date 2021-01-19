@@ -64,7 +64,7 @@ function Crags() {
             </div>
           )}
           { crags.map(crag => (
-            <div className="block">
+            <div key={ crag.slug } className="block">
               <Link key={ crag.slug } to={ `/crags/${crag.slug}` }>
                 <div className="block box">
                   <div className="is-flex is-flex-column">

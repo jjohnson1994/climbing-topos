@@ -138,7 +138,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
               Existing List
             </label>
             <label className="radio">
-              <input type="radio" name="newOrExisting" value="new" ref={ register } />
+              <input type="radio" name="newOrExisting" value="new" ref={ register } placeholder="e.g. 'Projects' or 'Font 2021'" />
               New List
             </label>
           </div>

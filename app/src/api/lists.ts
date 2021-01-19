@@ -47,7 +47,6 @@ export async function addRoutesToList(
   return json
 }
 
-
 export async function getLists(token: string): Promise<List[]> {
   const res = await fetch(`http://localhost:3001/dev/lists`, {
     headers: {
@@ -64,8 +63,8 @@ export async function getLists(token: string): Promise<List[]> {
   return json;
 }
 
-export async function getList(token: string, listSlug: string): Promise<List[]> {
-  const res = await fetch(`http://localhost:3001/dev/lists?listSlug=${listSlug}`, {
+export async function getList(token: string, listSlug: string): Promise<List> {
+  const res = await fetch(`http://localhost:3001/dev/lists/${listSlug}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

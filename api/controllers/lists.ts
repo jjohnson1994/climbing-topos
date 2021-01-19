@@ -8,6 +8,19 @@ export async function getLists(req, res) {
 
     res.status(200).json(userLists);
   } catch (error) {
+    console.error("Error getting lists", error);
+    res.status(500).json({ error: true });
+  }
+}
+
+export async function getList(req, res) {
+  try {
+    const userSub = req.user.sub;
+    const listSlug = req.params.listSlug;
+    const listReponse = await lists.getListBySlug(userSub, listSlug);
+
+    res.status(200).json(listReponse);
+  } catch (error) {
     console.error("Error getting list", error);
     res.status(500).json({ error: true });
   }
@@ -67,6 +80,11 @@ export async function patchList(req, res) {
         topoSlug: route.topoSlug
       }))
     );
+
+    lists.incrementRoutesCount(listSlug, userSub)
+      .catch(error => {
+        console.error("Error incrementing list routes count", error);
+      });
 
     res.status(200).json({ success: true, ...updateResponse });
   } catch (error) {

@@ -10,6 +10,7 @@ const router = express.Router();
 const newListSchema = NewListSchema(yup);
 const updateListSchema = UpdateListSchema(yup);
 
+router.get('/:listSlug', requireAuth, lists.getList);
 router.get('/', requireAuth, lists.getLists);
 
 router.post(

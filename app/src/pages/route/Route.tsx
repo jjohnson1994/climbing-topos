@@ -8,11 +8,13 @@ import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
 import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 
 function RoutePage() {
   const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
+  const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
   const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
   const context = useContext(RouteLogContext);
@@ -22,6 +24,7 @@ function RoutePage() {
   useEffect(() => {
     const doGetRoute = async () => {
       try {
+        setLoading(true);
         const token = isAuthenticated
           ? await getAccessTokenSilently()
           : "";
@@ -30,6 +33,8 @@ function RoutePage() {
       } catch (error) {
         console.error("Error loading route", error);
         popupError("Oh dear, there was a problem loading this route");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -61,7 +66,12 @@ function RoutePage() {
 
   return (
     <>
-      <section className="section">
+      { loading && (
+        <section className="section">
+          <LoadingSpinner />
+        </section>
+      )}
+      <section className={ `section ${ loading ? "is-hidden" : "" }` }>
         <div className="container">
           <div className="block">
             <div className="columns">

@@ -2,8 +2,9 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { List, ListRequest, ListRoute, ListRoutePartial, Route } from "../../core/types";
+import { List, ListRequest, ListRoute, ListRoutePartial } from "../../core/types";
 import { createSlug } from "../helpers/slug";
+import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
 export async function createList(userSub: string, listRequest: ListRequest) {
   const date = DateTime.utc().toString();
@@ -36,7 +37,6 @@ export async function createList(userSub: string, listRequest: ListRequest) {
 }
 
 export async function getListBySlug(userSub: string, listSlug: string): Promise<List> {
-  console.log({ userSub, listSlug });
   const params = {
     TableName: String(process.env.DB),
     KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
@@ -52,6 +52,28 @@ export async function getListBySlug(userSub: string, listSlug: string): Promise<
 
   const list = await dynamodb.query(params).promise()
   return list?.Items?.[0] as List;
+}
+
+export async function getListRoutes(listSlug: string): Promise<ListRoute[]> {
+  const params = {
+    TableName: String(process.env.DB),
+    IndexName: "gsi1",
+    KeyConditionExpression: "#model = :model AND begins_with(#sk, :sk)",
+    FilterExpression: "#listSlug = :listSlug",
+    ExpressionAttributeNames: {
+      "#model": "model",
+      "#sk": "sk",
+      "#listSlug": "listSlug",
+    },
+    ExpressionAttributeValues: {
+      ":model": "listRoute",
+      ":sk": `list#route#`,
+      ":listSlug": listSlug,
+    }
+  };
+
+  const listRoutes = await dynamodb.query(params).promise();
+  return listRoutes.Items as ListRoute[];
 }
 
 export async function getUserLists(userSub: string): Promise<List[]> {
@@ -105,4 +127,28 @@ export async function addRouteToList(
   return {
     slug,
   };
+}
+export async function update(
+  listSlug: string,
+  userSub: string,
+  updateProps: {
+    UpdateExpression: UpdateExpression;
+    ExpressionAttributeNames: ExpressionAttributeNameMap;
+    ExpressionAttributeValues: { [key: string]: any };
+  }
+) {
+  const params = {
+    TableName: String(process.env.DB),
+    Key: {
+      "hk": `user#${userSub}`,
+      "sk": `list#metadata#${listSlug}`,
+    },
+    ...updateProps
+  }
+
+  return dynamodb.update(params, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 }

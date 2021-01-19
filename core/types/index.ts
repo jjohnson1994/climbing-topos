@@ -222,5 +222,6 @@ export interface ListRoute extends ListRoutePartial {
 export interface List {
   title: string;
   slug: string;
+  routeCount: number;
   routes: ListRoute[];
 }

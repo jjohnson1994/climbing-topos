@@ -8,16 +8,20 @@ interface Props {
   btnCancelText?: string;
   btnConfirmText?: string;
   children: JSX.Element | JSX.Element[];
+  hasCancelButton?: boolean,
+  hasConfirmButton?: boolean
 }
 
 function Modal({
-  visible,
-  title,
   btnCancelOnClick,
-  btnConfirmOnClick,
   btnCancelText = "Cancel",
+  btnConfirmOnClick,
   btnConfirmText = "Confirm",
-  children
+  children,
+  hasCancelButton,
+  hasConfirmButton,
+  title,
+  visible,
 }: Props) {
   return (
     <div className={ `modal ${ visible ? "is-active" : "" }` } >
@@ -31,25 +35,29 @@ function Modal({
         </section>
         <footer className="modal-card-foot is-flex-direction-row is-justify-content-flex-end">
           <div className="field is-grouped">
-            <p className="control">
-              <button
-                className="button"
-                onClick={ () => btnCancelOnClick() }
-              >
-                { btnCancelText }
-              </button>
-            </p>
-            <p className="control">
-              <button
-                className="button is-primary"
-                onClick={ () => btnConfirmOnClick() }
-              >
-                <span className="icon">
-                  <i className="fas fa-check"></i>
-                </span>
-                <span>{ btnConfirmText }</span>
-              </button>
-            </p>
+            { hasCancelButton !== false && (
+              <p className="control">
+                <button
+                  className="button"
+                  onClick={ () => btnCancelOnClick() }
+                >
+                  { btnCancelText }
+                </button>
+              </p>
+            )}
+            { hasConfirmButton !== false && (
+              <p className="control">
+                <button
+                  className="button is-primary"
+                  onClick={ () => btnConfirmOnClick() }
+                >
+                  <span className="icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>{ btnConfirmText }</span>
+                </button>
+              </p>
+            )}
           </div>
         </footer>
       </div>

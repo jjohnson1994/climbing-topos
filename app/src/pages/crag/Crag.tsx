@@ -125,7 +125,7 @@ function CragView() {
             </div>
 
             { activeTab === "guide" && crag?.areas?.map(area => (
-              <div className="container">
+              <div key={ area.slug } className="container">
                 <div className="block">
                   <div className="columns">
                     <div className="column is-two-thirds">

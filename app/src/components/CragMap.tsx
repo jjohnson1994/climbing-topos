@@ -31,7 +31,7 @@ function CragMap({ crag }: { crag: Crag }) {
       ]}
       zoom={ 16 }
       scrollWheelZoom={false}
-      style={{ height: "600px" }}
+      style={{ height: "90vh" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
