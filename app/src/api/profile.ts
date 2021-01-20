@@ -35,6 +35,7 @@ export const useUserPreferences = () => {
   }
 
   return {
-    convertGradeToUserPreference
+    convertGradeToUserPreference,
+    preferedGradingSystems,
   };
 }

@@ -9,6 +9,7 @@ import { globals, logs} from "../api";
 import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
+import { useUserPreferences } from "../api/profile";
 
 interface Props {
   routes: Route[];
@@ -24,6 +25,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
   const { getAccessTokenSilently } = useAuth0();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
+  const { convertGradeToUserPreference, preferedGradingSystems } = useUserPreferences();
 
   const { register,  handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
@@ -48,7 +50,8 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
     }
   }
 
-  const getGradesFromGradingSystem = (gradingSystem: string) => {
+  const getGradesFromRouteType = (routeType: string) => {
+    const gradingSystem = preferedGradingSystems[routeType];
     const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
     const filteredGrades = Array.from(new Set(grades));
     return filteredGrades;
@@ -237,8 +240,12 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                     <label className="label">Grade</label>
                     <div className="control">
                       <div className="select">
-                        <select name={`logs.[${index}].gradeTaken`} ref={register({})}>
-                          {getGradesFromGradingSystem(route!.gradingSystem)?.map((grade, index) => (
+                        <select
+                          name={ `logs.[${index}].gradeTaken` }
+                          defaultValue={ route.grade }
+                          ref={ register({}) }
+                        >
+                          {getGradesFromRouteType(route!.routeType)?.map((grade, index) => (
                             <option value={ index } key={ grade }>
                               { grade }
                             </option>
