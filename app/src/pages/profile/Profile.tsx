@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import ProfileLogs from "../../components/ProfileLogs";
 import ProfileLists from "../../components/ProfileLists";
+import ProfileSettings from "../../components/ProfileSettings";
 
 function Profile() {
   const { logout, user } = useAuth0();
@@ -42,6 +43,9 @@ function Profile() {
             <li className={ activeTab === "lists" ? "is-active" : "" }>
               <a onClick={ () => setActiveTab("lists") }>Lists</a>
             </li>
+            <li className={ activeTab === "settings" ? "is-active" : "" }>
+              <a onClick={ () => setActiveTab("settings") }>Settings</a>
+            </li>
           </ul>
         </div>
         <div className={ `container ${ activeTab === "logs" ? "" : "is-hidden" }` }>
@@ -49,6 +53,9 @@ function Profile() {
         </div>
         <div className={ `container ${ activeTab === "lists" ? "" : "is-hidden" }` }>
           <ProfileLists />
+        </div>
+        <div className={ `container ${ activeTab === "settings" ? "" : "is-hidden" }` }>
+          <ProfileSettings />
         </div>
       </section>
     </>

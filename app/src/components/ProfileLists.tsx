@@ -81,7 +81,7 @@ function ProfileLists() {
               </thead>
               <tbody>
                 { activeList?.routes.map(route => (
-                  <tr>
+                  <tr key={ route.slug }>
                     <td>
                       <Link to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.routeSlug}`}>
                         { route.title }
@@ -104,7 +104,7 @@ function ProfileLists() {
         </div>
       ) : "" }
       { !loading && userLists.map(list => (
-        <div className="box block" onClick={ () => btnListRouteOnClick(list.slug) }>
+        <div key={ list.slug } className="box block" onClick={ () => btnListRouteOnClick(list.slug) }>
           <p><b>{ list.title }</b></p>
           <span className="tag">Routes { list.routeCount }</span>
         </div>
