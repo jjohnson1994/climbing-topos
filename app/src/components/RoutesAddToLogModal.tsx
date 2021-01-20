@@ -50,7 +50,8 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
     const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
-    return grades;
+    const filteredGrades = Array.from(new Set(grades));
+    return filteredGrades;
   }
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async data => {
@@ -237,8 +238,8 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                     <div className="control">
                       <div className="select">
                         <select name={`logs.[${index}].gradeTaken`} ref={register({})}>
-                          {getGradesFromGradingSystem(route!.gradingSystem)?.map((grade) => (
-                            <option value={ grade } key={ grade }>
+                          {getGradesFromGradingSystem(route!.gradingSystem)?.map((grade, index) => (
+                            <option value={ index } key={ grade }>
                               { grade }
                             </option>
                           ))}

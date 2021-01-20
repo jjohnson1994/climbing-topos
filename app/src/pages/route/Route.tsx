@@ -9,6 +9,7 @@ import TopoImage from "../../components/TopoImage";
 import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { useUserPreferences } from "../../api/profile";
 
 
 function RoutePage() {
@@ -17,6 +18,8 @@ function RoutePage() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
   const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
+  const { convertGradeToUserPreference } = useUserPreferences();
+
   const context = useContext(RouteLogContext);
 
   usePageTitle(route?.title);
@@ -78,7 +81,9 @@ function RoutePage() {
               <div className="column is-two-thirds">
                 <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
                 <h6 className="subtitle is-6">
-                  { route?.grade } <span> </span> { route?.routeType }
+                  { route ? convertGradeToUserPreference(parseInt(route.grade), route.routeType) : "" }
+                  <span> </span>
+                  { route?.routeType }
                 </h6>
                 <h6 className="subtitle is-6">{ route?.description }</h6>
               </div>

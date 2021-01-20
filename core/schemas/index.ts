@@ -1,22 +1,5 @@
 import { gradingSystems, cragTags, routeTags, areaTags, rockTypes } from "../globals";
 
-const validateGrade = (yup, message) => yup.string().required()
-  .required("Required")
-  .test("valid-grade", message, (value, context) => {
-    const gradingSystemTitle = context.options.parent.gradingSystem;
-    if (!value || !gradingSystemTitle) {
-      return false;
-    }
-
-    const gradingSystem = gradingSystems.find(({ title }) => title === gradingSystemTitle)
-    if (!gradingSystem) {
-      return false;
-    }
-
-    const { grades = [] } = gradingSystem;
-    return !!grades.includes(value);
-  });
-
 export const NewCragSchema = yup => yup.object().shape({
   title: yup.string().required("Required"),
   description: yup.string().required("Required"),
@@ -96,8 +79,8 @@ export const NewLogsSchema = yup => yup.object().shape({
       comment: yup.string(),
       cragSlug: yup.string().required(),
       dateSent: yup.string().required("Required"),
-      grade: validateGrade(yup, "Invalid Grade"),
-      gradeTaken: validateGrade(yup, "Invalid Grade Taken"),
+      grade: yup.number().required("Required"),
+      gradeTaken: yup.number().required("Required"),
       gradingSystem: yup.string().oneOf(
         gradingSystems.map(g => g.title),
         "Invalid Grading System"

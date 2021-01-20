@@ -89,55 +89,57 @@ function AreaView() {
         </div>
       </section>
 
-      <section className="section">
-        {area?.topos && area?.topos.map((topo) => (
-          <div key={ topo.slug } id={ topo.slug } className="container block">
-            <div className="columns">
-              <div className="column">
-                <TopoImage
-                  routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                  background={ `${topo.image}` }
-                />
-              </div>
-              <div className="column">
-                <div className="block is-flex is-justify-content-space-between is-align-items-center">
-                  <span className="icon-text">
-                    <span className="icon">
-                      <i className="fas fa-compass"></i>
-                    </span>
-                    <span className="is-capitalized">{ topo.orientation }</span>
-                  </span>
-                  <Link
-                    to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
-                    className="button is-rounded"
-                  >
-                    <span className="icon is-small">
-                      <i className="fas fa-plus"></i>
-                    </span>
-                    <span>Add Route</span>
-                  </Link>
+      { loading === false && area?.topos.length ? (
+        <section className="section">
+          {area?.topos && area?.topos.map((topo) => (
+            <div key={ topo.slug } id={ topo.slug } className="container block">
+              <div className="columns">
+                <div className="column">
+                  <TopoImage
+                    routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                    background={ `${topo.image}` }
+                  />
                 </div>
-                { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
-                  <div className="block box">
-                    <AreaRoutesTable
-                      routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
-                      loggedRoutes={ area.userLogs }
-                    />
+                <div className="column">
+                  <div className="block is-flex is-justify-content-space-between is-align-items-center">
+                    <span className="icon-text">
+                      <span className="icon">
+                        <i className="fas fa-compass"></i>
+                      </span>
+                      <span className="is-capitalized">{ topo.orientation }</span>
+                    </span>
+                    <Link
+                      to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
+                      className="button is-rounded"
+                    >
+                      <span className="icon is-small">
+                        <i className="fas fa-plus"></i>
+                      </span>
+                      <span>Add Route</span>
+                    </Link>
                   </div>
-                ) : "" }
+                  { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                    <div className="block box">
+                      <AreaRoutesTable
+                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                        loggedRoutes={ area.userLogs }
+                      />
+                    </div>
+                  ) : "" }
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </section>
+          ))}
+        </section>
+      ) : "" }
 
-      { loading === false && area?.topos.length === 0 && (
+      { loading === false && area?.topos.length === 0 ? (
         <section className="section">
           <div className="container box">
             <p><b>There's nothing here... YET!</b><br/>Click "Add Topo" above to start uploding images and drawing routes</p>
           </div>
         </section>
-      )}
+      ) : ""}
     </>
   );
 }

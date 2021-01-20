@@ -1,8 +1,9 @@
 import Tippy from '@tippyjs/react';
-import React, { ChangeEvent, useContext, useState } from "react";
+import React, { ChangeEvent, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Log, Route } from "../../../core/types";
 import { RouteLogContext } from './RouteLogContext';
+import { useUserPreferences } from '../api/profile';
 
 interface Props {
   routes: Route[] | undefined;
@@ -11,6 +12,8 @@ interface Props {
 
 function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
   const context = useContext(RouteLogContext);
+
+  const { convertGradeToUserPreference } = useUserPreferences();
 
   const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, route: Route) => {
     if (context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) > -1) {
@@ -43,7 +46,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
             <td className="is-capitalized">
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
-            <td>{ route.grade }</td>
+            <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
             <td>{ route.rating !== -1 ? route.rating : "" }</td>
             <td> { context.isSelectingMultiple
               ? (

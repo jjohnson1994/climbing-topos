@@ -3,6 +3,7 @@ import { List, ListRoute } from "core/types";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { lists } from "../api";
+import { useUserPreferences } from "../api/profile";
 import { popupError } from "../helpers/alerts";
 import LoadingSpinner from "./LoadingSpinner";
 import Modal from "./Modal";
@@ -15,6 +16,7 @@ function ProfileLists() {
   const [loading, setLoading] = useState(true);
   const [listViewModalVisible, setListViewModalVisible] = useState(false);
   const [viewingListSlug, setViewingListSlug] = useState("");
+  const { convertGradeToUserPreference } = useUserPreferences();
 
   useEffect(() => {
     const getProfileDate = async () => {
@@ -89,7 +91,7 @@ function ProfileLists() {
                     </td>
                     <td>{ route.cragTitle }</td>
                     <td>{ route.routeType }</td>
-                    <td>{ route.grade }</td>
+                    <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
                   </tr>
                 ))}
               </tbody>

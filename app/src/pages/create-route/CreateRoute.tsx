@@ -81,7 +81,7 @@ function CreateRoute() {
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
     const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
-    return grades;
+    return Array.from(new Set(grades));
   }
 
   const onDrawingChanged = (drawing: RouteDrawing) => {
@@ -249,8 +249,8 @@ function CreateRoute() {
               <div className="contro is-expandedl">
                 <div className="select is-fullwidth">
                   <select name="grade" ref={ register }>
-                    {watchGradingSystem && getGradesFromGradingSystem(getValues("gradingSystem"))?.map((grade) => (
-                      <option key={ grade } value={ grade }>{ grade }</option>
+                    {watchGradingSystem && getGradesFromGradingSystem(getValues("gradingSystem"))?.map((grade, index) => (
+                      <option key={ grade } value={ index }>{ grade }</option>
                     ))}
                   </select>
                 </div>
