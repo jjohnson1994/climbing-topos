@@ -1,9 +1,9 @@
-name: s3-depl
+name: Build & Deploy
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
