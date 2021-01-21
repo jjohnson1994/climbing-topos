@@ -26,6 +26,8 @@ jobs:
         run: serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Serverless Deploy
         run: cd api && serverless deploy --stage production
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
       - name: Build React App
         run: cd app && npm install && npm run build
       - name: Deploy app build to S3 bucket
