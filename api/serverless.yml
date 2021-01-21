@@ -8,9 +8,9 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
 custom:
-  tableName: 'climbing_topos_${self:provider.stage}_${opt:stage}'
-  imageBucketName: 'climbing-topos-images-${opt:stage}'
-  deployBucketName: 'climbing-topos-deploy-${opt:stage}'
+  tableName: 'climbing_topos'
+  imageBucketName: 'climbing-topos-images'
+  deployBucketName: 'climbing-topos-deploy'
   serverless-offline:
     httpPort: 3001
   webpack:
