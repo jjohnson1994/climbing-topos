@@ -84,7 +84,7 @@ resources:
       Type: AWS::S3::BucketPolicy
       Properties:
         Bucket:
-          Ref: S3Deploy
+          Ref: S3Images
         PolicyDocument: {
           "Version": "2012-10-17",
           "Statement": [
