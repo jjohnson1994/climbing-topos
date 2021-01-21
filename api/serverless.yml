@@ -80,54 +80,12 @@ resources:
             }
           ]
         }
-    S3ImagesPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: S3Deploy
-        PolicyDocument: {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Sid": "PublicReadGetObject",
-                  "Effect": "Allow",
-                  "Principal": "*",
-                  "Action": [
-                      "s3:GetObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::${self:custom.imageBucketName}/*"
-                  ]
-              }
-          ]
-        }
     S3Deploy:
       Type: 'AWS::S3::Bucket'
       Properties:
         BucketName: ${self:custom.deployBucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
-    S3DeployPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: S3Deploy
-        PolicyDocument: {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Sid": "PublicReadGetObject",
-                  "Effect": "Allow",
-                  "Principal": "*",
-                  "Action": [
-                      "s3:GetObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::${self:custom.deployBucketName}/*"
-                  ]
-              }
-          ]
-        }
     DynamoDBClimbingTopos:
       Type: 'AWS::DynamoDB::Table'
       Properties:
