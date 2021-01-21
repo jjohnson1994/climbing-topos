@@ -8,8 +8,9 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
 custom:
-  tableName: 'climbing_topos_${self:provider.stage}'
-  imageBucketName: 'climbing-topos-images'
+  tableName: 'climbing_topos_${self:provider.stage}_${opt:stage}'
+  imageBucketName: 'climbing-topos-images-${opt:stage}'
+  deployBucketName: 'climbing-topos-deploy-${opt:stage}'
   serverless-offline:
     httpPort: 3001
   webpack:
@@ -77,6 +78,33 @@ resources:
               ],
               "MaxAge": 300
             }
+          ]
+        }
+    S3Deploy:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: ${self:custom.deployBucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+    S3DeployPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: S3Deploy
+        PolicyDocument: {
+          "Version": "2012-10-17",
+          "Statement": [
+              {
+                  "Sid": "PublicReadGetObject",
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": [
+                      "s3:GetObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::${self:custom.deployBucketName}/*"
+                  ]
+              }
           ]
         }
     DynamoDBClimbingTopos:

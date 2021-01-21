@@ -1,3 +1,7 @@
 .webpack
 .dynamodb
 .serverless
+
+.env
+.env.development
+.env.production
