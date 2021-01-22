@@ -8,9 +8,11 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
 custom:
+  aliasDNSName: 's3-website-us-east-1.amazonaws.com'
+  aliasHostedZoneId: 'Z0796811MPC87A5CPC2B'
+  siteName: 'climbingtopos.com'
   tableName: 'climbing_topos'
   imageBucketName: 'climbing-topos-images'
-  deployBucketName: 'climbing-topos-deploy'
   serverless-offline:
     httpPort: 3001
   webpack:
@@ -104,7 +106,7 @@ resources:
     S3Deploy:
       Type: 'AWS::S3::Bucket'
       Properties:
-        BucketName: ${self:custom.deployBucketName}
+        BucketName: ${self:custom.siteName}
         WebsiteConfiguration:
           IndexDocument: index.html
     S3DeployPolicy:
@@ -123,11 +125,21 @@ resources:
                       "s3:GetObject"
                   ],
                   "Resource": [
-                    "arn:aws:s3:::${self:custom.deployBucketName}/*"
+                    "arn:aws:s3:::${self:custom.siteName}/*"
                   ]
               }
           ]
         }
+    DnsRecord:
+      Type: "AWS::Route53::RecordSet"
+      Properties:
+        AliasTarget:
+          DNSName: ${self:custom.aliasDNSName}
+          HostedZoneId: ${self:custom.aliasHostedZoneId}
+        HostedZoneName: ${self:custom.siteName}.
+        Name:
+          Ref: S3Deploy
+        Type: 'A'
     DynamoDBClimbingTopos:
       Type: 'AWS::DynamoDB::Table'
       Properties:
