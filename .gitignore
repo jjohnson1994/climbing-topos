@@ -3,5 +3,6 @@ node_modules
 .terraform
 
 **/.env
-**/.env.**
+**/.env.development
+**/.env.production
 api/uploads/**
