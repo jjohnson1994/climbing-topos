@@ -5,7 +5,6 @@ service: climbing-topos
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
-  - serverless-dynamodb-local
   - serverless-offline
 custom:
   aliasDNSName: 's3-website-eu-west-1.amazonaws.com'
@@ -17,10 +16,6 @@ custom:
     httpPort: 3001
   webpack:
     webpackConfig: 'webpack.config.js'
-  dynamodb:
-    stages: dev
-    start:
-      migrate: true
 
 package:
   individually: true
@@ -30,19 +25,6 @@ provider:
   runtime: nodejs10.x
   stage: dev
   region: eu-west-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        - { "Fn::GetAtt": ["DynamoDBClimbingTopos", "Arn" ] }
-  environment:
-    DB: ${self:custom.tableName}
 
 functions:
   app:
@@ -58,129 +40,3 @@ functions:
     handler: index.handler
     events:
       - http: 'POST /crags/{proxy+}'
-
-resources:
-  Resources:
-    S3Images:
-      Type: 'AWS::S3::Bucket'
-      Properties:
-        BucketName: ${self:custom.imageBucketName}
-        CorsConfiguration: {
-          "CorsRules": [
-            {
-              "AllowedHeaders": [
-                "*"
-              ],
-              "AllowedMethods": [
-                "PUT",
-              ],
-              "AllowedOrigins": [
-                "http://localhost:3000",
-                "https://climbingtopos.com"
-              ],
-              "MaxAge": 300
-            }
-          ]
-        }
-    S3ImagesPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: S3Images
-        PolicyDocument: {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Sid": "PublicReadGetObject",
-                  "Effect": "Allow",
-                  "Principal": "*",
-                  "Action": [
-                      "s3:GetObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::${self:custom.imageBucketName}/*"
-                  ]
-              }
-          ]
-        }
-    S3Deploy:
-      Type: 'AWS::S3::Bucket'
-      Properties:
-        BucketName: ${self:custom.siteName}
-        WebsiteConfiguration:
-          IndexDocument: index.html
-    S3DeployPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: S3Deploy
-        PolicyDocument: {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Sid": "PublicReadGetObject",
-                  "Effect": "Allow",
-                  "Principal": "*",
-                  "Action": [
-                      "s3:GetObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::${self:custom.siteName}/*"
-                  ]
-              }
-          ]
-        }
-    DnsRecord:
-      Type: "AWS::Route53::RecordSet"
-      Properties:
-        AliasTarget:
-          DNSName: ${self:custom.aliasDNSName}
-          HostedZoneId: ${self:custom.aliasHostedZoneId}
-        HostedZoneName: ${self:custom.siteName}.
-        Name:
-          Ref: S3Deploy
-        Type: 'A'
-    DynamoDBClimbingTopos:
-      Type: 'AWS::DynamoDB::Table'
-      Properties:
-        TableName: ${self:custom.tableName}
-        ProvisionedThroughput:
-          ReadCapacityUnits: 20
-          WriteCapacityUnits: 20
-        AttributeDefinitions:
-          - AttributeName: hk
-            AttributeType: S
-          - AttributeName: sk
-            AttributeType: S
-          - AttributeName: model
-            AttributeType: S
-          - AttributeName: slug
-            AttributeType: S
-        KeySchema:
-          - AttributeName: hk
-            KeyType: HASH
-          - AttributeName: sk
-            KeyType: RANGE
-        GlobalSecondaryIndexes:
-          - IndexName: gsi1
-            KeySchema:
-              - AttributeName: model
-                KeyType: HASH
-              - AttributeName: sk
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-                ReadCapacityUnits: 5
-                WriteCapacityUnits: 5
-          - IndexName: gsi2
-            KeySchema:
-              - AttributeName: model
-                KeyType: HASH
-              - AttributeName: slug
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-                ReadCapacityUnits: 5
-                WriteCapacityUnits: 5

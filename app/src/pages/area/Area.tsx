@@ -9,11 +9,13 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import TopoImage from "../../components/TopoImage";
 import { popupError } from '../../helpers/alerts';
 import { usePageTitle } from "../../helpers/pageTitle";
+import { useGlobals } from "../../api/globals";
 
 function AreaView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
   const { areaSlug, cragSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area>();
+  const { getOrientationsTitleById } = useGlobals();
   const [loading, setLoading] = useState(true);
 
   usePageTitle(area?.title);
@@ -55,14 +57,10 @@ function AreaView() {
             <div className="column is-two-thirds">
               <h1 className="title is-spaced is-capitalized">{ area?.title }</h1>
               <h6 className="subtitle is-6">{ area?.description }</h6>
-              <h6 className="subtitle is-6">{ area?.approachNotes }</h6>
-              <h6 className="subtitle is-6">{ area?.accessDetails }</h6>
+              <h6 className="subtitle is-6">{ area?.approachDetails }</h6>
             </div>
             <div className="column">
-              <div role="group" className="tags">
-                <label className={ `tag is-capitalized ${ area?.access === "banned" ? "is-danger " : "is-primary" }` }>
-                  Access { area?.access }
-                </label>
+              <div role="group" className="tags is-capitalized">
                 {area?.tags.map(tag => (
                   <label key={ tag } className="tag is-primary">
                     { tag }
@@ -96,7 +94,7 @@ function AreaView() {
               <div className="columns">
                 <div className="column">
                   <TopoImage
-                    routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                    routes={ area.routes?.filter(route => route.topoId === topo.id) }
                     background={ `${topo.image}` }
                   />
                 </div>
@@ -106,7 +104,7 @@ function AreaView() {
                       <span className="icon">
                         <i className="fas fa-compass"></i>
                       </span>
-                      <span className="is-capitalized">{ topo.orientation }</span>
+                      <span className="is-capitalized">{ getOrientationsTitleById(topo.orientationId) }</span>
                     </span>
                     <Link
                       to={ `/crags/${cragSlug}/areas/${areaSlug}/topos/${topo.slug}/create-route` }
@@ -118,10 +116,10 @@ function AreaView() {
                       <span>Add Route</span>
                     </Link>
                   </div>
-                  { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
+                  { area.routes?.filter(route => route.topoId === topo.id).length ? (
                     <div className="block box">
                       <AreaRoutesTable
-                        routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
+                        routes={ area.routes?.filter(route => route.topoId === topo.id) }
                         loggedRoutes={ area.userLogs }
                       />
                     </div>

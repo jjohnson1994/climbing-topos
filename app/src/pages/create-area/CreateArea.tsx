@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { areas, crags } from "../../api";
-import { areaTags as tags, rockTypes } from "core/globals";
+import { useGlobals } from "../../api/globals";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 
@@ -17,6 +17,7 @@ function CreateArea() {
   const history = useHistory();
   const { getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
+  const { areaTags: tags } = useGlobals();
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [crag, setCrag] = useState<Crag>();
@@ -25,13 +26,10 @@ function CreateArea() {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      access: "unknown",
-      accessDetails: "",
-      approachNotes: "",
+      approachDetails: "",
       description: "",
       latitude: "",
       longitude: "",
-      rockType: "",
       tags: [] as string[],
       title: "",
     }
@@ -79,12 +77,7 @@ function CreateArea() {
       const { slug: areaSlug } = await areas.createArea(
         {
           ...formData,
-          country: crag.osmData.address.country,
-          countryCode: crag.osmData.address.country_code,
-          county: crag.osmData.address.county,
           cragSlug,
-          cragTitle: crag.title,
-          state: crag.osmData.address.state,
         },
         token
       );
@@ -132,16 +125,16 @@ function CreateArea() {
           </div>
 
           <div className="field">
-            <label className="label" htmlFor="approachNotes">Approach Notes</label>
+            <label className="label" htmlFor="approachDetails">Approach Details</label>
             <div className="control">
               <textarea
-                id="approachNotes"
+                id="approachDetails"
                 className="textarea"
-                name="approachNotes"
+                name="approachDetails"
                 ref={ register }
               ></textarea> 
             </div>
-            <p className="help is-danger">{ errors.approachNotes?.message }</p>
+            <p className="help is-danger">{ errors.approachDetails?.message }</p>
           </div>
 
           <div className="field">
@@ -150,41 +143,27 @@ function CreateArea() {
               <div role="group" className="tags">
                 {tags.map(tag => (
                   <label
-                    key={ tag }
+                    key={ tag.id }
                     className={`
                       tag
-                      ${watchTags?.includes(tag) ? "is-primary" : ""}
+                      is-capitalized
+                      ${watchTags.includes(`${tag.id}`) ? "is-primary" : ""}
                     `}
                   >
                     <input
                       type="checkbox"
                       name="tags"
-                      value={ tag }
+                      value={ tag.id }
                       ref={ register }
                       style={{ display: "none" }}
                     />
-                    { tag }
+                    { tag.title }
                   </label>
                 ))} 
               </div>
             </div>
             <p className="help is-danger">{ (errors.tags as any)?.message }</p>
           </div>
-
-          <div className="field">
-            <label className="label">Rock Type</label>
-            <div className="control is-expanded">
-              <div className="select is-fullwidth">
-                <select name="rockType" ref={ register }>
-                  {rockTypes.map(rockType => (
-                    <option key={ rockType } value={ rockType }>{ rockType }</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <p className="help is-danger">{ errors.rockType?.message }</p>
-          </div>
-
 
           <div className="field">
             <div className="field">
@@ -231,60 +210,6 @@ function CreateArea() {
             <div className="help is-danger">{ errors.longitude?.message }</div>
           </div>
           
-          <div className="field">
-            <label className="label">Access</label>
-            <div className="control">
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="access"
-                  value="unknown"
-                  ref={ register }
-                />
-                Unknown
-              </label>
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="access"
-                  value="permitted"
-                  ref={ register }
-                />
-                Permitted
-              </label>
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="access"
-                  value="restricted"
-                  ref={ register }
-                />
-                Restricted
-              </label>
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="access"
-                  value="banned"
-                  ref={ register }
-                />
-                Banned
-              </label>
-            </div>
-            <p className="help is-danger"></p>
-          </div>
-
-          <div className="field">
-            <label className="label" htmlFor="accessDetails">Access Details</label>
-            <div className="control">
-              <textarea
-                className="textarea"
-                name="accessDetails"
-                ref={ register }
-              /> 
-            </div>
-          </div>
-
           <div className="field">
             <div className="field is-flex is-justified-end">
               <div className="control">

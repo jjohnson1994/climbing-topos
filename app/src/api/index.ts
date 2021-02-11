@@ -7,3 +7,4 @@ export * as profile from "./profile";
 export * as routes from "./routes";
 export * as topos from "./topos";
 export * as uploads from "./uploads";
+export * as users from "./users";

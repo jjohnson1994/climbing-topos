@@ -1,5 +1,5 @@
 import { ListRequest, ListRoutePartial } from "../../core/types";
-import { lists } from "../models";
+import { lists } from "../repositories";
 
 export async function getListBySlug(userSub: string, listSlug: string) {
   const [metadata, routes] = await Promise.all([

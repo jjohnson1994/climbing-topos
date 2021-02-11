@@ -2,14 +2,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NewRouteScheme } from "core/schemas";
 import { Area, RouteDrawing } from "core/types";
-import { gradingSystems } from "core/globals";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from 'react-router-dom';
 import * as yup from "yup";
-import { areas, globals, routes, topos } from "../../api";
+import { areas, routes, topos } from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import { popupError, popupSuccess } from "../../helpers/alerts";
+import { useGlobals } from "../../api/globals";
 
 const schema = NewRouteScheme(yup);
 
@@ -17,8 +17,7 @@ function CreateRoute() {
   const history = useHistory();
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const { areaSlug, cragSlug, topoSlug } = useParams<{ areaSlug: string; cragSlug: string, topoSlug: string }>();
-  const [routeTags, setRouteTags] = useState<string[]>([]);
-  const [routeTypes, setRouteTypes] = useState<string[]>([]);
+  const { routeTags, routeTypes, gradingSystems } = useGlobals();
   const [loading, setLoading] = useState<boolean>(false);
   const [area, setArea] = useState<Area | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
@@ -31,18 +30,18 @@ function CreateRoute() {
       cragSlug,
       description: "",
       drawing: { path: [] },
-      grade: "",
-      gradingSystem: "",
+      gradeIndex: "",
+      gradingSystemId: "",
       rating: -1,
-      routeType: "",
+      routeTypeId: "",
       tags: [] as string[],
       title: "",
       topoSlug,
     }
   });
 
-  const watchTags = watch("tags");
-  const watchGradingSystem = watch("gradingSystem", "");
+  const watchTags = watch("tags", []);
+  const watchGradingSystem = watch("gradingSystemId", "");
 
   useEffect(() => {
     const doGetArea = async () => {
@@ -65,23 +64,16 @@ function CreateRoute() {
 
     doGetArea();
     doGetTopo();
-    doGetTags();
-    doGetRouteTypes();
   }, [areaSlug, isAuthenticated, topoSlug]);
 
-  const doGetTags = async () => {
-    const routeTags = await globals.getRouteTags();
-    setRouteTags(routeTags);
-  }
+  const getGradesFromGradingSystem = (gradingSystemId: string): [string, number][] => {
+    const grades = gradingSystems.find(({ id }) => `${id}` === gradingSystemId)?.grades;
+    const gradesTitleValueMap = (grades || [])?.reduce((acc, cur, idx) => {
+      acc.set(cur, idx);
+      return acc;
+    }, new Map());
 
-  const doGetRouteTypes = async () => {
-    const routeTypes = await globals.getRouteTypes();
-    setRouteTypes(routeTypes);
-  }
-
-  const getGradesFromGradingSystem = (gradingSystem: string) => {
-    const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
-    return Array.from(new Set(grades));
+    return Array.from(gradesTitleValueMap);
   }
 
   const onDrawingChanged = (drawing: RouteDrawing) => {
@@ -100,16 +92,7 @@ function CreateRoute() {
       const { routeSlug } = await routes.createRoute(
         {
           ...formData,
-          areaTitle: area.title,
-          country: area.country,
-          countryCode: area.countryCode,
-          county: area.county,
-          cragTitle: area.cragTitle,
-          latitude: area.latitude,
-          longitude: area.longitude,
           rating: -1,
-          rockType: area.rockType,
-          state: area.state,
         },
         token
       );
@@ -141,18 +124,6 @@ function CreateRoute() {
             style={{ display: "flex", flexDirection: "column" }}
             autoComplete="off"
           >
-            <input
-              className="is-hidden"
-              name="cragSlug"
-              defaultValue={ cragSlug }
-              ref={ register }
-            />
-            <input
-              className="is-hidden"
-              name="areaSlug"
-              defaultValue={ areaSlug }
-              ref={ register }
-            />
             <input
               className="is-hidden"
               name="topoSlug"
@@ -195,20 +166,21 @@ function CreateRoute() {
                 <div role="group" className="tags">
                   {routeTags.map(tag => (
                     <label
-                      key={ tag }
+                      key={ tag.id }
                       className={`
                         tag
-                        ${watchTags?.includes(tag) ? "is-primary" : ""}
+                        is-capitalized
+                        ${watchTags.includes(`${tag.id}`) ? "is-primary" : ""}
                       `}
                     >
                       <input
                         type="checkbox"
                         name="tags"
-                        value={ tag }
-                        ref={ register }
+                        value={ tag.id }
+                        ref={ register() }
                         style={{ display: "none" }}
                       />
-                      { tag }
+                      { tag.title }
                     </label>
                   ))} 
                 </div>
@@ -220,42 +192,44 @@ function CreateRoute() {
               <label className="label">Route Type</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="routeType" ref={ register }>
+                  <select name="routeTypeId" ref={ register }>
                     {routeTypes.map((routeType) => (
-                      <option key={ routeType } value={ routeType }>{ routeType }</option>
+                      <option key={ routeType.id } value={ routeType.id }>{ routeType.title }</option>
                     ))}
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.routeType?.message }</p>
+              <p className="help is-danger">{ errors.routeTypeId?.message }</p>
             </div>
 
             <div className="field">
               <label className="label">Grading System</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="gradingSystem" ref={ register }>
+                  <select name="gradingSystemId" ref={ register }>
                     {gradingSystems.map((gradingSystem) => (
-                      <option key={ gradingSystem.title } value={ gradingSystem.title }>{ gradingSystem.title }</option>
+                      <option key={ gradingSystem.title } value={ gradingSystem.id }>{ gradingSystem.title }</option>
                     ))}
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.gradingSystem?.message }</p>
+              <p className="help is-danger">{ errors.gradingSystemId?.message }</p>
             </div>
 
             <div className="field">
               <label className="label">Grade</label>
               <div className="contro is-expandedl">
                 <div className="select is-fullwidth">
-                  <select name="grade" ref={ register }>
-                    {watchGradingSystem && getGradesFromGradingSystem(getValues("gradingSystem"))?.map((grade, index) => (
-                      <option key={ grade } value={ index }>{ grade }</option>
-                    ))}
+                  <select name="gradeIndex" ref={ register }>
+                    {watchGradingSystem
+                      && getGradesFromGradingSystem(getValues("gradingSystemId"))?.map(grade => (
+                        <option key={ grade[1] } value={ grade[1] }>{ grade[0] }</option>
+                      ))
+                    }
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.grade?.message }</p>
+              <p className="help is-danger">{ errors.gradeIndex?.message }</p>
             </div>
 
             <div className="field">

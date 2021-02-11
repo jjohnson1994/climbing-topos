@@ -1,12 +1,10 @@
-import { logs } from "../models";
+import { logs } from "../repositories";
 import { LogRequest } from "../../core/types";
 
-export async function logRoutes(logRequests: LogRequest[], user) {
-  const requests = logRequests
-    .map(logRequest => logs.createRouteLog(logRequest, user));
-  return Promise.all(requests);
+export async function logRoutes(logRequests: LogRequest[], userSub: string) {
+  return logs.createRouteLogs(logRequests, userSub);
 }
 
-export async function getUserLogs(userSub: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string) {
-  return logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug);
+export async function getUserLogs(userSub: string) {
+  return logs.getLogsForUser(userSub);
 }

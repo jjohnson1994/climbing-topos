@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Log } from "../../../core/types";
+import { Log } from "core/types";
 import { logs } from "../api";
 import { useUserPreferences } from "../api/profile";
 import { popupError } from "../helpers/alerts";
@@ -53,13 +53,13 @@ function ProfileLogs() {
           </thead>
           <tbody>
             { loggedRoutes.map(log => (
-              <tr key={ log.slug } >
+              <tr key={ log.id } >
                 <td>
-                  <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topos/${log.topoSlug}/routes/${log.routeSlug}` }>
+                  <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}` }>
                     { log.routeTitle }
                   </Link>
                 </td>
-                <td>{ convertGradeToUserPreference(parseInt(log.gradeTaken), log.routeType) }</td>
+                <td>{ convertGradeToUserPreference(parseInt(log.gradeTaken), log.gradingSystemId, log.routeTypeTitle) }</td>
                 <td>{ log.stars }</td>
                 <td>{ log.dateSent }</td>
               </tr>

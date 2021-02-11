@@ -11,10 +11,12 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import TopoImage from "../../components/TopoImage";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
+import { useGlobals } from "../../api/globals";
 
 function CragView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
+  const { getOrientationsTitleById } = useGlobals();
   const [loading, setLoading] = useState(true);
   const [crag, setCrag] = useState<Crag>();
   const [activeTab, setActiveTab] = useState("routes");
@@ -51,11 +53,11 @@ function CragView() {
   }, [cragSlug, isLoading, isAuthenticated]);
 
   const areaTopos = (area: Area) => {
-    return crag?.topos.filter(topo => topo.areaSlug === area.slug);
+    return crag?.topos.filter(topo => topo.areaId === area.id);
   }
 
   const topoRoutes = (topo: Topo) => {
-    return crag?.routes.filter(route => route.topoSlug === topo.slug) || [];
+    return crag?.routes.filter(route => route.topoId === topo.id) || [];
   }
 
   return (
@@ -68,11 +70,13 @@ function CragView() {
         </section>
       ) : (
         <>
+          { /*
           { crag && crag.access === "banned" && (
             <div className="notification is-danger">
               Climbing at this crag is <b>banned</b>, probably best to find somewhere else
             </div>
           )}
+          */}
           <section className="section">
             <div className="container">
               <div className="columns">
@@ -82,11 +86,11 @@ function CragView() {
                 </div>
                 <div className="column">
                   <div role="group" className="tags">
-                    <label className={ `tag is-capitalized ${ crag?.access === "banned" ? "is-danger " : "is-primary" }` }>
+                    <label className="tag is-capitalized is-primary">
                       Access { crag?.access }
                     </label>
                     { crag?.tags?.map(tag => (
-                      <label key={ tag } className="tag is-primary">
+                      <label key={ tag } className="tag is-primary is-capitalized">
                         { tag }
                       </label>
                     ))} 
@@ -129,13 +133,13 @@ function CragView() {
                 <div className="block">
                   <div className="columns">
                     <div className="column is-two-thirds">
-                      <Link to={ `/crags/${area.cragSlug}/areas/${area.slug}` }>
+                      <Link to={ `/crags/${crag.slug}/areas/${area.slug}` }>
                         <h1 className="title" style={{ whiteSpace: "nowrap" }}>{ area.title }</h1>
                       </Link>
                       <p className="subtitle is-6">{ area.description }</p>
                     </div>
                     <div className="column">
-                      <div className="tags">
+                      <div className="tags is-capitalized">
                         { area.tags.map(tag => (
                           <label key={ tag } className="tag">{ tag }</label>
                         ))}
@@ -150,10 +154,10 @@ function CragView() {
                   </div>
                 </div>
                 <div className="block">
-                  { areaTopos(area)?.filter(topo => topo.areaSlug === area.slug).map(topo =>(
+                  { areaTopos(area)?.map(topo => (
                     <div key={ topo.slug } className={ `columns ${ topoRoutes(topo).length ? "" : "is-hidden" }` }>
                       <div className="column">
-                        <HashLink to={ `/crags/${area.cragSlug}/areas/${area.slug}#${topo.slug}` }>
+                        <HashLink to={ `/crags/${crag.slug}/areas/${area.slug}#${topo.slug}` }>
                           <TopoImage
                             routes={ topoRoutes(topo) }
                             background={ String(topo.image) }
@@ -166,7 +170,7 @@ function CragView() {
                             <span className="icon">
                               <i className="fas fa-compass"></i>
                             </span>
-                            <span className="is-capitalized">{ topo.orientation }</span>
+                            <span className="is-capitalized">{ getOrientationsTitleById(topo.orientationId) }</span>
                           </span>
                         </div>
                         <div className="box mt-1">
@@ -187,6 +191,7 @@ function CragView() {
               <div id="routes" className="container box">
                 { crag?.routes.length ? (
                   <AreaRoutesTable
+                    showIndex={ false }
                     routes={ crag?.routes }
                     loggedRoutes={ (crag && crag.userLogs) || [] }
                   />
@@ -245,8 +250,8 @@ function CragView() {
               <div id="approach" className="container">
                 <div className="box">
                   <h3 className="title">Approach</h3>
-                  {(crag?.approachNotes &&
-                    <p>{ crag?.approachNotes }</p>)
+                  {(crag?.approachDetails &&
+                    <p>{ crag?.approachDetails }</p>)
                     ||
                     <p>No approach details have been given. Hopefully that means it's an easy walk in 🤷‍♂️</p>
                   }
@@ -255,7 +260,6 @@ function CragView() {
                   <h3 className="title">Access</h3>
                   <span className="tag is-primary is-capitalized">{ crag?.access }</span>
                   <p>{ crag?.accessDetails }</p>
-                  <p>{ crag?.accessLink }</p>
                 </div>
               </div>
             )}

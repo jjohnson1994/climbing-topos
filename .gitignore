@@ -3,4 +3,5 @@ node_modules
 .terraform
 
 **/.env
+**/.env.**
 api/uploads/**

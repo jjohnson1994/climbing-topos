@@ -13,7 +13,7 @@ function SearchResultCrag({ area }: { area: Area }) {
               <b>{ area.title } </b>
               <span>{ area.cragTitle }</span>
               <br />
-              <small>{ area.county }, { area.country }</small>
+              <small>{ area.osmData.address.county }, { area.osmData.address.country }</small>
             </p>
           </div>
         </div>

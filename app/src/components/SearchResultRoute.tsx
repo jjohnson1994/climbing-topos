@@ -12,7 +12,7 @@ function SearchResultsRoute({ route }: { route: Route }) {
               <span className="tag is-pulled-right">Route</span>
               <b>{ route.title } </b> { route.cragTitle }
               <br />
-              <small>{ route.grade } { route.routeType }</small>
+              <small>{ route.gradeIndex } { route.routeTypeId }</small>
             </p>
           </div>
         </div>

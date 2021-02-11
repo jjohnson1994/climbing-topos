@@ -20,9 +20,9 @@ export async function createRoute(routeDescription: RouteRequest, token: string)
   return { routeSlug: json.routeSlug };
 }
 
-export async function getRoute(token: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<Route> {
+export async function getRoute(token: string, routeSlug: string): Promise<Route> {
   const res = await fetch(
-    `http://localhost:3001/dev/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
+    `http://localhost:3001/dev/routes?routeSlug=${routeSlug}`,
     {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` })

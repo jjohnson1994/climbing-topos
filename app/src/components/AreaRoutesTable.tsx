@@ -6,11 +6,12 @@ import { RouteLogContext } from './RouteLogContext';
 import { useUserPreferences } from '../api/profile';
 
 interface Props {
-  routes: Route[] | undefined;
   loggedRoutes: Log[];
+  routes: Route[] | undefined;
+  showIndex?: boolean,
 }
 
-function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
+function AreaRoutesTable({ showIndex = true, routes, loggedRoutes, }: Props) {
   const context = useContext(RouteLogContext);
 
   const { convertGradeToUserPreference } = useUserPreferences();
@@ -32,8 +33,10 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
     <table className="table is-fullwidth">
       <thead>
         <tr>
-          <th></th>
-          <th>Route</th>
+          { showIndex && (
+            <th></th>
+          )}
+          <th>Title</th>
           <th>Grade</th>
           <th>Rating</th>
           <th></th>
@@ -42,11 +45,13 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
       <tbody>
         {routes?.map((route, index) => (
           <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
-            <td>{ index + 1 }</td>
+            { showIndex && (
+              <td>{ index + 1 }</td>
+            )}
             <td className="is-capitalized">
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
             </td>
-            <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
+            <td>{ convertGradeToUserPreference(parseInt(route.gradeIndex), route.gradingSystemId, route.routeTypeId) }</td>
             <td>{ route.rating !== -1 ? route.rating : "" }</td>
             <td> { context.isSelectingMultiple
               ? (

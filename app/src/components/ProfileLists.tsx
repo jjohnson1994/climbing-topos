@@ -91,7 +91,7 @@ function ProfileLists() {
                     </td>
                     <td>{ route.cragTitle }</td>
                     <td>{ route.routeType }</td>
-                    <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
+                    <td>{ convertGradeToUserPreference(parseInt(route.grade), route.gradingSystemId, route.routeType) }</td>
                   </tr>
                 ))}
               </tbody>

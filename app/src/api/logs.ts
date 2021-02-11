@@ -65,6 +65,7 @@ export function useLogRoutes() {
 
   const clearSelectedRoutes = () => {
     setSelectedRoutes([]);
+    setIsSelectingMultipleRoutes(false);
   }
 
   const onInitSelectMultipleRoutes = (selectMultiple: boolean, routeSlug: string) => {

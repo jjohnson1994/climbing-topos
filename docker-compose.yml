@@ -1,0 +1,38 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: ondra
+      POSTGRES_PASSWORD: megos
+      POSTGRES_DB: climbingtopos
+    ports:
+      - "5432:5432"
+  migrations:
+    build: ./migrations
+    depends_on:
+      - postgres
+    volumes:
+      - "./migrations/:/opt/app:rw"
+    environment:
+      POSTGRES_USER: ondra
+      POSTGRES_PASSWORD: megos
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: climbingtopos
+      NODE_ENV: dev
+      WAIT_HOSTS: postgres:5432
+
+# app:
+#   build: ./app
+#   volumes:
+#     - "./app/:/opt/app:rw"
+#     - "./core/:/opt/core:rw"
+#     - "./app/node_modules/:/opt/app/node_modules:rw"
+#   ports:
+#     - "3000:3000"
+# api:
+#   build: ./api
+#   volumes:
+#     - "./api/:/opt/app:rw"
+#     - "./core/:/opt/core:rw"
+#     - "./api/node_modules/:/opt/app/node_modules:rw"

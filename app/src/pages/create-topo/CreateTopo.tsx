@@ -6,6 +6,7 @@ import {useForm} from "react-hook-form";
 import {useHistory, useParams} from "react-router-dom";
 import * as yup from "yup";
 import {topos} from "../../api";
+import { useGlobals } from "../../api/globals";
 import {popupError, popupSuccess} from "../../helpers/alerts";
 
 const schema = NewTopoSchema(yup);
@@ -15,6 +16,7 @@ let image: File;
 function CreateTopo() {
   const history = useHistory();
   const { getAccessTokenSilently } = useAuth0();
+  const { orientations } = useGlobals();
   const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -22,10 +24,9 @@ function CreateTopo() {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      orientation: "unknown",
+      orientationId: "",
       imageFileName: "",
       areaSlug,
-      cragSlug
     }
   });
 
@@ -68,13 +69,6 @@ function CreateTopo() {
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
-          <input
-            type="text"
-            name="cragSlug"
-            value={ cragSlug }
-            ref={ register() }
-            className="is-hidden"
-          />
           <input
             type="text"
             name="areaSlug"
@@ -120,20 +114,14 @@ function CreateTopo() {
             <label className="label">Orientation</label>
             <div className="control">
               <div className="select">
-                <select name="orientation" ref={ register }>
-                  <option value="unknown">Unknown</option>
-                  <option value="north">North</option>
-                  <option value="north-east">North East</option>
-                  <option value="east">East</option>
-                  <option value="south-east">South East</option>
-                  <option value="south">South</option>
-                  <option value="south-west">South West</option>
-                  <option value="west">West</option>
-                  <option value="noth-west">North West</option>
+                <select name="orientationId" ref={ register }>
+                  { orientations.map(orientation => (
+                    <option key={ orientation.id } value={ orientation.id }>{ orientation.title }</option>
+                  ))}
                 </select>
               </div>
             </div>
-            <p className="help is-danger">{ errors.orientation?.message }</p>
+            <p className="help is-danger">{ errors.orientationId?.message }</p>
           </div>
 
           <div className="field">
