@@ -4,9 +4,9 @@ import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dy
 
 export async function createArea(areaDescription: AreaRequest, userSub: string) {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       WITH crags AS (
         SELECT
@@ -127,9 +127,9 @@ export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
 
 export async function getAreaBySlug(slug: string, userSub: string): Promise<Area> {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       SELECT
         areas.approach_details as "approachDetails",

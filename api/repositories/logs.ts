@@ -3,9 +3,9 @@ import { Log, LogRequest } from "../../core/types";
 
 export async function createRouteLogs(logRequests: LogRequest[], userSub: string) {
   return rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       WITH users AS (
         SELECT
@@ -112,9 +112,9 @@ export async function getLogsByCragSlug(cragSlug: string): Promise<Log[]> {
 
 export async function getLogsForUser(userSub: string): Promise<Log[]> {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       SELECT
         areas.slug as "areaSlug",

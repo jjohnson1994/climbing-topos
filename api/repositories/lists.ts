@@ -56,9 +56,9 @@ export async function getListBySlug(userSub: string, listSlug: string): Promise<
 
 export async function getListRoutes(listId: string): Promise<ListRoute[]> {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       SELECT
         list_routes.*
@@ -83,9 +83,9 @@ export async function getListRoutes(listId: string): Promise<ListRoute[]> {
 
 export async function getUserLists(userSub: string): Promise<List[]> {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: "SELECT * FROM lists", 
   }).promise();
 

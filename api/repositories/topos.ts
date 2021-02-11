@@ -5,9 +5,9 @@ import { nanoid } from "nanoid";
 export async function createTopo(topoDetails: TopoRequest, userSub: string) {
   const topoSlug = nanoid();
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       WITH areas AS (
         SELECT
@@ -122,9 +122,9 @@ export async function getTopo(cragSlug: string, areaSlug: string, topoSlug: stri
 
 export async function getTopoBySlug(slug: string): Promise<Topo> {
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       SELECT
         areas.slug as "areaSlug",

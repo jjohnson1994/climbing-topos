@@ -4,9 +4,9 @@ import { rdsDataService } from "../db";
 export async function getAllGlobals(): Promise<Globals> {
   console.log({rdsDataService});
   const { records } = await rdsDataService.executeStatement({
-    database: process.env.DATABASE_NAME,
-    resourceArn: `${process.env.DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DATABASE_SECRET_ARN}`,
+    database: process.env.RDS_DATABASE_NAME,
+    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       WITH access_types AS (
         SELECT coalesce(jsonb_agg(access_types), '[]'::jsonb) agg
