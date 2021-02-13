@@ -4,10 +4,11 @@
       "@babel/preset-env",
       {
         "targets": {
-          "node": "15",
+          "node": "12",
         }
       }
     ],
-    "@babel/preset-typescript",
+    "@babel/plugin-transform-runtime",
+    "@babel/preset-typescript"
   ]
 }
