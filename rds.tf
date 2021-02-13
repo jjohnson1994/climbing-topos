@@ -1,16 +1,16 @@
 module "aurora" {
   source  = "terraform-aws-modules/rds-aurora/aws"
   version = "~> 3.0"
-  
-  name   = var.app_name
 
-  # PostgreSQL
+  name = var.app_name
+
   engine = "aurora-postgresql"
 
   engine_mode           = "serverless"
   engine_version        = null
   replica_scale_enabled = false
   replica_count         = 0
+  enable_http_endpoint  = true
 
   subnets             = module.vpc_main.private_subnets
   vpc_id              = module.vpc_main.vpc_id
@@ -63,7 +63,7 @@ resource "aws_secretsmanager_secret" "rds_credentials" {
 }
 
 resource "aws_secretsmanager_secret_version" "rds_credentials" {
-  secret_id     = aws_secretsmanager_secret.rds_credentials.id
+  secret_id = aws_secretsmanager_secret.rds_credentials.id
   secret_string = jsonencode(map(
     "username", module.aurora.this_rds_cluster_master_username,
     "password", module.aurora.this_rds_cluster_master_password

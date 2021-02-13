@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "cert" {
-  provider = aws.virginia
+  provider          = aws.virginia
   domain_name       = var.domain_name
   validation_method = "DNS"
 

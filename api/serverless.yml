@@ -30,6 +30,13 @@ provider:
       Action:
         - rds-data:ExecuteStatement
       Resource: '*' #TODO get resource arn from Terraform
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetResourcePolicy
+        - secretsmanager:GetSecretValue
+        - secretsmanager:DescribeSecret
+        - secretsmanager:ListSecretVersionIds
+      Resource: '*' #TODO get resource arn from Terraform
 
 functions:
   app:
