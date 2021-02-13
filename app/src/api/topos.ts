@@ -41,7 +41,7 @@ export async function createTopo(topoDetails: TopoRequest, token: string) {
     image = objectUrl;
   }
 
-  const res = await fetch('http://localhost:3001/dev/topos', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/topos`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export async function createTopo(topoDetails: TopoRequest, token: string) {
 }
 
 export async function getTopo(topoSlug: string): Promise<Topo> {
-  const res = await fetch( `http://localhost:3001/dev/topos/${topoSlug}`);
+  const res = await fetch( `${process.env.REACT_APP_API_URL}/topos/${topoSlug}`);
   const json = await res.json();
 
   if (res.status !== 200) {

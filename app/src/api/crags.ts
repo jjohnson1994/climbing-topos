@@ -1,7 +1,7 @@
 import {Crag, CragBrief, CragRequest} from "core/types";
 
 export async function createCrag(cragDetails: CragRequest, token: string): Promise<{ hk: string, slug: string }> {
-  const res = await fetch('http://localhost:3001/dev/crags', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ export async function createCrag(cragDetails: CragRequest, token: string): Promi
 }
 
 export async function getCrags(token: string): Promise<CragBrief[]> {
-  const res = await fetch('http://localhost:3001/dev/crags', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     },
@@ -35,7 +35,7 @@ export async function getCrags(token: string): Promise<CragBrief[]> {
 }
 
 export async function getCragBySlug(slug: string, token: string): Promise<Crag> {
-  const res = await fetch(`http://localhost:3001/dev/crags/${slug}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags/${slug}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     }

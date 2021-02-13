@@ -15,7 +15,7 @@ const GlobalsGetter = () => {
 
   return async () => {
     if (!globals) {
-      const newGlobals = await fetch('http://localhost:3001/dev/globals')
+      const newGlobals = await fetch(`${process.env.REACT_APP_API_URL}/globals`)
         .then(res => res.json());
       globals = newGlobals;
     }

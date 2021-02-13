@@ -1,7 +1,7 @@
 import { AreaRequest, Area } from "../../../core/types";
 
 export async function createArea(areaDescription: AreaRequest, token: string): Promise<{ slug: string }> {
-  const res = await fetch('http://localhost:3001/dev/areas',
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas`,
     {
       method: 'POST',
       headers: {
@@ -20,7 +20,7 @@ export async function createArea(areaDescription: AreaRequest, token: string): P
 }
 
 export async function getArea(areaSlug: string, token: string): Promise<Area> {
-  const res = await fetch(`http://localhost:3001/dev/areas/${areaSlug}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas/${areaSlug}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     }

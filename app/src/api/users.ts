@@ -1,5 +1,5 @@
 export async function login(token: string) {
-  const res = await fetch(`http://localhost:3001/dev/users/login`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`

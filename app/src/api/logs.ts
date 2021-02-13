@@ -3,7 +3,7 @@ import {Log, LogRequest} from "../../../core/types";
 import {queryStringFromObject} from "../helpers/queryString";
 
 export async function logRoutes(logs: LogRequest[], token: string) {
-  const res = await fetch('http://localhost:3001/dev/logs', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/logs`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function getProfileLogs(token: string, cragSlug?: string, areaSlug?
     routeSlug
   });
 
-  const res = await fetch(`http://localhost:3001/dev/profile/logs${queryString}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/profile/logs${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -45,7 +45,7 @@ export async function getProfileLogs(token: string, cragSlug?: string, areaSlug?
 }
 
 export async function getUserLogs(userSub: string, token: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
-  const res = await fetch(`http://localhost:3001/dev/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     }

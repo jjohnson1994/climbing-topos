@@ -1,7 +1,7 @@
 import { List, Route } from "core/types";
 
 export async function addList(token: string, title: string): Promise<List> {
-  const res = await fetch("http://localhost:3001/dev/lists", {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/lists`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function addRoutesToList(
     routeSlug: string 
   }[]
 ) {
-  const res = await fetch(`http://localhost:3001/dev/lists?listSlug=${listSlug}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/lists?listSlug=${listSlug}`, {
     method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export async function addRoutesToList(
 }
 
 export async function getLists(token: string): Promise<List[]> {
-  const res = await fetch(`http://localhost:3001/dev/lists`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/lists`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -64,7 +64,7 @@ export async function getLists(token: string): Promise<List[]> {
 }
 
 export async function getList(token: string, listSlug: string): Promise<List> {
-  const res = await fetch(`http://localhost:3001/dev/lists/${listSlug}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/lists/${listSlug}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

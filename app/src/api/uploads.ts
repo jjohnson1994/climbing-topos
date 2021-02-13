@@ -1,5 +1,5 @@
 export async function getPresignedUploadURL(token: string) {
-  const res = await fetch('http://localhost:3001/dev/uploads/pre-signed-upload-url', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/uploads/pre-signed-upload-url`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
