@@ -25,6 +25,11 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: eu-west-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds-data:ExecuteStatement
+      Resource: '*' #TODO get resource arn from Terraform
 
 functions:
   app:
