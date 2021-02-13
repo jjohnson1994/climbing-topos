@@ -3,6 +3,7 @@ module "aurora" {
   version = "~> 3.0"
 
   name = var.app_name
+  database_name = var.app_name
 
   engine = "aurora-postgresql"
 
