@@ -22,7 +22,7 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs15.x
+  runtime: nodejs12.x
   stage: dev
   region: eu-west-1
 
