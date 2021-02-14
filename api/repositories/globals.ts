@@ -84,5 +84,7 @@ export async function getAllGlobals(): Promise<Globals> {
     ]
   }).promise();
 
+  console.log("globals got records", records);
+
   return records[0];
 }

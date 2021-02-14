@@ -91,7 +91,7 @@ const rdsDataService = {
 
       console.log("cleaned records", records);
 
-      return records;
+      return { records: rows };
     }
 
     return { promise: exec };
