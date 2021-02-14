@@ -16,7 +16,12 @@ import users from "./routes/users";
 const app = express()
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.IS_OFFLINE
+    ? "http://localhost:3000"
+    : "https://climbingtopos.com",
+  optionsSuccessStatus: 200
+}));
 
 app.use("/areas", areas);
 app.use("/crags", crags);
