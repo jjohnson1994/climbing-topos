@@ -1,5 +1,6 @@
 import serverless from "serverless-http";
 import express from "express";
+import cors from "cors";
 
 import areas from "./routes/areas";
 import crags from "./routes/crags";
@@ -15,6 +16,7 @@ import users from "./routes/users";
 const app = express()
 
 app.use(express.json());
+app.use(cors());
 
 app.use("/areas", areas);
 app.use("/crags", crags);
