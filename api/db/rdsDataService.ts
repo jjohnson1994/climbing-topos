@@ -71,6 +71,7 @@ const rdsDataService = {
       const { records = [], columnMetadata = [] } = await client.executeStatement(params).promise();
 
       console.log("raw records", records);
+      console.log("column meta", columnMetadata);
 
       columnMetadata.map(col => {
         cols.push(`${col.name}`)
