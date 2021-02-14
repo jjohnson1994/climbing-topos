@@ -59,6 +59,15 @@ const rdsPgNodeWrapper = {
   }
 }
 
+function parseIfJson(potentialJson: string) {
+  try {
+    const json = JSON.parse(potentialJson);
+    return json;
+  } catch(error) {
+    return potentialJson;
+  }
+}
+
 const rdsDataService = {
   executeStatement: (
     params: AWS.RDSDataService.Types.ExecuteStatementRequest
@@ -80,7 +89,7 @@ const rdsDataService = {
       records.map((record) => {
         const row: {[key: string]: any} = {};
         record.map((value, i) => {
-          row[cols[i]] = value.stringValue 
+          row[cols[i]] = (value.stringValue && parseIfJson(value.stringValue))
             ?? value.blobValue
             ?? value.doubleValue
             ?? value.longValue
