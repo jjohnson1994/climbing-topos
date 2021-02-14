@@ -68,7 +68,7 @@ const rdsDataService = {
       const rows: {[key: string]: string}[] = [];
       const cols: string[] = [];
       const client = new AWS.RDSDataService();
-      const { records = [], columnMetadata = [] } = await client.executeStatement(params).promise();
+      const { records = [], columnMetadata = [] } = await client.executeStatement({ ...params, includeResultMetadata: true }).promise();
 
       console.log("raw records", records);
       console.log("column meta", columnMetadata);
@@ -92,7 +92,7 @@ const rdsDataService = {
 
       console.log("cleaned records", records);
 
-      return { records: cols };
+      return { records: rows };
     }
 
     return { promise: exec };
