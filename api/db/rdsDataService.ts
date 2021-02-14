@@ -1,5 +1,4 @@
 import AWS from "aws-sdk";
-import { rdsDataStructToObjectArray } from "helpers/rds";
 import { Client } from "pg";
 
 const IS_OFFLINE = process.env.IS_OFFLINE;
@@ -70,7 +69,6 @@ const rdsDataService = {
       const cols: string[] = [];
       const client = new AWS.RDSDataService();
       const { records = [], columnMetadata = [] } = await client.executeStatement(params).promise();
-      const cleanedRecords = rdsDataStructToObjectArray(records);
 
       console.log("raw records", records);
 
