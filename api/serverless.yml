@@ -44,11 +44,4 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
-  cragsGet:
-    handler: index.handler
-    events:
-      - http: 'GET /crags/{proxy+}'
-  cragsPost:
-    handler: index.handler
-    events:
-      - http: 'POST /crags/{proxy+}'
+    cors: true

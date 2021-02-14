@@ -2,7 +2,6 @@ import { Globals } from "../../core/types";
 import { rdsDataService } from "../db";
 
 export async function getAllGlobals(): Promise<Globals> {
-  console.log({rdsDataService});
   const { records } = await rdsDataService.executeStatement({
     database: process.env.RDS_DATABASE_NAME,
     resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
