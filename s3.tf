@@ -4,6 +4,7 @@ resource "aws_s3_bucket" "deploy" {
 
   website {
     index_document = "index.html"
+    error_document = "index.html"
   }
 }
 
@@ -33,11 +34,6 @@ POLICY
 resource "aws_s3_bucket" "s3_images" {
   bucket = var.image_bucket_name
   acl    = "public-read"
-
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
-  }
 
   cors_rule {
     allowed_headers = ["*"]

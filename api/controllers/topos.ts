@@ -4,7 +4,7 @@ export async function postTopo(req, res) {
   try {
     const topoDetails = req.body;
     const { user } = req;
-    const userSub = user ? user.sub : false;
+    const userSub = user ? user.sub : undefined;
     await topos.createTopo(topoDetails, userSub);
 
     res.status(200).send({ success: true });

@@ -3,7 +3,7 @@ import { crags } from '../services';
 export async function getCrags(req, res) {
   try {
     const { user } = req;
-    const userSub = user ? user.sub : false;
+    const userSub = user ? user.sub : undefined;
     const allCrags = await crags.getAllCrags(userSub);
     res.status(200).json(allCrags);
   } catch (error) {
@@ -16,7 +16,7 @@ export async function getCragBySlug(req, res) {
   try {
     const { slug } = req.params;
     const { user } = req;
-    const userSub = user ? user.sub : false;
+    const userSub = user ? user.sub : undefined;
     const crag = await crags.getCragBySlug(slug, userSub);
     res.status(200).json(crag);
   } catch (error) {

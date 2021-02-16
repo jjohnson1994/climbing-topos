@@ -18,7 +18,7 @@ export async function getRoute(req, res) {
   try {
     const { routeSlug } = req.query;
     const { user } = req;
-    const userSub = user ? user.sub : false;
+    const userSub = user ? user.sub : undefined;
     const route = await routes.getRouteBySlug(userSub, routeSlug);
     res.status(200).json(route);
   } catch(error) {
