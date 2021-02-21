@@ -106,13 +106,13 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
       {
         name: "latitude",
         value: {
-          "stringValue": cragDetails.latitude,
+          "stringValue": `${cragDetails.latitude}`,
         },
       },
       {
         name: "longitude",
         value: {
-          "stringValue": cragDetails.longitude,
+          "stringValue": `${cragDetails.longitude}`,
         },
       },
       {
