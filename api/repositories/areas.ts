@@ -78,13 +78,13 @@ export async function createArea(areaDescription: AreaRequest, userSub: string) 
       {
         name: "latitude",
         value: {
-          "longValue": parseInt(areaDescription.latitude, 10),
+          "stringValue": `${areaDescription.latitude}`,
         },
       },
       {
         name: "longitude",
         value: {
-          "longValue": parseInt(areaDescription.longitude, 10),
+          "stringValue": `${areaDescription.longitude}`,
         },
       },
       {
