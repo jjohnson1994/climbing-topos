@@ -3,9 +3,9 @@ services:
   postgres:
     image: postgres:alpine
     environment:
-      POSTGRES_USER: ondra
-      POSTGRES_PASSWORD: megos
-      POSTGRES_DB: climbingtopos
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     ports:
       - "5432:5432"
   migrations:
@@ -15,12 +15,17 @@ services:
     volumes:
       - "./migrations/:/opt/app:rw"
     environment:
-      POSTGRES_USER: ondra
-      POSTGRES_PASSWORD: megos
-      POSTGRES_HOST: postgres
-      POSTGRES_DB: climbingtopos
-      NODE_ENV: dev
-      WAIT_HOSTS: postgres:5432
+      - BASTION_SSH_HOST
+      - BASTION_SSH_USER
+      - BASTION_SSH_PASSPHRASE
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - POSTGRES_DB
+      - NODE_ENV
+      - WAIT_HOSTS
+    ports:
+      - "22:22"
 
 # app:
 #   build: ./app

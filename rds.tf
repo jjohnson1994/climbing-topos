@@ -59,6 +59,15 @@ resource "aws_security_group_rule" "allow_access" {
   security_group_id        = module.aurora.this_security_group_id
 }
 
+resource "aws_security_group_rule" "aurora_rds_access" {
+  type                     = "ingress"
+  from_port                = module.aurora.this_rds_cluster_port
+  to_port                  = module.aurora.this_rds_cluster_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bastion.id
+  security_group_id        = module.aurora.this_security_group_id
+}
+
 resource "aws_secretsmanager_secret" "rds_credentials" {
   name = "rds_credentials"
 }

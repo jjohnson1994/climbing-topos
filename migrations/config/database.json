@@ -14,7 +14,12 @@
 	"password":{ "ENV": "POSTGRES_PASSWORD" },
 	"host": { "ENV": "POSTGRES_HOST" },
 	"database": { "ENV": "POSTGRES_DB" },
-	"ssl": "true",
-	"port": "5432"
+	"port": "5432",
+    "tunnel": {
+      "host": { "ENV": "BASTION_SSH_HOST" },
+      "username": { "ENV": "BASTION_SSH_USER" },
+      "privateKeyPath": "/opt/app/id_rsa",
+      "passphrase": { "ENV": "BASTION_SSH_PASSPHRASE" }
+    }
   }
 }
