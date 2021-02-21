@@ -130,7 +130,7 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
       {
         name: "rock_type_id",
         value: {
-          "stringValue": cragDetails.rockTypeId,
+          "longValue": parseInt(cragDetails.rockTypeId, 10),
         },
       },
       {
