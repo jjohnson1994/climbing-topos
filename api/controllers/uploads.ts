@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { s3 } from "../db";
 
 export async function getPreSignedUploadURL(req, res) {
+  console.log("access key id", process.env.AWS_ACCESS_KEY_ID)
   try {
     const key = nanoid();
     const url = await s3
