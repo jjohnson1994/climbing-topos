@@ -9,7 +9,7 @@ export async function getPreSignedUploadURL(req, res) {
         ACL: "public-read",
         Bucket: "climbing-topos-images",
         Key: key,
-        ContentType: 'image/*',
+        // ContentType: 'image/*',
         Expires: 300,
       });
 
