@@ -37,6 +37,10 @@ provider:
         - secretsmanager:DescribeSecret
         - secretsmanager:ListSecretVersionIds
       Resource: '*' #TODO get resource arn from Terraform
+    - Effect: Allow
+      Action:
+        - s3:putObject
+      Resource: '*' #TODO get resource arn from Terraform
 
 functions:
   app:
