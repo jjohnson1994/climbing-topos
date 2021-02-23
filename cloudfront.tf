@@ -20,7 +20,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     target_origin_id = local.s3_origin_id
 
     forwarded_values {
-      query_string = false
+      query_string = true
 
       cookies {
         forward = "none"
@@ -79,8 +79,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   custom_error_response {
-    error_code = 404
-    response_code = 200
+    error_code         = 404
+    response_code      = 200
     response_page_path = "/index.html"
   }
 

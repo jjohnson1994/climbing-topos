@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "s3_images" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["PUT"]
-    allowed_origins = ["http://localhost:3000"]
+    allowed_origins = ["http://localhost:3000", "https://climbingtopos.com"]
     max_age_seconds = 3000
   }
 }
