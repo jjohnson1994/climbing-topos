@@ -290,7 +290,7 @@ export const getCragBySlug = async (slug: string, userSub: string): Promise<Crag
       {
         name: "user_sub",
         value: {
-          "stringValue": userSub || "NO_USE_SUB",
+          "stringValue": userSub || "NO_USER_SUB",
         }
       }
     ]

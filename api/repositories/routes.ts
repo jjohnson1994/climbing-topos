@@ -199,7 +199,7 @@ export async function getRouteBySlug(routeSlug: string, userSub: string): Promis
       {
         name: "user_sub",
         value: {
-          "stringValue": userSub,
+          "stringValue": userSub || "NO_USER_SUB",
         },
       },
     ],

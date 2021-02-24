@@ -217,7 +217,7 @@ export async function getAreaBySlug(slug: string, userSub: string): Promise<Area
       {
         name: "user_sub",
         value: {
-          "stringValue": userSub,
+          "stringValue": userSub || "NO_USER_SUB",
         }
       }
     ],
