@@ -43,7 +43,7 @@ export async function createTopo(topoDetails: TopoRequest, userSub: string) {
       {
         name: "orientation_id",
         value: {
-          "stringValue": topoDetails.orientationId,
+          "longValue": parseInt(topoDetails.orientationId, 10),
         }
       },
       {

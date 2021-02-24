@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import { s3 } from "../db";
 
 export async function getPreSignedUploadURL(req, res) {
-  console.log("access key id", process.env.AWS_ACCESS_KEY_ID)
   try {
     const key = nanoid();
     const url = await s3
@@ -10,7 +9,7 @@ export async function getPreSignedUploadURL(req, res) {
         ACL: "public-read",
         Bucket: "climbing-topos-images",
         Key: key,
-        // ContentType: 'image/*',
+        ContentType: 'image/*',
         Expires: 300,
       });
 

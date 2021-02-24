@@ -176,8 +176,6 @@ export async function getAllCrags(userSub: string): Promise<CragBrief[]> {
     `,
   }).promise();
 
-  console.log("crags got records", records);
-
   return records;
 }
 

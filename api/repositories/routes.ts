@@ -77,19 +77,19 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
       {
         name: "grade_index",
         value: {
-          "stringValue": routeDescription.gradeIndex,
+          "longValue": parseInt(routeDescription.gradeIndex, 10),
         }
       },
       {
         name: "grading_systems_id",
         value: {
-          "stringValue": routeDescription.gradingSystemId,
+          "longValue": parseInt(routeDescription.gradingSystemId, 10),
         }
       },
       {
         name: "route_type_id",
         value: {
-          "stringValue": routeDescription.routeTypeId,
+          "longValue": parseInt(routeDescription.routeTypeId, 10),
         }
       },
       {
