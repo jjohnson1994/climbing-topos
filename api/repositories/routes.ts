@@ -10,7 +10,7 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
   await rdsDataService.executeStatement({
     database: process.env.RDS_DATABASE_NAME,
     resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.DRDS_ATABASE_SECRET_ARN}`,
+    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
     sql: `
       WITH topos as (
         SELECT
