@@ -34,7 +34,7 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
         )
         SELECT
           :description,
-          :drawing,
+          :drawing::jsonb,
           :grade_index,
           :grading_systems_id,
           :route_type_id,
