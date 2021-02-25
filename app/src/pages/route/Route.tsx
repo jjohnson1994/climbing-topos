@@ -85,7 +85,7 @@ function RoutePage() {
                   <span> </span>
                   <span className="is-capitalized">{ route ? getRouteTypeTitleById(route.routeTypeId) : "" }</span>
                 </h6>
-                <h6 className="subtitle is-6 is-capitalized">{ route?.description }</h6>
+                <h6 className="subtitle is-6">{ route?.description }</h6>
               </div>
               <div className="column">
                 <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
