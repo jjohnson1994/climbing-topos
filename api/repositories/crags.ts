@@ -200,7 +200,8 @@ export const getCragBySlug = async (slug: string, userSub: string): Promise<Crag
         to_jsonb(array_remove(array_agg(DISTINCT topos), null)) as "topos",
         to_jsonb(array_remove(array_agg(DISTINCT routes), null)) as "routes",
         to_jsonb(array_remove(array_agg(DISTINCT user_logs), null)) as "userLogs",
-        to_jsonb(array_remove(array_agg(DISTINCT car_parks), null)) as "carParks"
+        to_jsonb(array_remove(array_agg(DISTINCT car_parks), null)) as "carParks",
+        to_jsonb(array_remove(array_agg(DISTINCT tags), null)) as "tags"
       FROM 
         crags
       LEFT JOIN access_types
@@ -276,6 +277,16 @@ export const getCragBySlug = async (slug: string, userSub: string): Promise<Crag
         AND
           routes.topo_id = topos.id
       ) as "user_logs" ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT
+          crag_tags.title
+        FROM
+          crag_crag_tags
+        LEFT JOIN crag_tags
+          ON crag_tags.id = crag_crag_tags.tag_id
+        WHERE
+          crag_crag_tags.crag_id = crags.id
+      ) as "tags" ON TRUE
       WHERE
         crags.slug = :slug
       GROUP BY crags.id, access_types.id, rock_types.id

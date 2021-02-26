@@ -1,22 +1,30 @@
 import { Crag, CragBrief } from '../../core/types';
 import { algolaIndex } from "../db/algolia";
-import { crags } from '../repositories';
+import { crags, globals } from '../repositories';
 
 export const createCrag = async (cragDetails: Crag, userSub: string) => {
   const newCrag = await crags.createCrag(cragDetails, userSub);
 
-  algolaIndex
-    .saveObject({
-      title: cragDetails.title,
-      osmData: cragDetails.osmData,
-      tags: cragDetails.tags,
-      model: "crag" ,
-      objectID: newCrag.slug,
-      slug: newCrag.slug
-    })
-    .catch(error => {
-      console.error("Error saving new crag to algolia", error);
-    });
+  try {
+    const { cragTags } = await globals.getAllGlobals();
+
+    algolaIndex
+      .saveObject({
+        title: cragDetails.title,
+        osmData: cragDetails.osmData,
+        tags: cragTags
+          .filter(({ id }) => cragDetails.tags.includes(`${id}`))
+          .map(({ title }) => title),
+        model: "crag" ,
+        objectID: newCrag.slug,
+        slug: newCrag.slug
+      })
+      .catch(error => {
+        console.error("Error saving new crag to algolia", error);
+      });
+  } catch(error) {
+    console.error("Error saving new route to algolia", error);
+  }
 
   return newCrag;
 }
