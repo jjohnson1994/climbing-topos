@@ -14,19 +14,19 @@ const populateQueryParams = (
 ) => {
   const populatedQuery = parameters.reduce((acc, cur) => {
     if (typeof cur.value?.stringValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), `'${escapeSingleQuotes(Object.values(cur.value)[0])}'`);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), `'${escapeSingleQuotes(Object.values(cur.value)[0])}'`);
     } else if (typeof cur.value?.blobValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else if (typeof cur.value?.arrayValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else if (typeof cur.value?.isNull !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else if (typeof cur.value?.longValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else if (typeof cur.value?.doubleValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else if (typeof cur.value?.booleanValue !== "undefined") {
-      return (acc as any).replace(new RegExp(`:${cur.name}`), Object.values(cur.value)[0]);
+      return (acc as any).replace(new RegExp(`:${cur.name}`, "g"), Object.values(cur.value)[0]);
     } else {
       throw new Error("Value type does not exist");
     }

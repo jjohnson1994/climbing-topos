@@ -6,7 +6,7 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
   const newCrag = await crags.createCrag(cragDetails, userSub);
 
   try {
-    const { cragTags } = await globals.getAllGlobals();
+    const { rockTypes, cragTags } = await globals.getAllGlobals();
 
     algolaIndex
       .saveObject({
@@ -16,6 +16,9 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
           .filter(({ id }) => cragDetails.tags.includes(`${id}`))
           .map(({ title }) => title),
         model: "crag" ,
+        rockType: rockTypes
+          .find(({ id }) => cragDetails.rockTypeId === `${id}`)
+          ?.title,
         objectID: newCrag.slug,
         slug: newCrag.slug
       })
