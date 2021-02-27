@@ -57,7 +57,7 @@ function CragMap({ crag }: { crag: Crag }) {
           >
             <Popup>
               <h6 className="subtitle is-6">{ carPark.title }</h6>
-              <p className="subtitle">{ carPark.description }</p>
+              <p>{ carPark.description }</p>
               <ButtonCopyCoordinates
                 className="is-small"
                 latitude={ carPark.latitude }
