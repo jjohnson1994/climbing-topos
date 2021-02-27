@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Log, Route } from "../../../core/types";
 import { RouteLogContext } from './RouteLogContext';
 import { useUserPreferences } from '../api/profile';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface Props {
   loggedRoutes: Log[];
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function AreaRoutesTable({ showIndex = true, routes, loggedRoutes, }: Props) {
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
   const context = useContext(RouteLogContext);
 
   const { convertGradeToUserPreference } = useUserPreferences();
@@ -27,6 +29,22 @@ function AreaRoutesTable({ showIndex = true, routes, loggedRoutes, }: Props) {
   const hasUserLoggedRoute = (routeSlug: string) => {
     return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1
       || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
+  }
+
+  const btnSingleRouteDoneOnClick = (route: Route) => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    } else {
+      context.onSingleRouteDone(route)
+    }
+  }
+
+  const btnSingleRouteAddToListOnClick = (route: Route) => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    } else {
+      context.onSingleRouteAddToList(route);
+    }
   }
 
   return (
@@ -74,7 +92,7 @@ function AreaRoutesTable({ showIndex = true, routes, loggedRoutes, }: Props) {
                           <div className="dropdown-content">
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => { context.onSingleRouteDone(route) } }
+                              onClick={ () => { btnSingleRouteDoneOnClick(route) } }
                             >
                               <span className="icon">
                                 <i className="fas fw fa-check"></i>
@@ -83,7 +101,7 @@ function AreaRoutesTable({ showIndex = true, routes, loggedRoutes, }: Props) {
                             </button>
                             <button
                               className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={ () => { context.onSingleRouteAddToList(route) } }
+                              onClick={ () => { btnSingleRouteAddToListOnClick(route) } }
                             >
                               <span className="icon">
                                 <i className="fas fw fa-list"></i>

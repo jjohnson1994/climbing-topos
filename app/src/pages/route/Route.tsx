@@ -13,7 +13,7 @@ import { usePageTitle } from "../../helpers/pageTitle";
 
 
 function RoutePage() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
+  const { getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const { routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
@@ -47,13 +47,17 @@ function RoutePage() {
   }, [routeSlug, isAuthenticated, isLoading]);
 
   const btnDoneOnClick = () => {
-    if (route) {
+    if (!isAuthenticated) {
+      loginWithRedirect(); 
+    } else if (route) {
       context.onSingleRouteDone(route);
     }
   }
 
   const btnSaveToListOnClick = () => {
-    if (route) {
+    if (!isAuthenticated) {
+      loginWithRedirect(); 
+    } else if (route) {
       context.onSingleRouteAddToList(route);
     }
   }
@@ -100,7 +104,7 @@ function RoutePage() {
                   </div>
                   <div className="field has-addons has-addons-right is-horizontal">
                     <p className="control">
-                      <button className="button">
+                      <button className="button" onClick={ btnDoneOnClick }>
                         { hasUserLoggedRoute()
                           ? (
                             <>

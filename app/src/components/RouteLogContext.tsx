@@ -1,4 +1,5 @@
 import { Route } from "core/types";
+import { useAuth0 } from '@auth0/auth0-react';
 import React, { createContext, useState } from "react";
 import RoutesAddToListModal from "./RoutesAddToListModal";
 import RoutesAddToLogModal from "./RoutesAddToLogModal";
@@ -26,6 +27,7 @@ export const RouteLogContext = createContext<RouteLogContextType>({
 });
 
 function RouteLog({ children }: React.HTMLAttributes<Element>) {
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
   const [selectedRoutes, setSelectedRoutes] = useState<Route[]>([]);
   const [isSelectingMultiple, setIsSelectingMultiple] = useState<boolean>(false);
   const [showLogModal, setShowLogModal] = useState<boolean>(false);
@@ -72,11 +74,19 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   }
 
   const btnDoneMultipleOnClick = () => {
-    setShowLogModal(true);
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    } else {
+      setShowLogModal(true);
+    }
   }
 
   const btnSaveMultipleToListOnClick = () => {
-    setShowAddToListModal(true);
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    } else {
+      setShowAddToListModal(true);
+    }
   }
 
   const onInitSelectMultiple = (isSelectingMultiple: boolean, route: Route) => {
