@@ -1,41 +1,70 @@
-import { Route, RouteRequest } from "../../core/types";
+import {RouteRequest, Route} from "../../core/types";
+import {areas, logs, routes, topos} from "../models";
 import { algolaIndex } from "../db/algolia";
-import { areas, crags, routes, topos, globals } from "../repositories";
 
-export async function createRoute(routeDescription: RouteRequest, userSub: string) {
-  const newRouteSlug = await routes.createRoute(routeDescription, userSub);
+export async function createRoute(routeDescription: RouteRequest, userId: string) {
+  const newRoute = await routes.createRoute(routeDescription, userId);
 
-  try {
-    const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
-    const area = await areas.getAreaBySlug(topo.areaSlug, userSub);
-    const crag = await crags.getCragBySlug(area.cragSlug, userSub);
-    const { gradingSystems, routeTags } = await globals.getAllGlobals();
+  algolaIndex
+    .saveObject({
+      ...routeDescription,
+      model: "route",
+      objectID: newRoute.slug,
+      slug: newRoute.slug,
+    })
+    .catch(error => {
+      console.error("Error saving new route to algolia", error);
+    });
 
-    algolaIndex
-      .saveObject({
-        title: routeDescription.title,
-        grade: gradingSystems
-          ?.find(({ id }) => `${id}` === `${routeDescription.gradingSystemId}`)
-          ?.grades[parseInt(routeDescription.gradeIndex, 10)],
-        tags: routeTags
-          .filter(({ id }) => routeDescription.tags.includes(`${id}`))
-          .map(({ title }) => title),
-        rockType: crag.rockTypeTitle,
-        orientation: topo.orientationTitle,
-        model: "route",
-        objectID: newRouteSlug,
-        slug: newRouteSlug,
-        cragSlug: crag.slug,
-        areaSlug: area.slug,
-        toposSlug: topo.slug
-      });
-  } catch(error) {
-    console.error("Error saving new route to algolia", error);
-  }
-
-  return newRouteSlug;
+  return newRoute;
 }
 
-export function getRouteBySlug(userSub: string, routeSlug: string): Promise<Route> {
-  return routes.getRouteBySlug(routeSlug, userSub);
+export async function getRouteBySlug(
+  userSub: string,
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+): Promise<Route> {
+  const route = await routes.getRouteBySlug(
+    cragSlug,
+    areaSlug,
+    topoSlug,
+    routeSlug
+  );
+
+  const [topo, area, siblingRoutes, userLogs] = await Promise.all([
+    topos.getTopoBySlug(route.topoSlug),
+    areas.getAreaBySlug(route.areaSlug),
+    routes.getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
+      .then(res => res.filter(route => route.slug !== routeSlug)),
+    userSub
+      ? logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug)
+      : [],
+  ]);
+
+  return {
+    ...route,
+    topo,
+    area,
+    siblingRoutes,
+    userLogs
+  };
+}
+
+export async function incrementLogCount(
+  cragSlug: string, 
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+) {
+  return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
+    UpdateExpression: "set #logCount = #logCount + :inc",
+    ExpressionAttributeNames: { 
+      "#logCount": "logCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
 }

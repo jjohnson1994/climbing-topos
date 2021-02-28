@@ -26,7 +26,7 @@ function CragRoutesTable({ routes }: Props) {
                 { route.title }
               </Link>
             </td>
-            <td>{ route.gradeIndex }</td>
+            <td>{ route.grade }</td>
           </tr>
         ))}
       </tbody>

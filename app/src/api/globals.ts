@@ -1,87 +1,32 @@
-import { AccessType, GradingSystem, Orientation, RockType, RouteType, Tag } from "core/types";
-import { useEffect, useState } from "react";
+import {
+  areaTags,
+  cragTags,
+  gradingSystems,
+  rockTypes,
+  routeTags,
+  routeTypes
+} from "core/globals";
 
-const GlobalsGetter = () => {
-  let globals: {
-    accessTypes: AccessType[],
-    areaTags: Tag[],
-    cragTags: Tag[],
-    gradingSystems: GradingSystem[],
-    orientations: Orientation[],
-    rockTypes: RockType[],
-    routeTags: Tag[],
-    routeTypes: RouteType[]
-  };
-
-  return async () => {
-    if (!globals) {
-      const newGlobals = await fetch(`${process.env.REACT_APP_API_URL}/globals`)
-        .then(res => res.json());
-      globals = newGlobals;
-    }
-
-    return globals;
-  }
+export async function getCragTags() {
+  return cragTags;
 }
 
-const globalsGetter = GlobalsGetter();
+export async function getAreaTags() {
+  return areaTags;
+}
 
-export const useGlobals = () => {
-  const [accessTypes, setAccessTypes] = useState<AccessType[]>([]);
-  const [areaTags, setAreaTags] = useState<Tag[]>([]);
-  const [cragTags, setCragTags] = useState<Tag[]>([]);
-  const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
-  const [orientations, setOrientations] = useState<Orientation[]>([]);
-  const [rockTypes, setRockTypes] = useState<RockType[]>([]);
-  const [routeTags, setRouteTags] = useState<Tag[]>([]);
-  const [routeTypes, setRouteTypes] = useState<RouteType[]>([]);
+export async function getRockTypes() {
+  return rockTypes;
+}
 
-  useEffect(() => {
-    const getGlobals = async () => {
-      const {
-        accessTypes,
-        areaTags,
-        cragTags,
-        gradingSystems,
-        orientations,
-        rockTypes,
-        routeTags,
-        routeTypes
-      } = await globalsGetter();
+export async function getRouteTags() {
+  return routeTags;
+}
 
-      setAccessTypes(accessTypes);
-      setAreaTags(areaTags);
-      setCragTags(cragTags);
-      setGradingSystems(gradingSystems);
-      setOrientations(orientations);
-      setRockTypes(rockTypes);
-      setRouteTags(routeTags);
-      setRouteTypes(routeTypes);
-    }
+export async function getRouteTypes() {
+  return routeTypes;
+}
 
-    getGlobals();
-  }, []);
-
-  const getOrientationsTitleById = (id: string) => {
-    const orientation = orientations.find(({ id: _id }) => _id === id);
-    return orientation && orientation.title;
-  }
-
-  const getRouteTypeTitleById = (id: string) => {
-    const routeType = routeTypes.find(({ id: _id }) => _id === id);
-    return routeType && routeType.title;
-  }
-
-  return {
-    accessTypes,
-    areaTags,
-    cragTags,
-    getOrientationsTitleById,
-    getRouteTypeTitleById,
-    gradingSystems,
-    orientations,
-    rockTypes,
-    routeTags,
-    routeTypes,
-  }
+export async function getGradingSystems() {
+  return gradingSystems;
 }

@@ -1,22 +1,20 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import algoliasearch from 'algoliasearch/lite';
 import "leaflet-defaulticon-compatibility";
-import React, { useEffect } from "react";
+import React from "react";
 import { InstantSearch } from 'react-instantsearch-dom';
 import {
   BrowserRouter as Router,
   Route,
   Switch
 } from "react-router-dom";
-import { users } from './api';
 import './App.scss';
 import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
 import ProtectedRoute from "./auth/protected-route";
 import Footer from './components/Footer';
 import Nav from "./components/Nav";
 import RouteLogContext from "./components/RouteLogContext";
-import About from './pages/about/About';
 import Area from './pages/area/Area';
+import About from './pages/about/About';
 import Crag from './pages/crag/Crag';
 import CragsMap from "./pages/crags-map/CragsMap";
 import Crags from './pages/crags/Crags';
@@ -35,37 +33,11 @@ const searchClient = algoliasearch(
 );
 const algoliaIndexName = `${process.env.REACT_APP_ALGOLIA_INDEX}`;
 
-function OnLogin() {
-  const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
-
-  useEffect(() => {
-    // When the page first loads, check for an auth token and make POST 'login' request
-    // to the server if the token exists
-    //
-    // Weird to have this in a compoenent, but I couldn't find a way to access the
-    // auth token in any 'on login' callbacks
-    if (isLoading === true || isAuthenticated === false) {
-      return;
-    }
-
-    getAccessTokenSilently()
-      .then(token => {
-        users.login(token);
-      })
-      .catch(error => {
-        console.error("Error loading access token", error);
-      });
-  }, [isAuthenticated, isLoading, getAccessTokenSilently])
-
-  return <span></span>
-}
-
 function App() {
   return (
     <>
       <Router>
         <Auth0ProviderWithHistory>
-          <OnLogin />
           <InstantSearch searchClient={ searchClient } indexName={ algoliaIndexName }>
             <RouteLogContext>
               <Nav />
