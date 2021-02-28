@@ -49,4 +49,4 @@ jobs:
       - name: Deploy app build to S3 bucket
         run: |
           cd app
-          aws s3 sync ./build/ s3://climbing-topos-deploy --delete
+          aws s3 sync ./build/ s3://climbingtopos.com --delete
