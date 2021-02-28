@@ -92,7 +92,6 @@ function RoutePage() {
                 <h6 className="subtitle is-6">{ route?.description }</h6>
               </div>
               <div className="column">
-<<<<<<< HEAD
                 <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
                   <div className="is-flex is-justify-content-flex-end">
                     <div className="tags mb-1">
@@ -135,42 +134,6 @@ function RoutePage() {
                       </button>
                     </p>
                   </div>
-=======
-                <div role="group" className="tags">
-                  {route?.tags.map(tag => (
-                    <label key={ tag } className="tag is-primary">
-                      { tag }
-                    </label>
-                  ))} 
-                </div>
-                <div className="buttons has-addons is-right">
-                  <button className="button is-rounded" onClick={ btnDoneOnClick }>
-                    { hasUserLoggedRoute()
-                      ? (
-                        <>
-                          <span className="icon is-small">
-                            <i className="fas fw fa-check"></i>
-                          </span>
-                          <span>Done</span>
-                        </>
-                      )
-                      : (
-                        <>
-                          <span className="icon is-small">
-                            <i className="fas fw fa-plus"></i>
-                          </span>
-                          <span>Log Book</span>
-                        </>
-                      )
-                    }
-                  </button>
-                  <button className="button is-rounded" onClick={ btnSaveToListOnClick }>
-                    <span className="icon is-small">
-                      <i className="fas fw fa-list"></i>
-                    </span>
-                    <span>Save to List</span>
-                  </button>
->>>>>>> parent of 9e4e846... Dynamo -> Postgres, 90%
                 </div>
               </div>
             </div>
