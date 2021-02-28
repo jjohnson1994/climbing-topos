@@ -7,6 +7,11 @@ export async function postArea(req, res) {
     const userSub = req.user.sub;
     const resp = await areas.createArea(areaDetails, userSub);
 
+    crags.incrementAreaCount(areaDetails.cragSlug)
+      .catch(error => {
+        console.error("Error updating crag area count", error);
+      });
+
     res.status(200).json({ success: true, ...resp });
   } catch(error) {
     console.error('Error creating area', error);

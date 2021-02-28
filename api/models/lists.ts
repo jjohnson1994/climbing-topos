@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
-import { dynamodb, rdsDataService } from '../db';
+import { dynamodb } from '../db';
 import { List, ListRequest, ListRoute, ListRoutePartial } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
@@ -54,42 +54,44 @@ export async function getListBySlug(userSub: string, listSlug: string): Promise<
   return list?.Items?.[0] as List;
 }
 
-export async function getListRoutes(listId: string): Promise<ListRoute[]> {
-  const { records } = await rdsDataService.executeStatement({
-    database: process.env.RDS_DATABASE_NAME,
-    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
-    sql: `
-      SELECT
-        list_routes.*
-      FROM
-        lists
-      LEFT JOIN list_routes
-        ON list_routes.list_id = lists.id
-      WHERE lists.id = :id
-    `,
-    parameters: [
-      {
-        name: "id",
-        value: {
-          "stringValue": listId
-        }
-      }
-    ]
-  }).promise();
+export async function getListRoutes(listSlug: string): Promise<ListRoute[]> {
+  const params = {
+    TableName: String(process.env.DB),
+    IndexName: "gsi1",
+    KeyConditionExpression: "#model = :model AND begins_with(#sk, :sk)",
+    FilterExpression: "#listSlug = :listSlug",
+    ExpressionAttributeNames: {
+      "#model": "model",
+      "#sk": "sk",
+      "#listSlug": "listSlug",
+    },
+    ExpressionAttributeValues: {
+      ":model": "listRoute",
+      ":sk": `list#route#`,
+      ":listSlug": listSlug,
+    }
+  };
 
-  return records;
+  const listRoutes = await dynamodb.query(params).promise();
+  return listRoutes.Items as ListRoute[];
 }
 
 export async function getUserLists(userSub: string): Promise<List[]> {
-  const { records } = await rdsDataService.executeStatement({
-    database: process.env.RDS_DATABASE_NAME,
-    resourceArn: `${process.env.RDS_DATABASE_RESOURCE_ARN}`,
-    secretArn: `${process.env.RDS_DATABASE_SECRET_ARN}`,
-    sql: "SELECT * FROM lists", 
-  }).promise();
+  const params = {
+    TableName: String(process.env.DB),
+    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
+    ExpressionAttributeNames:{
+      "#hk": "hk",
+      "#sk": "sk"
+    },
+    ExpressionAttributeValues: {
+      ":hk": `user#${userSub}`,
+      ":sk": `list#metadata#`,
+    }
+  }
 
-  return records;
+  const lists = await dynamodb.query(params).promise()
+  return lists?.Items as List[];
 }
 
 export async function addRouteToList(

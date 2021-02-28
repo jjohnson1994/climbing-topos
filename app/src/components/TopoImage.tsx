@@ -5,25 +5,22 @@ import { Route, RouteDrawing } from "../../../core/types";
 import TopoImageStartTag from "./TopoImageStartTag";
 
 interface PropTypes {
-  filter?: string;
   routes: Route[];
   background: string;
   highlightedRouteSlug?: string;
 }
 
-function TopoImage({ filter, routes, background, highlightedRouteSlug }: PropTypes) {
+function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
   const [joinedRoutePaths, setJoinedRoutePaths] = useState<number[][][]>([]);
   const [routeLabels, setRouteLabels] = useState<{ [key: string]: (string | number)[] }>({});
 
   useEffect(() => {
-    const newJoinedRoutePaths = routes
-      .filter(route => filter ? route.slug === filter : true)
-      .map(route => {
-        return joinLinkedRoutes(route.drawing, routes);
-      });
+    const newJoinedRoutePaths = routes.map(route => {
+      return joinLinkedRoutes(route.drawing, routes);
+    });
 
     setJoinedRoutePaths(newJoinedRoutePaths);
-  }, [routes, filter]);
+  }, [routes]);
 
   useEffect(() => {
     const newRouteLabels = { ...routeLabels };
@@ -93,17 +90,12 @@ function TopoImage({ filter, routes, background, highlightedRouteSlug }: PropTyp
     return joinedPathPoints;
   }
 
-  const filteredRoutes = () => {
-    return routes
-      .filter(route => filter ? route.slug === filter : true);
-  }
-
   return (
     <div className="area-topo-image">
       <img src={ background } alt="topo"/>
       <div className="area-topo-image--canvas">
         <svg width="100%" height="100%" viewBox="0 0 1000 1000">
-          {filteredRoutes().map((route) => (
+          {routes?.map((route) => (
             <path
               key={ route.slug }
               d={ SmoothPath(joinLinkedRoutes(route.drawing, routes)) }

@@ -1,16 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import { useAuth0} from "@auth0/auth0-react";
+import { yupResolver} from "@hookform/resolvers/yup";
+import React, { useEffect, useState } from "react";
 import { useForm} from "react-hook-form";
 import * as yup from "yup";
-import { LogRequest, Route } from "core/types";
+import { GradingSystem, LogRequest, Route } from "core/types";
 import { NewLogsSchema } from "core/schemas";
-import { logs } from "../api";
+import { globals, logs} from "../api";
 import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
 import { useUserPreferences } from "../api/profile";
-import { useGlobals } from "../api/globals";
 
 interface Props {
   routes: Route[];
@@ -24,7 +23,8 @@ const schema = NewLogsSchema(yup);
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLogged }: Props) {
   const { getAccessTokenSilently } = useAuth0();
-  const { routeTags, gradingSystems } = useGlobals();
+  const [routeTags, setRouteTags] = useState<string[]>([]);
+  const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
   const { convertGradeToUserPreference, preferedGradingSystems } = useUserPreferences();
 
   const { register,  handleSubmit, errors, watch } = useForm({
@@ -34,14 +34,27 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
 
   const watchLogs = watch("logs", []);
 
-  const getGradesFromGradingSystem = (gradingSystemId: string): [string, number][] => {
-    const grades = gradingSystems.find(({ id }) => id === gradingSystemId)?.grades;
-    const gradesTitleValueMap = (grades || [])?.reduce((acc, cur, idx) => {
-      acc.set(cur, idx);
-      return acc;
-    }, new Map());
+  useEffect(() => {
+    getGlobals();
+  }, []);
 
-    return Array.from(gradesTitleValueMap);
+  const getGlobals = async () => {
+    try {
+      const _routeTags = await globals.getRouteTags();
+      const _gradingSystem = await globals.getGradingSystems();
+
+      setRouteTags(_routeTags);
+      setGradingSystems(_gradingSystem);
+    } catch (error) {
+      console.error("Error loading route tags", error);
+    }
+  }
+
+  const getGradesFromRouteType = (routeType: string) => {
+    const gradingSystem = preferedGradingSystems[routeType];
+    const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
+    const filteredGrades = Array.from(new Set(grades));
+    return filteredGrades;
   }
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async data => {
@@ -91,21 +104,119 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
               defaultChecked={ index === 0 ? true: false }
             />
             <label htmlFor={ `chkRoute${route.slug}` } className="label is-capitalized">
-              {routes.length > 1 && (
-                <>
-                  <i className="far fas fa-chevron-up checked mr-2"></i>
-                  <i className="far fas fa-chevron-down not-checked mr-2"></i>
-                </>
-              )}
               <span>{ route.title }</span>
               <span className="has-text-danger">{ errors.logs?.[index] ? " Has Errors! " : "" }</span>
+              {routes.length > 1 && (
+                <>
+                  <i className="far fas fa-chevron-up checked"></i>
+                  <i className="far fas fa-chevron-down not-checked"></i>
+                </>
+              )}
             </label>
             <div>
+              <input
+                type="text"
+                name={ `logs.[${index}].cragSlug` }
+                ref={ register({}) }
+                defaultValue={ route.cragSlug }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].areaSlug` }
+                ref={ register({}) }
+                defaultValue={ route.areaSlug }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].areaTitle` }
+                ref={ register({}) }
+                defaultValue={ route.areaTitle }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].country` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].countryCode` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].county` }
+                ref={ register({}) }
+                defaultValue={ route.country }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].cragTitle` }
+                ref={ register({}) }
+                defaultValue={ route.cragTitle }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].grade` }
+                ref={ register({}) }
+                defaultValue={ route.grade }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].gradingSystem` }
+                ref={ register({}) }
+                defaultValue={ route.gradingSystem }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].rockType` }
+                ref={ register({}) }
+                defaultValue={ route.rockType }
+                className="is-hidden"
+              />
               <input
                 type="text"
                 name={ `logs.[${index}].routeSlug` }
                 ref={ register({}) }
                 defaultValue={ route.slug }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].routeTitle` }
+                ref={ register({}) }
+                defaultValue={ route.title }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].routeType` }
+                ref={ register({}) }
+                defaultValue={ route.routeType }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].state` }
+                ref={ register({}) }
+                defaultValue={ route.state }
+                className="is-hidden"
+              />
+              <input
+                type="text"
+                name={ `logs.[${index}].topoSlug` }
+                ref={ register({}) }
+                defaultValue={ route.topoSlug }
                 className="is-hidden"
               />
               <div className="field is-grouped">
@@ -131,12 +242,12 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                       <div className="select">
                         <select
                           name={ `logs.[${index}].gradeTaken` }
-                          defaultValue={ route.gradeIndex }
+                          defaultValue={ route.grade }
                           ref={ register({}) }
                         >
-                          {getGradesFromGradingSystem(route!.routeTypeId)?.map(grade => (
-                            <option value={ grade[1] } key={ grade[1] }>
-                              { grade[0] }
+                          {getGradesFromRouteType(route!.routeType)?.map((grade, index) => (
+                            <option value={ index } key={ grade }>
+                              { grade }
                             </option>
                           ))}
                         </select>
@@ -199,21 +310,20 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                   <div role="group" className="tags">
                     {routeTags.map(tag => (
                       <label
-                        key={ tag.id }
+                        key={ tag }
                         className={`
                           tag
-                          is-capitalized
-                          ${watchLogs[index]?.tags?.includes(`${tag.id}`) ? "is-primary" : ""}
+                          ${watchLogs[index]?.tags?.includes(tag) ? "is-primary" : ""}
                         `}
                       >
                         <input
                           type="checkbox"
                           name={ `logs.[${index}].tags` }
-                          value={ tag.id }
-                          ref={ register() }
+                          value={ tag }
+                          ref={register({})}
                           style={{ display: "none" }}
                         />
-                        { tag.title }
+                        { tag }
                       </label>
                     ))} 
                   </div>

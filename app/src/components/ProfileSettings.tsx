@@ -15,6 +15,7 @@ function ProfileSettings() {
       setValue("preferedGradingSystems.Boulder", newPreferedGradingSystems.Boulder);
       setValue("preferedGradingSystems.Sport", newPreferedGradingSystems.Sport);
       setValue("preferedGradingSystems.Trad", newPreferedGradingSystems.Trad);
+      console.log("settings prefered", newPreferedGradingSystems);
     };
 
     try {

@@ -6,7 +6,6 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
 import { crags, globals } from "../../api";
-import { useGlobals } from "../../api/globals";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 import { reverseLookup } from '../../helpers/nominatim';
@@ -23,8 +22,8 @@ type CarPark = {
 function CreateCrag() {
   const history = useHistory();
   const { getAccessTokenSilently } = useAuth0();
-  const { accessTypes, cragTags, rockTypes } = useGlobals();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] = useState(-1);
+  const [cragTags, setCragTags] = useState<string[]>([]);
   const [cragLocationLoading, setCragLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,19 +31,19 @@ function CreateCrag() {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
+      access: "unknown",
       accessDetails: "",
-      accessTypeId: "",
-      approachDetails: "",
+      accessLink: "",
+      approachNotes: "",
       carParks: [{
-        description: "",
+        title: "",
         latitude: "",
         longitude: "",
-        title: "",
+        description: ""
       }] as CarPark[],
       description: "",
       latitude: "",
       longitude: "",
-      rockTypeId: "",
       tags: [] as string[],
       title: "",
     }
@@ -61,6 +60,15 @@ function CreateCrag() {
   });
 
   const watchTags = watch("tags", []);
+
+  useEffect(() => {
+    doGetTags();
+  }, []);
+
+  const doGetTags = async () => {
+    const cragTags = await globals.getCragTags();
+    setCragTags(cragTags);
+  }
 
   const btnCragLocationFindMeOnClick = async () => {
     setCragLocationLoading(true);
@@ -144,7 +152,7 @@ function CreateCrag() {
                 className="input"
                 type="text"
                 name="title"
-                ref={ register() }
+                ref={ register }
               />
             </div>
             <p className="help is-danger">{ errors.title?.message }</p>
@@ -163,31 +171,16 @@ function CreateCrag() {
           </div>
 
           <div className="field">
-            <label className="label">Rock Type</label>
-            <div className="control is-expanded">
-              <div className="select is-fullwidth">
-                <select name="rockTypeId" ref={ register }>
-                  <option key="" value="">Select One</option>
-                  {rockTypes.map(rockType => (
-                    <option key={ rockType.id } value={ rockType.id }>{ rockType.title }</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <p className="help is-danger">{ errors.rockTypeId?.message }</p>
-          </div>
-
-          <div className="field">
-            <label className="label" htmlFor="approachDetails">Approach Notes</label>
+            <label className="label" htmlFor="approachNotes">Approach Notes</label>
             <div className="control">
               <textarea
-                id="approachDetails"
+                id="approachNotes"
                 className="textarea"
-                name="approachDetails"
+                name="approachNotes"
                 ref={ register }
               ></textarea> 
             </div>
-            <p className="help is-danger">{ errors.approachDetails?.message }</p>
+            <p className="help is-danger">{ errors.approachNotes?.message }</p>
           </div>
 
           <div className="field">
@@ -196,15 +189,14 @@ function CreateCrag() {
               <div role="group" className="tags">
                 {cragTags.map(tag => (
                   <label
-                    key={ tag.id }
+                    key={ tag }
                     className={`
                       tag
-                      is-capitalized
-                      ${watchTags.includes(`${tag.id}`) ? "is-primary" : ""}
+                      ${watchTags?.includes(tag) ? "is-primary" : ""}
                     `}
                   >
-                    <input type="checkbox" name="tags" value={ tag.id } ref={ register } style={{ display: "none" }} />
-                    { tag.title }
+                    <input type="checkbox" name="tags" value={ tag } ref={ register } style={{ display: "none" }} />
+                    { tag }
                   </label>
                 ))} 
               </div>
@@ -320,9 +312,9 @@ function CreateCrag() {
                       <span>Find Me</span>
                     </button>
                   </div>
+                  <div className="help is-danger">{ errors.carParks?.[index]?.latitude?.message }</div>
+                  <div className="help is-danger">{ errors.carParks?.[index]?.longitude?.message }</div>
                 </div>
-                <div className="help is-danger">{ errors.carParks?.[index]?.latitude?.message }</div>
-                <div className="help is-danger">{ errors.carParks?.[index]?.longitude?.message }</div>
                 <div className="field">
                   <div className="control">
                     <textarea
@@ -353,17 +345,45 @@ function CreateCrag() {
 
           <div className="field">
             <label className="label">Access</label>
-            <div className="control is-expanded">
-              <div className="select is-fullwidth">
-                <select name="accessTypeId" ref={ register }>
-                  <option key="" value="">Select One</option>
-                  {accessTypes.map(accessType => (
-                    <option key={ accessType.id } value={ accessType.id }>{ accessType.title }</option>
-                  ))}
-                </select>
-              </div>
+            <div className="control">
+              <label className="radio">
+                <input
+                  type="radio"
+                  name="access"
+                  value="unknown"
+                  ref={ register }
+                />
+                Unknown
+              </label>
+              <label className="radio">
+                <input
+                  type="radio"
+                  name="access"
+                  value="permitted"
+                  ref={ register }
+                />
+                Permitted
+              </label>
+              <label className="radio">
+                <input
+                  type="radio"
+                  name="access"
+                  value="restricted"
+                  ref={ register }
+                />
+                Restricted
+              </label>
+              <label className="radio">
+                <input
+                  type="radio"
+                  name="access"
+                  value="banned"
+                  ref={ register }
+                />
+                Banned
+              </label>
             </div>
-            <p className="help is-danger">{ errors.accessTypeId?.message }</p>
+            <p className="help is-danger"></p>
           </div>
 
           <div className="field">
@@ -375,6 +395,19 @@ function CreateCrag() {
                 ref={ register }
               /> 
             </div>
+          </div>
+
+          <div className="field">
+            <label className="label" htmlFor="accessLink">Access Details Link</label>
+            <div className="control">
+              <input
+                className="input"
+                type="text"
+                name="accessLink"
+                ref={ register }
+              />
+            </div>
+            <p className="help is-danger">{ errors.accessLink?.message }</p>
           </div>
 
           <div className="field">

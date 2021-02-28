@@ -1,6 +1,5 @@
-import { routeTypeDefaultGradingSystem } from "core/globals";
+import { gradingSystems, routeTypeDefaultGradingSystem } from "core/globals";
 import { useEffect, useState } from "react";
-import { useGlobals } from "./globals";
 
 export async function getPreferedGradingSystems() {
   const userPreferedGradingSystems = window.localStorage.getItem("preferedGradingSystems");
@@ -17,7 +16,6 @@ export async function setPreferedGradingSystems(preferences: { [key: string]: st
 }
 
 export const useUserPreferences = () => {
-  const { gradingSystems, routeTypes } = useGlobals();
   const [preferedGradingSystems, setPreferedGradingSystems] = useState<{ [key: string]: string }>(routeTypeDefaultGradingSystem);
 
   useEffect(() => {
@@ -29,12 +27,11 @@ export const useUserPreferences = () => {
     getGradingSystems();
   }, []);
 
-  const convertGradeToUserPreference = (gradeIndex: number, gradingSystemId: string, routeTypeId: string) => {
-    const routeGradingSystem = gradingSystems.find(({ id }) => id === gradingSystemId);
-
-    if (routeGradingSystem) {
-      return routeGradingSystem.grades[gradeIndex];
-    }
+  const convertGradeToUserPreference = (grade: number, routeType: string) => {
+    const gradingSystem = preferedGradingSystems[routeType];
+    const gradingSystemGrades = gradingSystems.find(system => system.title === gradingSystem)?.grades;
+    const systemGrade = Array.from(new Set(gradingSystemGrades))[grade];
+    return systemGrade;
   }
 
   return {
