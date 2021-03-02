@@ -44,14 +44,8 @@ functions:
   app:
     handler: index.handler
     events:
-      - http:
-          method: ANY
-          path: /
-          cors: true
-      - http:
-          method: ANY
-          path: '{proxy+}'
-          cors: true
+      - http: ANY /
+      - http: 'ANY {proxy+}'
 
 resources:
   Resources:
