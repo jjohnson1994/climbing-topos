@@ -36,7 +36,7 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - { "Fn::GetAtt": ["DynamoDBClimbingTopos", "Arn" ] }
+        - "*"
   environment:
     DB: ${self:custom.tableName}
 
