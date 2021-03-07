@@ -33,6 +33,12 @@ jobs:
           serverless deploy --stage production
         env:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          NODE_ENV: ${{secrets.NODE_ENV}}
+          ALGOLIA_ADMIN_KEY: ${{secrets.ALGOLIA_ADMIN_KEY}}
+          ALGOLIA_APP_ID: ${{secrets.ALGOLIA_APP_ID}}
+          ALGOLIA_INDEX: ${{secrets.ALGOLIA_INDEX}}
+          AUTH0_AUDIENCE: ${{secrets.AUTH0_AUDIENCE}}
+          AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
       - name: Build React App
         run: |
           cd app
