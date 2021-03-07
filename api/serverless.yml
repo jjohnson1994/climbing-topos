@@ -39,6 +39,12 @@ provider:
         - "*"
   environment:
     DB: ${self:custom.tableName}
+    NODE_ENV: ${env:NODE_ENV}
+    ALGOLIA_ADMIN_KEY: ${env:ALGOLIA_ADMIN_KEY}
+    ALGOLIA_APP_ID: ${env:ALGOLIA_APP_ID}
+    ALGOLIA_INDEX: ${env:ALGOLIA_INDEX}
+    AUTH0_AUDIENCE: ${env:AUTH0_AUDIENCE}
+    AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
 
 functions:
   app:
