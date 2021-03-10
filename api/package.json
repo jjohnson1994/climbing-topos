@@ -30,6 +30,8 @@
     "nanoid": "^3.1.16",
     "node-fetch": "^2.6.1",
     "serverless-http": "^2.6.0",
+    "serverless-offline-dynamodb-streams": "^4.2.0",
+    "serverless-offline-sns": "^0.68.0",
     "slugify": "^1.4.6",
     "yup": "^0.32.8"
   },

@@ -7,6 +7,8 @@ plugins:
   - serverless-webpack
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-offline-sns
+  - serverless-offline-dynamodb-streams
 custom:
   tableName: 'climbing_topos'
   serverless-offline:
@@ -17,6 +19,17 @@ custom:
     stages: dev
     start:
       migrate: true
+  serverless-offline-dynamodb-streams:
+    apiVersion: '2013-12-02'
+    endpoint: http://0.0.0.0:8000
+    region: ${env:AWS_REGION}
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
+    readInterval: 500
+  serverless-offline-sns:
+    port: 4002
+    debug: true
 
 package:
   individually: true
@@ -45,6 +58,8 @@ provider:
     ALGOLIA_INDEX: ${env:ALGOLIA_INDEX}
     AUTH0_AUDIENCE: ${env:AUTH0_AUDIENCE}
     AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
+    AWS_REGION: ${env:AWS_REGION}
+    AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
 
 functions:
   app:
@@ -58,6 +73,26 @@ functions:
           method: ANY
           path: '{proxy+}'
           cors: true
+  stream:
+    handler: functions/stream/stream.handler
+    events:
+      - stream:
+          enabled: true
+          type: dynamodb
+          batchSize: 1
+          startingPosition: TRIM_HORIZON
+          arn:
+            Fn::GetAtt:
+              - DynamoDBClimbingTopos
+              - StreamArn
+  areaOnInsert:
+    handler: functions/area/areaOnInsert.handler
+    events:
+      - sns: area_insert
+  cragOnInsert:
+    handler: functions/crag/cragOnInsert.handler
+    events:
+      - sns: crag_insert
 
 resources:
   Resources:
@@ -68,6 +103,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 20
           WriteCapacityUnits: 20
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
         AttributeDefinitions:
           - AttributeName: hk
             AttributeType: S
