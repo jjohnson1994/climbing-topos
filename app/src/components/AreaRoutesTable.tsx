@@ -54,6 +54,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
           <th>Route</th>
           <th>Grade</th>
           <th>Rating</th>
+          <th>Logs</th>
           <th></th>
         </tr>
       </thead>
@@ -66,6 +67,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
             </td>
             <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
             <td>{ route.rating !== -1 ? route.rating : "" }</td>
+            <td>{ route.logCount }</td>
             <td> { context.isSelectingMultiple
               ? (
                   <input

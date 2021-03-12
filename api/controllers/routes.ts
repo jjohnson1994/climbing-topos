@@ -7,16 +7,6 @@ export async function postRoute(req, res) {
     const user = req.user;
     const resp = await routes.createRoute(routeDetails, user.sub);
 
-    crags.incrementRouteCount(routeDetails.cragSlug)
-      .catch(error => {
-        console.error("Error updating crag route count", error);
-      });
-
-    areas.incrementRouteCount(routeDetails.cragSlug, routeDetails.areaSlug)
-      .catch(error => {
-        console.error("Error updating area route count", error);
-      });
-
     res.status(200).json({ success: true, inserted: resp });
   } catch(error) {
     console.error('Error creating route', error);

@@ -6,9 +6,9 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-dynamodb-local
-  - serverless-offline
   - serverless-offline-sns
   - serverless-offline-dynamodb-streams
+  - serverless-offline
 custom:
   tableName: 'climbing_topos'
   serverless-offline:
@@ -29,7 +29,7 @@ custom:
     readInterval: 500
   serverless-offline-sns:
     port: 4002
-    debug: true
+    debug: false
 
 package:
   individually: true
@@ -85,14 +85,22 @@ functions:
             Fn::GetAtt:
               - DynamoDBClimbingTopos
               - StreamArn
-  areaOnInsert:
-    handler: functions/area/areaOnInsert.handler
-    events:
-      - sns: area_insert
   cragOnInsert:
     handler: functions/crag/cragOnInsert.handler
     events:
-      - sns: crag_insert
+      - sns: crag-insert
+  areaOnInsert:
+    handler: functions/area/areaOnInsert.handler
+    events:
+      - sns: area-insert
+  routeOnInsert:
+    handler: functions/route/routeOnInsert.handler
+    events:
+      - sns: route-insert
+  logOnInsert:
+    handler: functions/log/logOnInsert.handler
+    events:
+      - sns: log-insert
 
 resources:
   Resources:
