@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+AWS.config.region = 'eu-west-1';
 
 const IS_OFFLINE = `${process.env.IS_OFFLINE}`;
 
