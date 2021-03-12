@@ -58,7 +58,6 @@ provider:
     ALGOLIA_INDEX: ${env:ALGOLIA_INDEX}
     AUTH0_AUDIENCE: ${env:AUTH0_AUDIENCE}
     AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
-    AWS_REGION: ${env:AWS_REGION}
     AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
 
 functions:
