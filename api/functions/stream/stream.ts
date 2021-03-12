@@ -3,6 +3,7 @@ import SNS, { generateTopicArn } from "../../db/sns";
 const IS_OFFLINE = `${process.env.IS_OFFLINE}`;
 
 export const handler = async (event, context) => {
+  console.log("steam triggered")
   event.Records.forEach(record => {
     const { eventName } = record;
     const { S: model } = record.dynamodb.NewImage.model;
