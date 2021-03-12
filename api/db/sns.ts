@@ -1,5 +1,4 @@
 import AWS from 'aws-sdk';
-AWS.config.region = 'eu-west-1';
 
 const IS_OFFLINE = `${process.env.IS_OFFLINE}`;
 
@@ -8,7 +7,9 @@ const SNS = IS_OFFLINE === 'true'
       endpoint: 'http://127.0.0.1:4002',
       region: `${process.env.AWS_REGION}`
     })
-  : new AWS.SNS();
+  : new AWS.SNS({
+      region: `${process.env.AWS_REGION}`
+    });
 
 export default SNS;
 
