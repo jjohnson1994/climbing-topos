@@ -2,8 +2,7 @@ import { crags, areas, routes } from "../../services";
 
 export const handler = async (event) => {
   try {
-    const promises = [];
-    event.Records.map(record => {
+    const promises = event.Records.flatMap(record => {
       const message = JSON.parse(record.Sns.Message);
       const { S: hk } = message.dynamodb.NewImage.hk;
       const { S: cragSlug } = message.dynamodb.NewImage.cragSlug;
@@ -16,16 +15,20 @@ export const handler = async (event) => {
       * Only run analytics on one
       */ 
       if (hk.match(/^user#/)) {
-        promises.push(crags.incrementLogCount(cragSlug));
-        promises.push(areas.incrementLogCount(cragSlug, areaSlug));
-        promises.push(routes.incrementLogCount(cragSlug, areaSlug, topoSlug, routeSlug));
+        return [
+          crags.incrementLogCount(cragSlug),
+          areas.incrementLogCount(cragSlug, areaSlug),
+          routes.incrementLogCount(cragSlug, areaSlug, topoSlug, routeSlug)
+        ]
       }
     })
 
     await Promise.all(promises);
     console.log("logOnInsert updates done")
+    return 200;
   } catch(error) {
     console.error("Error logOnInsert", error);
+    throw new Error(error)
   }
 }
 

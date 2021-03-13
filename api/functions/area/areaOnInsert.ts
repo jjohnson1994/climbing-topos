@@ -11,7 +11,9 @@ export const handler = async (event) => {
     })
 
     await Promise.all(promises)
+    return 200;
   } catch (error) {
     console.error("Error in areaOnInsert", error)
+    throw new Error(error)
   }
 }
