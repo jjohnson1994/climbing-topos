@@ -128,14 +128,19 @@ export async function update(
     ExpressionAttributeValues: { [key: string]: any };
   }
 ) {
-  const params = {
-    TableName: String(process.env.DB),
-    Key: {
-      "hk": cragSlug,
-      "sk": "metadata#"
-    },
-    ...updateProps
-  }
+  try {
+    const params = {
+      TableName: String(process.env.DB),
+      Key: {
+        "hk": cragSlug,
+        "sk": "metadata#"
+      },
+      ...updateProps
+    }
 
-  await dynamodb.update(params).promise()
+    const response = await dynamodb.update(params).promise()
+    console.log("Crag updated", response)
+  } catch (error) {
+    console.error("Error updating crag", error)
+  }
 }
