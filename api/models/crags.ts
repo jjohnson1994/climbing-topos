@@ -137,9 +137,5 @@ export async function update(
     ...updateProps
   }
 
-  return dynamodb.update(params, (err) => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  await dynamodb.update(params).promise()
 }
