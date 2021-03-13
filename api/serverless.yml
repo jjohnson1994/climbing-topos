@@ -50,6 +50,7 @@ provider:
         - dynamodb:DeleteItem
         - sns:Publish
         - sns:Subscribe
+        - s3:PutObject
       Resource:
         - "*"
   environment:
