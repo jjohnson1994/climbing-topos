@@ -1,13 +1,21 @@
 import { crags, areas } from "../../services";
 
 export const handler = async (event) => {
-  event.Records.forEach(record => {
-    console.log("routesOnInsert");
-    const message = JSON.parse(record.Sns.Message);
-    const { S: cragSlug } = message.dynamodb.NewImage.cragSlug;
-    const { S: areaSlug } = message.dynamodb.NewImage.areaSlug;
+  console.log("routeonInsert")
+  try {
+    const promises = [];
+    event.Records.forEach(record => {
+      const message = JSON.parse(record.Sns.Message);
+      const { S: cragSlug } = message.dynamodb.NewImage.cragSlug;
+      const { S: areaSlug } = message.dynamodb.NewImage.areaSlug;
 
-    areas.incrementRouteCount(cragSlug, areaSlug);
-    crags.incrementRouteCount(cragSlug);
-  })
+      promises.push(areas.incrementRouteCount(cragSlug, areaSlug));
+      promises.push(crags.incrementRouteCount(cragSlug));
+    })
+
+    await Promise.all(promises)
+    console.log("Promises done")
+  } catch (error) {
+    console.error("Error in routesOnInsert", error)
+  }
 }
