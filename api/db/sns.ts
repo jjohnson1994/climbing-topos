@@ -1,14 +1,15 @@
-import { SNSClient } from "@aws-sdk/client-sns";
+import AWS from 'aws-sdk';
+AWS.config.update({ region: `${process.env.AWS_REGION}` });
 
 const IS_OFFLINE = `${process.env.IS_OFFLINE}`;
 
 const SNS = IS_OFFLINE === 'true'
-  ? new SNSClient({
+  ? new AWS.SNS({
       endpoint: 'http://127.0.0.1:4002',
       region: `${process.env.AWS_REGION}`,
       apiVersion: '2010-03-31'
     })
-  : new SNSClient({
+  : new AWS.SNS({
       region: `${process.env.AWS_REGION}`,
       apiVersion: '2010-03-31'
     });
