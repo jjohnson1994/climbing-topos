@@ -48,6 +48,8 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - sns:Publish
+        - sns:Subscribe
       Resource:
         - "*"
   environment:
