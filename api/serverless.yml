@@ -51,6 +51,7 @@ provider:
         - sns:Publish
         - sns:Subscribe
         - s3:PutObject
+        - s3:PutObjectAcl
       Resource:
         - "*"
   environment:
