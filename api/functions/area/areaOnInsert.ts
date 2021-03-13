@@ -7,12 +7,15 @@ export const handler = async (event) => {
       const message = JSON.parse(record.Sns.Message);
       const { S: cragSlug } = message.dynamodb.NewImage.cragSlug;
 
+      console.log("Incrementing area count", cragSlug)
       return crags.incrementAreaCount(cragSlug);
     })
 
-    console.error("areaOnInsert awaiting")
+    console.log("areaOnInsert awaiting")
     await promises
-    console.error("areaOnInsert done")
+    console.log("areaOnInsert done")
+  } catch (error) {
+    console.error("Error in areaOnInsert", error)
   } finally {
     return true
   }
