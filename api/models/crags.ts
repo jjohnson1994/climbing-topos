@@ -63,12 +63,17 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
   };
 }
 
-export async function getAllCrags(): Promise<Crag[]> {
+export async function getAllCrags(
+  sortBy?: string,
+  sortOrder?: string,
+  limit?: number,
+  offset?: number
+): Promise<Crag[]> {
   const params = {
     TableName: String(process.env.DB),
     IndexName: 'gsi1',
     KeyConditionExpression: "#model = :entity",
-    ExpressionAttributeNames:{
+    ExpressionAttributeNames: {
       "#model": "model"
     },
     ExpressionAttributeValues: {
@@ -76,8 +81,39 @@ export async function getAllCrags(): Promise<Crag[]> {
     }
   }
 
-  const crags = await dynamodb.query(params).promise()
-  return crags?.Items as Crag[];
+  const crags = await dynamodb
+    .query(params)
+    .promise()
+    .then(({ Items }): { res: {  Items: Crag[]  }}  => {
+      return Items.sort((cragA, cragB) => {
+        if (sortOrder === 'DESC') {
+          return cragB[sortBy] - cragA[sortBy]
+        } else if (sortOrder === 'ASC') {
+          return cragA[sortBy] - cragB[sortBy]
+        } else {
+          return 0;
+        }
+      })
+    })
+    .then(crags => {
+      if (typeof offset !== 'undefined' && typeof limit !== 'undefined') {
+        return crags.slice(offset, offset + limit)
+      }
+
+      if (typeof offset !== 'undefined') {
+        return crags.slice(offset)
+      }
+
+      if (typeof limit !== 'undefined') {
+        return crags.slice(0, limit)
+      }
+      
+      return crags
+    })
+
+  console.log({ crags })
+
+  return crags as Crag[];
 }
 
 export const getCragBySlug = async (slug: string): Promise<Crag> => {

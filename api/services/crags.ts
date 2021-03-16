@@ -19,9 +19,20 @@ export const createCrag = async (cragDetails: Crag, userSub: string) => {
   return newCrag;
 }
 
-export async function getAllCrags(user: string): Promise<CragBrief[]> {
+export async function getAllCrags(
+  user: string,
+  sortBy?: string,
+  sortOrder?: string,
+  limit?: number,
+  offset?: number
+): Promise<CragBrief[]> {
   const allCrags = await crags
-    .getAllCrags()
+    .getAllCrags(
+      sortBy,
+      sortOrder,
+      limit,
+      offset
+    )
     .then(async crags => {
       const cragViews = await Promise.all(
         crags.map(crag => new Promise<CragBrief>(async (resolve) => {

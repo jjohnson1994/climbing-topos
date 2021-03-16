@@ -1,43 +1,16 @@
 version: "3"
 services:
-  postgres:
-    image: postgres:alpine
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-    ports:
-      - "5432:5432"
-  migrations:
-    build: ./migrations
-    depends_on:
-      - postgres
+  app:
+    build: ./app
     volumes:
-      - "./migrations/:/opt/app:rw"
-    environment:
-      - BASTION_SSH_HOST
-      - BASTION_SSH_USER
-      - BASTION_SSH_PASSPHRASE
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_HOST
-      - POSTGRES_DB
-      - NODE_ENV
-      - WAIT_HOSTS
+      - "./app/:/opt/app:rw"
+      - "./core/:/opt/core:rw"
+      - "./app/node_modules/:/opt/app/node_modules:rw"
     ports:
-      - "22:22"
-
-# app:
-#   build: ./app
-#   volumes:
-#     - "./app/:/opt/app:rw"
-#     - "./core/:/opt/core:rw"
-#     - "./app/node_modules/:/opt/app/node_modules:rw"
-#   ports:
-#     - "3000:3000"
-# api:
-#   build: ./api
-#   volumes:
-#     - "./api/:/opt/app:rw"
-#     - "./core/:/opt/core:rw"
-#     - "./api/node_modules/:/opt/app/node_modules:rw"
+      - "3000:3000"
+  api:
+    build: ./api
+    volumes:
+      - "./api/:/opt/app:rw"
+      - "./core/:/opt/core:rw"
+      - "./api/node_modules/:/opt/app/node_modules:rw"

@@ -1,5 +1,19 @@
 import {Crag, CragBrief, CragRequest} from "core/types";
 
+function generateQueryParams(params: object): string {
+  const queryParams = Object
+    .entries(params)
+    .reduce((acc, [key, value]) => {
+      if (typeof value === 'undefined' && value !== null) {
+        return acc;
+      }
+
+      return `${acc}${key}=${value}&`
+    }, '?');
+
+  return queryParams;
+}
+
 export async function createCrag(cragDetails: CragRequest, token: string): Promise<{ hk: string, slug: string }> {
   const res = await fetch(`${process.env.REACT_APP_API_URL}/crags`, {
     method: 'POST',
@@ -18,8 +32,21 @@ export async function createCrag(cragDetails: CragRequest, token: string): Promi
   return { hk: json.inserted.hk, slug: json.inserted.slug };
 }
 
-export async function getCrags(token: string): Promise<CragBrief[]> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags`, {
+export async function getCrags(
+  token: string,
+  sortBy?: string,
+  sortOrder?: "desc" | "asc",
+  limit?: number,
+  offset?: number
+): Promise<CragBrief[]> {
+  const params = generateQueryParams({
+    sortBy,
+    sortOrder,
+    limit,
+    offset
+  })
+
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags${params}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` })
     },

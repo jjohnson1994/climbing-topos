@@ -3,8 +3,9 @@ import { crags } from '../services';
 export async function getCrags(req, res) {
   try {
     const { user } = req;
+    const { sortBy, sortOrder, limit, offset } = req.query;
     const userSub = user ? user.sub : undefined;
-    const allCrags = await crags.getAllCrags(userSub);
+    const allCrags = await crags.getAllCrags(userSub, sortBy, sortOrder, limit, offset);
     res.status(200).json(allCrags);
   } catch (error) {
     console.error('Error getting crags', error);
