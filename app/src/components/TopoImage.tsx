@@ -16,7 +16,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
 
   useEffect(() => {
     const newJoinedRoutePaths = routes.map(route => {
-      return joinLinkedRoutes(route.drawing, routes);
+      return getLinkedRoutePaths(route.drawing, routes);
     });
 
     setJoinedRoutePaths(newJoinedRoutePaths);
@@ -59,14 +59,14 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
     return 0.5;
   }
 
-  const joinLinkedRoutes = (
+  const getLinkedRoutePaths = (
     routeDrawing: RouteDrawing,
     routes: Route[],
   ) => {
     let joinedPathPoints: number[][] = [];
 
     if (routeDrawing.linkFrom?.routeSlug) {
-      const linkFromPath = routes.find(route => route.slug === routeDrawing!.linkFrom!.routeSlug)!.drawing.path;
+      const linkFromPath = getLinkedRoutePaths(routes.find(route => route.slug === routeDrawing!.linkFrom!.routeSlug)!.drawing, routes);
       const joinIndex = linkFromPath?.findIndex(([x, y]) => {
         return Math.abs(x - routeDrawing!.linkFrom!.x) <= 5 && Math.abs(y - routeDrawing!.linkFrom!.y) <= 5;
       });
@@ -78,7 +78,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
     joinedPathPoints = [...joinedPathPoints, ...routeDrawing.path];
 
     if (routeDrawing.linkTo?.routeSlug) {
-      const linkToPath = routes.find(route => route.slug === routeDrawing!.linkTo!.routeSlug)!.drawing.path;
+      const linkToPath  = getLinkedRoutePaths(routes.find(route => route.slug === routeDrawing!.linkTo!.routeSlug)!.drawing, routes);
       const joinIndex = linkToPath?.findIndex(([x, y]) => {
         return Math.abs(x - routeDrawing!.linkTo!.x) <= 5 && Math.abs(y - routeDrawing!.linkTo!.y) <= 5;
       });
@@ -98,7 +98,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
           {routes?.map((route) => (
             <path
               key={ route.slug }
-              d={ SmoothPath(joinLinkedRoutes(route.drawing, routes)) }
+              d={ SmoothPath(getLinkedRoutePaths(route.drawing, routes)) }
               fill="transparent"
               stroke="yellow"
               strokeWidth="4"
