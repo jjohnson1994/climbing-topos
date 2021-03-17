@@ -32,7 +32,7 @@ function Home() {
           <div className="columns">
             { popularCrags.map(crag => (
               <div className="column">
-                <Link to="#">
+                <Link to={`/crags/${crag.slug}`}>
                   <div className="card">
                     <div className="card-image">
                       <figure className="image is-4by3">
