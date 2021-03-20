@@ -26,17 +26,8 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
     const newRouteLabels = { ...routeLabels };
 
     joinedRoutePaths.forEach((path, index) => {
-      const startX = Math.floor(path[0][0]);
-      const startY = Math.floor(path[0][1]);
       const endX = Math.floor(path[path.length - 1][0]);
       const endY = Math.floor(path[path.length - 1][1]);
-
-      newRouteLabels[`${startX},${startY}`] = Array.from(
-        new Set([
-          ...(newRouteLabels[`${startX},${startY}`] || []),
-          index + 1
-        ])
-      );
 
       newRouteLabels[`${endX},${endY}`] = Array.from(
         new Set([
@@ -111,6 +102,14 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
               content={ routes.join(", ") }
               x={ parseInt(coords.split(",")[0], 10) }
               y={ parseInt(coords.split(",")[1], 10) }
+            />
+          ))}
+          {routes.map((route, index) => (
+            <TopoImageStartTag
+              key={ index }
+              content={ `${index + 1}`  }
+              x={ route.drawing.path[0][0] }
+              y={ route.drawing.path[0][1] }
             />
           ))}
         </svg>
