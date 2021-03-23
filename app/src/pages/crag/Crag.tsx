@@ -169,7 +169,7 @@ function CragView() {
                             <span className="is-capitalized">{ topo.orientation }</span>
                           </span>
                         </div>
-                        <div className="box mt-1">
+                        <div className="mt-1">
                           <AreaRoutesTable
                             routes={ topoRoutes(topo) }
                             loggedRoutes= { crag.userLogs }
@@ -184,7 +184,7 @@ function CragView() {
             ))}
 
             { activeTab === "routes" && (
-              <div id="routes" className="container box">
+              <div id="routes" className="container">
                 { crag?.routes.length ? (
                   <AreaRoutesTable
                     routes={ crag?.routes }

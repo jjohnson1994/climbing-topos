@@ -5,6 +5,7 @@ import { Log, Route } from "../../../core/types";
 import { RouteLogContext } from './RouteLogContext';
 import { useUserPreferences } from '../api/profile';
 import { useAuth0 } from '@auth0/auth0-react';
+import RatingStarsDisplay from './RatingStarsDisplay';
 
 interface Props {
   routes: Route[] | undefined;
@@ -47,28 +48,25 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
   }
 
   return (
-    <table className="table is-fullwidth">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Route</th>
-          <th>Grade</th>
-          <th>Rating</th>
-          <th>Logs</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {routes?.map((route, index) => (
-          <tr key={ route.title } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>
-            <td>{ index + 1 }</td>
-            <td className="is-capitalized">
+    <>
+    <div>
+      {routes?.map((route, index) => (
+        <div className="box is-flex">
+          <span className="mr-2">{ index + 1 }</span>
+          <div className="is-flex is-flex-direction-column is-flex-grow-1">
+            <span>
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
-            </td>
-            <td>{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</td>
-            <td>{ route.rating !== -1 ? route.rating : "" }</td>
-            <td>{ route.logCount }</td>
-            <td> { context.isSelectingMultiple
+              <span className="mr-2"></span>
+              <RatingStarsDisplay stars={ route.rating } />
+            </span>
+            <div className="tags">
+              <span className="tag">{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</span>
+              <span className="tag">{ route.routeType }</span>
+              <span className="tag">{ route.logCount } Ticks</span>
+            </div>
+          </div>
+          <div>
+            <span>{ context.isSelectingMultiple
               ? (
                   <input
                     type="checkbox"
@@ -124,11 +122,12 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
                   </Tippy>
                 )
               }
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
   )
 }
 

@@ -3,13 +3,13 @@ import React, {useContext, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {Route} from "../../../../core/types";
 import {routes} from "../../api";
-import RoutesAddToLogModal from "../../components/RoutesAddToLogModal";
 import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
 import {popupError} from "../../helpers/alerts";
 import {usePageTitle} from "../../helpers/pageTitle";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useUserPreferences } from "../../api/profile";
+import RatingStarsDisplay from '../../components/RatingStarsDisplay';
 
 
 function RoutePage() {
@@ -88,6 +88,8 @@ function RoutePage() {
                   { route ? convertGradeToUserPreference(parseInt(route.grade), route.routeType) : "" }
                   <span> </span>
                   { route?.routeType }
+                  <span> </span>
+                  <RatingStarsDisplay stars={ route?.rating || 0 } />
                 </h6>
                 <h6 className="subtitle is-6">{ route?.description }</h6>
               </div>

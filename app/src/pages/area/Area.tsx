@@ -119,7 +119,7 @@ function AreaView() {
                     </Link>
                   </div>
                   { area.routes?.filter(route => route.topoSlug === topo.slug).length ? (
-                    <div className="block box">
+                    <div className="block">
                       <AreaRoutesTable
                         routes={ area.routes?.filter(route => route.topoSlug === topo.slug) }
                         loggedRoutes={ area.userLogs }
