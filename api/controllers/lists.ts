@@ -67,6 +67,7 @@ export async function patchList(req, res) {
         cragSlug: route.cragSlug,
         cragTitle: route.cragTitle,
         grade: route.grade,
+        gradeModal: route.gradeModal,
         gradingSystem: route.gradingSystem,
         latitude: route.latitude,
         listSlug,

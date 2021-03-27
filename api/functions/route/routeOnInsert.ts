@@ -1,7 +1,6 @@
 import { crags, areas } from "../../services";
 
 export const handler = async (event) => {
-  console.log("routeonInsert")
   try {
     const promises = event.Records.flatMap(record => {
       const message = JSON.parse(record.Sns.Message);

@@ -21,14 +21,15 @@ export async function createRouteLog(logRequest: LogRequest, user) {
     cragTitle: logRequest.cragTitle,
     dateSent: logRequest.dateSent,
     grade: logRequest.grade,
+    gradeModal: logRequest.gradeModal,
     gradeTaken: logRequest.gradeTaken,
     gradingSystem: logRequest.gradingSystem,
+    rating: logRequest.rating,
     region: logRequest.region,
     rockType: logRequest.rockType,
     routeSlug: logRequest.routeSlug,
     routeTitle: logRequest.routeTitle,
     routeType: logRequest.routeType,
-    stars: logRequest.stars,
     state: logRequest.state,
     tags: logRequest.tags,
     topoSlug: logRequest.topoSlug,
@@ -81,6 +82,29 @@ export async function getLogsByCragSlug(cragSlug: string): Promise<Log[]> {
   }
 
   const response = await dynamodb.query(params).promise()
+  return response?.Items as Log[];
+}
+
+export async function getLogsByRoute(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+): Promise<Log[]> {
+  const params = {
+    TableName: String(process.env.DB),
+    KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ExpressionAttributeNames: {
+      "#hk": "hk",
+      "#sk": "sk"
+    },
+    ExpressionAttributeValues: {
+      "#hk": `${cragSlug}`,
+      ":sk": `log#area#${areaSlug}#topo#${topoSlug}#route#${routeSlug}`
+    }
+  };
+
+  const response = await dynamodb.query(params).promise();
   return response?.Items as Log[];
 }
 
