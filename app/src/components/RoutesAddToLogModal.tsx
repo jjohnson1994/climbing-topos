@@ -1,15 +1,15 @@
-import { useAuth0} from "@auth0/auth0-react";
-import { yupResolver} from "@hookform/resolvers/yup";
-import React, { useEffect, useState } from "react";
-import { useForm} from "react-hook-form";
-import * as yup from "yup";
-import { GradingSystem, LogRequest, Route } from "core/types";
+import { useAuth0 } from "@auth0/auth0-react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { NewLogsSchema } from "core/schemas";
-import { globals, logs} from "../api";
+import { GradingSystem, LogRequest, Route } from "core/types";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { globals, logs } from "../api";
+import { useUserPreferences } from "../api/profile";
 import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
-import { useUserPreferences } from "../api/profile";
 
 interface Props {
   routes: Route[];
@@ -172,6 +172,13 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
               />
               <input
                 type="text"
+                name={ `logs.[${index}].gradeModal` }
+                ref={ register({}) }
+                defaultValue={ route.gradeModal }
+                className="is-hidden"
+              />
+              <input
+                type="text"
                 name={ `logs.[${index}].gradingSystem` }
                 ref={ register({}) }
                 defaultValue={ route.gradingSystem }
@@ -242,7 +249,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                       <div className="select">
                         <select
                           name={ `logs.[${index}].gradeTaken` }
-                          defaultValue={ route.grade }
+                          defaultValue={ route.gradeModal }
                           ref={ register({}) }
                         >
                           {getGradesFromRouteType(route!.routeType)?.map((grade, index) => (
@@ -260,10 +267,10 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
               <div className="field is-grouped">
                 <div className="control">
                   <div className="field">
-                    <label className="label">Stars</label>
+                    <label className="label">Rating</label>
                     <div className="control">
                       <div className="select">
-                        <select name={`logs.[${index}].stars`} ref={register({})}>
+                        <select name={`logs.[${index}].rating`} ref={register({})}>
                           <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -273,7 +280,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                         </select>
                       </div>
                     </div>
-                    <p className="help is-danger">{ errors.logs?.[index]?.stars?.message }</p>
+                    <p className="help is-danger">{ errors.logs?.[index]?.rating?.message }</p>
                   </div>
                 </div>
                 <div className="control">

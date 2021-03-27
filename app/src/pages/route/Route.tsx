@@ -85,7 +85,7 @@ function RoutePage() {
               <div className="column is-two-thirds">
                 <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
                 <h6 className="subtitle is-6">
-                  { route ? convertGradeToUserPreference(parseInt(route.grade), route.routeType) : "" }
+                  { route ? convertGradeToUserPreference(route.gradeModal, route.routeType) : "" }
                   <span> </span>
                   { route?.routeType }
                   <span> </span>

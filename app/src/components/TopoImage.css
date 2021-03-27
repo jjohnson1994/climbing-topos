@@ -1,5 +1,7 @@
 .area-topo-image {
-  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px;
 }
 
 .area-topo-image--canvas {

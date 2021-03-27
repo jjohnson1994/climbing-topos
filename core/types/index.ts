@@ -118,7 +118,6 @@ export interface RouteRequest {
   gradingSystem: string;
   latitude: string;
   longitude: string;
-  rating: number;
   rockType: string;
   routeType: string;
   state: string;
@@ -134,6 +133,10 @@ export interface Route extends RouteRequest {
   slug: string;
   topo: Topo;
   userLogs: Log[];
+  ratingTally: { [key: number]: number };
+  rating: number;
+  gradeTally: { [key: number]: number };
+  gradeModal: number;
 }
 
 export interface RouteDrawing {
@@ -167,14 +170,15 @@ export interface LogRequest {
   cragTitle: string;
   dateSent: string;
   grade: string;
+  gradeModal: number;
   gradeTaken: string;
   gradingSystem: string;
+  rating: number;
   region: string;
   rockType: string;
   routeSlug: string;
   routeTitle: string;
   routeType: string;
-  stars: number;
   state: string;
   tags: string[];
   topoSlug: string;
@@ -203,6 +207,7 @@ export interface ListRoutePartial extends ListAddRouteRequest {
   county: string;
   cragTitle: string;
   grade: string;
+  gradeModal: number;
   gradingSystem: string;
   latitude: string;
   listSlug: string;

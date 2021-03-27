@@ -80,6 +80,7 @@ export const NewLogsSchema = yup => yup.object().shape({
       cragSlug: yup.string().required(),
       dateSent: yup.string().required("Required"),
       grade: yup.number().required("Required"),
+      gradeModal: yup.number().required("Required"),
       gradeTaken: yup.number().required("Required"),
       gradingSystem: yup.string().oneOf(
         gradingSystems.map(g => g.title),
@@ -88,9 +89,9 @@ export const NewLogsSchema = yup => yup.object().shape({
       routeSlug: yup.string().required(),
       routeTitle: yup.string().required(),
       routeType: yup.string().required(),
-      stars: yup.number()
+      rating: yup.number()
         .min(0, "Cannot rate less than 0")
-        .max(5, "Canner rate more than 5")
+        .max(5, "Cannot rate more than 5")
         .required(),
       tags: yup.array().min(1, "Select at least 1").of(
         yup.string().oneOf(routeTags),

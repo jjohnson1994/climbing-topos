@@ -47,7 +47,7 @@ function ProfileLogs() {
             <tr>
               <th>Route</th>
               <th>Grade</th>
-              <th>Stars</th>
+              <th>Rating</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -60,7 +60,7 @@ function ProfileLogs() {
                   </Link>
                 </td>
                 <td>{ convertGradeToUserPreference(parseInt(log.gradeTaken), log.routeType) }</td>
-                <td>{ log.stars }</td>
+                <td>{ log.rating }</td>
                 <td>{ log.dateSent }</td>
               </tr>
             ))}

@@ -153,12 +153,10 @@ function CragView() {
                   { areaTopos(area)?.filter(topo => topo.areaSlug === area.slug).map(topo =>(
                     <div key={ topo.slug } className={ `columns ${ topoRoutes(topo).length ? "" : "is-hidden" }` }>
                       <div className="column">
-                        <HashLink to={ `/crags/${area.cragSlug}/areas/${area.slug}#${topo.slug}` }>
-                          <TopoImage
-                            routes={ topoRoutes(topo) }
-                            background={ String(topo.image) }
-                          />
-                        </HashLink>
+                        <TopoImage
+                          routes={ topoRoutes(topo) }
+                          background={ String(topo.image) }
+                        />
                       </div>
                       <div className="column">
                         <div className="is-flex is-justify-content-flex-end">

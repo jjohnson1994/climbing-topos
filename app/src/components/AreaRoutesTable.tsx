@@ -26,11 +26,6 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
     }
   }
 
-  const hasUserLoggedRoute = (routeSlug: string) => {
-    return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1
-      || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
-  }
-
   const btnSingleRouteDoneOnClick = (route: Route) => {
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -51,16 +46,18 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
     <>
     <div>
       {routes?.map((route, index) => (
-        <div className="box is-flex">
-          <span className="mr-2">{ index + 1 }</span>
+        <div className="box block is-flex" key={ index }>
+          <div className="is-flex mr-4 is-justify-content-center is-align-items-center">
+            <span>{ index + 1 }</span>
+          </div>
           <div className="is-flex is-flex-direction-column is-flex-grow-1">
-            <span>
+            <span className="mb-2">
               <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
               <span className="mr-2"></span>
               <RatingStarsDisplay stars={ route.rating } />
             </span>
             <div className="tags">
-              <span className="tag">{ convertGradeToUserPreference(parseInt(route.grade), route.routeType) }</span>
+              <span className="tag">{ convertGradeToUserPreference(route.gradeModal, route.routeType) }</span>
               <span className="tag">{ route.routeType }</span>
               <span className="tag">{ route.logCount } Ticks</span>
             </div>

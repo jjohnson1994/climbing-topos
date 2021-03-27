@@ -1,8 +1,10 @@
 import { Route } from "core/types";
-import React from "react";
 import { Link } from "react-router-dom";
+import { useUserPreferences } from "../api/profile";
 
 function SearchResultsRoute({ route }: { route: Route }) {
+  const { convertGradeToUserPreference } = useUserPreferences();
+
   return (
     <Link className="box" to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}`}>
       <article className="media">
@@ -12,7 +14,7 @@ function SearchResultsRoute({ route }: { route: Route }) {
               <span className="tag is-pulled-right">Route</span>
               <b>{ route.title } </b> { route.cragTitle }
               <br />
-              <small>{ route.grade } { route.routeType }</small>
+              <small>{ convertGradeToUserPreference(route.gradeModal, route.routeType) }</small>
             </p>
           </div>
         </div>
