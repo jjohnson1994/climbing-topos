@@ -32,6 +32,7 @@ jobs:
           cd api
           serverless deploy --stage production
         env:
+          NODE_OPTIONS: --max_old_space_size=8192
           ALGOLIA_ADMIN_KEY: ${{secrets.ALGOLIA_ADMIN_KEY}}
           ALGOLIA_APP_ID: ${{secrets.ALGOLIA_APP_ID}}
           ALGOLIA_INDEX: ${{secrets.ALGOLIA_INDEX}}
