@@ -16,7 +16,6 @@ export const handler = async (event, context) => {
         IS_OFFLINE === 'true' ? '123456789012' : awsAccountId
       );
 
-      console.log({ TopicArn: topicArn })
       return SNS.publish({
         Message: JSON.stringify(record),
         TopicArn: topicArn
@@ -30,8 +29,5 @@ export const handler = async (event, context) => {
   } catch (error) {
     console.error("error in stream", error)
     throw error;
-  } finally {
-    console.log("stream complete")
-    return 200;
   }
 }

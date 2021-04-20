@@ -1,7 +1,6 @@
 import { Route } from '../../../core/types';
 import algolaIndex from '../../db/algolia';
 import { normalizeRow } from '../../db/dynamodb';
-import { areas, crags } from "../../services";
 
 type Event = {
   Records: [{
@@ -18,11 +17,9 @@ export const handler = async (event: Event) => {
       const newImage = message.dynamodb.NewImage;
       const normalizedRow = normalizeRow<Route>(newImage);
 
-      const { areaSlug, cragSlug, slug } = normalizedRow;
+      const { slug } = normalizedRow;
 
       return [
-        areas.incrementRouteCount(cragSlug, areaSlug),
-        crags.incrementRouteCount(cragSlug),
         algolaIndex
           .saveObject({
             ...normalizedRow,

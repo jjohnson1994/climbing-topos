@@ -1,20 +1,8 @@
 import { areas, logs, routes, topos } from "../models";
 import { AreaRequest, Area } from "../../core/types";
-import { algolaIndex } from "../db/algolia";
 
 export async function createArea(areaDetails: AreaRequest, userSub: string) {
   const newArea = await areas.createArea(areaDetails, userSub);
-
-  algolaIndex
-    .saveObject({
-      ...areaDetails,
-      model: "area" ,
-      objectID: newArea.slug,
-      slug: newArea.slug
-    })
-    .catch(error => {
-      console.error("Error saving new area to algolia", error);
-    });
 
   return newArea;
 }

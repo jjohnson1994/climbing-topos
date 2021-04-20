@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { globals, logs } from "../api";
-import { useUserPreferences } from "../api/profile";
+import { useGradeHelpers } from "../api/grades";
 import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
@@ -25,7 +25,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
   const { getAccessTokenSilently } = useAuth0();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
-  const { convertGradeToUserPreference, preferedGradingSystems } = useUserPreferences();
+  const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   const { register,  handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
@@ -50,11 +50,15 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
     }
   }
 
-  const getGradesFromRouteType = (routeType: string) => {
-    const gradingSystem = preferedGradingSystems[routeType];
-    const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
-    const filteredGrades = Array.from(new Set(grades));
-    return filteredGrades;
+  const getGradeOptions = (gradingSystemTitle: string) => {
+    const gradingSystem = gradingSystems.find(({ title }) => title === gradingSystemTitle);
+
+    if (!gradingSystem) {
+      throw new Error(`Error, could not find grading system matching ${gradingSystemTitle}`)
+    }
+
+    const grades = gradingSystem.grades;
+    return grades;
   }
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async data => {
@@ -252,7 +256,7 @@ function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLog
                           defaultValue={ route.gradeModal }
                           ref={ register({}) }
                         >
-                          {getGradesFromRouteType(route!.routeType)?.map((grade, index) => (
+                          {getGradeOptions(route.gradingSystem).map((grade, index) => (
                             <option value={ index } key={ grade }>
                               { grade }
                             </option>

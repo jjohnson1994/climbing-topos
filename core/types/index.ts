@@ -140,17 +140,7 @@ export interface Route extends RouteRequest {
 }
 
 export interface RouteDrawing {
-  path: number[][];
-  linkFrom?: {
-    routeSlug: string,
-    x: number;
-    y: number;
-  },
-  linkTo?: {
-    routeSlug: string;
-    x: number;
-    y: number;
-  }
+  points: [number, number][];
 }
 
 export interface GradingSystem {

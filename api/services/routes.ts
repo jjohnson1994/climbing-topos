@@ -1,20 +1,8 @@
 import {RouteRequest, Route} from "../../core/types";
 import {areas, logs, routes, topos} from "../models";
-import { algolaIndex } from "../db/algolia";
 
 export async function createRoute(routeDescription: RouteRequest, userId: string) {
   const newRoute = await routes.createRoute(routeDescription, userId);
-
-  algolaIndex
-    .saveObject({
-      ...routeDescription,
-      model: "route",
-      objectID: newRoute.slug,
-      slug: newRoute.slug,
-    })
-    .catch(error => {
-      console.error("Error saving new route to algolia", error);
-    });
 
   return newRoute;
 }

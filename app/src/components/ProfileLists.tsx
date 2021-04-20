@@ -3,7 +3,7 @@ import { List, ListRoute } from "core/types";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { lists } from "../api";
-import { useUserPreferences } from "../api/profile";
+import { useGradeHelpers } from "../api/grades";
 import { popupError } from "../helpers/alerts";
 import LoadingSpinner from "./LoadingSpinner";
 import Modal from "./Modal";
@@ -16,7 +16,7 @@ function ProfileLists() {
   const [loading, setLoading] = useState(true);
   const [listViewModalVisible, setListViewModalVisible] = useState(false);
   const [viewingListSlug, setViewingListSlug] = useState("");
-  const { convertGradeToUserPreference } = useUserPreferences();
+  const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   useEffect(() => {
     const getProfileDate = async () => {
@@ -91,7 +91,7 @@ function ProfileLists() {
                     </td>
                     <td>{ route.cragTitle }</td>
                     <td>{ route.routeType }</td>
-                    <td>{ convertGradeToUserPreference(route.gradeModal, route.routeType) }</td>
+                    <td>{ convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) }</td>
                   </tr>
                 ))}
               </tbody>

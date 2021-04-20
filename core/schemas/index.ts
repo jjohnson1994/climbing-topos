@@ -51,17 +51,7 @@ export const NewRouteScheme = yup => yup.object().shape({
   drawing: yup.object()
     .required()
     .shape({
-      path: yup.array().required().min(1, "Not enough points in drawing path"),
-      linkFrom: yup.object().shape({
-        routeSlug: yup.string(),
-        x: yup.number(),
-        y: yup.number(),
-      }),
-      linkTo: yup.object().shape({
-        routeSlug: yup.string(),
-        x: yup.number(),
-        y: yup.number(),
-      })
+      points: yup.array().required().min(1, "Not enough points in drawing path"),
     }),
   routeType: yup.string().required("Required"),
   gradingSystem: yup.string().required("Required"),

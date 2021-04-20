@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./TopoImage.css";
-import { SmoothPath } from "../helpers/svg";
+import { smoothPath } from "../helpers/svg";
 import { Route, RouteDrawing } from "../../../core/types";
 import TopoImageStartTag from "./TopoImageStartTag";
 
@@ -11,34 +11,7 @@ interface PropTypes {
 }
 
 function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
-  const [joinedRoutePaths, setJoinedRoutePaths] = useState<number[][][]>([]);
   const [routeLabels, setRouteLabels] = useState<{ [key: string]: (string | number)[] }>({});
-
-  useEffect(() => {
-    const newJoinedRoutePaths = routes.map(route => {
-      return getLinkedRoutePaths(route.drawing, routes);
-    });
-
-    setJoinedRoutePaths(newJoinedRoutePaths);
-  }, [routes]);
-
-  useEffect(() => {
-    const newRouteLabels = { ...routeLabels };
-
-    joinedRoutePaths.forEach((path, index) => {
-      const endX = Math.floor(path[path.length - 1][0]);
-      const endY = Math.floor(path[path.length - 1][1]);
-
-      newRouteLabels[`${endX},${endY}`] = Array.from(
-        new Set([
-          ...(newRouteLabels[`${endX},${endY}`] || []),
-          index + 1
-        ])
-      );
-    });
-
-    setRouteLabels(newRouteLabels);
-  }, [joinedRoutePaths]);
 
   const getRouteStrokeOpacity = (routeSlug: string) => {
     if (highlightedRouteSlug && highlightedRouteSlug === routeSlug) {
@@ -50,35 +23,61 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
     return 0.5;
   }
 
-  const getLinkedRoutePaths = (
-    routeDrawing: RouteDrawing,
-    routes: Route[],
-  ) => {
-    let joinedPathPoints: number[][] = [];
+  const startTags = () => {
+    const allDrawings = routes
+      .map(route => route.drawing)
+      .filter(drawing => drawing.points.length > 0);
 
-    if (routeDrawing.linkFrom?.routeSlug) {
-      const linkFromPath = getLinkedRoutePaths(routes.find(route => route.slug === routeDrawing!.linkFrom!.routeSlug)!.drawing, routes);
-      const joinIndex = linkFromPath?.findIndex(([x, y]) => {
-        return Math.abs(x - routeDrawing!.linkFrom!.x) <= 5 && Math.abs(y - routeDrawing!.linkFrom!.y) <= 5;
-      });
-      const slicedPath = linkFromPath!.slice(0, joinIndex);
+    const startStationTags: { [key: string]: number[] } = allDrawings.reduce<{ [key: string]: number[] }>((stationTags, line, index) => {
+      const startStation = `${line.points[0][0]},${line.points[0][1]}`;
 
-      joinedPathPoints = [...joinedPathPoints, ...slicedPath];
-    }
+      return {
+        ...stationTags,
+        [startStation]: [ ...stationTags[startStation] || [], index + 1 ],
+      }
+    }, {});
 
-    joinedPathPoints = [...joinedPathPoints, ...routeDrawing.path];
+    const endStationTags: { [key: string]: number[] } = allDrawings.reduce<{ [key: string]: number[] }>((stationTags, line, index) => {
+      if (line.points.length > 1) {
+        const endStation = `${line.points[line.points.length - 1][0]},${line.points[line.points.length - 1][1]}`;
 
-    if (routeDrawing.linkTo?.routeSlug) {
-      const linkToPath  = getLinkedRoutePaths(routes.find(route => route.slug === routeDrawing!.linkTo!.routeSlug)!.drawing, routes);
-      const joinIndex = linkToPath?.findIndex(([x, y]) => {
-        return Math.abs(x - routeDrawing!.linkTo!.x) <= 5 && Math.abs(y - routeDrawing!.linkTo!.y) <= 5;
-      });
-      const slicedPath = linkToPath!.slice(joinIndex);
+        return {
+          ...stationTags,
+          [endStation]: [...stationTags[endStation] || [], index + 1 ],
+        }
+      } else {
+        return stationTags;
+      }
+    }, {});
 
-      joinedPathPoints = [...joinedPathPoints, ...slicedPath];
-    }
+    return [
+      ...Object.keys(startStationTags).map((station, index) => {
+        const [x, y] = station.split(',');
+        const text = startStationTags[station].join(', ');
 
-    return joinedPathPoints;
+        return (
+          <TopoImageStartTag
+            key={ `starttag${index}` }
+            content={ text }
+            x={ parseInt(x, 10) }
+            y={ parseInt(y, 10) + 23 }
+          />
+        )
+      }),
+      ...Object.keys(endStationTags).map((station, index) => {
+        const [x, y] = station.split(',');
+        const text = endStationTags[station].join(', ');
+
+        return (
+          <TopoImageStartTag
+            key={ `endtag${index}` }
+            content={ text }
+            x={ parseInt(x, 10) }
+            y={ parseInt(y, 10) - 23 }
+          />
+        )
+      }),
+    ];
   }
 
   return (
@@ -89,29 +88,14 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
           {routes?.map((route) => (
             <path
               key={ route.slug }
-              d={ SmoothPath(getLinkedRoutePaths(route.drawing, routes)) }
+              d={ smoothPath(route.drawing.points) }
               fill="transparent"
               stroke="yellow"
               strokeWidth="4"
               strokeOpacity={ getRouteStrokeOpacity(`${route.slug}`) }
             />
           ))}
-          {Object.entries(routeLabels).map(([ coords, routes ], index) => (
-            <TopoImageStartTag
-              key={ index }
-              content={ routes.join(", ") }
-              x={ parseInt(coords.split(",")[0], 10) }
-              y={ parseInt(coords.split(",")[1], 10) }
-            />
-          ))}
-          {routes.map((route, index) => (
-            <TopoImageStartTag
-              key={ index }
-              content={ `${index + 1}`  }
-              x={ route.drawing.path[0][0] }
-              y={ route.drawing.path[0][1] }
-            />
-          ))}
+          { startTags() }
         </svg>
       </div>
     </div>

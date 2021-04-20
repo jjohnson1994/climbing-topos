@@ -92,14 +92,26 @@ functions:
     handler: functions/crag/cragOnInsert.handler
     events:
       - sns: crag-insert
+  cragOnModify:
+    handler: functions/crag/cragOnModify.handler
+    events:
+      - sns: crag-modify
   areaOnInsert:
     handler: functions/area/areaOnInsert.handler
     events:
       - sns: area-insert
+  areaOnModify:
+    handler: functions/area/areaOnModify.handler
+    events:
+      - sns: area-modify
   routeOnInsert:
     handler: functions/route/routeOnInsert.handler
     events:
       - sns: route-insert
+  routeOnModify:
+    handler: functions/route/routeOnModify.handler
+    events:
+      - sns: route-modify
   logOnInsert:
     handler: functions/log/logOnInsert.handler
     events:

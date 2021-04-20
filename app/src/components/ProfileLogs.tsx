@@ -1,9 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Log } from "../../../core/types";
 import { logs } from "../api";
-import { useUserPreferences } from "../api/profile";
+import { useGradeHelpers } from "../api/grades";
 import { popupError } from "../helpers/alerts";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -11,7 +11,7 @@ function ProfileLogs() {
   const { getAccessTokenSilently, isLoading, isAuthenticated } = useAuth0();
   const [loggedRoutes, setLoggedRoutes] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
-  const { convertGradeToUserPreference } = useUserPreferences();
+  const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   useEffect(() => {
     const getProfileDate = async () => {
@@ -59,7 +59,7 @@ function ProfileLogs() {
                     { log.routeTitle }
                   </Link>
                 </td>
-                <td>{ convertGradeToUserPreference(parseInt(log.gradeTaken), log.routeType) }</td>
+                <td>{ convertGradeValueToGradeLabel(parseInt(log.gradeTaken), log.gradingSystem) }</td>
                 <td>{ log.rating }</td>
                 <td>{ log.dateSent }</td>
               </tr>

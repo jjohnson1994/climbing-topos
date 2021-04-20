@@ -1,9 +1,9 @@
 import Tippy from '@tippyjs/react';
-import React, { ChangeEvent, useContext } from "react";
+import { ChangeEvent, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Log, Route } from "../../../core/types";
 import { RouteLogContext } from './RouteLogContext';
-import { useUserPreferences } from '../api/profile';
+import { useGradeHelpers } from '../api/grades';
 import { useAuth0 } from '@auth0/auth0-react';
 import RatingStarsDisplay from './RatingStarsDisplay';
 
@@ -16,7 +16,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
   const context = useContext(RouteLogContext);
 
-  const { convertGradeToUserPreference } = useUserPreferences();
+  const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   const chkRouteOnChange = (event: ChangeEvent<HTMLInputElement>, route: Route) => {
     if (context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) > -1) {
@@ -57,7 +57,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
               <RatingStarsDisplay stars={ route.rating } />
             </span>
             <div className="tags">
-              <span className="tag">{ convertGradeToUserPreference(route.gradeModal, route.routeType) }</span>
+              <span className="tag">{ convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) }</span>
               <span className="tag">{ route.routeType }</span>
               <span className="tag">{ route.logCount } Ticks</span>
             </div>

@@ -1,175 +1,170 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route } from "../../../core/types";
-import { domToSvgPoint, ReducePath, SmoothPath } from "../helpers/svg";
+import { domToSvgPoint, smoothPath } from "../helpers/svg";
 import { RouteDrawing } from "../../../core/types";
 
 import "./TopoCanvas.css";
+import TopoImageStartTag from "./TopoImageStartTag";
 
-enum PointerState {
-  up = "up",
-  down = "down"
+interface Props {
+  backgroundImageURL: string;
+  onDrawingChanged: Function;
+  routes: Route[] | undefined;
 }
 
-const strokeColor = "yellow";
-const strokeWidth = "4";
-
-function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundImageURL: string; onDrawingChanged: Function, routes: Route[] | undefined}) {
-  const [finishXY, setFinishXY] = useState([-1, -1]);
-  const [linkFrom, setLinkFrom] = useState<{routeSlug: string; x: number; y: number;} | undefined>();
-  const [linkTo, setLinkTo] = useState<{routeSlug: string; x: number; y: number;} | undefined>();
-  const [pointerState, setPointerState] = useState<PointerState>(PointerState.up);
-  const [existingRoutes, setExistingRoutes] = useState<Map<string, number[][]>>(new Map());
-  const [routePath, setRoutePath] = useState<number[][]>();
-  const [completePath, setCompletePath] = useState<number[][]>([]);
-  const [routeDrawing, setRouteDrawing] = useState<RouteDrawing>();
-
-  const canvasElement = useRef<SVGSVGElement>(document.querySelector("svg") as SVGSVGElement);
+function TopoCanvas({ backgroundImageURL, onDrawingChanged, routes }: Props) {
+  const [hasFocus, setHasFocus] = useState<boolean>(false);
+  const [pointerCoords, setPointerCoords] = useState<[number, number]>([0, 0]);
+  const [newLine, setNewLine] = useState<RouteDrawing>({ points: [] });
+  const [existingLineDrawing, setExistingLineDrawings] = useState<RouteDrawing[]>([]);
 
   useEffect(() => {
-    if (canvasElement.current) {
-      canvasElement.current.addEventListener("touchstart", event => {
-        event.preventDefault();
-      });
-    }
-  }, [canvasElement]);
-
-  useEffect(() => {
-    if (routes) {
-      const newExistingRoutes = new Map(existingRoutes);
-
-      routes.forEach(route => {
-        const existingRouteCoordinatesArray = route.drawing?.path;
-
-        if (existingRouteCoordinatesArray) {
-          newExistingRoutes.set(`${route.slug}`, existingRouteCoordinatesArray);
-        }
-      });
-
-      setExistingRoutes(newExistingRoutes);
-    }
+    setExistingLineDrawings([ ...routes || []].map(route => route.drawing));
   }, [routes]);
 
-  function findRouteUnderPointer(x: number, y: number): {x: number; y: number; parentRouteSlug: string} | undefined {
-    let parentRoute;
+  const canvasOnPointerEnter = () => {
+    setHasFocus(true);
+  }
 
-    existingRoutes.forEach((pathPoints, routeSlug) => {
-      pathPoints.forEach(([x1, y1]) => {
-        if (Math.abs(x - x1) <= 5 && Math.abs(y - y1) <= 5) {
-          parentRoute = ({x: x1, y: y1, parentRouteSlug: routeSlug});
+  const canvasOnPointerMove = ({ clientX, clientY }: PointerEvent) => {
+    const canvasElement = document.querySelector('svg');
+
+    if (!canvasElement) {
+      throw new Error('Error: Canvas Element is Not on Page');
+    }
+
+    const { x, y } = domToSvgPoint({ clientX, clientY }, canvasElement);
+
+    setPointerCoords([x, y]);
+  }
+
+  const canvasOnPointerUp = ({ clientX, clientY }: PointerEvent) => {
+    const canvasElement = document.querySelector('svg');
+
+    if (!canvasElement) {
+      throw new Error('Error: Canvas Element is Not on Page');
+    }
+
+    const { x, y } = domToSvgPoint({ clientX, clientY }, canvasElement);
+
+    const newNewLine: [number, number][] = [...newLine.points, [x, y]];
+    setNewLine({ points: newNewLine });
+    onDrawingChanged({ points: newNewLine });
+  }
+
+  const existingStationOnPointerUp = (event: PointerEvent, x: number, y: number) => {
+    event.stopPropagation();
+
+    const newNewLine: [number, number][] = [...newLine.points, [x, y]];
+    setNewLine({ points: newNewLine });
+    onDrawingChanged({ points: newNewLine });
+  }
+
+  const canvasOnPointerLeave = () => {
+    setHasFocus(false);
+  }
+
+  const lines = () => {
+    const existingLinePoints = existingLineDrawing.map(path => path.points);
+
+    return [...existingLinePoints, hasFocus ? [...newLine.points, pointerCoords] : newLine.points].map((pathPoints, index) => (
+      <path
+        key={ index }
+        d={ smoothPath(pathPoints as [number, number][]) }
+        stroke="yellow"
+        strokeWidth="4"
+        fill="transparent"
+      />
+    ))
+  }
+
+  const existingStations = () => {
+    const flatPathPoints = existingLineDrawing.flatMap(path => path.points);
+
+    return flatPathPoints.map(([x, y], index) => (
+      <ellipse
+        key={ index }
+        cx={ x }
+        cy={ y }
+        rx="5"
+        ry="5"
+        strokeWidth="2"
+        stroke="red"
+        fill="transparent"
+        onPointerUp={ (event) => existingStationOnPointerUp(event as unknown as PointerEvent, x, y) }
+      />
+    ))
+  }
+
+  const newStations = () => {
+    return newLine.points.map(([x, y], index, arr) => (
+      <ellipse
+        key={ index }
+        cx={ x }
+        cy={ y }
+        rx="5"
+        ry="5"
+        strokeWidth="2"
+        stroke="red"
+        fill="transparent"
+        style={{ ...(index as number) === arr.length - 1 && { pointerEvents: 'none' } }}
+      />
+    ))
+  }
+
+  const startTags = () => {
+    const allLines = [...existingLineDrawing, newLine].filter(path => path.points.length > 0);
+
+    const startStationTags: { [key: string]: number[] } = allLines.reduce<{ [key: string]: number[] }>((stationTags, line, index) => {
+      const startStation = `${line.points[0][0]},${line.points[0][1]}`;
+
+      return {
+        ...stationTags,
+        [startStation]: [ ...stationTags[startStation] || [], index ],
+      }
+    }, {});
+
+    const endStationTags: { [key: string]: number[] } = allLines.reduce<{ [key: string]: number[] }>((stationTags, line, index) => {
+      if (line.points.length > 1) {
+        const endStation = `${line.points[line.points.length - 1][0]},${line.points[line.points.length - 1][1]}`;
+
+        return {
+          ...stationTags,
+          [endStation]: [...stationTags[endStation] || [], index ],
         }
-      });
-    });
+      } else {
+        return stationTags;
+      }
+    }, {});
 
-    return parentRoute;
-  }
+    return [
+      ...Object.keys(startStationTags).map((station, index) => {
+        const [x, y] = station.split(',');
+        const text = startStationTags[station].join(', ');
 
-  // TODO 99% the same as in TopoImage.tsx
-  function joinLinkedRoutes(
-    routePath: number[][],
-    linkFrom: { routeSlug: string, x: number; y: number } | undefined,
-    linkTo: { routeSlug: string; x: number; y: number } | undefined,
-    routes: Map<string, number[][]>
-  ) {
-    let joinedPathPoints: number[][] = [];
+        return (
+          <TopoImageStartTag
+            key={ `starttag${index}` }
+            content={ text }
+            x={ parseInt(x, 10) }
+            y={ parseInt(y, 10) + 23 }
+          />
+        )
+      }),
+      ...Object.keys(endStationTags).map((station, index) => {
+        const [x, y] = station.split(',');
+        const text = endStationTags[station].join(', ');
 
-    if (linkFrom) {
-      const linkFromPath = routes.get(linkFrom.routeSlug);
-      const joinIndex = linkFromPath?.findIndex(([x, y]) => {
-        return Math.abs(x - linkFrom.x) <= 5 && Math.abs(y - linkFrom.y) <= 5;
-      });
-      const slicedPath = linkFromPath!.slice(0, joinIndex);
-
-      joinedPathPoints = [...joinedPathPoints, ...slicedPath];
-    }
-
-    joinedPathPoints = [...joinedPathPoints, ...routePath];
-
-    if (linkTo) {
-      const linkToPath = routes.get(linkTo.routeSlug);
-      const joinIndex = linkToPath?.findIndex(([x, y]) => {
-        return Math.abs(x - linkTo.x) <= 5 && Math.abs(y - linkTo.y) <= 5;
-      });
-      const slicedPath = linkToPath!.slice(joinIndex);
-
-      joinedPathPoints = [...joinedPathPoints, ...slicedPath];
-    }
-
-    return joinedPathPoints;
-  }
-
-  function onPointerDown() {
-    setPointerState(PointerState.down);
-    setFinishXY([ -1, -1 ]);
-    setLinkTo(undefined);
-    setRoutePath(undefined);
-    setRouteDrawing({
-      path: [],
-      linkFrom,
-      linkTo
-    });
-  }
-
-  function onPointerUp() {
-    setPointerState(PointerState.up);
-    onDrawingChanged(routeDrawing);
-  }
-
-  function onPointerMove({clientX, clientY}: PointerEvent) {
-    if (pointerState === PointerState.down) {
-      onPointerDrag({clientX, clientY});
-      return;
-    }
-
-    const {x, y} = domToSvgPoint({x: clientX, y: clientY}, canvasElement.current);
-    const targetRoute = findRouteUnderPointer(x, y);
-
-    if (targetRoute && pointerState === PointerState.up) {
-      setLinkFrom({
-        x: Math.round(x * 100) / 100,
-        y: Math.round(y * 100) / 100,
-        routeSlug: targetRoute.parentRouteSlug
-      });
-    } else {
-      setLinkFrom(undefined);
-    }
-  }
-
-  function onPointerDrag({clientX, clientY}: {clientX: number, clientY: number}) {
-    const {x, y} = domToSvgPoint({x: clientX, y: clientY}, canvasElement.current);
-    const targetRoute = findRouteUnderPointer(x, y);
-
-    if (targetRoute && pointerState === PointerState.down) {
-      setLinkTo({
-        x,
-        y,
-        routeSlug: targetRoute.parentRouteSlug
-      });
-    } else {
-      setLinkTo(undefined);
-    }
-
-    setRoutePath(routePath
-      ? [...routePath, [x, y]]
-      : [[x, y]]
-    );
-
-    setRouteDrawing({
-      path: routePath || [],
-      linkFrom: routeDrawing?.linkFrom,
-      linkTo
-    });
-
-    if (routePath) {
-      const completePath = joinLinkedRoutes(
-        routePath,
-        routeDrawing?.linkFrom,
-        routeDrawing?.linkTo,
-        existingRoutes
-      );
-
-      setFinishXY(completePath.slice(-1)[0]);
-      setCompletePath(ReducePath(completePath));
-    }
+        return (
+          <TopoImageStartTag
+            key={ `endtag${index}` }
+            content={ text }
+            x={ parseInt(x, 10) }
+            y={ parseInt(y, 10) - 23 }
+          />
+        )
+      }),
+    ];
   }
 
   return (
@@ -181,48 +176,18 @@ function TopoCanvas({backgroundImageURL, onDrawingChanged, routes}: {backgroundI
         <img id="canvas-bg" src={backgroundImageURL} alt="topo drawing canvas" />
         <div id="canvas">
           <svg
-            ref={canvasElement}
             width="100%"
             height="100%"
             viewBox="0 0 1000 1000"
-            onPointerUp={onPointerUp}
-            onPointerMove={ event => onPointerMove(event as unknown as PointerEvent)}
-            onPointerDown={onPointerDown}
+            onPointerEnter={ canvasOnPointerEnter }
+            onPointerUp={ event => canvasOnPointerUp(event as unknown as PointerEvent) }
+            onPointerLeave={ canvasOnPointerLeave }
+            onPointerMove={ event => canvasOnPointerMove(event as unknown as PointerEvent) }
           >
-            {existingRoutes && [...existingRoutes.keys()].map(key => (
-              <path
-                key={key}
-                d={SmoothPath(existingRoutes.get(key) as number[][])}
-                strokeWidth={strokeWidth}
-                stroke={strokeColor}
-                strokeOpacity={0.5}
-                fill="none"
-              />
-            ))}
-            {routeDrawing?.path?.length && (
-              <path
-                d={SmoothPath(completePath)}
-                stroke={strokeColor}
-                strokeWidth={strokeWidth}
-                fill="none"
-              />
-            )}
-            {finishXY[0] !== -1 && finishXY[1] !== -1 && routeDrawing?.path?.length && (
-              <foreignObject x={finishXY[0] - 15} y={finishXY[1] - 30} width="30px" height="30px">
-                <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                  <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
-                  <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-flag"></i>
-                </div>
-              </foreignObject>
-            )}
-            {((linkFrom && pointerState === "up") || (linkTo && pointerState === "down")) && (
-              <foreignObject x={(pointerState === "up" ? linkFrom!.x : linkTo!.x) - 15} y={(pointerState === "up" ? linkFrom!.y : linkTo!.y) - 30} width="30px" height="30px">
-                <div style={{width: "30px", height: "30px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                  <div style={{background: "rgba(0, 0, 0, 0.8)", padding: "5px", borderRadius: "50em", position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}></div>
-                  <i style={{fontSize: "1rem", zIndex: 1, color: "#fff"}} className="fas fa-link"></i>
-                </div>
-              </foreignObject>
-            )}
+            { lines() }
+            { existingStations() }
+            { newStations() }
+            { startTags() }
           </svg>
         </div>
       </div>

@@ -4,3 +4,4 @@ const client = algoliasearch(`${process.env.ALGOLIA_APP_ID}`, `${process.env.ALG
 const index = client.initIndex(`${process.env.ALGOLIA_INDEX}`);
 
 export const algolaIndex: SearchIndex = index;
+export default index;

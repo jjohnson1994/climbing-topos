@@ -2,21 +2,11 @@ import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dy
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
 import { Crag, CragRequest } from '../../core/types';
-import { dynamodb } from '../db';
+import { dynamodb, algolaIndex } from '../db';
 import { createSlug } from "../helpers/slug";
 
 
 export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string) => {
-  const {
-    place_id,
-    address: {
-      city,
-      country,
-      country_code,
-      county,
-      state,
-    }
-  } = cragDetails.osmData;
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
 
@@ -58,6 +48,7 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
   }
 
   await dynamodb.put(params).promise()
+
   return {
     slug,
   };

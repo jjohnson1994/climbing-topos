@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
-import { dynamodb } from '../db';
+import { dynamodb, algolaIndex } from '../db';
 import { Route, RouteRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";

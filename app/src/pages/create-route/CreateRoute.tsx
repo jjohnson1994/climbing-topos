@@ -3,7 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { NewRouteScheme } from "core/schemas";
 import { Area, RouteDrawing } from "core/types";
 import { gradingSystems } from "core/globals";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from 'react-router-dom';
 import * as yup from "yup";
@@ -30,7 +30,7 @@ function CreateRoute() {
       areaSlug,
       cragSlug,
       description: "",
-      drawing: { path: [] },
+      drawing: { points: [] },
       grade: "",
       gradingSystem: "",
       routeType: "",

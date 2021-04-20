@@ -1,24 +1,22 @@
-import {useAuth0} from "@auth0/auth0-react";
-import React, {useContext, useEffect, useState} from "react";
-import {Link, useParams} from "react-router-dom";
-import {Route} from "../../../../core/types";
-import {routes} from "../../api";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Route } from "../../../../core/types";
+import { routes } from "../../api";
+import { useGradeHelpers } from "../../api/grades";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import RatingStarsDisplay from '../../components/RatingStarsDisplay';
 import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
-import {popupError} from "../../helpers/alerts";
-import {usePageTitle} from "../../helpers/pageTitle";
-import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserPreferences } from "../../api/profile";
-import RatingStarsDisplay from '../../components/RatingStarsDisplay';
-
+import { popupError } from "../../helpers/alerts";
+import { usePageTitle } from "../../helpers/pageTitle";
 
 function RoutePage() {
   const { getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
-  const [routeJustLogged, setRouteJustLogged] = useState<Boolean>(false); 
-  const { convertGradeToUserPreference } = useUserPreferences();
+  const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   const context = useContext(RouteLogContext);
 
@@ -85,7 +83,7 @@ function RoutePage() {
               <div className="column is-two-thirds">
                 <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
                 <h6 className="subtitle is-6">
-                  { route ? convertGradeToUserPreference(route.gradeModal, route.routeType) : "" }
+                  { route ? convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) : "" }
                   <span> </span>
                   { route?.routeType }
                   <span> </span>

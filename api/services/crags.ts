@@ -1,21 +1,8 @@
 import { areas, crags, logs, routes, topos } from '../models';
 import { Crag, CragBrief } from '../../core/types';
-import { algolaIndex } from "../db/algolia";
 
 export const createCrag = async (cragDetails: Crag, userSub: string) => {
   const newCrag = await crags.createCrag(cragDetails, userSub);
-
-  algolaIndex
-    .saveObject({
-      ...cragDetails,
-      model: "crag" ,
-      objectID: newCrag.slug,
-      slug: newCrag.slug
-    })
-    .catch(error => {
-      console.error("Error saving new crag to algolia", error);
-    });
-
   return newCrag;
 }
 
@@ -75,7 +62,8 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
   };
 }
 
-export async function incrementAreaCount(cragSlug: string) {
+export function incrementAreaCount(cragSlug: string) {
+  console.log({ cragSlug })
   return crags.update(cragSlug, {
     UpdateExpression: "set #areaCount = #areaCount + :inc",
     ExpressionAttributeNames: { 
@@ -87,7 +75,7 @@ export async function incrementAreaCount(cragSlug: string) {
   });
 }
 
-export async function incrementRouteCount(cragSlug: string) {
+export function incrementRouteCount(cragSlug: string) {
   return crags.update(cragSlug, {
     UpdateExpression: "set #routeCount = #routeCount + :inc",
     ExpressionAttributeNames: { 
@@ -99,7 +87,7 @@ export async function incrementRouteCount(cragSlug: string) {
   });
 }
 
-export async function incrementLogCount(cragSlug: string) {
+export function incrementLogCount(cragSlug: string) {
   return crags.update(cragSlug, {
     UpdateExpression: "set #logCount = #logCount + :inc",
     ExpressionAttributeNames: { 
