@@ -133,7 +133,7 @@ functions:
     events:
       - sns: log-remove
   topoOnRemove:
-    handler: functions/log/topoOnRemove.handler
+    handler: functions/topo/topoOnRemove.handler
     events:
       - sns: topo-remove
 
