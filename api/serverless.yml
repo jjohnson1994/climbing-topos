@@ -132,6 +132,10 @@ functions:
     handler: functions/log/logOnRemove.handler
     events:
       - sns: log-remove
+  topoOnInsert:
+    handler: functions/topo/topoOnInsert.handler
+    events:
+      - sns: topo-insert
   topoOnRemove:
     handler: functions/topo/topoOnRemove.handler
     events:
