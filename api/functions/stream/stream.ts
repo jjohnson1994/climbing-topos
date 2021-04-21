@@ -9,7 +9,7 @@ export const handler = async (event, context) => {
     const promises = event.Records.map(record => {
       console.log('stream', record)
       const { eventName } = record;
-      const { S: model } = record.dynamodb.NewImage.model;
+      const { S: model } = { ...record.dynamodb.NewImage, ...record.dynamodb.OldImage }.model;
       const topicArn = generateTopicArn(
         eventName,
         model,
