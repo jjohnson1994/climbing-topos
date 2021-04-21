@@ -7,6 +7,7 @@ const awsRegion = `${process.env.AWS_REGION}`;
 export const handler = async (event, context) => {
   try {
     const promises = event.Records.map(record => {
+      console.log('stream', record)
       const { eventName } = record;
       const { S: model } = record.dynamodb.NewImage.model;
       const topicArn = generateTopicArn(
