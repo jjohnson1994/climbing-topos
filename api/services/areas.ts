@@ -26,6 +26,18 @@ export async function getAreaBySlug(areaSlug: string, userSub: string): Promise<
   };
 }
 
+export async function decrementRouteCount(cragSlug: string, areaSlug: string) {
+  return areas.update(cragSlug, areaSlug, {
+    UpdateExpression: "set #routeCount = #routeCount - :inc",
+    ExpressionAttributeNames: { 
+      "#routeCount": "routeCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
+}
+
 export async function incrementRouteCount(cragSlug: string, areaSlug: string) {
   return areas.update(cragSlug, areaSlug, {
     UpdateExpression: "set #routeCount = #routeCount + :inc",

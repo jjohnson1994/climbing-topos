@@ -75,6 +75,18 @@ export function incrementAreaCount(cragSlug: string) {
   });
 }
 
+export function decrementRouteCount(cragSlug: string) {
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #routeCount = #routeCount - :inc",
+    ExpressionAttributeNames: { 
+      "#routeCount": "routeCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
+}
+
 export function incrementRouteCount(cragSlug: string) {
   return crags.update(cragSlug, {
     UpdateExpression: "set #routeCount = #routeCount + :inc",

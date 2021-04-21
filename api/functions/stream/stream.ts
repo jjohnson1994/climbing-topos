@@ -17,6 +17,8 @@ export const handler = async (event, context) => {
         IS_OFFLINE === 'true' ? '123456789012' : awsAccountId
       );
 
+      console.log('Publish to topic', topicArn);
+
       return SNS.publish({
         Message: JSON.stringify(record),
         TopicArn: topicArn
