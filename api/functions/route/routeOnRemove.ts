@@ -31,7 +31,7 @@ export const handler = async (event: Event) => {
     console.log("Promises done")
     return 200;
   } catch (error) {
-    console.error("Error in routesOnInsert", error)
+    console.error("Error in routeOnRemove", error)
     throw new Error(error)
   }
 }

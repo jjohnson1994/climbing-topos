@@ -128,6 +128,10 @@ functions:
     handler: functions/log/logOnInsert.handler
     events:
       - sns: log-insert
+  logOnRemove:
+    handler: functions/log/logOnRemove.handler
+    events:
+      - sns: log-remove
 
 resources:
   Resources:
