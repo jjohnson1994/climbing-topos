@@ -30,7 +30,7 @@ export async function postCrag(req, res) {
   try {
     const cragDetails = req.body;
     const user = req.user;
-    const resp = await crags.createCrag(cragDetails, user.sub);
+    const resp = await crags.createCrag(cragDetails, user);
     res.status(200).json({ success: true, inserted: resp });
   } catch(error) {
     console.error('Error creating crag', error);

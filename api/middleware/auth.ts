@@ -52,7 +52,6 @@ export const requireAuth = (req, res, next) => {
       }
 
       const userInfo = await userInfoResponse.json();
-
       req.user = userInfo;
 
       next();

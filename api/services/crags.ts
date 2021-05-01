@@ -1,8 +1,8 @@
 import { areas, crags, logs, routes, topos } from '../models';
-import { Crag, CragBrief } from '../../core/types';
+import { Auth0User, Crag, CragBrief } from '../../core/types';
 
-export const createCrag = async (cragDetails: Crag, userSub: string) => {
-  const newCrag = await crags.createCrag(cragDetails, userSub);
+export const createCrag = async (cragDetails: Crag, user: Auth0User) => {
+  const newCrag = await crags.createCrag(cragDetails, user);
   return newCrag;
 }
 

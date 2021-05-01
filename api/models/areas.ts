@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
-import { dynamodb, algolaIndex } from '../db';
+import { dynamodb } from '../db';
 import { Area, AreaRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
@@ -35,7 +35,8 @@ export async function createArea(areaDescription: AreaRequest, userSub: string) 
       sk: `area#${slug}#`,
       ...areaData,
       logCount: 0,
-      model: "area",
+      verified: false,
+      model: 'area',
       routeCount: 0,
       slug,
       createdBy: userSub,

@@ -1,3 +1,13 @@
+export interface Auth0User {
+  sub: string,
+  nickname: string,
+  name: string,
+  picture: string,
+  updated_at: string,
+  email: string,
+  email_verified: boolean
+}
+
 export interface UserRegisterForm {
   username: string,
   password: string,
@@ -38,6 +48,7 @@ export interface CragRequest {
   approachNotes: string;
   carParks: CarPark[];
   description: string;
+  image: File | string;
   latitude: string;
   longitude: string;
   osmData: OsmData;
@@ -60,6 +71,8 @@ export interface Crag extends CragBrief {
   slug: string; 
   topos: Topo[];
   userLogs: Log[];
+  verified: boolean;
+  managedBy: Auth0User;
 }
 
 export interface Climb {
@@ -90,18 +103,22 @@ export interface Area extends AreaRequest {
   routeCount: number;
   logCount: number;
   routes: Route[];
+  slug: string;
   topos: Topo[];
   userLogs: Log[];
-  slug: string;
+  verifed: boolean;
 }
-
-export interface Topo {
+export interface TopoRequest {
   areaSlug: string;
   cragSlug: string;
   image: File | string;
   imageFileName: string;
   orientation: string;
   slug?: string;
+}
+
+export interface Topo extends TopoRequest {
+  verifed: boolean;
 }
 
 export interface RouteRequest {
@@ -128,15 +145,16 @@ export interface RouteRequest {
 
 export interface Route extends RouteRequest {
   area: Area;
+  gradeModal: number;
+  gradeTally: { [key: number]: number };
   logCount: number;
+  rating: number;
+  ratingTally: { [key: number]: number };
   siblingRoutes: Route[];
   slug: string;
   topo: Topo;
   userLogs: Log[];
-  ratingTally: { [key: number]: number };
-  rating: number;
-  gradeTally: { [key: number]: number };
-  gradeModal: number;
+  verifed: boolean;
 }
 
 export interface RouteDrawing {

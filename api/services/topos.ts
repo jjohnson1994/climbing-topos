@@ -1,7 +1,7 @@
 import { topos } from "../models";
-import { Topo } from "../../core/types";
+import { TopoRequest } from "../../core/types";
 
-export function createTopo(topoDetails: Topo, userSub: string) {
+export function createTopo(topoDetails: TopoRequest, userSub: string) {
   return topos.createTopo(topoDetails, userSub)
 }
 

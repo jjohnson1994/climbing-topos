@@ -11,6 +11,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import TopoImage from "../../components/TopoImage";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
+import CragTitleImage from "../../components/CragTitleImage";
 
 function CragView() {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
@@ -60,7 +61,7 @@ function CragView() {
 
   return (
     <>
-      { loading ? (
+      { !crag || loading ? (
         <section className="section">
           <div className="container">
             <LoadingSpinner />
@@ -68,19 +69,20 @@ function CragView() {
         </section>
       ) : (
         <>
-          { crag && crag.access === "banned" && (
-            <div className="notification is-danger">
-              Climbing at this crag is <b>banned</b>, probably best to find somewhere else
+          <div className="columns is-gapless mb-0">
+            <div className="column">
+              <CragTitleImage src={ `${crag.image}` } />
             </div>
-          )}
-          <section className="section">
-            <div className="container">
-              <div className="columns">
-                <div className="column is-two-thirds">
+            <div className="column">
+              <section className="section">
+              { crag.access === "banned" && (
+                <div className="notification is-danger">
+                  Climbing at this crag is <b>banned</b>, probably best to find somewhere else
+                </div>
+              )}
+                <div className="container">
                   <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
                   <h5 className="subtitle is-5">{ crag?.description }</h5>
-                </div>
-                <div className="column">
                   <div role="group" className="tags">
                     <label className={ `tag is-capitalized ${ crag?.access === "banned" ? "is-danger " : "is-primary" }` }>
                       Access { crag?.access }
@@ -98,32 +100,33 @@ function CragView() {
                     />
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </section>
-          <section className="section">
-            <div className="tabs">
-              <ul>
-                { crag?.routes.length ? (
-                  <li className={ activeTab === 'guide' ? 'is-active' : '' }>
-                    <a onClick={ () => setActiveTab('guide') }>Guide</a>
-                  </li>
-                ): "" }
-                <li className={ activeTab === 'routes' ? 'is-active' : '' }>
-                  <a onClick={ () => setActiveTab('routes') }>Routes</a>
-                </li>
-                <li className={ activeTab === 'areas' ? 'is-active' : '' }>
-                  <a onClick={ () => setActiveTab('areas') }>Areas</a>
-                </li>
-                <li className={ activeTab === 'approach' ? 'is-active' : '' }>
-                  <a onClick={ () => setActiveTab('approach') }>Approach</a>
-                </li>
-                <li className={ activeTab === 'map' ? 'is-active' : '' }>
-                  <a onClick={ () => setActiveTab('map') }>Map</a>
-                </li>
-              </ul>
-            </div>
+          </div>
 
+          <div className="tabs mb-0">
+            <ul>
+              { crag?.routes.length ? (
+                <li className={ activeTab === 'guide' ? 'is-active' : '' }>
+                  <a onClick={ () => setActiveTab('guide') }>Guide</a>
+                </li>
+              ): "" }
+              <li className={ activeTab === 'routes' ? 'is-active' : '' }>
+                <a onClick={ () => setActiveTab('routes') }>Routes</a>
+              </li>
+              <li className={ activeTab === 'areas' ? 'is-active' : '' }>
+                <a onClick={ () => setActiveTab('areas') }>Areas</a>
+              </li>
+              <li className={ activeTab === 'approach' ? 'is-active' : '' }>
+                <a onClick={ () => setActiveTab('approach') }>Approach</a>
+              </li>
+              <li className={ activeTab === 'map' ? 'is-active' : '' }>
+                <a onClick={ () => setActiveTab('map') }>Map</a>
+              </li>
+            </ul>
+          </div>
+
+          <section className="section">
             { activeTab === "guide" && crag?.areas?.map(area => (
               <div key={ area.slug } className="container">
                 <div className="block">
@@ -182,7 +185,7 @@ function CragView() {
             ))}
 
             { activeTab === "routes" && (
-              <div id="routes" className="container">
+              <div id="routes" className="container box">
                 { crag?.routes.length ? (
                   <AreaRoutesTable
                     routes={ crag?.routes }

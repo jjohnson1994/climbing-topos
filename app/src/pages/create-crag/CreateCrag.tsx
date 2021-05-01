@@ -12,6 +12,8 @@ import { reverseLookup } from '../../helpers/nominatim';
 
 const schema = NewCragSchema(yup);
 
+let image: File;
+
 type CarPark = {
   title: string;
   latitude: string;
@@ -46,8 +48,24 @@ function CreateCrag() {
       longitude: "",
       tags: [] as string[],
       title: "",
+      imageFileName: "",
     }
   });
+
+  const watchImageFileName = watch("imageFileName");
+
+  async function onImageSelected() {
+    const files =
+      (document.querySelector('input[type=file]') as HTMLInputElement).files;
+
+    if (files) {
+      const file = files.item(0);
+      image = file as File;
+      setValue("imageFileName", file?.name);
+    } else {
+      setValue("imageFileName", "");
+    }
+  }
 
   const {
     fields: carParks,
@@ -121,7 +139,7 @@ function CreateCrag() {
       setLoading(true);
       const token = await getAccessTokenSilently();
       const osmData = await getCragNominatim(formData.latitude, formData.longitude);
-      const { slug } = await crags.createCrag({ ...formData, osmData }, token);
+      const { slug } = await crags.createCrag({ ...formData, osmData, image }, token);
       await popupSuccess("Crag Created!");
       history.push(`/crags/${slug}`);
     } catch (error) {
@@ -145,6 +163,12 @@ function CreateCrag() {
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
+          <input
+            type="text"
+            name="imageFileName"
+            ref={ register({}) }
+            className="is-hidden"
+          />
           <div className="field">
             <label className="label" htmlFor="title">Title</label>
             <div className="control">
@@ -156,6 +180,34 @@ function CreateCrag() {
               />
             </div>
             <p className="help is-danger">{ errors.title?.message }</p>
+          </div>
+
+          <div className="field">
+            <label className="label">Image</label>
+            <div className="control">
+              <div className="file has-name">
+                <label className="file-label">
+                  <input
+                    className="file-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={ onImageSelected }
+                  />
+                  <span className="file-cta">
+                    <span className="file-icon">
+                      <i className="fas fa-upload"></i>
+                    </span>
+                    <span className="file-label">
+                      Choose a file…
+                    </span>
+                  </span>
+                  <span className="file-name">
+                    { watchImageFileName }
+                  </span>
+                </label>
+              </div>
+            </div>
+            <p className="help is-danger">{ errors.imageFileName?.message }</p>
           </div>
 
           <div className="field">

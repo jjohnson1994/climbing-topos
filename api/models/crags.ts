@@ -1,12 +1,11 @@
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
-import { Crag, CragRequest } from '../../core/types';
-import { dynamodb, algolaIndex } from '../db';
+import { Auth0User, Crag, CragRequest } from '../../core/types';
+import { dynamodb } from '../db';
 import { createSlug } from "../helpers/slug";
 
-
-export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string) => {
+export const createCrag = async (cragDetails: CragRequest, user: Auth0User) => {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
 
@@ -22,6 +21,7 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
     osmData: cragDetails.osmData,
     tags: cragDetails.tags,
     title: cragDetails.title,
+    image: cragDetails.image
   };
 
   const params = {
@@ -30,16 +30,16 @@ export const createCrag = async (cragDetails: CragRequest, ownerUserSub: string)
       hk: slug,
       sk: "metadata#",
       ...cragData,
+      verified: false,
       areaCount: 0,
       city: cragDetails.osmData.address.city,
       country: cragDetails.osmData.address.country,
       countryCode: cragDetails.osmData.address.country_code,
       county: cragDetails.osmData.address.county,
       createdAt: date,
-      createdBy: ownerUserSub,
+      managedBy: user,
       logCount: 0,
       model: 'crag',
-      owner: ownerUserSub,
       routeCount: 0,
       slug,
       state: cragDetails.osmData.address.state,

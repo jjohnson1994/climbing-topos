@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
-import { dynamodb, algolaIndex } from '../db';
+import { dynamodb } from '../db';
 import { Route, RouteRequest } from "../../core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
@@ -38,6 +38,7 @@ export async function createRoute(routeDescription: RouteRequest, userId: string
       hk: routeDescription.cragSlug,
       sk: `route#area#${routeDescription.areaSlug}#topo#${routeDescription.topoSlug}#${slug}`,
       ...routeData,
+      verified: false,
       gradeTally: {},
       gradeModal: routeDescription.grade,
       logCount: 0,
