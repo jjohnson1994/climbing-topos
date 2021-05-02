@@ -68,17 +68,25 @@ function Crags() {
               <Link key={ crag.slug } to={ `/crags/${crag.slug}` }>
                 <div className="block box">
                   <div className="is-flex is-flex-column">
-                    <p className="is-capitalized"><b>{ crag.title }</b></p>
                     <div className="columns">
-                      <div className="column">
-                        <p className="is-capitalized">{ crag.osmData.address.county }, { crag.osmData.address.country }</p>
+                      <div className="column is-3">
+                        <div style={{
+                          width: '100%',
+                          height: '200px',
+                          backgroundImage: `url("${crag.image}")`,
+                          backgroundPosition: 'center',
+                          backgroundSize: 'cover'
+                        }}>
+                        </div>
                       </div>
                       <div className="column">
-                        <div className="tags is-justify-content-flex-end">
+                        <p className="is-capitalized"><b>{ crag.title }</b> { crag.osmData.address.county }, { crag.osmData.address.country }</p>
+                        <div className="tags">
                           <span className="tag">Routes { crag.routeCount }</span>
                           <span className="tag">Areas { crag.areaCount }</span>
                           <span className="tag">Logs { crag.logCount }</span>
                         </div>
+                        <p className="is-capitalized">{ crag.description.substring(0, 280) }</p>
                       </div>
                     </div>
                   </div>
