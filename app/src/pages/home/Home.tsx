@@ -31,7 +31,7 @@ function Home() {
           <h1 className="title">Popular Crags</h1>
           <div className="columns">
             { popularCrags.map(crag => (
-              <div className="column">
+              <div key={ crag.slug } className="column">
                 <Link to={`/crags/${crag.slug}`}>
                   <div className="card">
                     <div className="card-image">
