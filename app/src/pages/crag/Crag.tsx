@@ -185,14 +185,14 @@ function CragView() {
             ))}
 
             { activeTab === "routes" && (
-              <div id="routes" className="container box">
+              <div id="routes" className="container">
                 { crag?.routes.length ? (
                   <AreaRoutesTable
                     routes={ crag?.routes }
                     loggedRoutes={ (crag && crag.userLogs) || [] }
                   />
                 ) : (
-                  <p><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
+                  <p className="box"><b>This crag doesn't have any routes yet</b><br/>To start adding routes: you must first create an area, then upload a topo image</p>
                 )}
               </div>
             )}
