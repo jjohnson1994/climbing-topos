@@ -42,6 +42,11 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
     }
   }
 
+  const hasUserLoggedRoute = (routeSlug: string) => {
+    return loggedRoutes.findIndex(log => log.routeSlug === routeSlug) !== -1
+      || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
+  }
+
   return (
     <>
     <div>
@@ -52,7 +57,7 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
           </div>
           <div className="is-flex is-flex-direction-column is-flex-grow-1">
             <span className="mb-2">
-              <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>{ route.title }</Link>
+              <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` } className={ hasUserLoggedRoute(String(route.slug)) ? "line-through" : "" }>{ route.title }</Link>
               <span className="mr-2"></span>
               <RatingStarsDisplay stars={ route.rating } />
             </span>
