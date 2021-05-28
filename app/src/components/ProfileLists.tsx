@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { List, ListRoute } from "core/types";
-import React, { useEffect, useState } from "react";
+import { List } from "core/types";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { lists } from "../api";
 import { useGradeHelpers } from "../api/grades";

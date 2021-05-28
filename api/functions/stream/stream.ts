@@ -7,7 +7,6 @@ const awsRegion = `${process.env.AWS_REGION}`;
 export const handler = async (event, context) => {
   try {
     const promises = event.Records.map(record => {
-      console.log('stream', record)
       const { eventName } = record;
       const { S: model } = { ...record.dynamodb.NewImage, ...record.dynamodb.OldImage }.model;
       const topicArn = generateTopicArn(
@@ -16,8 +15,6 @@ export const handler = async (event, context) => {
         awsRegion,
         IS_OFFLINE === 'true' ? '123456789012' : awsAccountId
       );
-
-      console.log('Publish to topic', topicArn);
 
       return SNS.publish({
         Message: JSON.stringify(record),

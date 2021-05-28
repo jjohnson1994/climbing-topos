@@ -41,9 +41,6 @@ export async function createCrag(cragDetails: CragRequest, token: string): Promi
     await fetch(url, {
       method: "PUT",
       body: compressedFile,
-      headers: new Headers({
-        'Content-Type': file.type,
-      })
     })
       .then(async res => {
         if (res.status !== 200) {

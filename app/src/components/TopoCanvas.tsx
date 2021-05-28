@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Route } from "../../../core/types";
+import { Route } from "core/types";
 import { domToSvgPoint, smoothPath } from "../helpers/svg";
-import { RouteDrawing } from "../../../core/types";
+import { RouteDrawing } from "core/types";
 
 import "./TopoCanvas.css";
 import TopoImageStartTag from "./TopoImageStartTag";

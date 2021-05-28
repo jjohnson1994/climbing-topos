@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Route } from "../../../../core/types";
+import { Route } from "core/types";
 import { routes } from "../../api";
 import { useGradeHelpers } from "../../api/grades";
 import LoadingSpinner from "../../components/LoadingSpinner";

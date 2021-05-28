@@ -1,5 +1,4 @@
 import { Area } from "core/types";
-import React from "react";
 import { Link } from "react-router-dom";
 
 function SearchResultCrag({ area }: { area: Area }) {

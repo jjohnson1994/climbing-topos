@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Log, LogRequest} from "../../../core/types";
+import {Log, LogRequest} from "core/types";
 import {queryStringFromObject} from "../helpers/queryString";
 
 export async function logRoutes(logs: LogRequest[], token: string) {

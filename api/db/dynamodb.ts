@@ -10,7 +10,7 @@ const dynamoDb = IS_OFFLINE === 'true'
   : new AWS.DynamoDB.DocumentClient();
 
 export function normalizeRow<T>(image: {}): T {
-  return AWS.DynamoDB.Converter.unmarshall(image)
+  return AWS.DynamoDB.Converter.unmarshall(image) as T
 }
 
 

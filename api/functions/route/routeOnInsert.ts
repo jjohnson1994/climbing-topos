@@ -33,7 +33,6 @@ export const handler = async (event: Event) => {
     })
 
     await Promise.all(promises)
-    console.log("Promises done")
     return 200;
   } catch (error) {
     console.error("Error in routesOnInsert", error)

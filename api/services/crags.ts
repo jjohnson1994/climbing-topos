@@ -63,7 +63,6 @@ export async function getCragBySlug(slug: string, userSub: string): Promise<Crag
 }
 
 export function incrementAreaCount(cragSlug: string) {
-  console.log({ cragSlug })
   return crags.update(cragSlug, {
     UpdateExpression: "set #areaCount = #areaCount + :inc",
     ExpressionAttributeNames: { 

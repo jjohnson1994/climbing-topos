@@ -1,11 +1,14 @@
-export interface Auth0User {
-  sub: string,
-  nickname: string,
-  name: string,
-  picture: string,
-  updated_at: string,
-  email: string,
-  email_verified: boolean
+export interface Auth0UserPublicData {
+  sub: string;
+  nickname: string;
+  picture: string;
+}
+
+export interface Auth0User extends Auth0UserPublicData {
+  name: string;
+  updated_at: string;
+  email: string;
+  email_verified: boolean;
 }
 
 export interface UserRegisterForm {
@@ -72,7 +75,7 @@ export interface Crag extends CragBrief {
   topos: Topo[];
   userLogs: Log[];
   verified: boolean;
-  managedBy: Auth0User;
+  managedBy: Auth0UserPublicData;
 }
 
 export interface Climb {
@@ -130,7 +133,9 @@ export interface RouteRequest {
   cragSlug: string;
   cragTitle: string;
   description: string;
-  drawing: RouteDrawing;
+  drawing: {
+    points: [number, number][];
+  };
   grade: string;
   gradingSystem: string;
   latitude: string;
@@ -151,10 +156,21 @@ export interface Route extends RouteRequest {
   rating: number;
   ratingTally: { [key: number]: number };
   siblingRoutes: Route[];
+  drawing: {
+    points: [number, number][];
+    backgroundImage: string;
+  };
   slug: string;
   topo: Topo;
   userLogs: Log[];
   verifed: boolean;
+  recentLogs: {
+    sub: string;
+    picture: string;
+    nickname: string;
+    createdAt: string;
+  }[],
+  createdBy: Auth0UserPublicData
 }
 
 export interface RouteDrawing {

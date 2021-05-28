@@ -1,18 +1,38 @@
+import {string} from "yup/lib/locale";
+import { normalizeRow } from "../../db/dynamodb";
 import { crags, areas, routes, logs } from "../../services";
+
+interface EventRecordImage {
+  hk: string;
+  cragSlug: string;
+  areaSlug: string;
+  topoSlug: string;
+  routeSlug: string;
+  rating: number;
+  gradeTaken: string;
+  createdAt: string;
+  user: {
+    picture: string;
+    nickname: string;
+    sub: string;
+  }
+}
 
 export const handler = async (event) => {
   try {
     const promises = event.Records.map(async record => {
       const message = JSON.parse(record.Sns.Message);
-      const { S: hk } = message.dynamodb.NewImage.hk;
-      const { S: cragSlug } = message.dynamodb.NewImage.cragSlug;
-      const { S: areaSlug } = message.dynamodb.NewImage.areaSlug;
-      const { S: topoSlug } = message.dynamodb.NewImage.topoSlug;
-      const { S: routeSlug } = message.dynamodb.NewImage.routeSlug;
-      const { N: rating } = message.dynamodb.NewImage.rating;
-      const { N: gradeTaken } = message.dynamodb.NewImage.gradeTaken;
-
-      console.log({ hk, cragSlug, areaSlug, topoSlug, routeSlug, rating })
+      const {
+        hk, 
+        cragSlug, 
+        areaSlug, 
+        topoSlug, 
+        routeSlug, 
+        rating, 
+        gradeTaken, 
+        createdAt,
+        user 
+      } = normalizeRow<EventRecordImage>(message.dynamodb.NewImage)
 
       /**
       * Two records are insertd for each log
@@ -33,6 +53,8 @@ export const handler = async (event) => {
             routeSlug,
             parseInt(rating, 10),
             parseInt(gradeTaken, 10),
+            createdAt,
+            user
           );
 
           resolve(true)

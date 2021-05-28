@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Log } from "../../../core/types";
+import { Log } from "core/types";
 import { logs } from "../api";
 import { useGradeHelpers } from "../api/grades";
 import { popupError } from "../helpers/alerts";

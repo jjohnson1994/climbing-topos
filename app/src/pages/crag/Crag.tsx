@@ -1,7 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { HashLink } from "react-router-hash-link";
 import { Area, Crag, Topo } from "core/types";
 import { getCragBySlug } from "../../api/crags";
 import AreaRoutesTable from "../../components/AreaRoutesTable";

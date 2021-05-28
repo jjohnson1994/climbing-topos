@@ -1,4 +1,4 @@
-import { RouteRequest, Route } from "../../../core/types";
+import { RouteRequest, Route } from "core/types";
 
 export async function createRoute(routeDescription: RouteRequest, token: string): Promise<{ routeSlug: string }> {
   const res = await fetch(`${process.env.REACT_APP_API_URL}/routes`,

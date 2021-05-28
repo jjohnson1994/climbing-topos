@@ -12,7 +12,6 @@ type Event = {
 }
 
 export const handler = async (event: Event) => {
-  console.log('areaOnInsert', event)
   try {
     const promises = event.Records.flatMap(record => {
       const message = JSON.parse(record.Sns.Message);

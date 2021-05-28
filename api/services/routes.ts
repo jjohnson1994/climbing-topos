@@ -1,8 +1,16 @@
-import {RouteRequest, Route} from "../../core/types";
+import {RouteRequest, Route, Auth0User} from "../../core/types";
 import {areas, logs, routes, topos} from "../models";
 
-export async function createRoute(routeDescription: RouteRequest, userId: string) {
-  const newRoute = await routes.createRoute(routeDescription, userId);
+export async function createRoute(routeDescription: RouteRequest, user: Auth0User) {
+  const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
+
+  const newRoute = await routes.createRoute({
+    ...routeDescription,
+    drawing: {
+      ...routeDescription.drawing,
+      backgroundImage: topo.image,
+    }
+  }, user);
 
   return newRoute;
 }
@@ -24,7 +32,8 @@ export async function getRouteBySlug(
   const [topo, area, siblingRoutes, userLogs] = await Promise.all([
     topos.getTopoBySlug(route.topoSlug),
     areas.getAreaBySlug(route.areaSlug),
-    routes.getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
+    routes
+      .getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
       .then(res => res.filter(route => route.slug !== routeSlug)),
     userSub
       ? logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug)
@@ -63,9 +72,15 @@ export async function updateMetricsOnLogInsert(
   topoSlug: string,
   routeSlug: string,
   rating: number,
-  grade: number
+  grade: number,
+  createdAt: string,
+  user: {
+    picture: string,
+    nickname: string,
+    sub: string,
+  }
 ) {
-  const { ratingTally, gradeTally } = await getRouteBySlug('', cragSlug, areaSlug, topoSlug, routeSlug);
+  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug('', cragSlug, areaSlug, topoSlug, routeSlug);
 
   // Calc new rating
   const existingRatingTally = ratingTally[rating];
@@ -83,8 +98,17 @@ export async function updateMetricsOnLogInsert(
   };
   const newGrade = parseInt(Object.entries(newGradeTally).sort((a, b) => b[1] - a[1])[0][0], 10);
 
-  console.log(newGradeTally)
-  console.log({ newGrade })
+  // Calc new recent logs listStyle
+  const newRecentLogs = [ { ...user, createdAt }, ...recentLogs || [] ]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0,100)
+    .reduce((acc, cur, idx, arr) => {
+      if (arr.findIndex(item => item.sub === cur.sub && item.createdAt === cur.createdAt) !== -1) {
+        return [ ...acc, cur ];
+      } else {
+        return acc;
+      }
+    }, [])
 
   return Promise.all([
     updateRouteRatingAndRatingTally(
@@ -104,6 +128,13 @@ export async function updateMetricsOnLogInsert(
       newGrade,
       grade,
       existingGradeTally,
+    ),
+    updateRouteRecentLogs(
+      cragSlug,
+      areaSlug,
+      topoSlug,
+      routeSlug,
+      newRecentLogs,
     ),
   ])
 }
@@ -161,7 +192,6 @@ export async function updateRouteGradeAndGradeTally(
   tallyItemToIncrement: number,
   existingGradeTally: number | undefined
 ) {
-  console.log({ grade, tallyItemToIncrement, existingGradeTally })
   if (typeof existingGradeTally !== 'undefined') {
     return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
       UpdateExpression: `
@@ -195,4 +225,28 @@ export async function updateRouteGradeAndGradeTally(
       },
     });
   }
+}
+
+export async function updateRouteRecentLogs(
+  cragSlug: string, 
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string,
+  recentLogs: {
+    picture: string,
+    nickname: string,
+    sub: string,
+  }[]
+) {
+  return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
+    UpdateExpression: `
+      set #recentLogs = :recentLogs
+    `,
+    ExpressionAttributeNames: { 
+      "#recentLogs": 'recentLogs',
+    },
+    ExpressionAttributeValues: {
+      ":recentLogs": recentLogs,
+    },
+  });
 }

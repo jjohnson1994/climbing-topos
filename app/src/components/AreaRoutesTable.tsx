@@ -1,7 +1,7 @@
 import Tippy from '@tippyjs/react';
 import { ChangeEvent, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Log, Route } from "../../../core/types";
+import { Log, Route } from "core/types";
 import { RouteLogContext } from './RouteLogContext';
 import { useGradeHelpers } from '../api/grades';
 import { useAuth0 } from '@auth0/auth0-react';

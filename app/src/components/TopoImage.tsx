@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import {useState} from "react";
 import "./TopoImage.css";
 import { smoothPath } from "../helpers/svg";
-import { Route, RouteDrawing } from "../../../core/types";
+import { Route } from "core/types";
 import TopoImageStartTag from "./TopoImageStartTag";
 
 interface PropTypes {

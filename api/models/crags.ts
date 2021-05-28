@@ -102,8 +102,6 @@ export async function getAllCrags(
       return crags
     })
 
-  console.log({ crags })
-
   return crags as Crag[];
 }
 
@@ -166,7 +164,6 @@ export async function update(
     }
 
     const response = await dynamodb.update(params).promise()
-    console.log("Crag updated", response)
   } catch (error) {
     console.error("Error updating crag", error)
   }

@@ -1,6 +1,7 @@
 import { gradingSystems, cragTags, routeTags, areaTags, rockTypes } from "../globals";
 
-export const NewCragSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewCragSchema = (yup: any) => yup.object().shape({
   title: yup.string().required("Required"),
   description: yup.string().required("Required"),
   tags: yup.array().min(1, "Select at least 1").of(
@@ -20,7 +21,8 @@ export const NewCragSchema = yup => yup.object().shape({
   accessLink: yup.string().url("Not a valid URL").nullable(),
 });
 
-export const NewAreaSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewAreaSchema = (yup: any) => yup.object().shape({
   title: yup.string().required("Required"),
   description: yup.string(),
   tags: yup.array().min(1, "Select at least 1").of(
@@ -33,7 +35,8 @@ export const NewAreaSchema = yup => yup.object().shape({
   rockType: yup.string().required("Required").oneOf(rockTypes, "Invalid Rock Type"),
 });
 
-export const NewTopoSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewTopoSchema = (yup: any) => yup.object().shape({
   orientation: yup.string().required("Required"),
   imageFileName: yup.string().required("Required"),
   image: yup.string(),
@@ -41,7 +44,8 @@ export const NewTopoSchema = yup => yup.object().shape({
   cragSlug: yup.string().required()
 });
 
-export const NewRouteScheme = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewRouteScheme = (yup :any) => yup.object().shape({
   title: yup.string().required("Required"),
   description: yup.string(),
   tags: yup.array().min(1, "Select at least 1").of(
@@ -61,7 +65,8 @@ export const NewRouteScheme = yup => yup.object().shape({
   topoSlug: yup.string().required("Required")
 });
 
-export const NewLogsSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewLogsSchema = (yup: any) => yup.object().shape({
   logs: yup.array().of(
     yup.object().shape({
       areaSlug: yup.string().required(),
@@ -91,11 +96,13 @@ export const NewLogsSchema = yup => yup.object().shape({
   )
 });
 
-export const NewListSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const NewListSchema = (yup: any) => yup.object().shape({
   title: yup.string().required("Required"),
 });
 
-export const UpdateListSchema = yup => yup.object().shape({
+// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
+export const UpdateListSchema = (yup: any) => yup.object().shape({
   routes: yup.array().of(
     yup.object().shape({
       cragSlug: yup.string().required(),

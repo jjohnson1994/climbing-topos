@@ -1,5 +1,5 @@
 import Compressor from 'compressorjs';
-import { Topo, TopoRequest } from "../../../core/types";
+import { Topo, TopoRequest } from "core/types";
 import { uploads } from "../api";
 
 const imageIsFile = (image: File) => image && image.name && image.type && image.size;

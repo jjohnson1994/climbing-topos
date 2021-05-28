@@ -1,4 +1,4 @@
-import { AreaRequest, Area } from "../../../core/types";
+import { AreaRequest, Area } from "core/types";
 
 export async function createArea(areaDescription: AreaRequest, token: string): Promise<{ slug: string }> {
   const res = await fetch(`${process.env.REACT_APP_API_URL}/areas`,
