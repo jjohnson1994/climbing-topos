@@ -199,6 +199,45 @@ export default class MyStack extends sst.Stack {
       })]
     });
 
+    const topicTopoOnInsert = new sst.Topic(this, 'topoOnInsert', {
+      subscribers: [new sst.Function(this, 'topoOnInsertHandler', {
+        handler: 'src/events/topo/topoOnInsert.handler',
+        environment: {
+          ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`, 
+          ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+          ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+          tableName: table.dynamodbTable.tableName,
+        },
+        permissions: [table]
+      })]
+    });
+
+    const topicTopoOnModify = new sst.Topic(this, 'topoOnModify', {
+      subscribers: [new sst.Function(this, 'topoOnModifyHandler', {
+        handler: 'src/events/topo/topoOnModify.handler',
+        environment: {
+          ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`, 
+          ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+          ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+          tableName: table.dynamodbTable.tableName,
+        },
+        permissions: [table]
+      })]
+    });
+
+    const topicTopoOnRemove = new sst.Topic(this, 'topoOnRemove', {
+      subscribers: [new sst.Function(this, 'topoOnRemoveHandler', {
+        handler: 'src/events/topo/topoOnRemove.handler',
+        environment: {
+          ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`, 
+          ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+          ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+          tableName: table.dynamodbTable.tableName,
+        },
+        permissions: [table]
+      })]
+    });
+
     const dynamoConsumer = new sst.Function(this, "climbing-topos-dynamodb-stream-consumer", {
       handler: "src/events/dynamodb/stream.handler",
       environment: {
@@ -213,6 +252,9 @@ export default class MyStack extends sst.Stack {
         TOPIC_ARN_ROUTE_INSERT: topicRouteOnInsert.snsTopic.topicArn,
         TOPIC_ARN_ROUTE_MODIFY: topicRouteOnModify.snsTopic.topicArn,
         TOPIC_ARN_ROUTE_REMOVE: topicRouteOnRemove.snsTopic.topicArn,
+        TOPIC_ARN_TOPO_INSERT: topicTopoOnInsert.snsTopic.topicArn,
+        TOPIC_ARN_TOPO_MODIFY: topicTopoOnModify.snsTopic.topicArn,
+        TOPIC_ARN_TOPO_REMOVE: topicTopoOnRemove.snsTopic.topicArn,
       },
       permissions: [
         topicAreaOnInsert,
