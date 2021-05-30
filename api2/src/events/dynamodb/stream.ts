@@ -36,6 +36,10 @@ export const handler: DynamoDBStreamHandler = async (
       const topicName = `TOPIC_ARN_${modelUpperCase}_${eventNameUpperCase}`;
       const topicArn = process.env[topicName];
 
+      if (!topicArn) {
+        throw new Error(`Error in Dynamodb Stream: Cannot find topicArn for topic named ${topicName}`)
+      }
+
       return SNS.publish({
         Message: JSON.stringify(record),
         TopicArn: topicArn,
