@@ -393,6 +393,7 @@ export const rockTypes = [
   'Limestone',
   'Plastic',
   'Sandstone',
+  'Tuff',
   'Wood',
 ];
 
