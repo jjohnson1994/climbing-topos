@@ -37,26 +37,6 @@ jobs:
           AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
           AWS_ACCOUNT_ID: ${{secrets.AWS_ACCOUNT_ID}}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-          # - name: Serverless Install
-          #   run: |
-          #     cd api
-          #     npm i -g serverless
-          #     npm install
-          # - name: Serverless AWS Credentials
-          #   run: serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # - name: Serverless Deploy
-          #   run: |
-          #     cd api
-          #     serverless deploy --stage production
-          #   env:
-          #     NODE_OPTIONS: --max_old_space_size=8192
-          #     ALGOLIA_ADMIN_KEY: ${{secrets.ALGOLIA_ADMIN_KEY}}
-          #     ALGOLIA_APP_ID: ${{secrets.ALGOLIA_APP_ID}}
-          #     ALGOLIA_INDEX: ${{secrets.ALGOLIA_INDEX}}
-          #     AUTH0_AUDIENCE: ${{secrets.AUTH0_AUDIENCE}}
-          #     AUTH0_DOMAIN: ${{secrets.AUTH0_DOMAIN}}
-          #     AWS_ACCOUNT_ID: ${{secrets.AWS_ACCOUNT_ID}}
-          #     SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
       - name: Build React App
         run: |
           cd app
