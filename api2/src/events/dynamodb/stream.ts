@@ -20,15 +20,21 @@ export const handler: DynamoDBStreamHandler = async (
         );
       }
 
-      const { S: model } = {
+      const modelMarshalled = {
         ...record.dynamodb.NewImage,
         ...record.dynamodb.OldImage,
       }.model;
 
+      if (!modelMarshalled) {
+        // Only publish changes to objects with Models
+        return;
+      }
+
+      const { S: model } = modelMarshalled;
+
       if (!model) {
-        throw new Error(
-          'Error in Dynamodb Stream Consumer: no "model" in records'
-        );
+        // Only publish changes to objects with Models
+        return;
       }
 
       const modelUpperCase = model.toUpperCase();

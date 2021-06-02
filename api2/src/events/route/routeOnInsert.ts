@@ -1,7 +1,7 @@
 import { Route } from "core/types";
 import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
-import { areas, crags } from "../../services";
+import { analytics, areas, crags } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
@@ -14,6 +14,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const { areaSlug, cragSlug, slug } = normalizedRow;
 
       return [
+        analytics.incrementGlobalRouteCount(),
         areas.incrementRouteCount(cragSlug, areaSlug),
         crags.incrementRouteCount(cragSlug),
         (algolaIndex.saveObject({

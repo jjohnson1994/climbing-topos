@@ -1,5 +1,5 @@
 import { normalizeRow } from "../../db/dynamodb";
-import { crags, areas, routes } from "../../services";
+import { crags, areas, routes, analytics } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
 
 interface EventRecordImage {
@@ -35,11 +35,12 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       } = normalizeRow<EventRecordImage>(message.dynamodb.NewImage);
 
       /**
-       * Two records are insertd for each log
+       * Two records are inserted for each log
        * Only run analytics on one
        */
       if (hk.match(/^user#/)) {
         await Promise.all([
+          analytics.incrementGlobalLogCount(),
           crags.incrementLogCount(cragSlug),
           areas.incrementLogCount(cragSlug, areaSlug),
           routes.incrementLogCount(cragSlug, areaSlug, topoSlug, routeSlug),
