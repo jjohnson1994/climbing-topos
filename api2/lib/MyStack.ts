@@ -268,6 +268,9 @@ export default class MyStack extends sst.Stack {
         topicRouteOnInsert,
         topicRouteOnModify,
         topicRouteOnRemove,
+        topicTopoOnInsert,
+        topicTopoOnModify,
+        topicTopoOnRemove,
       ]
     });
 
