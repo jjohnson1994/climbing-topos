@@ -386,6 +386,7 @@ export const routeTags = [
   'Overhanging',
   'Pockets',
   'Power',
+  'Sidepulls',
   'Slab',
   'Slopers',
   'Undercuts',
