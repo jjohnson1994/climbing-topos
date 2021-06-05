@@ -348,42 +348,48 @@ export const gradingSystems = [
 ];
 
 export const cragTags = [
-  'Quick Drying',
-  'Slow Drying',
-  'Quick Walk-in',
-  'Long Walk-in',
   'Esoteric',
   'Family Friendly',
   'Good Landings',
   'Highballs',
+  'Long Walk-in',
   'Lowballs',
-  'Public Transport'
+  'Public Transport',
+  'Quick Drying',
+  'Quick Walk-in',
+  'Slow Drying',
 ];
 
 export const areaTags = [
-  'Quick Drying',
-  'Slow Drying',
+  'Bad Landings',
   'Easy Access',
+  'Good Landings',
   'Hard to Find',
   'Highballs',
   'Lowballs',
   'Needs a Brush',
-  'Bad Landings',
-  'Good Landings'
+  'Quick Drying',
+  'Slow Drying',
 ];
 
 export const routeTags = [
+  'Arete',
+  'Bad Landing',
   'Crimps',
-  'Slopers',
-  'Pockets',
-  'Jugs',
   'Gaston',
-  'Undercuts',
+  'Good Landing',
   'Highball',
+  'Jugs',
+  'Low Quality Rock',
   'Lowball',
-  'Slab',
+  'Needs Brushing',
   'Overhanging',
-  'Vert'
+  'Pockets',
+  'Power',
+  'Slab',
+  'Slopers',
+  'Undercuts',
+  'Vert',
 ];
 
 export const routeTypes = ['Sport', 'Trad', 'Boulder'];
