@@ -391,6 +391,7 @@ export const routeTags = [
   'Slopers',
   'Undercuts',
   'Vert',
+  'Mantel',
 ];
 
 export const routeTypes = ['Sport', 'Trad', 'Boulder'];
