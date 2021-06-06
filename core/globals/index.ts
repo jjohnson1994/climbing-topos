@@ -382,6 +382,8 @@ export const routeTags = [
   'Jugs',
   'Low Quality Rock',
   'Lowball',
+  'Mantel',
+  'Morpho',
   'Needs Brushing',
   'Overhanging',
   'Pockets',
@@ -391,7 +393,6 @@ export const routeTags = [
   'Slopers',
   'Undercuts',
   'Vert',
-  'Mantel',
 ];
 
 export const routeTypes = ['Sport', 'Trad', 'Boulder'];
