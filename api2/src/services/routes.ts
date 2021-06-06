@@ -51,6 +51,23 @@ export async function getRouteBySlug(
   };
 }
 
+export async function decrementLogCount(
+  cragSlug: string, 
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+) {
+  return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
+    UpdateExpression: "set #logCount = #logCount + :inc",
+    ExpressionAttributeNames: { 
+      "#logCount": "logCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": -1
+    },
+  });
+}
+
 export async function incrementLogCount(
   cragSlug: string, 
   areaSlug: string,

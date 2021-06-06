@@ -43,7 +43,7 @@ export const handler: DynamoDBStreamHandler = async (
       const topicArn = process.env[topicName];
 
       if (!topicArn) {
-        throw new Error(`Error in Dynamodb Stream: Cannot find topicArn for topic named ${topicName}`)
+        return;
       }
 
       return SNS.publish({

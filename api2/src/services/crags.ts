@@ -65,6 +65,18 @@ export async function getCragBySlug(slug: string, user: Auth0User): Promise<Crag
   };
 }
 
+export function decrementAreaCount(cragSlug: string) {
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #areaCount = #areaCount - :inc",
+    ExpressionAttributeNames: { 
+      "#areaCount": "areaCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": 1
+    },
+  });
+}
+
 export function incrementAreaCount(cragSlug: string) {
   return crags.update(cragSlug, {
     UpdateExpression: "set #areaCount = #areaCount + :inc",
@@ -97,6 +109,18 @@ export function incrementRouteCount(cragSlug: string) {
     },
     ExpressionAttributeValues: {
       ":inc": 1
+    },
+  });
+}
+
+export function decrementLogCount(cragSlug: string) {
+  return crags.update(cragSlug, {
+    UpdateExpression: "set #logCount = #logCount + :inc",
+    ExpressionAttributeNames: { 
+      "#logCount": "logCount",
+    },
+    ExpressionAttributeValues: {
+      ":inc": -1
     },
   });
 }
