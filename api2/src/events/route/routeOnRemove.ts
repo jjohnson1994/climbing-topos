@@ -13,6 +13,10 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
       const { areaSlug, cragSlug, slug } = normalizedRow;
 
+      if (!(areaSlug && cragSlug && slug)) {
+        throw new Error('Missing required value. areaSlug: ${areaSlug}, cragSlug: ${cragSlug}, slug: ${slug}')
+      }
+
       return [
         areas.decrementRouteCount(cragSlug, areaSlug),
         crags.decrementRouteCount(cragSlug),
