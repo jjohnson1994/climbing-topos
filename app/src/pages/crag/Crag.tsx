@@ -257,8 +257,12 @@ function CragView() {
                     <span className="ml-1"></span>
                     <span className="tag is-primary is-capitalized">{ crag?.access }</span>
                   </h3>
-                  <p>{ crag?.accessDetails }</p>
-                  <p>{ crag?.accessLink }</p>
+                  { crag?.accessDetails && (
+                    <p>{ crag.accessDetails }</p>
+                  )}
+                  { crag?.accessLink && (
+                    <p>{ crag.accessLink }</p>
+                  )}
                 </div>
               </div>
             )}
