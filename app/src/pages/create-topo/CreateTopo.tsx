@@ -17,6 +17,7 @@ function CreateTopo() {
   const { getAccessTokenSilently } = useAuth0();
   const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState('')
 
   const { register, watch, handleSubmit, setValue, errors } = useForm({
     resolver: yupResolver(schema),
@@ -37,8 +38,10 @@ function CreateTopo() {
 
     if (files) {
       const file = files.item(0);
+      const imagePreviewUrl = URL.createObjectURL(file)
       image = file as File;
       setValue("imageFileName", file?.name);
+      setImagePreview(imagePreviewUrl)
     } else {
       setValue("imageFileName", "");
     }
@@ -88,6 +91,7 @@ function CreateTopo() {
             ref={ register({}) }
             className="is-hidden"
           />
+
           <div className="field">
             <label className="label">Image</label>
             <div className="control">
@@ -115,6 +119,16 @@ function CreateTopo() {
             </div>
             <p className="help is-danger">{ errors.imageFileName?.message }</p>
           </div>
+
+          { imagePreview && (
+            <div className="field">
+              <div className="control">
+                <figure className="image">
+                  <img src={ imagePreview } alt="topo preview"/>
+                </figure>
+              </div>
+            </div>
+          )}
 
           <div className="field">
             <label className="label">Orientation</label>
