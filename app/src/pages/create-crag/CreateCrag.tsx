@@ -28,6 +28,7 @@ function CreateCrag() {
   const [cragTags, setCragTags] = useState<string[]>([]);
   const [cragLocationLoading, setCragLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState('')
 
   const { register, control, setValue, handleSubmit, errors, watch } = useForm({
     resolver: yupResolver(schema),
@@ -60,8 +61,10 @@ function CreateCrag() {
 
     if (files) {
       const file = files.item(0);
+      const imagePreviewUrl = URL.createObjectURL(file)
       image = file as File;
       setValue("imageFileName", file?.name);
+      setImagePreview(imagePreviewUrl)
     } else {
       setValue("imageFileName", "");
     }
@@ -209,6 +212,16 @@ function CreateCrag() {
             </div>
             <p className="help is-danger">{ errors.imageFileName?.message }</p>
           </div>
+
+          { imagePreview && (
+            <div className="field">
+              <div className="control">
+                <figure className="image">
+                  <img src={ imagePreview } alt="crag preview"/>
+                </figure>
+              </div>
+            </div>
+          )}
 
           <div className="field">
             <label className="label" htmlFor="description">Description</label>
