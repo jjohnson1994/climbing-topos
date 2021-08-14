@@ -5,7 +5,6 @@ import fetch from 'node-fetch';
 export const getAuth0UserFromEvent = async (event: APIGatewayProxyEventV2): Promise<Auth0User> => {
   try {
     const { authorization } = event.headers;
-    console.log('auth sub', event?.requestContext?.authorizer?.jwt.claims.sub)
 
     if (authorization) {
       const userInfoResponse = await fetch(`${process.env.AUTH0_DOMAIN}userinfo`, {
