@@ -1,11 +1,11 @@
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
-import { Auth0User, Crag, CragRequest } from "core/types";
+import { Auth0User, Auth0UserPublicData, Crag, CragRequest } from "core/types";
 import { dynamodb } from "../db";
 import { createSlug } from "../helpers/slug";
 
-export const createCrag = async (cragDetails: CragRequest, user: Auth0User) => {
+export const createCrag = async (cragDetails: CragRequest, user: Auth0UserPublicData) => {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
 
@@ -21,7 +21,6 @@ export const createCrag = async (cragDetails: CragRequest, user: Auth0User) => {
     osmData: cragDetails.osmData,
     tags: cragDetails.tags,
     title: cragDetails.title,
-    // image: `https://${process.env.imageBucketName}.s3.eu-west-1.amazonaws.com/${cragDetails.image}`,
     image: cragDetails.image
   };
 
@@ -39,6 +38,7 @@ export const createCrag = async (cragDetails: CragRequest, user: Auth0User) => {
       county: cragDetails.osmData.address.county,
       createdAt: date,
       managedBy: user,
+      createdBy: user,
       logCount: 0,
       model: 'crag',
       routeCount: 0,

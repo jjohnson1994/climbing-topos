@@ -4,7 +4,7 @@ import {
 } from "aws-lambda";
 import {AreaRequest} from "core/types";
 import { areas, crags } from "../../services";
-import { getAuth0UserFromEvent } from "../../utils/auth";
+import { getAuth0UserFromEvent, getAuth0UserPublicDataFromEvent } from "../../utils/auth";
 import { RequestValidator, validateRequest } from "../../utils/request-validator";
 
 const cragExists: RequestValidator = async (event: APIGatewayProxyEventV2) => {
@@ -52,8 +52,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const areaDetails = JSON.parse(`${event.body}`) as AreaRequest;
-    const user = await getAuth0UserFromEvent(event);
-    const resp = await areas.createArea(areaDetails, user.sub);
+    const user = await getAuth0UserPublicDataFromEvent(event);
+    const resp = await areas.createArea(areaDetails, user);
 
     return {
       statusCode: 200,

@@ -1,8 +1,8 @@
 import { areas, logs, routes, topos } from "../models";
-import { AreaRequest, Area } from "core/types";
+import { AreaRequest, Area, Auth0UserPublicData } from "core/types";
 
-export async function createArea(areaDetails: AreaRequest, userSub: string) {
-  const newArea = await areas.createArea(areaDetails, userSub);
+export async function createArea(areaDetails: AreaRequest, user: Auth0UserPublicData) {
+  const newArea = await areas.createArea(areaDetails, user);
 
   return newArea;
 }

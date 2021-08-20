@@ -238,7 +238,7 @@ export default class MyStack extends sst.Stack {
       })]
     });
 
-    const dynamoConsumer = new sst.Function(this, "climbing-topos-dynamodb-stream-consumer", {
+    const dynamoConsumer = new sst.Function(this, "climbing-topos-dynamodb-stream-consumer-2", {
       handler: "src/events/dynamodb/stream.handler",
       environment: {
         TOPIC_ARN_AREA_INSERT: topicAreaOnInsert.snsTopic.topicArn,
@@ -274,7 +274,7 @@ export default class MyStack extends sst.Stack {
       ]
     });
 
-    table.addConsumer(this, dynamoConsumer);
+    table.addConsumers(this, { streamConsumer2: dynamoConsumer });
 
     // Create the HTTP API
     const api = new sst.Api(this, "Api", {
@@ -318,6 +318,7 @@ export default class MyStack extends sst.Stack {
         "GET /profile/logs": "src/routes/profile/logs/get.handler",
         "GET /routes": publicFunction("src/routes/routes/get.handler"),
         "POST /routes": "src/routes/routes/post.handler",
+        "GET /routes/logs": publicFunction("src/routes/routes/logs/get.handler"),
         "POST /topos": "src/routes/topos/post.handler",
         "GET /topos/{topoSlug}": publicFunction("src/routes/topos/get.handler"),
         "GET /pre-signed-upload-url":

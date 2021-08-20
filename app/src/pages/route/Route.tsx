@@ -1,13 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Route } from "core/types";
-import { routes } from "../../api";
+import { Log, Route } from "core/types";
+import { routes, logs } from "../../api";
 import { useGradeHelpers } from "../../api/grades";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RatingStarsDisplay from '../../components/RatingStarsDisplay';
 import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
+import RouteLogs from '../../components/RouteLogs';
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 
@@ -16,6 +17,7 @@ function RoutePage() {
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
+  const [routeLogs, setRouteLogs] = useState<Log[]>();
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   const context = useContext(RouteLogContext);
@@ -39,8 +41,18 @@ function RoutePage() {
       }
     }
 
+    const doGetRouteLogs = async () => {
+      try {
+        const newRouteLogs = await logs.getRouteLogs(cragSlug, areaSlug, topoSlug, routeSlug);
+        setRouteLogs(newRouteLogs);
+      } catch (error) {
+        console.error("Error loading route logs", error);
+      }
+    }
+
     if (isLoading === false) {
       doGetRoute();
+      doGetRouteLogs();
     }
   }, [routeSlug, isAuthenticated, isLoading]);
 
@@ -148,6 +160,11 @@ function RoutePage() {
               : ""
             }
           </div>
+          { routeLogs && (
+            <div className="block">
+              <RouteLogs logs={ routeLogs } />
+            </div>
+          )}
         </div>
       </section>
     </>

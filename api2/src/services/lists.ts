@@ -1,4 +1,4 @@
-import { ListRequest, ListRoutePartial } from "core/types";
+import { Auth0UserPublicData, ListRequest, ListRoutePartial } from "core/types";
 import { lists } from "../models";
 
 export async function getListBySlug(userSub: string, listSlug: string) {
@@ -16,13 +16,13 @@ export function getLists(userSub: string) {
   return lists.getUserLists(userSub);
 }
 
-export function createList(userSub: string, params: ListRequest) {
-  return lists.createList(userSub, params);
+export function createList(user: Auth0UserPublicData, params: ListRequest) {
+  return lists.createList(user, params);
 }
 
-export function addRoutesToList(userSub: string, listSlug: string, routes: ListRoutePartial[]) {
+export function addRoutesToList(user: Auth0UserPublicData, listSlug: string, routes: ListRoutePartial[]) {
   return Promise.all(routes.map(route => 
-    lists.addRouteToList(userSub, listSlug, route)
+    lists.addRouteToList(user, listSlug, route)
   ));
 }
 

@@ -2,11 +2,11 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { Auth0User, Route, RouteRequest } from "core/types";
+import { Auth0UserPublicData, Route, RouteRequest } from "core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
-export async function createRoute(routeDescription: RouteRequest, user: Auth0User) {
+export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${routeDescription.title}-${nanoid(5)}`);
 

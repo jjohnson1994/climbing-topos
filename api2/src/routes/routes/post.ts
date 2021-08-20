@@ -1,14 +1,14 @@
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {RouteRequest} from "core/types";
 import {routes} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import {getAuth0UserFromEvent, getAuth0UserPublicDataFromEvent} from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
     const routeDetails = JSON.parse(`${event.body}`) as RouteRequest;
-    const user = await getAuth0UserFromEvent(event);
+    const user = await getAuth0UserPublicDataFromEvent(event);
     const resp = await routes.createRoute(routeDetails, user);
 
     return {

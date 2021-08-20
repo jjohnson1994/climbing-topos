@@ -1,6 +1,6 @@
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {areas, topos} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import {getAuth0UserFromEvent, getAuth0UserPublicDataFromEvent} from "../../utils/auth";
 import {RequestValidator} from "../../utils/request-validator";
 
 const areaExists = (userSub: string): RequestValidator  => async (event: APIGatewayProxyEventV2) => {
@@ -33,7 +33,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserFromEvent(event);
+    const user = await getAuth0UserPublicDataFromEvent(event);
     const areaExistsResponse = await areaExists(user.sub)(event);
 
     if (areaExistsResponse !== true) {
@@ -41,7 +41,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const topoDetails = JSON.parse(`${event.body}`);
-    await topos.createTopo(topoDetails, user.sub);
+    await topos.createTopo(topoDetails, user);
 
     return {
       statusCode: 200,

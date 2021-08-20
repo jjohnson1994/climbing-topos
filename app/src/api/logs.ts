@@ -59,6 +59,25 @@ export async function getUserLogs(userSub: string, token: string, cragSlug?: str
   return json;
 }
 
+export async function getRouteLogs(cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+  const queryString = queryStringFromObject({
+    cragSlug,
+    areaSlug,
+    topoSlug,
+    routeSlug
+  });
+
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/routes/logs${queryString}`);
+
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json.logs;
+}
+
 export function useLogRoutes() {
   const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
   const [isSelectingMultipleRoutes, setIsSelectingMultipleRoutes] = useState(false);

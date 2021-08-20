@@ -77,40 +77,41 @@ export async function createRouteLog(logRequest: LogRequest, user: Auth0User) {
   ]);
 }
 
-export async function getLogsByCragSlug(cragSlug: string): Promise<Log[]> {
-  const params = {
-    TableName: String(process.env.tableName),
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames:{
-      "#hk": "hk",
-      "#sk": "sk"
-    },
-    ExpressionAttributeValues: {
-      ":hk": cragSlug,
-      ":sk": `log`
-    }
+export async function getLogs(
+  cragSlug?: string,
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string,
+): Promise<Log[]> {
+  let sk = 'log#'
+
+  if (cragSlug) {
+    sk += `crag#${cragSlug}#`
   }
 
-  const response = await dynamodb.query(params).promise()
-  return response?.Items as Log[];
-}
+  if (cragSlug && areaSlug) {
+    sk += `area#${areaSlug}#`
+  }
 
-export async function getLogsByRoute(
-  cragSlug: string,
-  areaSlug: string,
-  topoSlug: string,
-  routeSlug: string
-): Promise<Log[]> {
+  if (cragSlug && areaSlug && topoSlug) {
+    sk += `topo#${topoSlug}#`
+  }
+
+  if (cragSlug && areaSlug && topoSlug && routeSlug) {
+    sk += `route#${routeSlug}`
+  }
+
   const params = {
     TableName: String(process.env.tableName),
+    IndexName: 'gsi1',
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
     ExpressionAttributeNames: {
-      "#hk": "hk",
+      "#hk": "model",
       "#sk": "sk"
     },
     ExpressionAttributeValues: {
-      "#hk": `${cragSlug}`,
-      ":sk": `log#area#${areaSlug}#topo#${topoSlug}#route#${routeSlug}`
+      ":hk": 'log',
+      ":sk": sk
     }
   };
 

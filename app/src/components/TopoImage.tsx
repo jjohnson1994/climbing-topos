@@ -1,4 +1,3 @@
-import {useState} from "react";
 import "./TopoImage.css";
 import { smoothPath } from "../helpers/svg";
 import { Route } from "core/types";
@@ -11,20 +10,21 @@ interface PropTypes {
 }
 
 function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
-  const [routeLabels, setRouteLabels] = useState<{ [key: string]: (string | number)[] }>({});
-
   const getRouteStrokeOpacity = (routeSlug: string) => {
     if (highlightedRouteSlug && highlightedRouteSlug === routeSlug) {
       return 1;
-    } else if (!highlightedRouteSlug) {
+    }
+
+    if (!highlightedRouteSlug) {
       return 1;
     }
 
-    return 0.5;
+    return 0;
   }
 
   const startTags = () => {
     const allDrawings = routes
+      .filter(route => highlightedRouteSlug && route.slug === highlightedRouteSlug)
       .map(route => route.drawing)
       .filter(drawing => drawing.points.length > 0);
 

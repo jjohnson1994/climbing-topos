@@ -2,7 +2,7 @@ import * as yup from "yup";
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {ListAddRouteRequest} from "core/types";
 import {lists, routes} from "../../services";
-import { getAuth0UserFromEvent } from "../../utils/auth";
+import { getAuth0UserFromEvent, getAuth0UserPublicDataFromEvent } from "../../utils/auth";
 import { NewListSchema } from "core/schemas";
 import {RequestValidator} from "../../utils/request-validator";
 
@@ -55,16 +55,16 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       return queryIsValid;
     }
 
-    const { sub } = await getAuth0UserFromEvent(event);
+    const user = await getAuth0UserPublicDataFromEvent(event);
     const { slug } = event.pathParameters as {
       slug: string;
     };
     const newRoutes = JSON.parse(`${event.body}`) as ListAddRouteRequest[];
-    const list = await lists.getListBySlug(sub, slug);
+    const list = await lists.getListBySlug(user.sub, slug);
 
     const routesToList = await Promise.all(
       newRoutes.map(async routeReq => routes.getRouteBySlug(
-        sub,
+        user,
         routeReq.cragSlug,
         routeReq.areaSlug,
         routeReq.topoSlug,
@@ -73,7 +73,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     );
 
     const updateResponse = await lists.addRoutesToList(
-      sub,
+      user,
       slug,
       routesToList.map(route => ({
         areaSlug: route.areaSlug,
@@ -100,7 +100,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       }))
     );
 
-    lists.incrementRoutesCount(slug, sub)
+    lists.incrementRoutesCount(slug, user.sub)
       .catch(error => {
         console.error("Error incrementing list routes count", error);
       });

@@ -2,9 +2,9 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from "../db";
-import { Topo, TopoRequest } from "core/types";
+import { Auth0UserPublicData, Topo, TopoRequest } from "core/types";
 
-export async function createTopo(topoDetails: TopoRequest, userSub: string) {
+export async function createTopo(topoDetails: TopoRequest, user: Auth0UserPublicData) {
   const date = DateTime.utc().toString();
   const slug = nanoid();
 
@@ -25,7 +25,7 @@ export async function createTopo(topoDetails: TopoRequest, userSub: string) {
       verified: false,
       model: "topo",
       slug,
-      createdBy: userSub,
+      createdBy: user,
       createdAt: date,
       updatedAt: date
     }

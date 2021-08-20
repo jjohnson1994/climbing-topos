@@ -2,7 +2,7 @@ import * as yup from "yup";
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {NewListSchema} from "core/schemas";
 import {lists} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import {getAuth0UserFromEvent, getAuth0UserPublicDataFromEvent} from "../../utils/auth";
 import {RequestValidator} from "../../utils/request-validator";
 
 const validateBody: RequestValidator = async (event: APIGatewayProxyEventV2) => {
@@ -30,9 +30,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       return bodyIsValid;
     }
 
-    const { sub } = await getAuth0UserFromEvent(event);
+    const user = await getAuth0UserPublicDataFromEvent(event);
     const listDescription = JSON.parse(`${event.body}`);
-    const newList = await lists.createList(sub, listDescription);
+    const newList = await lists.createList(user, listDescription);
 
     return {
       statusCode: 200,

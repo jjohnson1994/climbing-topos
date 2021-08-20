@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { crags } from "../../services";
-import { getAuth0UserFromEvent } from "../../utils/auth";
+import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
 import { RequestValidator } from "../../utils/request-validator";
 import { NewCragSchema } from "core/schemas";
 
@@ -31,7 +31,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const cragDetails = JSON.parse(`${event.body}`);
-    const user = await getAuth0UserFromEvent(event);
+    const user = await getAuth0UserPublicDataFromEvent(event);
     const resp = await crags.createCrag(cragDetails, user);
 
     return {

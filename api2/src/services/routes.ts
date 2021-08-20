@@ -1,7 +1,7 @@
-import {RouteRequest, Route, Auth0User} from "core/types";
+import {RouteRequest, Route, Auth0User, Auth0UserPublicData, Log} from "core/types";
 import {areas, logs, routes, topos} from "../models";
 
-export async function createRoute(routeDescription: RouteRequest, user: Auth0User) {
+export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData) {
   const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
 
   const newRouteDescription = {
@@ -18,7 +18,7 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
 }
 
 export async function getRouteBySlug(
-  userSub: string | undefined,
+  user: Auth0UserPublicData | undefined,
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
@@ -37,8 +37,8 @@ export async function getRouteBySlug(
     routes
       .getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
       .then(res => res.filter(route => route.slug !== routeSlug)),
-    userSub
-      ? logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug)
+    user?.sub
+      ? logs.getLogsForUser(user.sub, cragSlug, areaSlug, topoSlug, routeSlug)
       : [],
   ]);
 
@@ -99,7 +99,7 @@ export async function updateMetricsOnLogInsert(
     sub: string,
   }
 ) {
-  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug('', cragSlug, areaSlug, topoSlug, routeSlug);
+  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug(undefined, cragSlug, areaSlug, topoSlug, routeSlug);
 
   // Calc new rating
   const existingRatingTally = ratingTally[rating];
@@ -119,15 +119,7 @@ export async function updateMetricsOnLogInsert(
 
   // Calc new recent logs listStyle
   const newRecentLogs = [ { ...user, createdAt }, ...recentLogs || [] ]
-    // .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0,100)
-    // .reduce((acc, cur, _idx, arr) => {
-    //   if (arr.findIndex(item => item.sub === cur.sub && item.createdAt === cur.createdAt) !== -1) {
-    //     return [ ...acc, cur ];
-    //   } else {
-    //     return acc;
-    //   }
-    // }, [])
+    .slice(0, 10)
 
   return Promise.all([
     updateRouteRatingAndRatingTally(

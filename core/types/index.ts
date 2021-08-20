@@ -211,6 +211,7 @@ export interface LogRequest {
 export interface Log extends LogRequest {
   title: string;
   slug: string;
+  user: Auth0UserPublicData;
 };
 
 export interface ListRequest {
