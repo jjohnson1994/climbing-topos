@@ -20,6 +20,7 @@ const RouteLogs = ({ logs }: Props) => {
 
   return (
     <div className="box">
+      <h3 className="title" style={{ whiteSpace: "nowrap" }}>Logs</h3>
       <Table
         columns={['Date', 'User', 'Comment', 'Rating']}
         data={ getTableData() }
