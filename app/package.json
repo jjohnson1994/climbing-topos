@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "^15.5.1",
+    "node": "16.7.0",
     "npm": "^7"
   },
   "workspaces": [
@@ -30,7 +30,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.1",
     "leaflet.markercluster": "^1.4.1",
     "luxon": "^1.25.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^6.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, User } from "@auth0/auth0-react";
 import ProfileLogs from "../../components/ProfileLogs";
 import ProfileLists from "../../components/ProfileLists";
 
 function Profile() {
   const { logout, user } = useAuth0();
-  const { name, picture, email } = user;
+  const { name, picture, email } = user as User;
   const [activeTab, setActiveTab] = useState("logs");
 
   return (
