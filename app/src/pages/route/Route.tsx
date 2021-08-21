@@ -88,85 +88,93 @@ function RoutePage() {
           <LoadingSpinner />
         </section>
       )}
-      <section className={ `section ${ loading ? "is-hidden" : "" }` }>
-        <div className="container">
-          <div className="block">
-            <div className="columns">
-              <div className="column is-two-thirds">
-                <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
-                <h6 className="subtitle is-6">
-                  { route ? convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) : "" }
-                  <span> </span>
-                  { route?.routeType }
-                  <span> </span>
-                  <RatingStarsDisplay stars={ route?.rating || 0 } />
-                </h6>
-                <h6 className="subtitle is-6">{ route?.description }</h6>
-              </div>
-              <div className="column">
-                <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
-                  <div className="is-flex is-justify-content-flex-end">
-                    <div className="tags mb-1">
-                      {route?.tags.map(tag => (
-                        <label key={ tag } className="tag is-primary is-capitalize">
-                          { tag }
-                        </label>
-                      ))} 
-                    </div>
+      { !loading && (
+        <>
+          <section className="section">
+            <div className="container">
+              <div className="block">
+                <div className="columns">
+                  <div className="column is-two-thirds">
+                    <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
+                    <h6 className="subtitle is-6">
+                      { route ? convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) : "" }
+                      <span> </span>
+                      { route?.routeType }
+                      <span> </span>
+                      <RatingStarsDisplay stars={ route?.rating || 0 } />
+                    </h6>
+                    <h6 className="subtitle is-6">{ route?.description }</h6>
                   </div>
-                  <div className="field has-addons has-addons-right is-horizontal">
-                    <p className="control">
-                      <button className="button" onClick={ btnDoneOnClick }>
-                        { hasUserLoggedRoute()
-                          ? (
-                            <>
-                              <span className="icon is-small">
-                                <i className="fas fw fa-check"></i>
-                              </span>
-                              <span>Done</span>
-                            </>
-                          )
-                          : (
-                            <>
-                              <span className="icon is-small">
-                                <i className="fas fw fa-plus"></i>
-                              </span>
-                              <span>Log Book</span>
-                            </>
-                          )
-                        }
-                      </button>
-                    </p>
-                    <p className="control">
-                      <button className="button" onClick={ btnSaveToListOnClick }>
-                        <span className="icon is-small">
-                          <i className="fas fw fa-list"></i>
-                        </span>
-                        <span>Save to List</span>
-                      </button>
-                    </p>
+                  <div className="column">
+                    <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
+                      <div className="is-flex is-justify-content-flex-end">
+                        <div className="tags mb-1">
+                          {route?.tags.map(tag => (
+                            <label key={ tag } className="tag is-primary is-capitalize">
+                              { tag }
+                            </label>
+                          ))} 
+                        </div>
+                      </div>
+                      <div className="field has-addons has-addons-right is-horizontal">
+                        <p className="control">
+                          <button className="button" onClick={ btnDoneOnClick }>
+                            { hasUserLoggedRoute()
+                              ? (
+                                <>
+                                  <span className="icon is-small">
+                                    <i className="fas fw fa-check"></i>
+                                  </span>
+                                  <span>Done</span>
+                                </>
+                              )
+                              : (
+                                <>
+                                  <span className="icon is-small">
+                                    <i className="fas fw fa-plus"></i>
+                                  </span>
+                                  <span>Log Book</span>
+                                </>
+                              )
+                            }
+                          </button>
+                        </p>
+                        <p className="control">
+                          <button className="button" onClick={ btnSaveToListOnClick }>
+                            <span className="icon is-small">
+                              <i className="fas fw fa-list"></i>
+                            </span>
+                            <span>Save to List</span>
+                          </button>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="block">
-            { route?.drawing
-              ? <TopoImage
-                  routes={[route, ...route.siblingRoutes]}
-                  highlightedRouteSlug={ route.slug }
-                  background={ `${route?.topo?.image}` }
-                />
-              : ""
-            }
-          </div>
-          { routeLogs && (
-            <div className="block">
-              <RouteLogs logs={ routeLogs } />
+          </section>
+          <section  className="section">
+            <div className="container">
+              <div className="block">
+                { route?.drawing
+                  ? <TopoImage
+                      routes={[route, ...route.siblingRoutes]}
+                      highlightedRouteSlug={ route.slug }
+                      background={ `${route?.topo?.image}` }
+                    />
+                  : ""
+                }
+              </div>
+              { routeLogs && (
+                <div className="block">
+                  <RouteLogs logs={ routeLogs } />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        </>
+      )}
     </>
   );
 }

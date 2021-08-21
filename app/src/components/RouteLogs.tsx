@@ -19,21 +19,17 @@ const RouteLogs = ({ logs }: Props) => {
   }
 
   return (
-    <section className="section">
-      <div className="container">
-        <div className="box">
-          <Table
-            columns={['Date', 'User', 'Comment', 'Rating']}
-            data={ getTableData() }
-            special={{
-              'Rating': rating => (
-                <RatingStarsDisplay stars={ rating } />
-              )
-            }}
-          />
-        </div>
-      </div>
-    </section>
+    <div className="box">
+      <Table
+        columns={['Date', 'User', 'Comment', 'Rating']}
+        data={ getTableData() }
+        special={{
+          'Rating': rating => (
+            <RatingStarsDisplay stars={ rating } />
+          )
+        }}
+      />
+    </div>
   )
 }
 
