@@ -24,7 +24,7 @@ function TopoImage({ routes, background, highlightedRouteSlug }: PropTypes) {
 
   const startTags = () => {
     const allDrawings = routes
-      .filter(route => highlightedRouteSlug && route.slug === highlightedRouteSlug)
+      .filter(route => route.slug === highlightedRouteSlug || !highlightedRouteSlug)
       .map(route => route.drawing)
       .filter(drawing => drawing.points.length > 0);
 
