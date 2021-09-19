@@ -6,7 +6,11 @@ import { Area, AreaRequest, Auth0UserPublicData } from "core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
-export async function createArea(areaDescription: AreaRequest, user: Auth0UserPublicData) {
+export async function createArea(
+  areaDescription: AreaRequest,
+  user: Auth0UserPublicData,
+  areaVerified: boolean
+) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${areaDescription.title}-${nanoid(5)}`);
   
@@ -35,10 +39,10 @@ export async function createArea(areaDescription: AreaRequest, user: Auth0UserPu
       sk: `area#${slug}#`,
       ...areaData,
       logCount: 0,
-      verified: false,
       model: 'area',
       routeCount: 0,
       slug,
+      verified: areaVerified,
       createdBy: user,
       createdAt: date,
       updatedAt: date

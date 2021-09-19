@@ -2,23 +2,42 @@ import { Area } from "core/types";
 import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
 import { SNSHandler, SNSEvent } from "aws-lambda";
+import {crags} from "../../services";
+
+export const didBecomeVerified = (newImage: Area, oldImage: Area) => {
+  if (newImage.verified === true && oldImage.verified === false) {
+    return true;
+  }
+
+  return false;
+}
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
     const promises = event.Records.flatMap((record) => {
       const message = JSON.parse(record.Sns.Message);
       const newImage = message.dynamodb.NewImage;
-      const normalizedRow = normalizeRow<Area>(newImage);
+      const oldImage = message.dynamodb.OldImage;
+      const normalizedNewImage = normalizeRow<Area>(newImage);
+      const normalizedOldImage = normalizeRow<Area>(oldImage);
 
-      const { slug } = normalizedRow;
+      const { cragSlug, slug } = normalizedNewImage;
 
-      return [
-        algolaIndex.saveObject({
-          ...normalizedRow,
-          model: "area",
-          objectID: slug,
-        }),
-      ];
+      const tasks: Promise<any>[] = []
+
+      const becameVerified = didBecomeVerified(normalizedNewImage, normalizedOldImage);
+      if (becameVerified) {
+        tasks.push(
+          crags.incrementAreaCount(cragSlug),
+          algolaIndex.saveObject({
+            ...normalizedNewImage,
+            model: "area",
+            objectID: slug,
+          }),
+        );
+      }
+
+      return tasks;
     });
 
     await Promise.all(promises);

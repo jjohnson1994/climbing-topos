@@ -45,12 +45,15 @@ export async function getAllCrags(
   return allCrags;
 }
 
-export async function getCragBySlug(slug: string, user: Auth0User): Promise<Crag> {
+export async function getCragBySlug(slug: string, user: Auth0UserPublicData): Promise<Crag> {
   const [crag, cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
-    areas.getAreasByCragSlug(slug),
-    routes.getRoutesByCragSlug(slug),
-    topos.getToposByCragSlug(slug),
+    areas.getAreasByCragSlug(slug)
+      .then(res => res.filter(area => area.verified === true || area.createdBy.sub === user.sub)),
+    routes.getRoutesBySlug(slug)
+      .then(res => res.filter(route => route.verified === true || route.createdBy.sub === user.sub)),
+    topos.getToposByCragSlug(slug)
+      .then(res => res.filter(topo => topo.verified === true || topo.createdBy.sub === user.sub)),
     user.sub
       ? logs.getLogsForUser(user.sub, slug)
       : []

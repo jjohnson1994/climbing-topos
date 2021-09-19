@@ -5,3 +5,4 @@ export * as logs from './logs';
 export * as topos from './topos';
 export * as routes from './routes';
 export * as globals from './globals';
+export * as users from './users';

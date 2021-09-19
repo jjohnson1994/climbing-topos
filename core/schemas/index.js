@@ -45,6 +45,7 @@ export const NewCragSchema = (yup) =>
       .required("Add at least 1")
       .min(1, "Add at least 1"),
     accessLink: yup.string().url("Not a valid URL").nullable(),
+    acceptTerms: yup.boolean().oneOf([true], 'Required'),
   });
 
 export const NewAreaSchema = (yup) =>

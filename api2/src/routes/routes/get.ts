@@ -1,6 +1,6 @@
-import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
-import {routes} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
+import { routes } from "../../services";
+import { getAuth0UserFromEvent } from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2

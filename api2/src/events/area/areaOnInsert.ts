@@ -11,16 +11,22 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const newImage = message.dynamodb.NewImage;
       const normalizedRow = normalizeRow<Area>(newImage);
 
-      const { cragSlug, slug } = normalizedRow;
+      const { cragSlug, slug, verified } = normalizedRow;
 
-      return [
-        crags.incrementAreaCount(cragSlug),
-        (algolaIndex.saveObject({
-          ...normalizedRow,
-          model: "area",
-          objectID: slug,
-        }) as unknown) as Promise<any>,
-      ];
+      const tasks: Promise<any>[] = []
+
+      if (verified) {
+        tasks.push(
+          crags.incrementAreaCount(cragSlug),
+          algolaIndex.saveObject({
+            ...normalizedRow,
+            model: "area",
+            objectID: slug,
+          })
+        )
+      }
+
+      return tasks;
     });
 
     await Promise.all(promises);

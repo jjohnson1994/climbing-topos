@@ -1,30 +1,46 @@
-import {RouteRequest, Route, Auth0User, Auth0UserPublicData, Log} from "core/types";
-import {areas, logs, routes, topos} from "../models";
+import {
+  RouteRequest,
+  Route,
+  Auth0User,
+  Auth0UserPublicData,
+  Log,
+} from "core/types";
+import { areas, crags, logs, routes, topos } from "../models";
 
-export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData) {
+export async function createRoute(
+  routeDescription: RouteRequest,
+  user: Auth0UserPublicData
+) {
   const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
+  const crag = await crags.getCragBySlug(routeDescription.cragSlug);
+
+  const routeVerified = crag.managedBy.sub === user.sub;
 
   const newRouteDescription = {
     ...routeDescription,
     drawing: {
       ...routeDescription.drawing,
       backgroundImage: topo.image,
-    }
+    },
   };
 
-  const newRoute = await routes.createRoute(newRouteDescription, user);
+  const newRoute = await routes.createRoute(
+    newRouteDescription,
+    user,
+    routeVerified
+  );
 
   return newRoute;
 }
 
 export async function getRouteBySlug(
-  user: Auth0UserPublicData | undefined,
+  user: Auth0UserPublicData,
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string
 ): Promise<Route> {
-  const route = await routes.getRouteBySlug(
+  const [route] = await routes.getRoutesBySlug(
     cragSlug,
     areaSlug,
     topoSlug,
@@ -35,8 +51,14 @@ export async function getRouteBySlug(
     topos.getTopoBySlug(route.topoSlug),
     areas.getAreaBySlug(route.areaSlug),
     routes
-      .getRoutesByTopoSlug(cragSlug, areaSlug, topoSlug)
-      .then(res => res.filter(route => route.slug !== routeSlug)),
+      .getRoutesBySlug(cragSlug, areaSlug, topoSlug)
+      .then((res) =>
+        res.filter(
+          (route) =>
+            route.slug !== routeSlug &&
+            (route.verified === true || route.createdBy.sub === user.sub)
+        )
+      ),
     user?.sub
       ? logs.getLogsForUser(user.sub, cragSlug, areaSlug, topoSlug, routeSlug)
       : [],
@@ -47,46 +69,46 @@ export async function getRouteBySlug(
     topo,
     area,
     siblingRoutes,
-    userLogs
+    userLogs,
   };
 }
 
 export async function decrementLogCount(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: "set #logCount = #logCount + :inc",
-    ExpressionAttributeNames: { 
+    ExpressionAttributeNames: {
       "#logCount": "logCount",
     },
     ExpressionAttributeValues: {
-      ":inc": -1
+      ":inc": -1,
     },
   });
 }
 
 export async function incrementLogCount(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: "set #logCount = #logCount + :inc",
-    ExpressionAttributeNames: { 
+    ExpressionAttributeNames: {
       "#logCount": "logCount",
     },
     ExpressionAttributeValues: {
-      ":inc": 1
+      ":inc": 1,
     },
   });
 }
 
 export async function updateMetricsOnLogInsert(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
@@ -94,32 +116,48 @@ export async function updateMetricsOnLogInsert(
   grade: number,
   createdAt: string,
   user: {
-    picture: string,
-    nickname: string,
-    sub: string,
+    picture: string;
+    nickname: string;
+    sub: string;
   }
 ) {
-  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug(undefined, cragSlug, areaSlug, topoSlug, routeSlug);
+  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug(
+    user,
+    cragSlug,
+    areaSlug,
+    topoSlug,
+    routeSlug
+  );
 
   // Calc new rating
   const existingRatingTally = ratingTally[rating];
   const newRatingTally = {
     ...ratingTally,
-    [rating]: typeof existingRatingTally !== 'undefined' ? existingRatingTally + 1 : 1,
+    [rating]:
+      typeof existingRatingTally !== "undefined" ? existingRatingTally + 1 : 1,
   };
-  const newRating = parseInt(Object.entries(newRatingTally).sort((a, b) => b[1] - a[1])[0][0], 10);
+  const newRating = parseInt(
+    Object.entries(newRatingTally).sort((a, b) => b[1] - a[1])[0][0],
+    10
+  );
 
   // Calc new grade
   const existingGradeTally = gradeTally[grade];
   const newGradeTally = {
     ...gradeTally,
-    [grade]: typeof existingGradeTally !== 'undefined' ? existingGradeTally + 1 : 1,
+    [grade]:
+      typeof existingGradeTally !== "undefined" ? existingGradeTally + 1 : 1,
   };
-  const newGrade = parseInt(Object.entries(newGradeTally).sort((a, b) => b[1] - a[1])[0][0], 10);
+  const newGrade = parseInt(
+    Object.entries(newGradeTally).sort((a, b) => b[1] - a[1])[0][0],
+    10
+  );
 
   // Calc new recent logs listStyle
-  const newRecentLogs = [ { ...user, createdAt }, ...recentLogs || [] ]
-    .slice(0, 10)
+  const newRecentLogs = [{ ...user, createdAt }, ...(recentLogs || [])].slice(
+    0,
+    10
+  );
 
   return Promise.all([
     updateRouteRatingAndRatingTally(
@@ -129,7 +167,7 @@ export async function updateMetricsOnLogInsert(
       routeSlug,
       newRating,
       rating,
-      existingRatingTally,
+      existingRatingTally
     ),
     updateRouteGradeAndGradeTally(
       cragSlug,
@@ -138,20 +176,20 @@ export async function updateMetricsOnLogInsert(
       routeSlug,
       newGrade,
       grade,
-      existingGradeTally,
+      existingGradeTally
     ),
     updateRouteRecentLogs(
       cragSlug,
       areaSlug,
       topoSlug,
       routeSlug,
-      newRecentLogs,
+      newRecentLogs
     ),
-  ])
+  ]);
 }
 
 export async function updateRouteRatingAndRatingTally(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
@@ -159,13 +197,13 @@ export async function updateRouteRatingAndRatingTally(
   tallyItemToIncrement: number,
   existingRatingTally: number | undefined
 ) {
-  if (typeof existingRatingTally !== 'undefined') {
+  if (typeof existingRatingTally !== "undefined") {
     return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
       UpdateExpression: `
         set #ratingTally.#userVote = #ratingTally.#userVote + :inc,
         #rating = :rating
       `,
-      ExpressionAttributeNames: { 
+      ExpressionAttributeNames: {
         "#ratingTally": "ratingTally",
         "#rating": "rating",
         "#userVote": `${tallyItemToIncrement}`,
@@ -181,7 +219,7 @@ export async function updateRouteRatingAndRatingTally(
         set #ratingTally.#userVote = :inc,
         #rating = :rating
       `,
-      ExpressionAttributeNames: { 
+      ExpressionAttributeNames: {
         "#ratingTally": "ratingTally",
         "#rating": "rating",
         "#userVote": `${tallyItemToIncrement}`,
@@ -195,7 +233,7 @@ export async function updateRouteRatingAndRatingTally(
 }
 
 export async function updateRouteGradeAndGradeTally(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
@@ -203,13 +241,13 @@ export async function updateRouteGradeAndGradeTally(
   tallyItemToIncrement: number,
   existingGradeTally: number | undefined
 ) {
-  if (typeof existingGradeTally !== 'undefined') {
+  if (typeof existingGradeTally !== "undefined") {
     return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
       UpdateExpression: `
         set #gradeTally.#userVote = #gradeTally.#userVote + :inc,
         #gradeModal = :gradeModal
       `,
-      ExpressionAttributeNames: { 
+      ExpressionAttributeNames: {
         "#gradeTally": "gradeTally",
         "#gradeModal": "gradeModal",
         "#userVote": `${tallyItemToIncrement}`,
@@ -225,7 +263,7 @@ export async function updateRouteGradeAndGradeTally(
         set #gradeTally.#userVote = :inc,
         #gradeModal = :gradeModal
       `,
-      ExpressionAttributeNames: { 
+      ExpressionAttributeNames: {
         "#gradeTally": "gradeTally",
         "#gradeModal": "gradeModal",
         "#userVote": `${tallyItemToIncrement}`,
@@ -239,22 +277,22 @@ export async function updateRouteGradeAndGradeTally(
 }
 
 export async function updateRouteRecentLogs(
-  cragSlug: string, 
+  cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
   recentLogs: {
-    picture: string,
-    nickname: string,
-    sub: string,
+    picture: string;
+    nickname: string;
+    sub: string;
   }[]
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: `
       set #recentLogs = :recentLogs
     `,
-    ExpressionAttributeNames: { 
-      "#recentLogs": 'recentLogs',
+    ExpressionAttributeNames: {
+      "#recentLogs": "recentLogs",
     },
     ExpressionAttributeValues: {
       ":recentLogs": recentLogs,

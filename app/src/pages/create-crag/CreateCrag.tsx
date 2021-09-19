@@ -6,6 +6,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
 import { crags, globals } from "../../api";
+import Message, {Color} from "../../components/Message";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 import { reverseLookup } from '../../helpers/nominatim';
@@ -50,6 +51,7 @@ function CreateCrag() {
       tags: [] as string[],
       title: "",
       imageFileName: "",
+      acceptTerms: false,
     }
   });
 
@@ -172,6 +174,25 @@ function CreateCrag() {
             ref={ register({}) }
             className="is-hidden"
           />
+
+          <Message color={ Color.isWarning } header="Terms & Conditions">
+            <p>By creating a crag you agree to become the crag maintainer. This means you're in charge of approving any new routes and keeping things up to date.</p>
+            <br />
+            <div className="is-flex is-justify-content-flex-end	">
+              <div className="is-flex is-flex-direction-column is-align-items-flex-end">
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    name="acceptTerms"
+                    ref={ register }                  
+                  />
+                    <span className="ml-2">Agree</span>
+                </label>
+                <p className="help is-danger">{ errors.acceptTerms?.message }</p>
+              </div>
+            </div>
+          </Message>
+
           <div className="field">
             <label className="label" htmlFor="title">Title</label>
             <div className="control">

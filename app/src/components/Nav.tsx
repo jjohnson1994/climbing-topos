@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import Button from "../elements/Button";
+import NavbarItem from "../elements/NavbarItem";
 
 function Nav() {
   const [navBarMenuClass, setNavBarMenuClass] = useState("");
@@ -54,27 +56,21 @@ function Nav() {
         </div>
 
         <div className="navbar-end">
-          <div className="navbar-item">
+          <NavbarItem>
             <Link to="/search" className="navbar-item">
               <i className="fas fa-search"></i>
             </Link>
-          </div>
+          </NavbarItem>
           <div className="navbar-item">
           { isAuthenticated 
             ? <Link to="/profile">
-                <button className="button">
-                  <span className="icon">
-                    <i className="fas fa-user"></i>
-                  </span>
-                  <span>Profile</span>
-                </button>
+                <Button icon="fas fa-user">
+                  Profile
+                </Button>
               </Link>
-            : <button className="button" onClick={ loginWithRedirect }>
-                <span className="icon">
-                  <i className="fas fa-user"></i>
-                </span>
-                <span>Login</span>
-              </button>
+            : <Button onClick={ loginWithRedirect } icon="fas fa-user">
+                Login
+              </Button>
           }
           </div>
         </div>

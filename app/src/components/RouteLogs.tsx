@@ -24,10 +24,13 @@ const RouteLogs = ({ logs }: Props) => {
       <Table
         columns={['Date', 'User', 'Comment', 'Rating']}
         data={ getTableData() }
-        special={{
-          'Rating': rating => (
+        fieldComponents={{
+          Rating: rating => (
             <RatingStarsDisplay stars={ rating } />
           )
+        }}
+        fieldClasses={{
+          Rating: 'is-whitespace-no-wrap'
         }}
       />
     </div>

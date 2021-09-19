@@ -109,8 +109,10 @@ export interface Area extends AreaRequest {
   slug: string;
   topos: Topo[];
   userLogs: Log[];
-  verifed: boolean;
+  verified: boolean;
+  createdBy: Auth0UserPublicData;
 }
+
 export interface TopoRequest {
   areaSlug: string;
   cragSlug: string;
@@ -121,7 +123,8 @@ export interface TopoRequest {
 }
 
 export interface Topo extends TopoRequest {
-  verifed: boolean;
+  verified: boolean;
+  createdBy: Auth0UserPublicData;
 }
 
 export interface RouteRequest {
@@ -163,7 +166,7 @@ export interface Route extends RouteRequest {
   slug: string;
   topo: Topo;
   userLogs: Log[];
-  verifed: boolean;
+  verified: boolean;
   recentLogs: {
     sub: string;
     picture: string;

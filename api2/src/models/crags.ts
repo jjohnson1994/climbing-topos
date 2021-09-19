@@ -1,7 +1,7 @@
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
-import { Auth0User, Auth0UserPublicData, Crag, CragRequest } from "core/types";
+import { Auth0UserPublicData, Crag, CragRequest } from "core/types";
 import { dynamodb } from "../db";
 import { createSlug } from "../helpers/slug";
 

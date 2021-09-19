@@ -6,7 +6,7 @@ import { Auth0UserPublicData, Route, RouteRequest } from "core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
-export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData) {
+export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData, verified: boolean) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${routeDescription.title}-${nanoid(5)}`);
 
@@ -38,7 +38,6 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
       hk: routeDescription.cragSlug,
       sk: `route#area#${routeDescription.areaSlug}#topo#${routeDescription.topoSlug}#${slug}`,
       ...routeData,
-      verified: false,
       gradeTally: {},
       gradeModal: routeDescription.grade,
       logCount: 0,
@@ -46,6 +45,7 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
       rating: 0,
       ratingTally: {},
       slug,
+      verified,
       createdBy: user,
       createdAt: date,
       updatedAt: date
@@ -59,69 +59,41 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
   };
 }
 
-export async function getRouteBySlug(
+export async function getRoutesBySlug(
   cragSlug: string,
-  areaSlug: string,
-  topoSlug: string,
-  routeSlug: string
-): Promise<Route> {
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string
+): Promise<Route[]> {
+  let queryString = `route#`;
+
+  if (areaSlug) {
+    queryString += `area#${areaSlug}#`;
+  }
+
+  if (areaSlug && topoSlug) {
+    queryString += `topo#${topoSlug}#`;
+  }
+
+  if (areaSlug && topoSlug && routeSlug) {
+    queryString += routeSlug;
+  }
+
   const params = {
     TableName: String(process.env.tableName),
-    KeyConditionExpression: "#hk = :hk AND #sk = :sk",
+    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
     ExpressionAttributeNames: {
       "#hk": "hk",
       "#sk": "sk"
     },
     ExpressionAttributeValues: {
       ":hk": cragSlug,
-      ":sk": `route#area#${areaSlug}#topo#${topoSlug}#${routeSlug}`
+      ":sk": queryString
     }
   }
 
   const route = await dynamodb.query(params).promise()
-  return route?.Items?.[0] as Route;
-}
-
-export async function getRoutesByCragSlug(
-  cragSlug: string
-): Promise<Route[]> {
-  const params = {
-    TableName: String(process.env.tableName),
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames: {
-      "#hk": "hk",
-      "#sk": "sk"
-    },
-    ExpressionAttributeValues: {
-      ":hk": cragSlug,
-      ":sk": `route#`
-    }
-  }
-
-  const response = await dynamodb.query(params).promise()
-  return response?.Items as Route[];
-}
-
-export async function getRoutesByTopoSlug(
-  cragSlug: string,
-  areaSlug: string,
-  topoSlug: string
-): Promise<Route[]> {
-  const params = {
-    TableName: String(process.env.tableName),
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames: {
-      "#hk": "hk",
-      "#sk": "sk"
-    },
-    ExpressionAttributeValues: {
-      ":hk": cragSlug,
-      ":sk": `route#area#${areaSlug}#topo#${topoSlug}`
-    }
-  }
-
-  const response = await dynamodb.query(params).promise()
-  return response?.Items as Route[];
+  return route?.Items as Route[];
 }
 
 export async function update(

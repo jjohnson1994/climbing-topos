@@ -1,10 +1,11 @@
 interface Props {
   columns: string[];
   data: string[][];
-  special: Record<string, (fieldValue: any) => any>
+  fieldComponents: Record<string, (fieldValue: any) => any>;
+  fieldClasses: Record<string, string>;
 }
 
-const Table = ({ columns, data, special }: Props) => {
+const Table = ({ columns, data, fieldComponents, fieldClasses }: Props) => {
   const getColumnTitle = (column: number) => {
     return columns[column];
   }
@@ -13,11 +14,21 @@ const Table = ({ columns, data, special }: Props) => {
     const columnTitle = getColumnTitle(column);
     const columnValue = data[row][column];
 
-    if (Object.keys(special).includes(columnTitle)) {
-      return special[columnTitle](columnValue);
+    if (Object.keys(fieldComponents).includes(columnTitle)) {
+      return fieldComponents[columnTitle](columnValue);
     }
 
     return columnValue;
+  }
+
+  const getFieldClasses = (column: number): string => {
+    const columnTitle = getColumnTitle(column);
+
+    if (Object.keys(fieldClasses).includes(columnTitle)) {
+      return fieldClasses[columnTitle];
+    }
+
+    return '';
   }
 
   return (
@@ -33,7 +44,10 @@ const Table = ({ columns, data, special }: Props) => {
         { data.map((column, rowIndex) => (
           <tr> {
             column.map((_field, colIndex) => (
-              <td key={ `tableBody_${rowIndex}_${colIndex}` }>
+              <td
+                key={ `tableBody_${rowIndex}_${colIndex}` }
+                className={ getFieldClasses(colIndex) }
+              >
                 { getFieldValue(rowIndex, colIndex) }
               </td>
             ))}

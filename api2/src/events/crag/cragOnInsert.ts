@@ -2,7 +2,7 @@ import { Crag } from "core/types";
 import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
 import { SNSHandler, SNSEvent } from "aws-lambda";
-import {analytics} from "../../services";
+import { analytics } from "../../services";
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {

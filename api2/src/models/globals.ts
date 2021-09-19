@@ -15,9 +15,5 @@ export const update = (updateProps: {
     ...updateProps,
   };
 
-  return dynamodb.update(params, (err) => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  return dynamodb.update(params).promise();
 };
