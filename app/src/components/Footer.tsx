@@ -16,14 +16,6 @@ function Footer() {
               <a href="https://forms.gle/y6Tt2nVdaVAMdf189" target="_blank" rel="noopener noreferrer">Report a Bug</a>
               <br />
             </p>
-            <p>
-              <Link to="#" className="has-text-dark mr-2">
-                <i className="fab fa-github"></i>
-              </Link>
-              <Link to="#" className="has-text-dark">
-                <i className="fab fa-instagram"></i>
-              </Link>
-            </p>
           </div>
         </div>
       </div>
