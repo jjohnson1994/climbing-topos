@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
+import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
 import { dynamodb } from "../db";
 import { Auth0UserPublicData, Topo, TopoRequest } from "core/types";
@@ -112,4 +113,32 @@ export async function getTopoBySlug(slug: string): Promise<Topo> {
 
   const crag = await dynamodb.query(params).promise()
   return crag?.Items?.[0] as Topo;
+}
+
+export async function update(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  updateProps: {
+    UpdateExpression: UpdateExpression;
+    ExpressionAttributeNames: ExpressionAttributeNameMap;
+    ExpressionAttributeValues: { [key: string]: any };
+  }
+) {
+  const params = {
+    TableName: String(process.env.tableName),
+    Key: {
+      "hk": cragSlug,
+      "sk": `topo#${areaSlug}#${topoSlug}`
+    },
+    ...updateProps
+  }
+
+  console.log('update topo', { params })
+
+  return dynamodb.update(params, (error) => {
+    if (error) {
+      console.error(error);
+    }
+  });
 }

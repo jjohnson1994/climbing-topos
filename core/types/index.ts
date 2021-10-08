@@ -69,13 +69,24 @@ export interface CragBrief extends CragRequest {
 
 export interface Crag extends CragBrief {
   areas: Area[];
-  owner: string;
+  model: 'Crag';
   routes: Route[];
   slug: string; 
   topos: Topo[];
   userLogs: Log[];
   verified: boolean;
   managedBy: Auth0UserPublicData;
+}
+
+export interface CragPatch {
+  title?: string;
+  description?: string;
+  newTags?: string[];
+  removeTags?: string[];
+  latitude?: string;
+  longitude?: string;
+  access?: string;
+  accessLink?: string;
 }
 
 export interface Climb {
@@ -102,7 +113,20 @@ export interface AreaRequest {
   title: string;
 }
 
+export interface AreaPatch {
+  title?: string;
+  description?: string;
+  addTags?: string[];
+  removeTags?: string[];
+  latitude?: string;
+  longitude?: string;
+  acess?: string;
+  rockType?: string;
+  verified?: boolean;
+}
+
 export interface Area extends AreaRequest {
+  model: 'area';
   routeCount: number;
   logCount: number;
   routes: Route[];
@@ -123,8 +147,16 @@ export interface TopoRequest {
 }
 
 export interface Topo extends TopoRequest {
+  model: 'topo';
   verified: boolean;
   createdBy: Auth0UserPublicData;
+}
+
+export interface TopoPatch {
+  orientation?: string;
+  imageFileName?: string;
+  image?: string;
+  verified?: boolean;
 }
 
 export interface RouteRequest {
@@ -153,6 +185,7 @@ export interface RouteRequest {
 
 export interface Route extends RouteRequest {
   area: Area;
+  model: 'route';
   gradeModal: number;
   gradeTally: { [key: number]: number };
   logCount: number;
@@ -174,6 +207,18 @@ export interface Route extends RouteRequest {
     createdAt: string;
   }[],
   createdBy: Auth0UserPublicData
+}
+
+export interface RoutePatch {
+  title?: string;
+  description?: string;
+  newTags?: string[];
+  removeTags?: string[];
+  drawing?: Pick<Route, 'drawing'>,
+  routeType?: string;
+  gradingSystem?: string;
+  grade?: string;
+  verified?: boolean;
 }
 
 export interface RouteDrawing {

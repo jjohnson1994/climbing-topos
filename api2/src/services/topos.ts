@@ -1,6 +1,6 @@
 import { topos } from "../models";
 import { crags } from "../services";
-import { Auth0UserPublicData, TopoRequest } from "core/types";
+import { Auth0UserPublicData, TopoPatch, TopoRequest } from "core/types";
 
 export async function createTopo(topoDetails: TopoRequest, user: Auth0UserPublicData) {
   const crag = await crags.getCragBySlug(topoDetails.cragSlug, user);
@@ -13,4 +13,39 @@ export const getTopoBySlug = async (slug: string) => {
   const topo = await topos.getTopoBySlug(slug);
 
   return topo;
+}
+
+export async function updateTopo(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  topoPatch: TopoPatch,
+) {
+  const expressionAttributeNames = Object.entries(topoPatch).reduce(
+    (acc, [key]) => ({
+      ...acc,
+      [`#${key}`]: key,
+    }),
+    {}
+  );
+
+  const expressionAttributeValues = Object.entries(topoPatch).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [`:${key}`]: value,
+    }),
+    {}
+  );
+
+  const updateExpression = Object.entries(topoPatch).map(
+    ([key]) => {
+      return `#${key} = :${key}`;
+    }
+  ).join(', ');
+
+  return topos.update(cragSlug, areaSlug, topoSlug, {
+    UpdateExpression: `set ${updateExpression}`,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues,
+  });
 }

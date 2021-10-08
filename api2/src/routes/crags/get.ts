@@ -7,12 +7,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (
 ) => {
   try {
     const user = await getAuth0UserFromEvent(event);
-    const { sortBy, sortOrder, limit = '10', offset = '0' } = event.queryStringParameters || {} as {
-      sortBy: string;
-      sortOrder: string;
-      limit: string;
-      offset: string;
-    };
+    const { sortBy, sortOrder, limit = '10', offset = '0' } = event.queryStringParameters
+      || {} as Record<string, string>;
     const { slug } = event.pathParameters || {} as {
       slug: string;
     };

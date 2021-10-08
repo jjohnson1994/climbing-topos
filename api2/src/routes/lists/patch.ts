@@ -63,7 +63,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     const list = await lists.getListBySlug(user.sub, slug);
 
     const routesToList = await Promise.all(
-      newRoutes.map(async routeReq => routes.getRouteBySlug(
+      newRoutes.map(async routeReq => routes.listRoutes(
         user,
         routeReq.cragSlug,
         routeReq.areaSlug,

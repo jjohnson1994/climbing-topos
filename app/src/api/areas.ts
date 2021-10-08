@@ -1,15 +1,17 @@
-import { AreaRequest, Area } from "core/types";
+import { AreaRequest, Area, AreaPatch } from "core/types";
 
-export async function createArea(areaDescription: AreaRequest, token: string): Promise<{ slug: string }> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(areaDescription)
-    });
+export async function createArea(
+  areaDescription: AreaRequest,
+  token: string
+): Promise<{ slug: string }> {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(areaDescription),
+  });
   const json = await res.json();
 
   if (res.status !== 200) {
@@ -20,11 +22,38 @@ export async function createArea(areaDescription: AreaRequest, token: string): P
 }
 
 export async function getArea(areaSlug: string, token: string): Promise<Area> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas/${areaSlug}`, {
-    headers: {
-      ...(token && { Authorization: `Bearer ${token}` })
+  const res = await fetch(
+    `${process.env.REACT_APP_API_URL}/areas/${areaSlug}`,
+    {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     }
-  });
+  );
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
+}
+
+export async function updateArea(
+  areaSlug: string,
+  patch: AreaPatch,
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(
+    `${process.env.REACT_APP_API_URL}/areas/${areaSlug}`,
+    {
+      method: "PATCH",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(patch),
+    }
+  );
   const json = await res.json();
 
   if (res.status !== 200) {

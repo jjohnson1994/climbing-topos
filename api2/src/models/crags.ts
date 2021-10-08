@@ -169,7 +169,9 @@ export async function update(
     }
 
     const response = await dynamodb.update(params).promise()
+    return response
   } catch (error) {
     console.error("Error updating crag", error)
+    throw error
   }
 }

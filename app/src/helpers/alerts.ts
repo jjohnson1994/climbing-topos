@@ -62,7 +62,7 @@ export async function popupError(message: string, didClose = () => {}) {
 export async function popupSuccess(message: string, didClose = () => {}) {
   const { default: swal } = await import("sweetalert2");
 
-  swal.fire({ icon: "success", text: message , didClose});
+  swal.fire({ icon: "success", text: message , didClose });
 }
 
 export async function popupWarning(message: string, didClose = () => {}) {

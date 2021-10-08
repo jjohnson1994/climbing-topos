@@ -1,5 +1,5 @@
 import Compressor from 'compressorjs';
-import { Crag, CragBrief, CragRequest } from "core/types";
+import { Area, Crag, CragBrief, CragRequest, Route, Topo } from "core/types";
 import { uploads } from "../api";
 
 function generateQueryParams(params: object): string {
@@ -108,6 +108,25 @@ export async function getCragBySlug(slug: string, token: string): Promise<Crag> 
     }
   });
   const json = await res.json();
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
+}
+
+export async function getCragItemsAwaitingAproval(
+  cragSlug: string,
+  token: string,
+): Promise<Array<Route | Area | Topo>> {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/crags/${cragSlug}/items-awaiting-approval`, {
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` })
+    }
+  });
+
+  const json = await res.json();
+
   if (res.status !== 200) {
     throw json;
   }

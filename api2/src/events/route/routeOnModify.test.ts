@@ -28,7 +28,7 @@ describe("routeOnModify", () => {
   it.each([
     ['incrementGlobalRouteCount', analytics.incrementGlobalRouteCount],
     ['area.incrementRouteCount', areas.incrementRouteCount],
-    ['crags.incrementRouteCount', crags.incrementRouteCount],
+    ['crags.incrementRouteCount', crags.incrementRouteCount]
   ])(
     "Calls %s when a route become verified",
     async (_title, func) => {
@@ -104,7 +104,7 @@ describe("routeOnModify", () => {
     expect(analytics.incrementGlobalRouteCount).not.toHaveBeenCalled();
   });
 
-  it("Calls algolia.saveObject", async () => {
+  it("Calls algoliaIndex.saveObject aslong as the route is verified", async () => {
     // @ts-ignore
     await handler({
       Records: [
@@ -113,8 +113,10 @@ describe("routeOnModify", () => {
             Message: JSON.stringify({
               dynamodb: {
                 NewImage: {
-                  slug: "a-new-route",
-                  title: "a new route",
+                  verified: true,
+                },
+                OldImage: {
+                  verified: true,
                 },
               },
             }),
@@ -123,16 +125,11 @@ describe("routeOnModify", () => {
       ],
     });
 
-    expect(algolaIndex.saveObject).toHaveBeenCalledWith({
-      slug: "a-new-route",
-      title: "a new route",
-      model: "route",
-      objectID: "a-new-route",
-    });
+    expect(algolaIndex.saveObject).toHaveBeenCalled();
   });
 
   it("Throws is task fails", () => {
-    (algolaIndex.saveObject as jest.Mock).mockImplementationOnce(
+    (analytics.incrementGlobalRouteCount as jest.Mock).mockImplementationOnce(
       () => {
         throw new Error("An Error");
       }
@@ -147,8 +144,10 @@ describe("routeOnModify", () => {
               Message: JSON.stringify({
                 dynamodb: {
                   NewImage: {
-                    slug: "a-new-route",
-                    title: "a new route",
+                    verified: true
+                  },
+                  OldImage: {
+                    verified: false,
                   },
                 },
               }),

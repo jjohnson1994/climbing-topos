@@ -109,9 +109,10 @@ export async function update(
       "hk": cragSlug,
       "sk": `area#${areaSlug}#`,
     },
-    ...updateProps
+    ...updateProps,
   }
 
+  console.log('update area', params)
   return dynamodb.update(params, (error) => {
     if (error) {
       console.error(error);

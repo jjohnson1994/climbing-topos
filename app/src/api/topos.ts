@@ -1,5 +1,5 @@
 import Compressor from 'compressorjs';
-import { Topo, TopoRequest } from "core/types";
+import { Topo, TopoPatch, TopoRequest } from "core/types";
 import { uploads } from "../api";
 
 const imageIsFile = (image: File) => image && image.name && image.type && image.size;
@@ -75,4 +75,28 @@ export async function getTopo(topoSlug: string): Promise<Topo> {
 
   return json;
 
+}
+
+export async function updateTopo(
+  topoSlug: string,
+  patch: TopoPatch,
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(
+    `${process.env.REACT_APP_API_URL}/topos/${topoSlug}`,
+    {
+      method: "PATCH",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(patch),
+    }
+  );
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
 }

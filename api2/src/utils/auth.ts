@@ -38,7 +38,6 @@ export const getAuth0UserFromEvent = async (event: APIGatewayProxyEventV2): Prom
 }
 
 export const getAuth0UserPublicDataFromEvent = async (event: APIGatewayProxyEventV2): Promise<Auth0UserPublicData> => {
-
   try {
     const { authorization } = event.headers;
 

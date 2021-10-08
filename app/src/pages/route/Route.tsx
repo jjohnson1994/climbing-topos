@@ -9,8 +9,9 @@ import RatingStarsDisplay from '../../components/RatingStarsDisplay';
 import { RouteLogContext } from '../../components/RouteLogContext';
 import TopoImage from "../../components/TopoImage";
 import RouteLogs from '../../components/RouteLogs';
-import { popupError } from "../../helpers/alerts";
+import { popupError, popupSuccess } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
+import Button, {Color} from "../../elements/Button";
 
 function RoutePage() {
   const { getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -55,6 +56,30 @@ function RoutePage() {
       doGetRouteLogs();
     }
   }, [routeSlug, isAuthenticated, isLoading]);
+
+  const btnVerifyOnClick = async () => {
+    try {
+      if (!route) {
+        return;
+      }
+
+      const verify = window.confirm(
+        "Are you sure you want to verify this route?"
+      );
+
+      if (verify) {
+        const token = await getAccessTokenSilently();
+        await routes.updateRoute(route.slug, { verified: true }, token);
+        setRoute({
+          ...route,
+          verified: true,
+        });
+        popupSuccess("Route Verified");
+      }
+    } catch (error) {
+      console.error("error updating area", error);
+    }
+  };
 
   const btnDoneOnClick = () => {
     if (!isAuthenticated) {
@@ -104,13 +129,24 @@ function RoutePage() {
                       <RatingStarsDisplay stars={ route?.rating || 0 } />
                     </h6>
                     <h6 className="subtitle is-6">{ route?.description }</h6>
+                    {route?.verified === false && (
+                      <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
+                        <span className="icon">
+                          <i className="fas fa-check"></i>
+                        </span>
+                        <span>Verify</span>
+                      </Button>
+                    )}
                   </div>
                   <div className="column">
                     <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
                       <div className="is-flex is-justify-content-flex-end">
                         <div className="tags mb-1">
+                          { route?.verified === false && (
+                            <span className="tag is-info">Awaiting Verification</span>
+                          )}
                           {route?.tags.map(tag => (
-                            <label key={ tag } className="tag is-primary is-capitalize">
+                            <label key={ tag } className="tag is-capitalize">
                               { tag }
                             </label>
                           ))} 

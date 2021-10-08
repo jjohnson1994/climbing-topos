@@ -4,6 +4,7 @@ import {
   Auth0User,
   Auth0UserPublicData,
   Log,
+  RoutePatch,
 } from "core/types";
 import { areas, crags, logs, routes, topos } from "../models";
 
@@ -33,14 +34,18 @@ export async function createRoute(
   return newRoute;
 }
 
-export async function getRouteBySlug(
+export function getRouteBySlug(slug: string) {
+  return routes.getRouteBySlug(slug);
+}
+
+export async function listRoutes(
   user: Auth0UserPublicData,
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
   routeSlug: string
 ): Promise<Route> {
-  const [route] = await routes.getRoutesBySlug(
+  const [route] = await routes.listRoutes(
     cragSlug,
     areaSlug,
     topoSlug,
@@ -51,7 +56,7 @@ export async function getRouteBySlug(
     topos.getTopoBySlug(route.topoSlug),
     areas.getAreaBySlug(route.areaSlug),
     routes
-      .getRoutesBySlug(cragSlug, areaSlug, topoSlug)
+      .listRoutes(cragSlug, areaSlug, topoSlug)
       .then((res) =>
         res.filter(
           (route) =>
@@ -121,7 +126,7 @@ export async function updateMetricsOnLogInsert(
     sub: string;
   }
 ) {
-  const { ratingTally, gradeTally, recentLogs } = await getRouteBySlug(
+  const { ratingTally, gradeTally, recentLogs } = await listRoutes(
     user,
     cragSlug,
     areaSlug,
@@ -297,5 +302,41 @@ export async function updateRouteRecentLogs(
     ExpressionAttributeValues: {
       ":recentLogs": recentLogs,
     },
+  });
+}
+
+export async function updateRoute(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string,
+  routePatch: RoutePatch
+) {
+  const expressionAttributeNames = Object.entries(routePatch).reduce(
+    (acc, [key]) => ({
+      ...acc,
+      [`#${key}`]: key,
+    }),
+    {}
+  );
+
+  const expressionAttributeValues = Object.entries(routePatch).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [`:${key}`]: value,
+    }),
+    {}
+  );
+
+  const updateExpression = Object.entries(routePatch).map(
+    ([key]) => {
+      return `#${key} = :${key}`;
+    }
+  ).join(', ');
+
+  return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
+    UpdateExpression: `set ${updateExpression}`,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues,
   });
 }

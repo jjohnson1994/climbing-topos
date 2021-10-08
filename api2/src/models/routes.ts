@@ -59,7 +59,7 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
   };
 }
 
-export async function getRoutesBySlug(
+export async function listRoutes(
   cragSlug: string,
   areaSlug?: string,
   topoSlug?: string,
@@ -94,6 +94,28 @@ export async function getRoutesBySlug(
 
   const route = await dynamodb.query(params).promise()
   return route?.Items as Route[];
+}
+
+export async function getRouteBySlug(
+  routeSlug: string
+): Promise<Route> {
+  const params = {
+    TableName: String(process.env.tableName),
+    IndexName: 'gsi2',
+    KeyConditionExpression: "#model = :model AND #slug = :slug",
+    ExpressionAttributeNames: {
+      "#model": "model",
+      "#slug": "slug"
+    },
+    ExpressionAttributeValues: {
+      ":model": "route",
+      ":slug": routeSlug
+    }
+  }
+
+  const route = await dynamodb.query(params).promise()
+
+  return route?.Items?.[0] as Route;
 }
 
 export async function update(

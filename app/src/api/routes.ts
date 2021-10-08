@@ -1,4 +1,4 @@
-import { RouteRequest, Route } from "core/types";
+import { RouteRequest, Route, RoutePatch } from "core/types";
 
 export async function createRoute(routeDescription: RouteRequest, token: string): Promise<{ routeSlug: string }> {
   const res = await fetch(`${process.env.REACT_APP_API_URL}/routes`,
@@ -27,6 +27,30 @@ export async function getRoute(token: string, cragSlug: string, areaSlug: string
       headers: {
         ...(token && { Authorization: `Bearer ${token}` })
       }
+    }
+  );
+  const json = await res.json();
+
+  if (res.status !== 200) {
+    throw json;
+  }
+
+  return json;
+}
+
+export async function updateRoute(
+  routeSlug: string,
+  patch: RoutePatch,
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(
+    `${process.env.REACT_APP_API_URL}/routes/${routeSlug}`,
+    {
+      method: "PATCH",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(patch),
     }
   );
   const json = await res.json();

@@ -307,9 +307,12 @@ export default class MyStack extends sst.Stack {
       routes: {
         "POST /areas": "src/routes/areas/post.handler",
         "GET /areas/{areaSlug}": publicFunction("src/routes/areas/get.handler"),
+        "PATCH /areas/{areaSlug}": "src/routes/areas/patch.handler",
         "GET /crags": publicFunction("src/routes/crags/get.handler"),
         "POST /crags": "src/routes/crags/post.handler",
+        "PATCH /crags/{cragSlug}": "src/routes/crags/patch.handler",
         "GET /crags/{slug}": publicFunction("src/routes/crags/get.handler"),
+        "GET /crags/{slug}/items-awaiting-approval": "src/routes/crags/items-awaiting-approval/get.handler",
         "GET /lists": "src/routes/lists/get.handler",
         "POST /lists": "src/routes/lists/post.handler",
         "PATCH /lists": "src/routes/lists/patch.handler",
@@ -318,8 +321,10 @@ export default class MyStack extends sst.Stack {
         "GET /profile/logs": "src/routes/profile/logs/get.handler",
         "GET /routes": publicFunction("src/routes/routes/get.handler"),
         "POST /routes": "src/routes/routes/post.handler",
+        "PATCH /routes/{routeSlug}": "src/routes/routes/patch.handler",
         "GET /routes/logs": publicFunction("src/routes/routes/logs/get.handler"),
         "POST /topos": "src/routes/topos/post.handler",
+        "PATCH /topos/{topoSlug}": "src/routes/topos/patch.handler",
         "GET /topos/{topoSlug}": publicFunction("src/routes/topos/get.handler"),
         "GET /pre-signed-upload-url":
           "src/routes/upload/pre-signed-upload-url/get.handler",

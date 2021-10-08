@@ -11,12 +11,14 @@ import TopoImage from "../../components/TopoImage";
 import { popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 import CragTitleImage from "../../components/CragTitleImage";
+import CragAdmin from "../../components/CragAdmin";
 
 function CragView() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading, user } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [crag, setCrag] = useState<Crag>();
+  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const [activeTab, setActiveTab] = useState("routes");
 
   usePageTitle(crag?.title);
@@ -39,7 +41,7 @@ function CragView() {
         }
       } catch (error) {
         console.error("Error loading crag", error);
-        popupError("There was an error loading this crag. It's 90% your fault");
+        popupError("There was an error loading this crag. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -49,6 +51,12 @@ function CragView() {
       doGetCrag();
     }
   }, [cragSlug, isLoading, isAuthenticated]);
+
+  useEffect(() => {
+    if (crag?.managedBy.sub && crag?.managedBy.sub === user?.sub) {
+      setIsAdmin(true);
+    }
+  }, [user, crag])
 
   const areaTopos = (area: Area) => {
     return crag?.topos.filter(topo => topo.areaSlug === area.slug);
@@ -83,6 +91,13 @@ function CragView() {
                   <h1 className="title is-spaced is-capitalized">{ crag?.title }</h1>
                   <h5 className="subtitle is-5">{ crag?.description }</h5>
                   <div role="group" className="tags">
+                    {
+                      isAdmin === true && (
+                        <label className="tag is-capitalized is-warning">
+                          Admin
+                        </label>
+                      )
+                    }
                     <label className={ `tag is-capitalized ${ crag?.access === "banned" ? "is-danger " : "is-primary" }` }>
                       Access { crag?.access }
                     </label>
@@ -122,6 +137,13 @@ function CragView() {
               <li className={ activeTab === 'map' ? 'is-active' : '' }>
                 <a onClick={ () => setActiveTab('map') }>Map</a>
               </li>
+              {
+                isAdmin === true && (
+                  <li className={ activeTab === 'admin' ? 'is-active' : '' }>
+                    <a onClick={ () => setActiveTab('admin') }>Admin</a>
+                  </li>
+                )
+              }
             </ul>
           </div>
 
@@ -269,6 +291,10 @@ function CragView() {
 
             { activeTab === "map" && crag && (
               <CragMap crag={ crag } />
+            )}
+
+            { activeTab === "admin" && crag && (
+              <CragAdmin crag={ crag } />
             )}
           </section>
         </>

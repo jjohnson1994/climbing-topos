@@ -1,6 +1,7 @@
 import { areas, logs, routes, topos } from "../models";
-import { AreaRequest, Area, Auth0UserPublicData } from "core/types";
+import { AreaRequest, Area, Auth0UserPublicData, AreaPatch } from "core/types";
 import { crags } from ".";
+import { getAuth0UserPublicDataFromEvent } from "../utils/auth";
 
 export async function createArea(
   areaDetails: AreaRequest,
@@ -27,7 +28,7 @@ export async function getAreaBySlug(
         )
       ),
     routes
-      .getRoutesBySlug(area.cragSlug, areaSlug)
+      .listRoutes(area.cragSlug, areaSlug)
       .then((res) =>
         res.filter(
           (route) => route.verified === true || route.createdBy.sub === userSub
@@ -89,5 +90,39 @@ export async function incrementLogCount(cragSlug: string, areaSlug: string) {
     ExpressionAttributeValues: {
       ":inc": 1,
     },
+  });
+}
+
+export async function updateArea(
+  cragSlug: string,
+  areaSlug: string,
+  areaPatch: AreaPatch,
+) {
+  const expressionAttributeNames = Object.entries(areaPatch).reduce(
+    (acc, [key]) => ({
+      ...acc,
+      [`#${key}`]: key,
+    }),
+    {}
+  );
+
+  const expressionAttributeValues = Object.entries(areaPatch).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [`:${key}`]: value,
+    }),
+    {}
+  );
+
+  const updateExpression = Object.entries(areaPatch).map(
+    ([key]) => {
+      return `#${key} = :${key}`;
+    }
+  ).join(', ');
+
+  return areas.update(cragSlug, areaSlug, {
+    UpdateExpression: `set ${updateExpression}`,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues,
   });
 }

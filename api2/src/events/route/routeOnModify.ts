@@ -30,12 +30,17 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         tasks.push(
           analytics.incrementGlobalRouteCount(),
           areas.incrementRouteCount(cragSlug, areaSlug),
-          crags.incrementRouteCount(cragSlug),
+          crags.incrementRouteCount(cragSlug)
+        )
+      }
+
+      if (normalizedNewImage.verified === true) {
+        tasks.push(
           algolaIndex.saveObject({
             ...normalizedNewImage,
             model: "route",
             objectID: slug,
-          }),
+          })
         )
       }
 
