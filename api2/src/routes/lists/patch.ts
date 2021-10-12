@@ -7,7 +7,7 @@ import { NewListSchema } from "core/schemas";
 import {RequestValidator} from "../../utils/request-validator";
 
 const validateBody: RequestValidator = async (event: APIGatewayProxyEventV2) => {
-  const schema = NewListSchema(yup);
+  const schema = NewListSchema();
   const isValid = await schema.isValid(JSON.parse(`${event.body}`));
 
   if (isValid) {

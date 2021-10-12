@@ -4,8 +4,7 @@ exports.UpdateListSchema = exports.NewListSchema = exports.NewLogsSchema = expor
 var globals_1 = require("../globals");
 var yup = require("yup");
 exports.yup = require("yup");
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewCragSchema = function (_yup) {
+var NewCragSchema = function () {
     return yup
         .object()
         .shape({
@@ -50,7 +49,6 @@ var NewCragSchema = function (_yup) {
         .noUnknown();
 };
 exports.NewCragSchema = NewCragSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 var UpdateCragSchema = function () {
     return yup
         .object()
@@ -79,8 +77,7 @@ var UpdateCragSchema = function () {
         .noUnknown();
 };
 exports.UpdateCragSchema = UpdateCragSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewAreaSchema = function (_yup) {
+var NewAreaSchema = function () {
     return yup
         .object()
         .shape({
@@ -110,7 +107,6 @@ var NewAreaSchema = function (_yup) {
         .noUnknown();
 };
 exports.NewAreaSchema = NewAreaSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 var UpdateAreaSchema = function () {
     return yup
         .object()
@@ -142,8 +138,7 @@ var UpdateAreaSchema = function () {
         .noUnknown();
 };
 exports.UpdateAreaSchema = UpdateAreaSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewTopoSchema = function (_yup) {
+var NewTopoSchema = function () {
     return yup
         .object()
         .shape({
@@ -156,7 +151,6 @@ var NewTopoSchema = function (_yup) {
         .noUnknown();
 };
 exports.NewTopoSchema = NewTopoSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 var UpdateTopoSchema = function () {
     return yup
         .object()
@@ -169,8 +163,7 @@ var UpdateTopoSchema = function () {
         .noUnknown();
 };
 exports.UpdateTopoSchema = UpdateTopoSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewRouteScheme = function (_yup) {
+var NewRouteScheme = function () {
     return yup
         .object()
         .shape({
@@ -200,7 +193,6 @@ var NewRouteScheme = function (_yup) {
         .noUnknown();
 };
 exports.NewRouteScheme = NewRouteScheme;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 var UpdateRouteScheme = function () {
     return yup
         .object()
@@ -231,8 +223,7 @@ var UpdateRouteScheme = function () {
         .noUnknown();
 };
 exports.UpdateRouteScheme = UpdateRouteScheme;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewLogsSchema = function (_yup) {
+var NewLogsSchema = function () {
     return yup
         .object()
         .shape({
@@ -264,8 +255,7 @@ var NewLogsSchema = function (_yup) {
         .noUnknown();
 };
 exports.NewLogsSchema = NewLogsSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var NewListSchema = function (_yup) {
+var NewListSchema = function () {
     return yup
         .object()
         .shape({
@@ -274,8 +264,7 @@ var NewListSchema = function (_yup) {
         .noUnknown();
 };
 exports.NewListSchema = NewListSchema;
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-var UpdateListSchema = function (_yup) {
+var UpdateListSchema = function () {
     return yup
         .object()
         .shape({

@@ -6,7 +6,7 @@ import { RequestValidator } from "../../utils/request-validator";
 import { NewCragSchema } from "core/schemas";
 
 const validateBody: RequestValidator = async (event: APIGatewayProxyEventV2) => {
-  const schema = NewCragSchema(yup);
+  const schema = NewCragSchema();
   const isValid = await schema.isValid(JSON.parse(`${event.body}`));
 
   if (isValid) {

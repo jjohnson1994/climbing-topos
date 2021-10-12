@@ -9,8 +9,7 @@ import * as yup from "yup";
 
 export * as yup from "yup";
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewCragSchema = (_yup: any) =>
+export const NewCragSchema = () =>
   yup
     .object()
     .shape({
@@ -56,7 +55,6 @@ export const NewCragSchema = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 export const UpdateCragSchema = () =>
   yup
     .object()
@@ -84,8 +82,7 @@ export const UpdateCragSchema = () =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewAreaSchema = (_yup: any) =>
+export const NewAreaSchema = () =>
   yup
     .object()
     .shape({
@@ -114,7 +111,6 @@ export const NewAreaSchema = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 export const UpdateAreaSchema = () =>
   yup
     .object()
@@ -145,8 +141,7 @@ export const UpdateAreaSchema = () =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewTopoSchema = (_yup: any) =>
+export const NewTopoSchema = () =>
   yup
     .object()
     .shape({
@@ -158,7 +153,6 @@ export const NewTopoSchema = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 export const UpdateTopoSchema = () =>
   yup
     .object()
@@ -170,8 +164,7 @@ export const UpdateTopoSchema = () =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewRouteScheme = (_yup: any) =>
+export const NewRouteScheme = () =>
   yup
     .object()
     .shape({
@@ -200,7 +193,6 @@ export const NewRouteScheme = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
 export const UpdateRouteScheme = () =>
   yup
     .object()
@@ -230,8 +222,7 @@ export const UpdateRouteScheme = () =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewLogsSchema = (_yup: any) =>
+export const NewLogsSchema = () =>
   yup
     .object()
     .shape({
@@ -267,8 +258,7 @@ export const NewLogsSchema = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const NewListSchema = (_yup: any) =>
+export const NewListSchema = () =>
   yup
     .object()
     .shape({
@@ -276,8 +266,7 @@ export const NewListSchema = (_yup: any) =>
     })
     .noUnknown();
 
-// @ts-ignore Serverless Stack wants ":any", React doesn't like ":any"
-export const UpdateListSchema = (_yup: any) =>
+export const UpdateListSchema = () =>
   yup
     .object()
     .shape({
