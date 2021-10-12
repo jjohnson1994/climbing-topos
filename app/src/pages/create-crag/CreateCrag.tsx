@@ -4,14 +4,13 @@ import { NewCragSchema } from "core/schemas";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import * as yup from "yup";
 import { crags, globals } from "../../api";
 import Message, {Color} from "../../components/Message";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 import { reverseLookup } from '../../helpers/nominatim';
 
-const schema = NewCragSchema(yup);
+const schema = NewCragSchema();
 
 let image: File;
 

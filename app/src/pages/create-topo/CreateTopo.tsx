@@ -4,11 +4,10 @@ import {NewTopoSchema} from "core/schemas";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useHistory, useParams} from "react-router-dom";
-import * as yup from "yup";
 import {topos} from "../../api";
 import {popupError, popupSuccess} from "../../helpers/alerts";
 
-const schema = NewTopoSchema(yup);
+const schema = NewTopoSchema();
 
 let image: File;
 

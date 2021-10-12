@@ -6,12 +6,11 @@ import { gradingSystems } from "core/globals";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from 'react-router-dom';
-import * as yup from "yup";
 import { areas, globals, routes, topos } from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 
-const schema = NewRouteScheme(yup);
+const schema = NewRouteScheme();
 
 function CreateRoute() {
   const history = useHistory();

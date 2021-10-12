@@ -5,13 +5,12 @@ import { Crag } from "core/types";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
-import * as yup from "yup";
 import { areas, crags } from "../../api";
 import { areaTags as tags, rockTypes } from "core/globals";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { getCurrentPosition } from '../../helpers/geolocation';
 
-const schema = NewAreaSchema(yup);
+const schema = NewAreaSchema();
 
 function CreateArea() {
   const history = useHistory();

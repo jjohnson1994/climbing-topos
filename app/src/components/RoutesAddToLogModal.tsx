@@ -4,7 +4,6 @@ import { NewLogsSchema } from "core/schemas";
 import { GradingSystem, LogRequest, Route } from "core/types";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import { globals, logs } from "../api";
 import { useGradeHelpers } from "../api/grades";
 import { popupError, toastSuccess } from "../helpers/alerts";
@@ -19,7 +18,7 @@ interface Props {
   onRoutesLogged?: Function
 }
 
-const schema = NewLogsSchema(yup);
+const schema = NewLogsSchema();
 
 function RoutesAddToLogModal({ routes, visible, onCancel, onConfirm, onRoutesLogged }: Props) {
   const { getAccessTokenSilently } = useAuth0();
