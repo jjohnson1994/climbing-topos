@@ -27,7 +27,7 @@ jobs:
       - name: Serverless Stack Deploy
         run: |
           cd api2
-          npx sst deploy --stage production
+          npm run deploy -- --stage production
         env:
           NODE_OPTIONS: --max_old_space_size=8192
           ALGOLIA_ADMIN_KEY: ${{secrets.ALGOLIA_ADMIN_KEY}}
