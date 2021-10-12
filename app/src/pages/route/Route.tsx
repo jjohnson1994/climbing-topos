@@ -1,8 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Log, Route } from "core/types";
-import { routes, logs } from "../../api";
+import { Crag, Log, Route } from "core/types";
+import { routes, logs, crags } from "../../api";
 import { useGradeHelpers } from "../../api/grades";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RatingStarsDisplay from '../../components/RatingStarsDisplay';
@@ -14,11 +14,13 @@ import { usePageTitle } from "../../helpers/pageTitle";
 import Button, {Color} from "../../elements/Button";
 
 function RoutePage() {
-  const { getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const { user, getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
+  const [crag, setCrag] = useState<Crag>();
   const [routeLogs, setRouteLogs] = useState<Log[]>();
+  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   const context = useContext(RouteLogContext);
@@ -32,8 +34,12 @@ function RoutePage() {
         const token = isAuthenticated
           ? await getAccessTokenSilently()
           : "";
-        const newRoute = await routes.getRoute(token, cragSlug, areaSlug, topoSlug, routeSlug);
+        const [newRoute, newCrag] = await Promise.all([
+          routes.getRoute(token, cragSlug, areaSlug, topoSlug, routeSlug),
+          crags.getCragBySlug(cragSlug, token)
+        ])
         setRoute(newRoute);
+        setCrag(newCrag);
       } catch (error) {
         console.error("Error loading route", error);
         popupError("Oh dear, there was a problem loading this route");
@@ -56,6 +62,15 @@ function RoutePage() {
       doGetRouteLogs();
     }
   }, [routeSlug, isAuthenticated, isLoading]);
+
+  useEffect(() => {
+    if (!crag?.managedBy.sub || !user?.sub) {
+      setIsAdmin(false);
+    } else if (crag.managedBy.sub === user.sub) {
+      console.log('setting admin true')
+      setIsAdmin(true);
+    }
+  }, [user, crag])
 
   const btnVerifyOnClick = async () => {
     try {
@@ -129,7 +144,7 @@ function RoutePage() {
                       <RatingStarsDisplay stars={ route?.rating || 0 } />
                     </h6>
                     <h6 className="subtitle is-6">{ route?.description }</h6>
-                    {route?.verified === false && (
+                    {(isAdmin === true && route?.verified === false) && (
                       <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
                         <span className="icon">
                           <i className="fas fa-check"></i>

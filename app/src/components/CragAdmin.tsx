@@ -119,6 +119,11 @@ const CragAdmin = (props: CragAdminProps) => {
         <div className="container">
           <h1 className="title">Awaiting Approval</h1>
           <div>
+            { itemsAwaitingApproval.length === 0 && (
+              <p>There are no items awaiting approval</p>
+            )}
+          </div>
+          <div>
             {
               itemsAwaitingApproval.map(itemAwaitingApproval => {
                 if (itemAwaitingApproval.model === 'route') {

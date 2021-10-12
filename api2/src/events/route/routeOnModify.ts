@@ -3,6 +3,7 @@ import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
 import { analytics, areas, crags } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
+import { gradingSystems } from "../../../../core/globals";
 
 export const didBecomeVerified = (newImage: Route, oldImage: Route) => {
   if (newImage.verified === true && oldImage.verified === false) {
@@ -10,7 +11,7 @@ export const didBecomeVerified = (newImage: Route, oldImage: Route) => {
   }
 
   return false;
-}
+};
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -20,18 +21,25 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const oldImage = message.dynamodb.OldImage;
       const normalizedNewImage = normalizeRow<Route>(newImage);
       const normalizedOldImage = normalizeRow<Route>(oldImage);
+      const normalizedGrade = gradingSystems.find(
+        (gradingSystem) =>
+          gradingSystem.title === normalizedNewImage.gradingSystem
+      )?.grades[parseInt(normalizedNewImage.grade, 10)];
 
       const { areaSlug, cragSlug, slug } = normalizedNewImage;
 
-      const tasks: Promise<any>[] = []
+      const tasks: Promise<any>[] = [];
 
-      const becameVerified = didBecomeVerified(normalizedNewImage, normalizedOldImage);
+      const becameVerified = didBecomeVerified(
+        normalizedNewImage,
+        normalizedOldImage
+      );
       if (becameVerified) {
         tasks.push(
           analytics.incrementGlobalRouteCount(),
           areas.incrementRouteCount(cragSlug, areaSlug),
           crags.incrementRouteCount(cragSlug)
-        )
+        );
       }
 
       if (normalizedNewImage.verified === true) {
@@ -40,8 +48,9 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
             ...normalizedNewImage,
             model: "route",
             objectID: slug,
+            grade: normalizedGrade,
           })
-        )
+        );
       }
 
       return tasks;

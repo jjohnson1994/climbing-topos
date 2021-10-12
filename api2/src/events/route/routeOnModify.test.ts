@@ -128,6 +128,36 @@ describe("routeOnModify", () => {
     expect(algolaIndex.saveObject).toHaveBeenCalled();
   });
 
+  it("Saves normalised grade to Algolia", async () => {
+    // @ts-ignore
+    await handler({
+      Records: [
+        {
+          Sns: {
+            Message: JSON.stringify({
+              dynamodb: {
+                NewImage: {
+                  verified: true,
+                  gradingSystem: 'Font',
+                  grade: '6'
+                },
+                OldImage: {
+                  verified: true,
+                },
+              },
+            }),
+          },
+        },
+      ],
+    });
+
+    expect(algolaIndex.saveObject).toHaveBeenCalledWith(
+      expect.objectContaining({
+        grade: '6B'
+      })
+    )
+  });
+
   it("Throws is task fails", () => {
     (analytics.incrementGlobalRouteCount as jest.Mock).mockImplementationOnce(
       () => {

@@ -375,6 +375,7 @@ export const areaTags = [
 export const routeTags = [
   'Arete',
   'Bad Landing',
+  'Crack',
   'Crimps',
   'Dynamic',
   'Gaston',

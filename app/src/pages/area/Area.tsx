@@ -1,8 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Area, Topo } from "core/types";
-import { areas, topos } from "../../api";
+import { Area, Crag, Topo } from "core/types";
+import { areas, crags, topos } from "../../api";
 import AreaRoutesTable from "../../components/AreaRoutesTable";
 import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -12,11 +12,13 @@ import { usePageTitle } from "../../helpers/pageTitle";
 import Button, { Color } from "../../elements/Button";
 
 function AreaView() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading, user } = useAuth0();
   const { areaSlug, cragSlug } =
     useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area>();
+  const [crag, setCrag] = useState<Crag>();
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
 
   usePageTitle(area?.title);
 
@@ -25,8 +27,12 @@ function AreaView() {
       try {
         setLoading(true);
         const token = isAuthenticated ? await getAccessTokenSilently() : "";
-        const area = await areas.getArea(areaSlug, token);
+        const [area, crag] = await Promise.all([
+          areas.getArea(areaSlug, token),
+          crags.getCragBySlug(cragSlug, token)
+        ])
         setArea(area);
+        setCrag(crag);
       } catch (error) {
         console.error("Error loading area", error);
         popupError("Oh dear, there was a problem loading this area");
@@ -39,6 +45,15 @@ function AreaView() {
       doGetArea();
     }
   }, [areaSlug, isAuthenticated, isLoading]);
+
+  useEffect(() => {
+    if (!crag?.managedBy.sub || !user?.sub) {
+      setIsAdmin(false);
+    } else if (crag.managedBy.sub === user.sub) {
+      console.log('setting admin true')
+      setIsAdmin(true);
+    }
+  }, [user, crag])
 
   const btnVerifyOnClick = async () => {
     try {
@@ -120,7 +135,7 @@ function AreaView() {
               <h6 className="subtitle is-6">{area?.description}</h6>
               <h6 className="subtitle is-6">{area?.approachNotes}</h6>
               <h6 className="subtitle is-6">{area?.accessDetails}</h6>
-              {area?.verified === false && (
+              {(isAdmin === true && area?.verified === false) && (
                 <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
                   <span className="icon">
                     <i className="fas fa-check"></i>
@@ -184,7 +199,7 @@ function AreaView() {
                   <div className="column">
                     <div className="block is-flex is-justify-content-space-between is-align-items-center">
                       <span>
-                        {topo.verified === false && (
+                        {(isAdmin === true && topo.verified === false) && (
                           <Button color={Color.isSuccess} onClick={ () => btnVerifyTopoOnClick(`${topo.slug}`) }>
                             <span className="icon">
                               <i className="fas fa-check"></i>

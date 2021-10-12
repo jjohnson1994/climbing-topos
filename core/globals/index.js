@@ -375,6 +375,7 @@ exports.areaTags = [
 exports.routeTags = [
     'Arete',
     'Bad Landing',
+    'Crack',
     'Crimps',
     'Dynamic',
     'Gaston',

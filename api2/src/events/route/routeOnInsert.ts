@@ -3,6 +3,7 @@ import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
 import { analytics, areas, crags } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
+import { gradingSystems } from "../../../../core/globals";
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -11,9 +12,20 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const newImage = message.dynamodb.NewImage;
       const normalizedRow = normalizeRow<Route>(newImage);
 
-      const { areaSlug, cragSlug, slug, verified } = normalizedRow;
+      const {
+        areaSlug,
+        cragSlug,
+        slug,
+        verified,
+        gradingSystem: routeGradingSystem,
+        grade,
+      } = normalizedRow;
 
-      const tasks: Promise<any>[] = []
+      const normalizedGrade = gradingSystems.find(
+        (gradingSystem) => gradingSystem.title === routeGradingSystem
+      )?.grades[parseInt(grade, 10)];
+
+      const tasks: Promise<any>[] = [];
 
       if (verified) {
         tasks.push(
@@ -24,8 +36,9 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
             ...normalizedRow,
             model: "route",
             objectID: slug,
+            grade: normalizedGrade,
           })
-        )
+        );
       }
 
       return tasks;

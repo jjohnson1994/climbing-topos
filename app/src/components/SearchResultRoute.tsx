@@ -6,7 +6,7 @@ function SearchResultsRoute({ route }: { route: Route }) {
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   return (
-    <Link className="box p-0" to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/routes/${route.slug}`} style={{ overflow: "hidden" }}>
+    <Link className="box p-0" to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`} style={{ overflow: "hidden" }}>
       <div className="columns is-mobile is-gapless">
         <div className="column is-narrow">
           <img 

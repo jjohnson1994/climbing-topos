@@ -75,7 +75,6 @@ export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
 }
 
 export async function getAreaBySlug(slug: string): Promise<Area> {
-  // TODO can be refactored out and replace with `hk = hk and begins_with(sk, sk)`
   const params = {
     TableName: String(process.env.tableName),
     IndexName: "gsi2",
