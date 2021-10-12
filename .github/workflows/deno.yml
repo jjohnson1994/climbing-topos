@@ -23,7 +23,7 @@ jobs:
       - name: Serverless Stack Install
         run: |
           cd api2
-          npm ci --legacy-peer-deps
+          npm i
       - name: Serverless Stack Deploy
         run: |
           cd api2
