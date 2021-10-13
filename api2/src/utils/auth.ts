@@ -14,6 +14,7 @@ export const getAuth0UserFromEvent = async (event: APIGatewayProxyEventV2): Prom
       })
 
       if (userInfoResponse.status !== 200) {
+        console.error('auth0 response', userInfoResponse)
         throw new Error("Auth0 did not respond with 200");
       }
 
@@ -49,6 +50,7 @@ export const getAuth0UserPublicDataFromEvent = async (event: APIGatewayProxyEven
       })
 
       if (userInfoResponse.status !== 200) {
+        console.error('auth0 response', userInfoResponse)
         throw new Error("Auth0 did not respond with 200");
       }
 
