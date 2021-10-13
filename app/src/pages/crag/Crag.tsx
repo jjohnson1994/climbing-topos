@@ -160,6 +160,9 @@ function CragView() {
                     </div>
                     <div className="column">
                       <div className="tags">
+                        {area.verified !== true && (
+                          <span className="tag is-info">Not Verified</span>
+                        )}
                         { area.tags.map(tag => (
                           <label key={ tag } className="tag">{ tag }</label>
                         ))}
@@ -190,6 +193,9 @@ function CragView() {
                             </span>
                             <span className="is-capitalized">{ topo.orientation }</span>
                           </span>
+                          {topo.verified !== true && (
+                            <span className="ml-2 tag is-info">Not Verified</span>
+                          )}
                         </div>
                         <div className="mt-1">
                           <AreaRoutesTable

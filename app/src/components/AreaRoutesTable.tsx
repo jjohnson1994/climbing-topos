@@ -62,6 +62,9 @@ function AreaRoutesTable({ routes, loggedRoutes, }: Props) {
               <RatingStarsDisplay stars={ route.rating } />
             </span>
             <div className="tags">
+              {route.verified !== true && (
+                <span className="tag is-info">Not Verified</span>
+              )}
               <span className="tag">{ convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) }</span>
               <span className="tag">{ route.routeType }</span>
               <span className="tag">{ route.logCount } Ticks</span>
