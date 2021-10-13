@@ -111,7 +111,6 @@ export async function update(
     ...updateProps,
   }
 
-  console.log('update area', params)
   return dynamodb.update(params, (error) => {
     if (error) {
       console.error(error);

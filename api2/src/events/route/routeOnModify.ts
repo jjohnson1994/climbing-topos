@@ -34,6 +34,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         normalizedNewImage,
         normalizedOldImage
       );
+
       if (becameVerified) {
         tasks.push(
           analytics.incrementGlobalRouteCount(),

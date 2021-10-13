@@ -75,9 +75,15 @@ export async function getCragItemsAwaitingAproval(
   slug: string
 ): Promise<Array<Area | Route | Topo>> {
   const [pendingAreas, pendingRoutes, pendingTopos] = await Promise.all([
-    areas.getAreasByCragSlug(slug),
-    routes.listRoutes(slug),
-    topos.getToposByCragSlug(slug)
+    areas
+      .getAreasByCragSlug(slug)
+      .then((res) => res.filter((area) => area.verified !== true)),
+    routes
+      .listRoutes(slug)
+      .then((res) => res.filter((route) => route.verified !== true)),
+    topos
+      .getToposByCragSlug(slug)
+      .then((res) => res.filter((topo) => topo.verified !== true)),
   ]);
 
   return [...pendingAreas, ...pendingRoutes, ...pendingTopos];
@@ -172,11 +178,11 @@ export async function updateCrag(cragSlug: string, cragPatch: CragPatch) {
     {}
   );
 
-  const updateExpression = Object.entries(cragPatch).map(
-    ([key]) => {
+  const updateExpression = Object.entries(cragPatch)
+    .map(([key]) => {
       return `#${key} = :${key}`;
-    }
-  ).join(', ');
+    })
+    .join(", ");
 
   return crags.update(cragSlug, {
     UpdateExpression: `set ${updateExpression}`,

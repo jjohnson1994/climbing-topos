@@ -134,8 +134,6 @@ export async function update(
     ...updateProps
   }
 
-  console.log('update topo', { params })
-
   return dynamodb.update(params, (error) => {
     if (error) {
       console.error(error);
