@@ -57,13 +57,7 @@ export async function listRoutes(
     areas.getAreaBySlug(route.areaSlug),
     routes
       .listRoutes(cragSlug, areaSlug, topoSlug)
-      .then((res) =>
-        res.filter(
-          (route) =>
-            route.slug !== routeSlug &&
-            (route.verified === true || route.createdBy.sub === user.sub)
-        )
-      ),
+      .then((res) => res.filter((route) => route.slug !== routeSlug)),
     user?.sub
       ? logs.getLogsForUser(user.sub, cragSlug, areaSlug, topoSlug, routeSlug)
       : [],
@@ -328,11 +322,11 @@ export async function updateRoute(
     {}
   );
 
-  const updateExpression = Object.entries(routePatch).map(
-    ([key]) => {
+  const updateExpression = Object.entries(routePatch)
+    .map(([key]) => {
       return `#${key} = :${key}`;
-    }
-  ).join(', ');
+    })
+    .join(", ");
 
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: `set ${updateExpression}`,

@@ -56,27 +56,9 @@ export async function getCragBySlug(
 ): Promise<Crag> {
   const [crag, cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
-    areas
-      .getAreasByCragSlug(slug)
-      .then((res) =>
-        res.filter(
-          (area) => area.verified === true || area.createdBy.sub === user.sub
-        )
-      ),
-    routes
-      .listRoutes(slug)
-      .then((res) =>
-        res.filter(
-          (route) => route.verified === true || route.createdBy.sub === user.sub
-        )
-      ),
-    topos
-      .getToposByCragSlug(slug)
-      .then((res) =>
-        res.filter(
-          (topo) => topo.verified === true || topo.createdBy.sub === user.sub
-        )
-      ),
+    areas.getAreasByCragSlug(slug),
+    routes.listRoutes(slug),
+    topos.getToposByCragSlug(slug),
     user.sub ? logs.getLogsForUser(user.sub, slug) : [],
   ]);
 
@@ -93,15 +75,9 @@ export async function getCragItemsAwaitingAproval(
   slug: string
 ): Promise<Array<Area | Route | Topo>> {
   const [pendingAreas, pendingRoutes, pendingTopos] = await Promise.all([
-    areas
-      .getAreasByCragSlug(slug)
-      .then((res) => res.filter((area) => area.verified === false)),
-    routes
-      .listRoutes(slug)
-      .then((res) => res.filter((route) => route.verified === false)),
-    topos
-      .getToposByCragSlug(slug)
-      .then((res) => res.filter((topo) => topo.verified === false)),
+    areas.getAreasByCragSlug(slug),
+    routes.listRoutes(slug),
+    topos.getToposByCragSlug(slug)
   ]);
 
   return [...pendingAreas, ...pendingRoutes, ...pendingTopos];

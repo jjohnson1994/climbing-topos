@@ -18,22 +18,10 @@ export async function getAreaBySlug(
   areaSlug: string,
   userSub?: string
 ): Promise<Area> {
-  const area = (await areas.getAreaBySlug(areaSlug)) as Area;
+  const area = await areas.getAreaBySlug(areaSlug)
   const [areaTopos, areaRoutes, userLogs] = await Promise.all([
-    topos
-      .getToposByCragArea(area.cragSlug, areaSlug)
-      .then((res) =>
-        res.filter(
-          (topo) => topo.verified === true || topo.createdBy.sub === userSub
-        )
-      ),
-    routes
-      .listRoutes(area.cragSlug, areaSlug)
-      .then((res) =>
-        res.filter(
-          (route) => route.verified === true || route.createdBy.sub === userSub
-        )
-      ),
+    topos.getToposByCragArea(area.cragSlug, areaSlug),
+    routes.listRoutes(area.cragSlug, areaSlug),
     userSub ? logs.getLogsForUser(userSub, area.cragSlug, areaSlug) : [],
   ]);
 
