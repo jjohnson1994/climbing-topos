@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { CragPatch } from "core/types";
 import { UpdateCragSchema } from "core/schemas";
 import { crags } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -43,6 +43,21 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
+    if (!event.headers.authorization) {
+      console.error(
+        "PATCH crag request received without authorization header",
+        event
+      );
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: true,
+          message: "Invalid Request",
+        }),
+      };
+    }
+
     const { cragSlug } = event.pathParameters as {
       cragSlug: string;
     };
@@ -54,10 +69,10 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const cragPatch = JSON.parse(`${event.body}`) as CragPatch;
-    const user = await getAuth0UserPublicDataFromEvent(event);
-    const crag = await crags.getCragBySlug(cragSlug, user);
+    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const crag = await crags.getCragBySlug(cragSlug, userSub);
 
-    if (crag.managedBy.sub !== user.sub) {
+    if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
         headers: { "Content-Type": "application/json" },

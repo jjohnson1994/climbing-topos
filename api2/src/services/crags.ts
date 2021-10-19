@@ -1,7 +1,6 @@
 import { areas, crags, logs, routes, topos } from "../models";
 import {
   Area,
-  Auth0User,
   Auth0UserPublicData,
   Crag,
   CragBrief,
@@ -19,7 +18,7 @@ export const createCrag = async (
 };
 
 export async function getAllCrags(
-  user: Auth0User,
+  userSub: string,
   sortBy?: string,
   sortOrder?: string,
   limit?: number,
@@ -32,7 +31,7 @@ export async function getAllCrags(
         (crag) =>
           new Promise<CragBrief>((resolve) => {
             Promise.all([
-              user ? logs.getLogsForUser(user.sub, crag.slug) : [],
+              userSub ? logs.getLogsForUser(userSub, crag.slug) : [],
             ]).then(([userLogs]) => {
               resolve({
                 ...crag,
@@ -52,14 +51,14 @@ export async function getAllCrags(
 
 export async function getCragBySlug(
   slug: string,
-  user: Auth0UserPublicData
+  userSub: string
 ): Promise<Crag> {
   const [crag, cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
     crags.getCragBySlug(slug),
     areas.getAreasByCragSlug(slug),
     routes.listRoutes(slug),
     topos.getToposByCragSlug(slug),
-    user.sub ? logs.getLogsForUser(user.sub, slug) : [],
+    userSub ? logs.getLogsForUser(userSub, slug) : [],
   ]);
 
   return {

@@ -1,11 +1,17 @@
-import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
+import {
+  ExpressionAttributeNameMap,
+  UpdateExpression,
+} from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
 import { Auth0UserPublicData, Crag, CragRequest } from "core/types";
 import { dynamodb } from "../db";
 import { createSlug } from "../helpers/slug";
 
-export const createCrag = async (cragDetails: CragRequest, user: Auth0UserPublicData) => {
+export const createCrag = async (
+  cragDetails: CragRequest,
+  auth0UserPublicData: Auth0UserPublicData
+) => {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
 
@@ -21,7 +27,7 @@ export const createCrag = async (cragDetails: CragRequest, user: Auth0UserPublic
     osmData: cragDetails.osmData,
     tags: cragDetails.tags,
     title: cragDetails.title,
-    image: cragDetails.image
+    image: cragDetails.image,
   };
 
   const params = {
@@ -37,23 +43,23 @@ export const createCrag = async (cragDetails: CragRequest, user: Auth0UserPublic
       countryCode: cragDetails.osmData.address.country_code,
       county: cragDetails.osmData.address.county,
       createdAt: date,
-      managedBy: user,
-      createdBy: user,
+      managedBy: auth0UserPublicData,
+      createdBy: auth0UserPublicData,
       logCount: 0,
-      model: 'crag',
+      model: "crag",
       routeCount: 0,
       slug,
       state: cragDetails.osmData.address.state,
-      updatedAt: date
-    }
-  }
+      updatedAt: date,
+    },
+  };
 
-  await dynamodb.put(params).promise()
+  await dynamodb.put(params).promise();
 
   return {
     slug,
   };
-}
+};
 
 export async function getAllCrags(
   sortBy?: string,
@@ -63,15 +69,15 @@ export async function getAllCrags(
 ): Promise<Crag[]> {
   const params = {
     TableName: String(process.env.tableName),
-    IndexName: 'gsi1',
+    IndexName: "gsi1",
     KeyConditionExpression: "#model = :entity",
     ExpressionAttributeNames: {
-      "#model": "model"
+      "#model": "model",
     },
     ExpressionAttributeValues: {
-      ":entity": "crag"
-    }
-  }
+      ":entity": "crag",
+    },
+  };
 
   const crags = await dynamodb
     .query(params)
@@ -79,33 +85,33 @@ export async function getAllCrags(
     .then(({ Items }) => {
       if (sortBy) {
         return Items!.sort((cragA, cragB) => {
-          if (sortOrder === 'DESC') {
-            return cragB[sortBy] - cragA[sortBy]
-          } else if (sortOrder === 'ASC') {
-            return cragA[sortBy] - cragB[sortBy]
+          if (sortOrder === "DESC") {
+            return cragB[sortBy] - cragA[sortBy];
+          } else if (sortOrder === "ASC") {
+            return cragA[sortBy] - cragB[sortBy];
           } else {
             return 0;
           }
-        })
+        });
       } else {
         return Items;
       }
     })
-    .then(crags => {
-      if (typeof offset !== 'undefined' && typeof limit !== 'undefined') {
-        return crags!.slice(offset, offset + limit)
+    .then((crags) => {
+      if (typeof offset !== "undefined" && typeof limit !== "undefined") {
+        return crags!.slice(offset, offset + limit);
       }
 
-      if (typeof offset !== 'undefined') {
-        return crags!.slice(offset)
+      if (typeof offset !== "undefined") {
+        return crags!.slice(offset);
       }
 
-      if (typeof limit !== 'undefined') {
-        return crags!.slice(0, limit)
+      if (typeof limit !== "undefined") {
+        return crags!.slice(0, limit);
       }
-      
-      return crags
-    })
+
+      return crags;
+    });
 
   return crags as Crag[];
 }
@@ -114,41 +120,52 @@ export const getCragBySlug = async (slug: string): Promise<Crag> => {
   const params = {
     TableName: String(process.env.tableName),
     KeyConditionExpression: "#hk = :hk AND #sk = :sk",
-    ExpressionAttributeNames:{
+    ExpressionAttributeNames: {
       "#hk": "hk",
-      "#sk": "sk"
+      "#sk": "sk",
     },
     ExpressionAttributeValues: {
       ":hk": slug,
-      ":sk": "metadata#"
-    }
-  }
+      ":sk": "metadata#",
+    },
+  };
 
-  const crag = await dynamodb.query(params).promise()
+  const crag = await dynamodb.query(params).promise();
   return crag?.Items?.[0] as Crag;
-}
+};
 
 export const getAllCragsByCountry = async (countryCode: string) => {
   const params = {
     TableName: String(process.env.tableName),
-    KeyConditionExpression: 'begins_with(PK, :entity) AND begins_with(SK, :countryCode)',
-    ExpressionAttributeValues: { ':entity': 'crag', ':countryCode': countryCode }
-  }
+    KeyConditionExpression:
+      "begins_with(PK, :entity) AND begins_with(SK, :countryCode)",
+    ExpressionAttributeValues: {
+      ":entity": "crag",
+      ":countryCode": countryCode,
+    },
+  };
 
-  const crags = await dynamodb.query(params).promise()
+  const crags = await dynamodb.query(params).promise();
   return crags;
-}
+};
 
-export const getAllCragsByCountryAndRegion = async (countryCode: string, region: string) => {
+export const getAllCragsByCountryAndRegion = async (
+  countryCode: string,
+  region: string
+) => {
   const params = {
     TableName: String(process.env.tableName),
-    KeyConditionExpression: 'begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)',
-    ExpressionAttributeValues: { ':entity': 'crag', ':countryCodeRegion': `${countryCode}#${region}` }
-  }
+    KeyConditionExpression:
+      "begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)",
+    ExpressionAttributeValues: {
+      ":entity": "crag",
+      ":countryCodeRegion": `${countryCode}#${region}`,
+    },
+  };
 
-  const crags = await dynamodb.query(params).promise()
+  const crags = await dynamodb.query(params).promise();
   return crags;
-}
+};
 
 export async function update(
   cragSlug: string,
@@ -162,16 +179,16 @@ export async function update(
     const params = {
       TableName: String(process.env.tableName),
       Key: {
-        "hk": cragSlug,
-        "sk": "metadata#"
+        hk: cragSlug,
+        sk: "metadata#",
       },
-      ...updateProps
-    }
+      ...updateProps,
+    };
 
-    const response = await dynamodb.update(params).promise()
-    return response
+    const response = await dynamodb.update(params).promise();
+    return response;
   } catch (error) {
-    console.error("Error updating crag", error)
-    throw error
+    console.error("Error updating crag", error);
+    throw error;
   }
 }

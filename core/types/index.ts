@@ -76,6 +76,7 @@ export interface Crag extends CragBrief {
   userLogs: Log[];
   verified: boolean;
   managedBy: Auth0UserPublicData;
+  createdBy: Auth0UserPublicData;
 }
 
 export interface CragPatch {

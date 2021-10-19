@@ -3,7 +3,7 @@ import { crags } from "../services";
 import { Auth0UserPublicData, TopoPatch, TopoRequest } from "core/types";
 
 export async function createTopo(topoDetails: TopoRequest, user: Auth0UserPublicData) {
-  const crag = await crags.getCragBySlug(topoDetails.cragSlug, user);
+  const crag = await crags.getCragBySlug(topoDetails.cragSlug, user.sub);
   const topoVerified = crag.managedBy.sub === user.sub;
 
   return topos.createTopo(topoDetails, user, topoVerified);

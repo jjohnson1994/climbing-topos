@@ -1,25 +1,42 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { crags } from "../../../services";
-import { getAuth0UserFromEvent } from "../../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserFromEvent(event);
-    const { slug } = (event.pathParameters || {}) as Record<string, string>;
-
-    if (!user.sub) {
+    if (!event.headers.authorization) {
+      console.error(
+        "POST crag request received without authorization header",
+        event
+      );
       return {
-        statusCode: 401,
+        statusCode: 400,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: true }),
+        body: JSON.stringify({
+          error: true,
+          message: "Invalid Request",
+        }),
       };
     }
 
-    const crag = await crags.getCragBySlug(slug, user);
+    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
 
-    if (crag.managedBy.sub !== user.sub) {
+    if (!userSub) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: true,
+        }),
+      };
+    }
+
+    const { slug } = (event.pathParameters || {}) as Record<string, string>;
+    const crag = await crags.getCragBySlug(slug, userSub);
+
+    if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
         headers: { "Content-Type": "application/json" },
@@ -27,7 +44,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       };
     }
 
-    const itemsAwaitingAproval = await crags.getCragItemsAwaitingAproval(crag.slug)
+    const itemsAwaitingAproval = await crags.getCragItemsAwaitingAproval(
+      crag.slug
+    );
 
     return {
       statusCode: 200,

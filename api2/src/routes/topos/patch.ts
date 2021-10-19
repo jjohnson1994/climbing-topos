@@ -1,8 +1,8 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { TopoPatch } from "core/types";
 import { UpdateTopoSchema } from "core/schemas";
-import { crags, routes, topos } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { crags, topos } from "../../services";
+import { getAuth0UserPublicDataFromEvent, getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -45,6 +45,21 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
+    if (!event.headers.authorization) {
+      console.error(
+        "POST topos request received without authorization header",
+        event
+      );
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: true,
+          message: "Invalid Request",
+        }),
+      };
+    }
+
     const { topoSlug } = event.pathParameters as {
       topoSlug: string;
     };
@@ -56,11 +71,11 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const topoPatch = JSON.parse(`${event.body}`) as TopoPatch;
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
     const topo = await topos.getTopoBySlug(topoSlug)
-    const crag = await crags.getCragBySlug(topo.cragSlug, user);
+    const crag = await crags.getCragBySlug(topo.cragSlug, userSub);
 
-    if (crag.managedBy.sub !== user.sub) {
+    if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
         headers: { "Content-Type": "application/json" },

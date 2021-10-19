@@ -1,17 +1,15 @@
 import {
   RouteRequest,
   Route,
-  Auth0User,
   Auth0UserPublicData,
-  Log,
   RoutePatch,
 } from "core/types";
 import { areas, crags, logs, routes, topos } from "../models";
 
-export async function createRoute(
+export const createRoute = async (
   routeDescription: RouteRequest,
   user: Auth0UserPublicData
-) {
+) => {
   const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
   const crag = await crags.getCragBySlug(routeDescription.cragSlug);
 
@@ -32,7 +30,7 @@ export async function createRoute(
   );
 
   return newRoute;
-}
+};
 
 export function getRouteBySlug(slug: string) {
   return routes.getRouteBySlug(slug);

@@ -2,9 +2,9 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { Auth0User, Log, LogRequest } from "core/types";
+import { Auth0UserPublicData, Log, LogRequest } from "core/types";
 
-export async function createRouteLog(logRequest: LogRequest, user: Auth0User) {
+export async function createRouteLog(logRequest: LogRequest, user: Auth0UserPublicData) {
   const date = DateTime.utc().toString();
   const cragLogSlug = nanoid();
   const userLogSlug = nanoid();

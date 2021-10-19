@@ -206,7 +206,7 @@ function CreateCrag() {
           </div>
 
           <div className="field">
-            <label className="label">Image</label>
+            <label className="label">Title Image</label>
             <div className="control">
               <div className="file has-name">
                 <label className="file-label">

@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { AreaPatch } from "core/types";
 import { UpdateAreaSchema } from "core/schemas";
 import { areas, crags } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -23,7 +23,9 @@ const isValidAreaPatch: RequestValidator = async (
   }
 
   const schema = UpdateAreaSchema();
-  const isValid = await schema.isValid(JSON.parse(event.body), { strict: true });
+  const isValid = await schema.isValid(JSON.parse(event.body), {
+    strict: true,
+  });
 
   if (!isValid) {
     return {
@@ -53,20 +55,36 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       return validationResponse;
     }
 
-    const areaPatch = JSON.parse(`${event.body}`) as AreaPatch
-    const user = await getAuth0UserPublicDataFromEvent(event);
-    const area = await areas.getAreaBySlug(areaSlug);
-    const crag = await crags.getCragBySlug(area.cragSlug, user);
+    if (!event.headers.authorization) {
+      console.error(
+        "PATCH area request received without authorization header",
+        event
+      );
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: true,
+          message: "Invalid Request",
+        }),
+      };
+    }
 
-    if (crag.managedBy.sub !== user.sub) {
+    const areaPatch = JSON.parse(`${event.body}`) as AreaPatch;
+    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const area = await areas.getAreaBySlug(areaSlug);
+    const crag = await crags.getCragBySlug(area.cragSlug, userSub);
+
+    if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: true,
-          message: "Permission Error: You Do Not Have Permission to Patch this Area",
+          message:
+            "Permission Error: You Do Not Have Permission to Patch this Area",
         }),
-      }
+      };
     }
 
     await areas.updateArea(crag.slug, areaSlug, areaPatch);

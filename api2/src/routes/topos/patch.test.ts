@@ -1,13 +1,9 @@
 import { topos } from "../../services";
 import { handler } from "./patch";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 
 jest.mock("../../utils/auth", () => ({
-  getAuth0UserPublicDataFromEvent: jest.fn(() => ({
-    sub: "user-sub",
-    nickname: "",
-    picture: "",
-  })),
+  getAuth0UserSubFromAuthHeader: jest.fn(() =>  "user-sub"),
 }));
 
 jest.mock("../../services", () => ({
@@ -46,6 +42,9 @@ describe("Topos PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     await handler({
+      headers: {
+        authorization: 'bearer token.token',
+      },
       pathParameters: {
         topoSlug: "topo-slug",
       },
@@ -68,6 +67,9 @@ describe("Topos PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     const response = await handler({
+      headers: {
+        authorization: 'bearer token.token',
+      },
       pathParameters: {
         topoSlug: "topo-slug",
       },
@@ -86,10 +88,8 @@ describe("Topos PATCH", () => {
   });
 
   it("Retuns an error if the user does not have permssions to update the topo", async () => {
-    (getAuth0UserPublicDataFromEvent as jest.Mock).mockImplementationOnce(
-      jest.fn(() => ({
-        sub: "not-crag-maintainers-user-sub",
-      }))
+    (getAuth0UserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
+      jest.fn(() => "not-crag-maintainers-user-sub")
     );
 
     const request = {
@@ -98,6 +98,9 @@ describe("Topos PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     const response = await handler({
+      headers: {
+        authorization: 'bearer token.token',
+      },
       pathParameters: {
         topoSlug: "topo-slug",
       },

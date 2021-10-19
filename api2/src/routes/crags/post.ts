@@ -1,11 +1,12 @@
-import * as yup from "yup";
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { crags } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserPublicDataFromEvent, getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 import { RequestValidator } from "../../utils/request-validator";
 import { NewCragSchema } from "core/schemas";
 
-const validateBody: RequestValidator = async (event: APIGatewayProxyEventV2) => {
+const validateBody: RequestValidator = async (
+  event: APIGatewayProxyEventV2
+) => {
   const schema = NewCragSchema();
   const isValid = await schema.isValid(JSON.parse(`${event.body}`));
 
@@ -15,10 +16,10 @@ const validateBody: RequestValidator = async (event: APIGatewayProxyEventV2) => 
     return {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: true })
-    }
+      body: JSON.stringify({ error: true }),
+    };
   }
-}
+};
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
@@ -40,15 +41,15 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       body: JSON.stringify({
         success: true,
         inserted: resp,
-      })
-    }
-  } catch(error) {
-    console.error('Error creating crag', error);
+      }),
+    };
+  } catch (error) {
+    console.error("Error creating crag", error);
 
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: true })
-    }
+      body: JSON.stringify({ error: true }),
+    };
   }
-}
+};

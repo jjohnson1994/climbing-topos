@@ -6,7 +6,7 @@ import { Auth0UserPublicData, Route, RouteRequest } from "core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
-export async function createRoute(routeDescription: RouteRequest, user: Auth0UserPublicData, verified: boolean) {
+export async function createRoute(routeDescription: RouteRequest, auth0UserPublicData: Auth0UserPublicData, verified: boolean) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${routeDescription.title}-${nanoid(5)}`);
 
@@ -46,7 +46,7 @@ export async function createRoute(routeDescription: RouteRequest, user: Auth0Use
       ratingTally: {},
       slug,
       verified,
-      createdBy: user,
+      createdBy: auth0UserPublicData,
       createdAt: date,
       updatedAt: date
     }

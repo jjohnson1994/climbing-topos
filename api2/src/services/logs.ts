@@ -1,7 +1,7 @@
 import { logs } from "../models";
-import { Auth0User, Log, LogRequest } from "core/types";
+import { Auth0UserPublicData, Log, LogRequest } from "core/types";
 
-export async function logRoutes(logRequests: LogRequest[], user: Auth0User) {
+export async function logRoutes(logRequests: LogRequest[], user: Auth0UserPublicData) {
   const requests = logRequests
     .map(logRequest => logs.createRouteLog(logRequest, user));
   return Promise.all(requests);

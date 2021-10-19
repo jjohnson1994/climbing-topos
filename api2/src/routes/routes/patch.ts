@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { RoutePatch } from "core/types";
 import { UpdateRouteScheme } from "core/schemas";
 import { crags, routes } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -45,6 +45,21 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
+    if (!event.headers.authorization) {
+      console.error(
+        "PATCH route request received without authorization header",
+        event
+      );
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: true,
+          message: "Invalid Request",
+        }),
+      };
+    }
+
     const { routeSlug } = event.pathParameters as {
       routeSlug: string;
     };
@@ -56,11 +71,11 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const routePatch = JSON.parse(`${event.body}`) as RoutePatch;
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
     const route = await routes.getRouteBySlug(routeSlug);
-    const crag = await crags.getCragBySlug(route.cragSlug, user);
+    const crag = await crags.getCragBySlug(route.cragSlug, userSub);
 
-    if (crag.managedBy.sub !== user.sub) {
+    if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
         headers: { "Content-Type": "application/json" },

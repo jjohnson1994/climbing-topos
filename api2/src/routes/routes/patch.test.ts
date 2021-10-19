@@ -1,13 +1,9 @@
 import { crags, routes } from "../../services";
 import { handler } from "./patch";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
 
 jest.mock("../../utils/auth", () => ({
-  getAuth0UserPublicDataFromEvent: jest.fn(() => ({
-    sub: "user-sub",
-    nickname: "",
-    picture: "",
-  })),
+  getAuth0UserSubFromAuthHeader: jest.fn(() => "crag-maintainers-user-sub"),
 }));
 
 jest.mock("../../services", () => ({
@@ -28,7 +24,7 @@ jest.mock("../../services", () => ({
       Promise.resolve({
         slug: "crag-slug",
         managedBy: {
-          sub: "user-sub",
+          sub: "crag-maintainers-user-sub",
         },
       })
     ),
@@ -48,6 +44,9 @@ describe("Routes PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     await handler({
+      headers: {
+        authorization: "bearer token.token",
+      },
       pathParameters: {
         routeSlug: "route-slug",
       },
@@ -71,6 +70,9 @@ describe("Routes PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     const response = await handler({
+      headers: {
+        authorization: "bearer token.token",
+      },
       pathParameters: {
         routeSlug: "route-slug",
       },
@@ -89,10 +91,8 @@ describe("Routes PATCH", () => {
   });
 
   it("Retuns an error if the user does not have permssions to update the route", async () => {
-    (getAuth0UserPublicDataFromEvent as jest.Mock).mockImplementationOnce(
-      jest.fn(() => ({
-        sub: "not-crag-maintainers-user-sub",
-      }))
+    (getAuth0UserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
+      jest.fn(() => "not-crag-maintainers-user-sub")
     );
 
     const request = {
@@ -102,6 +102,9 @@ describe("Routes PATCH", () => {
 
     // @ts-ignore expected 3 arguments, but got 1
     const response = await handler({
+      headers: {
+        authorization: "bearer token.token",
+      },
       pathParameters: {
         routeSlug: "route-slug",
       },

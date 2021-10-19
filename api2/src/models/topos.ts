@@ -7,7 +7,7 @@ import { Auth0UserPublicData, Topo, TopoRequest } from "core/types";
 
 export async function createTopo(
   topoDetails: TopoRequest,
-  user: Auth0UserPublicData,
+  auth0UserPublicData: Auth0UserPublicData,
   topoVerified: boolean
 ) {
   const date = DateTime.utc().toString();
@@ -30,7 +30,7 @@ export async function createTopo(
       model: "topo",
       slug,
       verified: topoVerified,
-      createdBy: user,
+      createdBy: auth0UserPublicData,
       createdAt: date,
       updatedAt: date
     }

@@ -22,7 +22,7 @@ function ButtonCopyCoordinates({ latitude, longitude, className = "" }: Props) {
   return (
     <button className={ `button is-rounded ${className}` } onClick={ copyCoordinatedToClipboard }>
       <span className="icon is-small">
-        <i className="far fa-copy"></i>
+        <i className="fas fa-map-marker-alt"></i>
       </span>
       <span>{ `${latitude}`.substring(0, 9) }, { `${longitude}`.substring(0, 9) }</span>
     </button>

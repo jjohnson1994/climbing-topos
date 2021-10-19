@@ -7,7 +7,7 @@ export async function createArea(
   areaDetails: AreaRequest,
   user: Auth0UserPublicData
 ) {
-  const crag = await crags.getCragBySlug(areaDetails.cragSlug, user);
+  const crag = await crags.getCragBySlug(areaDetails.cragSlug, user.sub);
   const areaVerified = crag.managedBy.sub === user.sub;
   const newArea = await areas.createArea(areaDetails, user, areaVerified);
 
@@ -18,7 +18,7 @@ export async function getAreaBySlug(
   areaSlug: string,
   userSub?: string
 ): Promise<Area> {
-  const area = await areas.getAreaBySlug(areaSlug)
+  const area = await areas.getAreaBySlug(areaSlug);
   const [areaTopos, areaRoutes, userLogs] = await Promise.all([
     topos.getToposByCragArea(area.cragSlug, areaSlug),
     routes.listRoutes(area.cragSlug, areaSlug),
@@ -84,7 +84,7 @@ export async function incrementLogCount(cragSlug: string, areaSlug: string) {
 export async function updateArea(
   cragSlug: string,
   areaSlug: string,
-  areaPatch: AreaPatch,
+  areaPatch: AreaPatch
 ) {
   const expressionAttributeNames = Object.entries(areaPatch).reduce(
     (acc, [key]) => ({
@@ -102,11 +102,11 @@ export async function updateArea(
     {}
   );
 
-  const updateExpression = Object.entries(areaPatch).map(
-    ([key]) => {
+  const updateExpression = Object.entries(areaPatch)
+    .map(([key]) => {
       return `#${key} = :${key}`;
-    }
-  ).join(', ');
+    })
+    .join(", ");
 
   return areas.update(cragSlug, areaSlug, {
     UpdateExpression: `set ${updateExpression}`,

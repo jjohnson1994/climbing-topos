@@ -1,12 +1,15 @@
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {crags} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import {getAuth0UserFromEvent, getAuth0UserSubFromAuthHeader} from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserFromEvent(event);
+    const userSub = event.headers.authorization
+      ? getAuth0UserSubFromAuthHeader(event.headers.authorization)
+      : null
+
     const { sortBy, sortOrder, limit = '10', offset = '0' } = event.queryStringParameters
       || {} as Record<string, string>;
     const { slug } = event.pathParameters || {} as {
@@ -14,7 +17,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     };
 
     if (slug) {
-      const crag = await crags.getCragBySlug(slug, user);
+      const crag = await crags.getCragBySlug(slug, userSub);
       
       return {
         statusCode: 200,
@@ -23,7 +26,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       }
     } else {
       const allCrags = await crags.getAllCrags(
-        user,
+        userSub,
         sortBy,
         sortOrder,
         parseInt(limit, 10),
