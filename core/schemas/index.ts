@@ -250,7 +250,6 @@ export const NewLogsSchema = () =>
             .required(),
           tags: yup
             .array()
-            .min(1, "Select at least 1")
             .of(yup.string().oneOf(routeTags))
             .typeError("Invalid Tags"),
         })
