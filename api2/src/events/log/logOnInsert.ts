@@ -1,5 +1,5 @@
 import { normalizeRow } from "../../db/dynamodb";
-import { crags, areas, routes, analytics } from "../../services";
+import { crags, areas, routes, analytics, users } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
 
 interface EventRecordImage {
@@ -44,6 +44,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
           crags.incrementLogCount(cragSlug),
           areas.incrementLogCount(cragSlug, areaSlug),
           routes.incrementLogCount(cragSlug, areaSlug, topoSlug, routeSlug),
+          users.incrementRoutesCompletedCount(user.sub)
         ]);
 
         await routes.updateMetricsOnLogInsert(

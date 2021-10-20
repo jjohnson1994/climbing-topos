@@ -1,7 +1,7 @@
 import { Route } from "core/types";
 import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
-import { analytics, areas, crags } from "../../services";
+import { analytics, areas, crags, users } from "../../services";
 import { SNSHandler, SNSEvent } from "aws-lambda";
 import { gradingSystems } from "../../../../core/globals";
 
@@ -19,6 +19,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         verified,
         gradingSystem: routeGradingSystem,
         grade,
+        createdBy
       } = normalizedRow;
 
       const normalizedGrade = gradingSystems.find(
@@ -32,6 +33,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
           analytics.incrementGlobalRouteCount(),
           areas.incrementRouteCount(cragSlug, areaSlug),
           crags.incrementRouteCount(cragSlug),
+          users.incrementRouteCreatedCount(createdBy.sub),
           algolaIndex.saveObject({
             ...normalizedRow,
             model: "route",

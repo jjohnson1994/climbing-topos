@@ -2,7 +2,7 @@ import { Crag } from "core/types";
 import algolaIndex from "../../db/algolia";
 import { normalizeRow } from "../../db/dynamodb";
 import { SNSHandler, SNSEvent } from "aws-lambda";
-import { analytics } from "../../services";
+import { analytics, users } from "../../services";
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -11,10 +11,11 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const newImage = message.dynamodb.NewImage;
       const normalizedRow = normalizeRow<Crag>(newImage);
 
-      const { slug } = normalizedRow;
+      const { slug, createdBy } = normalizedRow;
 
       return [
         analytics.incrementGlobalCragCount(),
+        users.incrementCragCreatedCount(createdBy.sub),
         algolaIndex.saveObject({
           ...normalizedRow,
           model: "crag",
