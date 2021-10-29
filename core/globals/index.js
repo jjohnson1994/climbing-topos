@@ -388,6 +388,7 @@ exports.routeTags = [
     'Morpho',
     'Needs Brushing',
     'Overhanging',
+    'Pinches',
     'Pockets',
     'Power',
     'Sidepulls',
