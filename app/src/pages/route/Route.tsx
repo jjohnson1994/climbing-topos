@@ -132,7 +132,15 @@ function RoutePage() {
         <>
           <section className="section">
             <div className="container">
+              <nav className="breadcrumb" aria-label="breadcrumbs">
+                <ul>
+                  <li><a href={`/crags/${route?.cragSlug}`}>{ route?.cragTitle }</a></li>                  
+                  <li><a href={`/crags/${route?.cragSlug}/areas/${route?.areaSlug}`}>{ route?.areaTitle }</a></li>
+                </ul>
+              </nav>
               <div className="block">
+                <div className="columns">
+                </div>
                 <div className="columns">
                   <div className="column is-two-thirds">
                     <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>

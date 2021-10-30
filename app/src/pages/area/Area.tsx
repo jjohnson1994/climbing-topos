@@ -129,6 +129,11 @@ function AreaView() {
       )}
       <section className={`section ${loading ? "is-hidden" : ""}`}>
         <div className="container">
+          <nav className="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href={`/crags/${area?.cragSlug}`}>{ area?.cragTitle }</a></li>                  
+            </ul>
+          </nav>
           <div className="columns">
             <div className="column is-two-thirds">
               <h1 className="title is-spaced is-capitalized">{area?.title}</h1>
