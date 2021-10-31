@@ -127,7 +127,7 @@ function AreaView() {
           </div>
         </section>
       )}
-      <section className={`section ${loading ? "is-hidden" : ""}`}>
+      <section className={`section pt-5 ${loading ? "is-hidden" : ""}`}>
         <div className="container">
           <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
