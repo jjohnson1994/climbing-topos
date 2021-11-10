@@ -55,7 +55,7 @@ function ProfileLogs() {
             { loggedRoutes.map(log => (
               <tr key={ log.slug } >
                 <td>
-                  <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topos/${log.topoSlug}/routes/${log.routeSlug}` }>
+                  <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}` }>
                     { log.routeTitle }
                   </Link>
                 </td>

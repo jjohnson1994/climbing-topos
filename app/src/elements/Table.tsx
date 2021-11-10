@@ -1,61 +1,68 @@
+import { useTable, useSortBy, Column } from "react-table";
+
 interface Props {
-  columns: string[];
-  data: string[][];
-  fieldComponents: Record<string, (fieldValue: any) => any>;
-  fieldClasses: Record<string, string>;
+  columns: Column[];
+  data: Object[];
+  sortBy?: {
+    id: string;
+    desc: boolean;
+  };
 }
 
-const Table = ({ columns, data, fieldComponents, fieldClasses }: Props) => {
-  const getColumnTitle = (column: number) => {
-    return columns[column];
-  }
+const Table = ({ columns, data, sortBy }: Props) => {
+  const tableInstance = useTable(
+    {
+      // @ts-ignore Type 'Column<{}>[]' is not assignable to type 'readonly Column<Object>[]'
+      columns,
+      data,
+      initialState: {
+        ...(sortBy && { sortBy: [sortBy] }),
+      },
+    },
+    useSortBy
+  );
 
-  const getFieldValue = (row: number, column: number) => {
-    const columnTitle = getColumnTitle(column);
-    const columnValue = data[row][column];
-
-    if (Object.keys(fieldComponents).includes(columnTitle)) {
-      return fieldComponents[columnTitle](columnValue);
-    }
-
-    return columnValue;
-  }
-
-  const getFieldClasses = (column: number): string => {
-    const columnTitle = getColumnTitle(column);
-
-    if (Object.keys(fieldClasses).includes(columnTitle)) {
-      return fieldClasses[columnTitle];
-    }
-
-    return '';
-  }
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance;
 
   return (
-    <table className="table is-fullwidth">
+    <table className="table is-fullwidth" {...getTableProps()}>
       <thead>
-        <tr>
-          { columns.map(column => (
-            <th key={ `tableHead_${column}` }>{ column }</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        { data.map((column, rowIndex) => (
-          <tr> {
-            column.map((_field, colIndex) => (
-              <td
-                key={ `tableBody_${rowIndex}_${colIndex}` }
-                className={ getFieldClasses(colIndex) }
-              >
-                { getFieldValue(rowIndex, colIndex) }
-              </td>
+        {headerGroups.map((headerGroup) => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                {column.render("Header")}
+                <span>
+                  {column.isSorted ? (
+                    column.isSortedDesc ? (
+                      <i className="ml-1 fas fa-chevron-down" />
+                    ) : (
+                      <i className="ml-1 fas fa-chevron-up" />
+                    )
+                  ) : (
+                    ""
+                  )}
+                </span>
+              </th>
             ))}
           </tr>
         ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map((row) => {
+          prepareRow(row);
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map((cell) => {
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              })}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
-  )
-}
+  );
+};
 
 export default Table;
