@@ -51,11 +51,13 @@ const RouteLogs = ({ logs }: Props) => {
       <h3 className="title" style={{ whiteSpace: "nowrap" }}>
         Logs
       </h3>
-      <Table
-        columns={columns}
-        data={data}
-        sortBy={{ id: "date", desc: true }}
-      />
+      <div className="table-container">
+        <Table
+          columns={columns}
+          data={data}
+          sortBy={{ id: "date", desc: true }}
+        />
+      </div>
     </div>
   );
 };
