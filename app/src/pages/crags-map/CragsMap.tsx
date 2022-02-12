@@ -52,6 +52,7 @@ function CragsMap() {
           >
             <Popup>
               <h5 className="subtitle is-5">{ crag.title }</h5>
+              <img src={ `${crag.image}` } alt={ crag.title }/>
               <ButtonCopyCoordinates
                 className="is-small"
                 latitude={ crag.latitude }
