@@ -1,11 +1,10 @@
-import {useAuth0} from "@auth0/auth0-react";
-import {yupResolver} from '@hookform/resolvers/yup';
-import {NewTopoSchema} from "core/schemas";
-import React, {useState} from "react";
-import {useForm} from "react-hook-form";
-import {useHistory, useParams} from "react-router-dom";
-import {topos} from "../../api";
-import {popupError, popupSuccess} from "../../helpers/alerts";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { NewTopoSchema } from "core/schemas";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
+import { topos } from "../../api";
+import { popupError, popupSuccess } from "../../helpers/alerts";
 
 const schema = NewTopoSchema();
 
@@ -13,34 +12,41 @@ let image: File;
 
 function CreateTopo() {
   const history = useHistory();
-  const { getAccessTokenSilently } = useAuth0();
-  const { cragSlug, areaSlug } = useParams<{ areaSlug: string; cragSlug: string }>();
+  const { cragSlug, areaSlug } =
+    useParams<{ areaSlug: string; cragSlug: string }>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [imagePreview, setImagePreview] = useState('')
+  const [imagePreview, setImagePreview] = useState("");
 
-  const { register, watch, handleSubmit, setValue, errors } = useForm({
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       orientation: "unknown",
       imageFileName: "",
       areaSlug,
-      cragSlug
-    }
+      cragSlug,
+    },
   });
 
   const watchImageFileName = watch("imageFileName");
 
   async function onImageSelected() {
-    const files =
-      (document.querySelector('input[type=file]') as HTMLInputElement).files;
+    const files = (
+      document.querySelector("input[type=file]") as HTMLInputElement
+    ).files;
 
     if (files) {
       const file = files.item(0);
-      const imagePreviewUrl = URL.createObjectURL(file)
+      const imagePreviewUrl = URL.createObjectURL(file);
       image = file as File;
-      setValue("imageFileName", file?.name);
-      setImagePreview(imagePreviewUrl)
+      setValue("imageFileName", file?.name ?? "Unnamed Image");
+      setImagePreview(imagePreviewUrl);
     } else {
       setValue("imageFileName", "");
     }
@@ -50,12 +56,11 @@ function CreateTopo() {
     setLoading(true);
 
     try {
-      const token = await getAccessTokenSilently();
-      await topos.createTopo({ ...formData, image }, token);
+      await topos.createTopo({ ...formData, image });
       await popupSuccess("Topo Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {
-      console.error('Error creating crag', error);
+      console.error("Error creating crag", error);
       popupError("Ahh, something has gone wrong...");
     } finally {
       setLoading(false);
@@ -66,28 +71,28 @@ function CreateTopo() {
     <section className="section">
       <div className="container box">
         <form
-          onSubmit={ formOnSubmit }
+          onSubmit={formOnSubmit}
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
           <input
             type="text"
             name="cragSlug"
-            value={ cragSlug }
-            ref={ register() }
+            value={cragSlug}
+            {...register}
             className="is-hidden"
           />
           <input
             type="text"
             name="areaSlug"
-            value={ areaSlug }
-            ref={ register() }
+            value={areaSlug}
+            {...register}
             className="is-hidden"
           />
           <input
             type="text"
             name="imageFileName"
-            ref={ register({}) }
+            {...register}
             className="is-hidden"
           />
 
@@ -100,30 +105,26 @@ function CreateTopo() {
                     className="file-input"
                     type="file"
                     accept="image/*"
-                    onChange={ onImageSelected }
+                    onChange={onImageSelected}
                   />
                   <span className="file-cta">
                     <span className="file-icon">
                       <i className="fas fa-upload"></i>
                     </span>
-                    <span className="file-label">
-                      Choose a file…
-                    </span>
+                    <span className="file-label">Choose a file…</span>
                   </span>
-                  <span className="file-name">
-                    { watchImageFileName }
-                  </span>
+                  <span className="file-name">{watchImageFileName}</span>
                 </label>
               </div>
             </div>
-            <p className="help is-danger">{ errors.imageFileName?.message }</p>
+            <p className="help is-danger">{errors.imageFileName?.message}</p>
           </div>
 
-          { imagePreview && (
+          {imagePreview && (
             <div className="field">
               <div className="control">
                 <figure className="image">
-                  <img src={ imagePreview } alt="topo preview"/>
+                  <img src={imagePreview} alt="topo preview" />
                 </figure>
               </div>
             </div>
@@ -133,7 +134,7 @@ function CreateTopo() {
             <label className="label">Orientation</label>
             <div className="control">
               <div className="select">
-                <select name="orientation" ref={ register }>
+                <select name="orientation" {...register}>
                   <option value="unknown">Unknown</option>
                   <option value="north">North</option>
                   <option value="north-east">North East</option>
@@ -146,13 +147,16 @@ function CreateTopo() {
                 </select>
               </div>
             </div>
-            <p className="help is-danger">{ errors.orientation?.message }</p>
+            <p className="help is-danger">{errors.orientation?.message}</p>
           </div>
 
           <div className="field">
             <div className="field is-flex is-justified-end">
               <div className="control">
-                <button type="submit" className={`button is-primary ${loading ? "is-loading" : ""}`}>
+                <button
+                  type="submit"
+                  className={`button is-primary ${loading ? "is-loading" : ""}`}
+                >
                   <span>Create Topo</span>
                 </button>
               </div>

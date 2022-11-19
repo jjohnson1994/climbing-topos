@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { areas, topos } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getUserPublicDataFromEvent } from "../../utils/auth";
 import { RequestValidator } from "../../utils/request-validator";
 
 const areaExists =
@@ -35,7 +35,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const user = await getUserPublicDataFromEvent(event);
     const areaExistsResponse = await areaExists(user.sub)(event);
 
     if (areaExistsResponse !== true) {

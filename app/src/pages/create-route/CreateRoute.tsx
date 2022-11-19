@@ -1,11 +1,10 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import { NewRouteScheme } from "core/schemas";
 import { Area, RouteDrawing } from "core/types";
 import { gradingSystems } from "core/globals";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from "react-router-dom";
 import { areas, globals, routes, topos } from "../../api";
 import TopoCanvas from "../../components/TopoCanvas";
 import { popupError, popupSuccess } from "../../helpers/alerts";
@@ -14,29 +13,36 @@ const schema = NewRouteScheme();
 
 function CreateRoute() {
   const history = useHistory();
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-  const { areaSlug, cragSlug, topoSlug } = useParams<{ areaSlug: string; cragSlug: string, topoSlug: string }>();
+  const { areaSlug, cragSlug, topoSlug } =
+    useParams<{ areaSlug: string; cragSlug: string; topoSlug: string }>();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [routeTypes, setRouteTypes] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [area, setArea] = useState<Area | undefined>();
   const [backgroundImageURL, setBackgroundImageURL] = useState("");
 
-  const { register, getValues, setValue, handleSubmit, errors, watch } = useForm({
+  const {
+    register,
+    getValues,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       areaSlug,
       cragSlug,
       description: "",
-      drawing: { points: [] },
+      drawing: { points: [] } as RouteDrawing,
       grade: "",
       gradingSystem: "",
       routeType: "",
       tags: [] as string[],
       title: "",
       topoSlug,
-    }
+    },
   });
 
   const watchTags = watch("tags");
@@ -45,10 +51,7 @@ function CreateRoute() {
   useEffect(() => {
     const doGetArea = async () => {
       try {
-        const token = isAuthenticated
-          ? await getAccessTokenSilently()
-          : "";
-        const area = await areas.getArea(areaSlug, token);
+        const area = await areas.getArea(areaSlug, );
         setArea(area);
       } catch (error) {
         console.error("Error loading area", error);
@@ -59,32 +62,34 @@ function CreateRoute() {
     const doGetTopo = async () => {
       const topo = await topos.getTopo(topoSlug);
       setBackgroundImageURL(`${topo.image}`);
-    }
+    };
 
     doGetArea();
     doGetTopo();
     doGetTags();
     doGetRouteTypes();
-  }, [areaSlug, isAuthenticated, topoSlug]);
+  }, [areaSlug, topoSlug]);
 
   const doGetTags = async () => {
     const routeTags = await globals.getRouteTags();
     setRouteTags(routeTags);
-  }
+  };
 
   const doGetRouteTypes = async () => {
     const routeTypes = await globals.getRouteTypes();
     setRouteTypes(routeTypes);
-  }
+  };
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
-    const grades = gradingSystems?.find(_gradingSystem => _gradingSystem.title === gradingSystem)?.grades;
+    const grades = gradingSystems?.find(
+      (_gradingSystem) => _gradingSystem.title === gradingSystem
+    )?.grades;
     return Array.from(new Set(grades));
-  }
+  };
 
   const onDrawingChanged = (drawing: RouteDrawing) => {
-    setValue("drawing", JSON.stringify(drawing));
-  }
+    setValue("drawing", drawing);
+  };
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
@@ -94,7 +99,6 @@ function CreateRoute() {
         throw new Error("Error creating route, area not found");
       }
 
-      const token = await getAccessTokenSilently();
       const { routeSlug } = await routes.createRoute(
         {
           ...formData,
@@ -108,12 +112,11 @@ function CreateRoute() {
           rockType: area.rockType,
           state: area.state,
         },
-        token
       );
       await popupSuccess("Route Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}#${routeSlug}`);
     } catch (error) {
-      console.error('Error creating crag', error);
+      console.error("Error creating crag", error);
       popupError("Ahh, something has gone wrong...");
     } finally {
       setLoading(false);
@@ -125,74 +128,76 @@ function CreateRoute() {
       <section className="section">
         <div className="container">
           <TopoCanvas
-            routes={ area?.routes?.filter(route => route.topoSlug === topoSlug) }
-            backgroundImageURL={ backgroundImageURL }
-            onDrawingChanged={ onDrawingChanged }
+            routes={area?.routes?.filter(
+              (route) => route.topoSlug === topoSlug
+            )}
+            backgroundImageURL={backgroundImageURL}
+            onDrawingChanged={onDrawingChanged}
           />
         </div>
       </section>
       <section className="section">
         <div className="container box">
           <form
-            onSubmit={ formOnSubmit }
+            onSubmit={formOnSubmit}
             style={{ display: "flex", flexDirection: "column" }}
             autoComplete="off"
           >
             <input
               className="is-hidden"
               name="cragSlug"
-              defaultValue={ cragSlug }
-              ref={ register }
+              defaultValue={cragSlug}
+              { ...register }
             />
             <input
               className="is-hidden"
               name="areaSlug"
-              defaultValue={ areaSlug }
-              ref={ register }
+              defaultValue={areaSlug}
+              { ...register }
             />
             <input
               className="is-hidden"
               name="topoSlug"
-              defaultValue={ topoSlug }
-              ref={ register }
+              defaultValue={topoSlug}
+              { ...register }
             />
-            <input
-              className="is-hidden"
-              name="drawing"
-              ref={ register }
-            />
+            <input className="is-hidden" name="drawing" { ...register } />
             <div className="field">
-              <label className="label" htmlFor="title">Title</label>
+              <label className="label" htmlFor="title">
+                Title
+              </label>
               <div className="control">
                 <input
                   className="input"
                   type="text"
                   name="title"
-                  ref={ register }
+                  { ...register }
                 />
               </div>
-              <p className="help is-danger">{ errors.title?.message }</p>
+              <p className="help is-danger">{errors.title?.message}</p>
             </div>
 
             <div className="field">
-              <label className="label" htmlFor="description">Description</label>
+              <label className="label" htmlFor="description">
+                Description
+              </label>
               <div className="control">
                 <textarea
                   className="textarea"
                   name="description"
-                  ref={ register }
-                ></textarea> 
+                  { ...register }
+                ></textarea>
               </div>
-              <p className="help is-danger">{ errors.description?.message }</p>
+              <p className="help is-danger">{errors.description?.message}</p>
             </div>
 
             <div className="field">
               <label className="label">Tags</label>
               <div className="field is-grouped is-grouped-multiline">
                 <div role="group" className="tags">
-                  {routeTags.map(tag => (
+                  {routeTags.map((tag) => (
                     <label
-                      key={ tag }
+                      key={tag}
                       className={`
                         tag
                         ${watchTags?.includes(tag) ? "is-primary" : ""}
@@ -201,65 +206,79 @@ function CreateRoute() {
                       <input
                         type="checkbox"
                         name="tags"
-                        value={ tag }
-                        ref={ register }
+                        value={tag}
+                        { ...register }
                         style={{ display: "none" }}
                       />
-                      { tag }
+                      {tag}
                     </label>
-                  ))} 
+                  ))}
                 </div>
               </div>
-              <p className="help is-danger">{ (errors.tags as any)?.message }</p>
+              <p className="help is-danger">{(errors.tags as any)?.message}</p>
             </div>
 
             <div className="field">
               <label className="label">Route Type</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="routeType" ref={ register }>
+                  <select name="routeType" { ...register }>
                     {routeTypes.map((routeType) => (
-                      <option key={ routeType } value={ routeType }>{ routeType }</option>
+                      <option key={routeType} value={routeType}>
+                        {routeType}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.routeType?.message }</p>
+              <p className="help is-danger">{errors.routeType?.message}</p>
             </div>
 
             <div className="field">
               <label className="label">Grading System</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="gradingSystem" ref={ register }>
+                  <select name="gradingSystem" { ...register }>
                     {gradingSystems.map((gradingSystem) => (
-                      <option key={ gradingSystem.title } value={ gradingSystem.title }>{ gradingSystem.title }</option>
+                      <option
+                        key={gradingSystem.title}
+                        value={gradingSystem.title}
+                      >
+                        {gradingSystem.title}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.gradingSystem?.message }</p>
+              <p className="help is-danger">{errors.gradingSystem?.message}</p>
             </div>
 
             <div className="field">
               <label className="label">Grade</label>
               <div className="contro is-expandedl">
                 <div className="select is-fullwidth">
-                  <select name="grade" ref={ register }>
-                    {watchGradingSystem && getGradesFromGradingSystem(getValues("gradingSystem"))?.map((grade, index) => (
-                      <option key={ grade } value={ index }>{ grade }</option>
-                    ))}
+                  <select name="grade" { ...register }>
+                    {watchGradingSystem &&
+                      getGradesFromGradingSystem(
+                        getValues("gradingSystem")
+                      )?.map((grade, index) => (
+                        <option key={grade} value={index}>
+                          {grade}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
-              <p className="help is-danger">{ errors.grade?.message }</p>
+              <p className="help is-danger">{errors.grade?.message}</p>
             </div>
 
             <div className="field">
               <div className="field is-flex is-justified-end">
                 <div className="control">
                   <button
-                    className={ `button is-primary ${ loading ? "is-loading" : "" }` }
+                    className={`button is-primary ${
+                      loading ? "is-loading" : ""
+                    }`}
                   >
                     Create Route
                   </button>

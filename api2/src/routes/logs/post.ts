@@ -1,14 +1,14 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { LogRequest } from "core/types";
 import { logs } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getUserPublicDataFromEvent } from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
     const logsDetails = JSON.parse(`${event.body}`).logs as LogRequest[];
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const user = await getUserPublicDataFromEvent(event);
     await logs.logRoutes(logsDetails, user);
 
     return {

@@ -1,11 +1,10 @@
 import { areas, logs, routes, topos } from "../models";
-import { AreaRequest, Area, Auth0UserPublicData, AreaPatch } from "core/types";
+import { AreaRequest, Area, UserPublicData, AreaPatch } from "core/types";
 import { crags } from ".";
-import { getAuth0UserPublicDataFromEvent } from "../utils/auth";
 
 export async function createArea(
   areaDetails: AreaRequest,
-  user: Auth0UserPublicData
+  user: UserPublicData
 ) {
   const crag = await crags.getCragBySlug(areaDetails.cragSlug, user.sub);
   const areaVerified = crag.managedBy.sub === user.sub;

@@ -4,13 +4,13 @@ import {
 } from "aws-sdk/clients/dynamodb";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
-import { Auth0UserPublicData, Crag, CragRequest } from "core/types";
+import { UserPublicData, Crag, CragRequest } from "core/types";
 import { dynamodb } from "../db";
 import { createSlug } from "../helpers/slug";
 
 export const createCrag = async (
   cragDetails: CragRequest,
-  auth0UserPublicData: Auth0UserPublicData
+  auth0UserPublicData: UserPublicData
 ) => {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);

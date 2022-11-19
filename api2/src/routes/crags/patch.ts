@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { CragPatch } from "core/types";
 import { UpdateCragSchema } from "core/schemas";
 import { crags } from "../../services";
-import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -69,7 +69,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const cragPatch = JSON.parse(`${event.body}`) as CragPatch;
-    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const userSub = getUserSubFromAuthHeader(event.headers.authorization);
     const crag = await crags.getCragBySlug(cragSlug, userSub);
 
     if (crag.managedBy.sub !== userSub) {

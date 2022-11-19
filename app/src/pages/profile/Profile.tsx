@@ -1,12 +1,23 @@
-import { useState } from "react";
-import { useAuth0, User } from "@auth0/auth0-react";
+import { useEffect, useState } from "react";
 import ProfileLogs from "../../components/ProfileLogs";
 import ProfileLists from "../../components/ProfileLists";
+import { useHistory } from "react-router-dom";
+import useUser from "../../api/user";
 
 function Profile() {
-  const { logout, user } = useAuth0();
-  const { name, picture, email } = user as User;
+  const { userAttributes, signOut } = useUser();
   const [activeTab, setActiveTab] = useState("logs");
+
+  const history = useHistory();
+
+  const handleLogout = async () => {
+    await signOut();
+    history.replace("/login");
+  };
+
+  useEffect(() => {
+    console.log({ userAttributes });
+  }, [userAttributes]);
 
   return (
     <>
@@ -14,17 +25,26 @@ function Profile() {
         <div className="container box">
           <div className="columns is-mobile is-multiline is-centered">
             <div className="column is-narrow">
-              <img src={ picture } alt="profile" />
-            </div>            
+              {/**
+              <img src={userAttributes.picture} alt="profile" />
+              */}
+            </div>
             <div className="column">
-              <div className="is-flex is-flex-column is-align-content-space-between" style={{ height: "100%" }}>
+              <div
+                className="is-flex is-flex-column is-align-content-space-between"
+                style={{ height: "100%" }}
+              >
                 <div className="is-flex-grow-1">
-                  <span><b>Username </b> { name } </span>
+                  <span>
+                    <b>Username </b> {userAttributes?.username}{" "}
+                  </span>
                   <br />
-                  <span><b>Email </b> { email } </span>
+                  <span>
+                    <b>Email </b> {userAttributes?.attributes?.email}{" "}
+                  </span>
                 </div>
-                <div>
-                  <button className="button" onClick={ () => logout() }>
+                <div className="is-flex is-justify-content-flex-end mt-2">
+                  <button className="button" onClick={handleLogout}>
                     Logout
                   </button>
                 </div>
@@ -36,18 +56,20 @@ function Profile() {
       <section className="section">
         <div className="tabs">
           <ul>
-            <li className={ activeTab === "logs" ? "is-active" : "" }>
-              <a onClick={ () => setActiveTab("logs") }>Logs</a>
+            <li className={activeTab === "logs" ? "is-active" : ""}>
+              <a onClick={() => setActiveTab("logs")}>Logs</a>
             </li>
-            <li className={ activeTab === "lists" ? "is-active" : "" }>
-              <a onClick={ () => setActiveTab("lists") }>Lists</a>
+            <li className={activeTab === "lists" ? "is-active" : ""}>
+              <a onClick={() => setActiveTab("lists")}>Lists</a>
             </li>
           </ul>
         </div>
-        <div className={ `container ${ activeTab === "logs" ? "" : "is-hidden" }` }>
+        <div className={`container ${activeTab === "logs" ? "" : "is-hidden"}`}>
           <ProfileLogs />
         </div>
-        <div className={ `container ${ activeTab === "lists" ? "" : "is-hidden" }` }>
+        <div
+          className={`container ${activeTab === "lists" ? "" : "is-hidden"}`}
+        >
           <ProfileLists />
         </div>
       </section>

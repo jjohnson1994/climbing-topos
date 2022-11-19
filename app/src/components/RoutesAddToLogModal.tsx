@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NewLogsSchema } from "core/schemas";
 import { GradingSystem, LogRequest, Route } from "core/types";
@@ -26,16 +25,20 @@ function RoutesAddToLogModal({
   onConfirm,
   onRoutesLogged,
 }: Props) {
-  const { getAccessTokenSilently } = useAuth0();
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
 
-  const { register, handleSubmit, errors, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
   });
 
-  const watchLogs = watch("logs", []);
+  const watchFormFields = watch();
 
   useEffect(() => {
     getGlobals();
@@ -43,11 +46,11 @@ function RoutesAddToLogModal({
 
   const getGlobals = async () => {
     try {
-      const _routeTags = await globals.getRouteTags();
-      const _gradingSystem = await globals.getGradingSystems();
+      const newRouteTags = await globals.getRouteTags();
+      const newGradingSystem = await globals.getGradingSystems();
 
-      setRouteTags(_routeTags);
-      setGradingSystems(_gradingSystem);
+      setRouteTags(newRouteTags);
+      setGradingSystems(newGradingSystem);
     } catch (error) {
       console.error("Error loading route tags", error);
     }
@@ -69,6 +72,7 @@ function RoutesAddToLogModal({
   };
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async (data) => {
+    console.log({ data })
     await logRoutes(data.logs as LogRequest[]);
 
     if (onRoutesLogged) {
@@ -84,8 +88,7 @@ function RoutesAddToLogModal({
 
   const logRoutes = async (routes: LogRequest[]) => {
     try {
-      const token = await getAccessTokenSilently();
-      await logs.logRoutes(routes, token);
+      await logs.logRoutes(routes);
       toastSuccess("Routes Logged");
 
       if (onConfirm) {
@@ -94,7 +97,7 @@ function RoutesAddToLogModal({
     } catch (error) {
       console.error("Error logging routes", error);
       popupError(
-        "Ah, there's been an error and those climbs could not be logged"
+        "Ah, there's been an error and your climbs could not be logged"
       );
     }
   };
@@ -110,7 +113,7 @@ function RoutesAddToLogModal({
       <form>
         {routes &&
           routes.map((route, index) => (
-            <div className="log-route-review-dropdown" key={route.slug}>
+            <div className="log-route-review-dropdown" key={route.slug} data-testid={`formSection-${route.slug}`}>
               <input
                 id={`chkRoute${route.slug}`}
                 type="radio"
@@ -135,113 +138,98 @@ function RoutesAddToLogModal({
               <div>
                 <input
                   type="text"
-                  name={`logs.[${index}].cragSlug`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].cragSlug`)}
                   defaultValue={route.cragSlug}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].areaSlug`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].areaSlug`)}
+                  {...register}
                   defaultValue={route.areaSlug}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].areaTitle`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].areaTitle`)}
                   defaultValue={route.areaTitle}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].country`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].country`)}
                   defaultValue={route.country}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].countryCode`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].countryCode`)}
                   defaultValue={route.country}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].county`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].county`)}
                   defaultValue={route.country}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].cragTitle`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].cragTitle`)}
                   defaultValue={route.cragTitle}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].grade`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].grade`)}
                   defaultValue={route.grade}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].gradeModal`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].gradeModal`)}
                   defaultValue={route.gradeModal}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].gradingSystem`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].gradingSystem`)}
                   defaultValue={route.gradingSystem}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].rockType`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].rockType`)}
                   defaultValue={route.rockType}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].routeSlug`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].routeSlug`)}
                   defaultValue={route.slug}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].routeTitle`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].routeTitle`)}
                   defaultValue={route.title}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].routeType`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].routeType`)}
                   defaultValue={route.routeType}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].state`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].state`)}
                   defaultValue={route.state}
                   className="is-hidden"
                 />
                 <input
                   type="text"
-                  name={`logs.[${index}].topoSlug`}
-                  ref={register({})}
+                  {...register(`logs.[${index}].topoSlug`)}
                   defaultValue={route.topoSlug}
                   className="is-hidden"
                 />
@@ -253,8 +241,7 @@ function RoutesAddToLogModal({
                         <input
                           className="input"
                           type="date"
-                          name={`logs.[${index}].dateSent`}
-                          ref={register({})}
+                          {...register(`logs.[${index}].dateSent`)}
                           defaultValue={new Date().toISOString().substr(0, 10)}
                         />
                       </div>
@@ -269,9 +256,8 @@ function RoutesAddToLogModal({
                       <div className="control">
                         <div className="select">
                           <select
-                            name={`logs.[${index}].gradeTaken`}
+                            {...register(`logs.[${index}].gradeTaken`)}
                             defaultValue={route.gradeModal}
-                            ref={register({})}
                           >
                             {getGradeOptions(route.gradingSystem).map(
                               (grade, index) => (
@@ -295,10 +281,7 @@ function RoutesAddToLogModal({
                       <label className="label">Rating</label>
                       <div className="control">
                         <div className="select">
-                          <select
-                            name={`logs.[${index}].rating`}
-                            ref={register({})}
-                          >
+                          <select {...register(`logs.[${index}].rating`)}>
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -319,8 +302,7 @@ function RoutesAddToLogModal({
                       <div className="control">
                         <div className="select">
                           <select
-                            name={`logs.[${index}].attempts`}
-                            ref={register({})}
+                            {...register(`logs.[${index}].attempts`)}
                           >
                             <option value="0">Flash</option>
                             <option value="1">1</option>
@@ -340,8 +322,7 @@ function RoutesAddToLogModal({
                   <div className="control">
                     <textarea
                       className="textarea"
-                      name={`logs.[${index}].comment`}
-                      ref={register({})}
+                      {...register(`logs.[${index}].comment`)}
                     ></textarea>
                   </div>
                   <p className="help is-danger">
@@ -358,7 +339,7 @@ function RoutesAddToLogModal({
                           className={`
                           tag
                           ${
-                            watchLogs[index]?.tags?.includes(tag)
+                            watchFormFields?.logs?.[index]?.tags?.includes?.(tag)
                               ? "is-primary"
                               : ""
                           }
@@ -366,9 +347,8 @@ function RoutesAddToLogModal({
                         >
                           <input
                             type="checkbox"
-                            name={`logs.[${index}].tags`}
+                            {...register(`logs.[${index}].tags`)}
                             value={tag}
-                            ref={register({})}
                             style={{ display: "none" }}
                           />
                           {tag}

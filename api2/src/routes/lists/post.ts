@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { NewListSchema } from "core/schemas";
 import { lists } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getUserPublicDataFromEvent } from "../../utils/auth";
 import { RequestValidator } from "../../utils/request-validator";
 
 const validateBody: RequestValidator = async (
@@ -31,7 +31,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       return bodyIsValid;
     }
 
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const user = await getUserPublicDataFromEvent(event);
     const listDescription = JSON.parse(`${event.body}`);
     const newList = await lists.createList(user, listDescription);
 

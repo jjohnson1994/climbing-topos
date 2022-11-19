@@ -8,7 +8,7 @@ function Home() {
 
   useEffect(() => {
     crags
-      .getCrags("", "logCount", "desc", 3)
+      .getCrags("logCount", "desc", 3)
       .then(popularCrags => {
         setPopularCrags(popularCrags)
       })

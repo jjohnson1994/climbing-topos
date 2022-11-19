@@ -1,5 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import { NewAreaSchema } from "core/schemas";
 import { Crag } from "core/types";
 import { useEffect, useState } from "react";
@@ -8,21 +7,26 @@ import { useHistory, useParams } from "react-router-dom";
 import { areas, crags } from "../../api";
 import { areaTags as tags, rockTypes } from "core/globals";
 import { popupError, popupSuccess } from "../../helpers/alerts";
-import { getCurrentPosition } from '../../helpers/geolocation';
+import { getCurrentPosition } from "../../helpers/geolocation";
 
 const schema = NewAreaSchema();
 
 function CreateArea() {
   const history = useHistory();
-  const { getAccessTokenSilently } = useAuth0();
   const { cragSlug } = useParams<{ cragSlug: string }>();
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [crag, setCrag] = useState<Crag>();
 
-  const { register, setValue, handleSubmit, errors, watch } = useForm({
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       access: "unknown",
       accessDetails: "",
@@ -33,7 +37,7 @@ function CreateArea() {
       rockType: "",
       tags: [] as string[],
       title: "",
-    }
+    },
   });
 
   const watchTags = watch("tags", []);
@@ -41,13 +45,12 @@ function CreateArea() {
   useEffect(() => {
     const getCrag = async () => {
       try {
-        const token = await getAccessTokenSilently();
-        const newCrag = await crags.getCragBySlug(cragSlug, token);
+        const newCrag = await crags.getCragBySlug(cragSlug);
         setCrag(newCrag);
-      } catch(error) {
+      } catch (error) {
         console.error("Error getting area crag", error);
       }
-    }
+    };
 
     getCrag();
   }, [cragSlug]);
@@ -60,11 +63,11 @@ function CreateArea() {
       setValue("latitude", `${location.coords.latitude}`);
       setValue("longitude", `${location.coords.longitude}`);
     } catch (error) {
-      console.error('Error loading user location', error);
+      console.error("Error loading user location", error);
     } finally {
       setLocationLoading(false);
     }
-  }
+  };
 
   const formOnSubmit = handleSubmit(async (formData) => {
     setLoading(true);
@@ -74,23 +77,19 @@ function CreateArea() {
         throw new Error("Cannot create new route, crag not found");
       }
 
-      const token = await getAccessTokenSilently();
-      const { slug: areaSlug } = await areas.createArea(
-        {
-          ...formData,
-          country: crag.osmData.address.country,
-          countryCode: crag.osmData.address.country_code,
-          county: crag.osmData.address.county,
-          cragSlug,
-          cragTitle: crag.title,
-          state: crag.osmData.address.state,
-        },
-        token
-      );
+      const { slug: areaSlug } = await areas.createArea({
+        ...formData,
+        country: crag.osmData.address.country,
+        countryCode: crag.osmData.address.country_code,
+        county: crag.osmData.address.county,
+        cragSlug,
+        cragTitle: crag.title,
+        state: crag.osmData.address.state,
+      });
       await popupSuccess("Area Created!");
       history.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {
-      console.error('Error creating crag', error);
+      console.error("Error creating crag", error);
       popupError("Ahh, something has gone wrong...");
     } finally {
       setLoading(false);
@@ -101,55 +100,56 @@ function CreateArea() {
     <section className="section">
       <div className="container box">
         <form
-          onSubmit={ formOnSubmit }
+          onSubmit={formOnSubmit}
           style={{ display: "flex", flexDirection: "column" }}
           autoComplete="off"
         >
           <div className="field">
-            <label className="label" htmlFor="title">Title</label>
+            <label className="label" htmlFor="title">
+              Title
+            </label>
             <div className="control">
-              <input
-                className="input"
-                type="text"
-                name="title"
-                ref={ register }
-              />
+              <input className="input" type="text" name="title" {...register} />
             </div>
-            <p className="help is-danger">{ errors.title?.message }</p>
+            <p className="help is-danger">{errors.title?.message}</p>
           </div>
 
           <div className="field">
-            <label className="label" htmlFor="description">Description</label>
+            <label className="label" htmlFor="description">
+              Description
+            </label>
             <div className="control">
               <textarea
                 className="textarea"
                 name="description"
-                ref={ register }
-              ></textarea> 
+                {...register}
+              ></textarea>
             </div>
-            <p className="help is-danger">{ errors.description?.message }</p>
+            <p className="help is-danger">{errors.description?.message}</p>
           </div>
 
           <div className="field">
-            <label className="label" htmlFor="approachNotes">Approach Notes</label>
+            <label className="label" htmlFor="approachNotes">
+              Approach Notes
+            </label>
             <div className="control">
               <textarea
                 id="approachNotes"
                 className="textarea"
                 name="approachNotes"
-                ref={ register }
-              ></textarea> 
+                {...register}
+              ></textarea>
             </div>
-            <p className="help is-danger">{ errors.approachNotes?.message }</p>
+            <p className="help is-danger">{errors.approachNotes?.message}</p>
           </div>
 
           <div className="field">
             <label className="label">Tags</label>
             <div className="field is-grouped is-grouped-multiline">
               <div role="group" className="tags">
-                {tags.map(tag => (
+                {tags.map((tag) => (
                   <label
-                    key={ tag }
+                    key={tag}
                     className={`
                       tag
                       ${watchTags?.includes(tag) ? "is-primary" : ""}
@@ -158,32 +158,33 @@ function CreateArea() {
                     <input
                       type="checkbox"
                       name="tags"
-                      value={ tag }
-                      ref={ register }
+                      value={tag}
+                      {...register}
                       style={{ display: "none" }}
                     />
-                    { tag }
+                    {tag}
                   </label>
-                ))} 
+                ))}
               </div>
             </div>
-            <p className="help is-danger">{ (errors.tags as any)?.message }</p>
+            <p className="help is-danger">{(errors.tags as any)?.message}</p>
           </div>
 
           <div className="field">
             <label className="label">Rock Type</label>
             <div className="control is-expanded">
               <div className="select is-fullwidth">
-                <select name="rockType" ref={ register }>
-                  {rockTypes.map(rockType => (
-                    <option key={ rockType } value={ rockType }>{ rockType }</option>
+                <select name="rockType" {...register}>
+                  {rockTypes.map((rockType) => (
+                    <option key={rockType} value={rockType}>
+                      {rockType}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
-            <p className="help is-danger">{ errors.rockType?.message }</p>
+            <p className="help is-danger">{errors.rockType?.message}</p>
           </div>
-
 
           <div className="field">
             <div className="field">
@@ -191,22 +192,22 @@ function CreateArea() {
               <div className="field has-addons">
                 <div className="control is-expanded has-icons-right">
                   <input
-                    disabled={ locationLoading }
+                    disabled={locationLoading}
                     className="input"
                     type="text"
                     placeholder="Latitude"
                     name="latitude"
-                    ref={ register }
+                    {...register}
                   />
                 </div>
                 <div className="control is-expanded has-icons-right">
                   <input
-                    disabled={ locationLoading }
+                    disabled={locationLoading}
                     className="input"
                     type="text"
                     placeholder="Logitude"
                     name="longitude"
-                    ref={ register }
+                    {...register}
                   />
                 </div>
                 <div className="control">
@@ -216,7 +217,7 @@ function CreateArea() {
                       button
                       ${locationLoading ? "is-loading" : ""}
                     `}
-                    onClick={ () => btnFindMeOnClick() }
+                    onClick={() => btnFindMeOnClick()}
                   >
                     <span className="icon">
                       <i className="fas fa-map-marker-alt"></i>
@@ -226,10 +227,10 @@ function CreateArea() {
                 </div>
               </div>
             </div>
-            <div className="help is-danger">{ errors.latitude?.message }</div>
-            <div className="help is-danger">{ errors.longitude?.message }</div>
+            <div className="help is-danger">{errors.latitude?.message}</div>
+            <div className="help is-danger">{errors.longitude?.message}</div>
           </div>
-          
+
           <div className="field">
             <label className="label">Access</label>
             <div className="control">
@@ -238,7 +239,7 @@ function CreateArea() {
                   type="radio"
                   name="access"
                   value="unknown"
-                  ref={ register }
+                  {...register}
                 />
                 Unknown
               </label>
@@ -247,7 +248,7 @@ function CreateArea() {
                   type="radio"
                   name="access"
                   value="permitted"
-                  ref={ register }
+                  {...register}
                 />
                 Permitted
               </label>
@@ -256,7 +257,7 @@ function CreateArea() {
                   type="radio"
                   name="access"
                   value="restricted"
-                  ref={ register }
+                  {...register}
                 />
                 Restricted
               </label>
@@ -265,7 +266,7 @@ function CreateArea() {
                   type="radio"
                   name="access"
                   value="banned"
-                  ref={ register }
+                  {...register}
                 />
                 Banned
               </label>
@@ -274,20 +275,25 @@ function CreateArea() {
           </div>
 
           <div className="field">
-            <label className="label" htmlFor="accessDetails">Access Details</label>
+            <label className="label" htmlFor="accessDetails">
+              Access Details
+            </label>
             <div className="control">
               <textarea
                 className="textarea"
                 name="accessDetails"
-                ref={ register }
-              /> 
+                {...register}
+              />
             </div>
           </div>
 
           <div className="field">
             <div className="field is-flex is-justified-end">
               <div className="control">
-                <button type="submit" className={`button is-primary ${loading ? "is-loading" : ""}`}>
+                <button
+                  type="submit"
+                  className={`button is-primary ${loading ? "is-loading" : ""}`}
+                >
                   <span>Continue</span>
                 </button>
               </div>

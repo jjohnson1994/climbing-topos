@@ -2,11 +2,11 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from '../db';
-import { Auth0UserPublicData, List, ListRequest, ListRoute, ListRoutePartial } from "core/types";
+import { UserPublicData, List, ListRequest, ListRoute, ListRoutePartial } from "core/types";
 import { createSlug } from "../helpers/slug";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
-export async function createList(user: Auth0UserPublicData, listRequest: ListRequest) {
+export async function createList(user: UserPublicData, listRequest: ListRequest) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${listRequest.title}-${nanoid(5)}`);
   
@@ -95,7 +95,7 @@ export async function getUserLists(userSub: string): Promise<List[]> {
 }
 
 export async function addRouteToList(
-  user: Auth0UserPublicData, 
+  userSub: string,
   listSlug: string, 
   route: ListRoutePartial
 ) {
@@ -111,10 +111,10 @@ export async function addRouteToList(
   const params = {
     TableName: String(process.env.tableName),
     Item: {
-      hk: `user#${user.sub}`,
+      hk: `user#${userSub}`,
       sk: `list#route#crag#${listRoute.cragSlug}#area#${listRoute.areaSlug}#topo#${listRoute.topoSlug}#route#${listRoute.routeSlug}`,
       ...listRoute,
-      createdBy: user,
+      createdBy: userSub,
       model: "listRoute",
       slug,
       createdAt: date,

@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { DateTime } from "luxon";
 
 import { dynamodb } from "../db";
-import { Area, AreaRequest, Auth0UserPublicData } from "core/types";
+import { Area, AreaRequest, UserPublicData } from "core/types";
 import { createSlug } from "../helpers/slug";
 import {
   ExpressionAttributeNameMap,
@@ -11,7 +11,7 @@ import {
 
 export async function createArea(
   areaDescription: AreaRequest,
-  auth0UserPublicData: Auth0UserPublicData,
+  auth0UserPublicData: UserPublicData,
   areaVerified: boolean
 ) {
   const date = DateTime.utc().toString();

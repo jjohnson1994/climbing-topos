@@ -20,9 +20,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        logs: routeLogs,
-      })
+      body: JSON.stringify(routeLogs)
     }
   } catch(error) {
     console.error("Error loading routes", error);

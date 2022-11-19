@@ -1,10 +1,10 @@
-import { getAuth0UserSubFromAuthHeader } from "./auth";
+import { getUserSubFromAuthHeader } from "./auth";
 
 const header = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ino3S2p1Q01vbnNXd2V3b3Jta1oydiJ9.eyJpc3MiOiJodHRwczovL2NsaW1iaW5nLXRvcG9zLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2MDIyZTAzN2Y4N2RjZTAwNzE5ZTNlZGIiLCJhdWQiOlsiaHR0cHM6Ly9jbGltYmluZ3RvcG9zLmNvbSIsImh0dHBzOi8vY2xpbWJpbmctdG9wb3MuZXUuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTYzNDE5MTY2MCwiZXhwIjoxNjM0Mjc4MDYwLCJhenAiOiJtQ1pBZzNLTmJhaEducFJRRDFkZUdSVUFoYVAzRDR6ViIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.1h4cFLvrq1XgRUusXqJi_Ms1Z2XWtGT4-emrXjCrtmzGlSNRTkrWbHVPPqvkCeLecjUbR1ipc3u1YvB0Cd5SupLxgyOVgj0J1gqkTkS_TeNbKB5o8IrvtoL3OIRMJ6ABqEOq_kvAm5KiVehi8_E6v-Ut5OUtqU1WkhyPt-US38eCNEYrsCDG9R2blU87_lrpGt4EfpIiGMrS2Zid1ZuNEEuMhScXrCrBh_qVheac5h6TwIDMuLt4dNEdV4ueTdipjplBT1TdYq8GNDspcxRlLFoSt0WqSL52--gNscVaQg5ZdKtdTK79xAEgXVw7X3AlCkcPVKlc5KA8pNYWLD_BcA';
 
-describe("getAuth0UserSub", () => {
+describe("getUserSub", () => {
   it("Returns userSub from a JWT Token", () => {
-    expect(getAuth0UserSubFromAuthHeader(header)).toBe(
+    expect(getUserSubFromAuthHeader(header)).toBe(
       "auth0|6022e037f87dce00719e3edb"
     );
   });

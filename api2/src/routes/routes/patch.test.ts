@@ -1,9 +1,9 @@
 import { crags, routes } from "../../services";
 import { handler } from "./patch";
-import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../utils/auth";
 
 jest.mock("../../utils/auth", () => ({
-  getAuth0UserSubFromAuthHeader: jest.fn(() => "crag-maintainers-user-sub"),
+  getUserSubFromAuthHeader: jest.fn(() => "crag-maintainers-user-sub"),
 }));
 
 jest.mock("../../services", () => ({
@@ -91,7 +91,7 @@ describe("Routes PATCH", () => {
   });
 
   it("Retuns an error if the user does not have permssions to update the route", async () => {
-    (getAuth0UserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
+    (getUserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
       jest.fn(() => "not-crag-maintainers-user-sub")
     );
 

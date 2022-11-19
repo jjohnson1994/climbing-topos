@@ -1,36 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getCrags } from "../../api/crags";
-import { CragBrief } from 'core/types';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { CragBrief } from "core/types";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function Crags() {
   const [crags, setCrags] = useState<CragBrief[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    if (isLoading === false) {
-      doGetCrags();
-    }
-  }, [isLoading, isAuthenticated]);
+    const doGetCrags = async () => {
+      try {
+        setLoading(true);
+        const crags = await getCrags().then((crags) =>
+          crags.sort((cragA, cragB) => (cragA.title > cragB.title ? 1 : -1))
+        );
+        setCrags(crags);
+      } catch (error) {
+        console.error("Error loading crags", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  async function doGetCrags() {
-    try {
-      setLoading(true);
-      const token = isAuthenticated
-        ? await getAccessTokenSilently()
-        : "";
-      const crags = await getCrags(token).then(crags => crags.sort((cragA, cragB) => cragA.title > cragB.title ? 1 : -1));
-      setCrags(crags);
-    } catch (error) {
-      console.error('Error loading crags', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+    doGetCrags();
+  }, []);
 
   return (
     <React.Fragment>
@@ -58,35 +53,40 @@ function Crags() {
               </div>
             </div>
           </div>
-          { loading && (
+          {loading && (
             <div className="block">
               <LoadingSpinner />
             </div>
           )}
-          { crags.map(crag => (
-            <div key={ crag.slug } className="block">
-              <Link key={ crag.slug } to={ `/crags/${crag.slug}` }>
-                <div className="block box p-0" style={{ overflow: 'hidden' }}>
+          {crags.map((crag) => (
+            <div key={crag.slug} className="block">
+              <Link key={crag.slug} to={`/crags/${crag.slug}`}>
+                <div className="block box p-0" style={{ overflow: "hidden" }}>
                   <div className="columns is-mobile is-gapless">
                     <div className="column is-narrow">
-                      <img 
-                        src={ `${crag.image}` } 
-                        className="image is-128x128" 
-                        alt={ crag.title } 
+                      <img
+                        src={`${crag.image}`}
+                        className="image is-128x128"
+                        alt={crag.title}
                         style={{
-                          objectFit: 'cover',
-                          height: '100%',
+                          objectFit: "cover",
+                          height: "100%",
                         }}
                       />
                     </div>
                     <div className="column m-3">
-                      <p className="is-capitalized"><b>{ crag.title }</b> { crag.osmData.address.county }, { crag.osmData.address.country }</p>
+                      <p className="is-capitalized">
+                        <b>{crag.title}</b> {crag.osmData.address.county},{" "}
+                        {crag.osmData.address.country}
+                      </p>
                       <div className="tags">
-                        <span className="tag">Routes { crag.routeCount }</span>
-                        <span className="tag">Areas { crag.areaCount }</span>
-                        <span className="tag">Logs { crag.logCount }</span>
+                        <span className="tag">Routes {crag.routeCount}</span>
+                        <span className="tag">Areas {crag.areaCount}</span>
+                        <span className="tag">Logs {crag.logCount}</span>
                       </div>
-                      <p className="is-capitalized">{ crag.description.substring(0, 280) }</p>
+                      <p className="is-capitalized">
+                        {crag.description.substring(0, 280)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -96,7 +96,7 @@ function Crags() {
         </div>
       </section>
     </React.Fragment>
-  )
+  );
 }
 
 export default Crags;

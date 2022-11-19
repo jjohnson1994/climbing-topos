@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { AreaPatch } from "core/types";
 import { UpdateAreaSchema } from "core/schemas";
 import { areas, crags } from "../../services";
-import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -71,7 +71,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const areaPatch = JSON.parse(`${event.body}`) as AreaPatch;
-    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const userSub = getUserSubFromAuthHeader(event.headers.authorization);
     const area = await areas.getAreaBySlug(areaSlug);
     const crag = await crags.getCragBySlug(area.cragSlug, userSub);
 

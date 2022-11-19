@@ -1,14 +1,14 @@
 import {
   RouteRequest,
   Route,
-  Auth0UserPublicData,
+  UserPublicData,
   RoutePatch,
 } from "core/types";
 import { areas, crags, logs, routes, topos } from "../models";
 
 export const createRoute = async (
   routeDescription: RouteRequest,
-  user: Auth0UserPublicData
+  user: UserPublicData
 ) => {
   const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
   const crag = await crags.getCragBySlug(routeDescription.cragSlug);
@@ -37,7 +37,7 @@ export function getRouteBySlug(slug: string) {
 }
 
 export async function listRoutes(
-  user: Auth0UserPublicData,
+  userSub: string | undefined,
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
@@ -56,8 +56,8 @@ export async function listRoutes(
     routes
       .listRoutes(cragSlug, areaSlug, topoSlug)
       .then((res) => res.filter((route) => route.slug !== routeSlug)),
-    user?.sub
-      ? logs.getLogsForUser(user.sub, cragSlug, areaSlug, topoSlug, routeSlug)
+    userSub
+      ? logs.getLogsForUser(userSub, cragSlug, areaSlug, topoSlug, routeSlug)
       : [],
   ]);
 
@@ -119,7 +119,7 @@ export async function updateMetricsOnLogInsert(
   }
 ) {
   const { ratingTally, gradeTally, recentLogs } = await listRoutes(
-    user,
+    user.sub,
     cragSlug,
     areaSlug,
     topoSlug,

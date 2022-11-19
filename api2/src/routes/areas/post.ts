@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
-import { AreaRequest, Auth0UserPublicData } from "core/types";
+import { AreaRequest, UserPublicData } from "core/types";
 import { areas, crags } from "../../services";
-import { getAuth0UserPublicDataFromEvent } from "../../utils/auth";
+import { getUserPublicDataFromEvent } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -45,7 +45,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserPublicDataFromEvent(event);
+    const user = await getUserPublicDataFromEvent(event);
 
     const validationResponse = await validateRequest(
       [cragExists(user.sub)],

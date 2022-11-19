@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { handler } from "./get";
 import { Crag } from "../../../../../core/types";
-import { getAuth0UserSubFromAuthHeader } from "../../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../../utils/auth";
 
 jest.mock("node-fetch");
 jest.mock("../../../services", () => ({
@@ -22,12 +22,12 @@ jest.mock("../../../services", () => ({
   },
 }));
 jest.mock("../../../utils/auth", () => ({
-  getAuth0UserSubFromAuthHeader: jest.fn(),
+  getUserSubFromAuthHeader: jest.fn(),
 }));
 
 const fetchMock = fetch as unknown as jest.Mock;
-const getAuth0UserSubFromAuthHeaderMock =
-  getAuth0UserSubFromAuthHeader as unknown as jest.Mock;
+const getUserSubFromAuthHeaderMock =
+  getUserSubFromAuthHeader as unknown as jest.Mock;
 
 describe("Get Crag Items Awaiting Approval", () => {
   afterEach(() => {
@@ -54,7 +54,7 @@ describe("Get Crag Items Awaiting Approval", () => {
   });
 
   it("Returns 403 if the User Does Not Manage the Crag", async () => {
-    getAuth0UserSubFromAuthHeaderMock.mockImplementationOnce(
+    getUserSubFromAuthHeaderMock.mockImplementationOnce(
       () => "not-crag-manager-mock-sub"
     );
 
@@ -78,7 +78,7 @@ describe("Get Crag Items Awaiting Approval", () => {
   });
 
   it("Returns a List of Items Awaiting Approval if the User Has Acccess", async () => {
-    getAuth0UserSubFromAuthHeaderMock.mockImplementationOnce(
+    getUserSubFromAuthHeaderMock.mockImplementationOnce(
       () => "crag-manager-mock-sub"
     );
 

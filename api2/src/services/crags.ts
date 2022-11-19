@@ -1,7 +1,7 @@
 import { areas, crags, logs, routes, topos } from "../models";
 import {
   Area,
-  Auth0UserPublicData,
+  UserPublicData,
   Crag,
   CragBrief,
   CragPatch,
@@ -11,7 +11,7 @@ import {
 
 export const createCrag = async (
   cragDetails: Crag,
-  user: Auth0UserPublicData
+  user: UserPublicData
 ) => {
   const newCrag = await crags.createCrag(cragDetails, user);
   return newCrag;

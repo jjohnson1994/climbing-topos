@@ -1,12 +1,12 @@
 import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
 import {logs} from "../../../services";
-import {getAuth0UserFromEvent} from "../../../utils/auth";
+import {getUserFromEvent} from "../../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const user = await getAuth0UserFromEvent(event);
+    const user = await getUserFromEvent(event);
     const { cragSlug, areaSlug, topoSlug, routeSlug } = {
       ...event.queryStringParameters,
     } as {

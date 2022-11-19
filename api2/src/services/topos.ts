@@ -1,8 +1,8 @@
 import { topos } from "../models";
 import { crags } from "../services";
-import { Auth0UserPublicData, TopoPatch, TopoRequest } from "core/types";
+import { UserPublicData, TopoPatch, TopoRequest } from "core/types";
 
-export async function createTopo(topoDetails: TopoRequest, user: Auth0UserPublicData) {
+export async function createTopo(topoDetails: TopoRequest, user: UserPublicData) {
   const crag = await crags.getCragBySlug(topoDetails.cragSlug, user.sub);
   const topoVerified = crag.managedBy.sub === user.sub;
 

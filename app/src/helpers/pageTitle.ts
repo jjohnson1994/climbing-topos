@@ -1,6 +1,6 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
 
-export function usePageTitle(pageTitle: string | undefined) { 
+export function usePageTitle(pageTitle: string | undefined) {
   useEffect(() => {
     document.title = pageTitle ? `${pageTitle} | Climbing Topos` : "Climbing Topos";
 

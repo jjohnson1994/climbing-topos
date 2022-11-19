@@ -1,64 +1,31 @@
+import { API } from "aws-amplify";
 import { AreaRequest, Area, AreaPatch } from "core/types";
 
 export async function createArea(
-  areaDescription: AreaRequest,
-  token: string
+  areaDescription: AreaRequest
 ): Promise<{ slug: string }> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/areas`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(areaDescription),
+  return API.post("climbing-topos", '/areas', {
+    body: areaDescription,
   });
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
 }
 
-export async function getArea(areaSlug: string, token: string): Promise<Area> {
-  const res = await fetch(
-    `${process.env.REACT_APP_API_URL}/areas/${areaSlug}`,
-    {
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-    }
+export async function getArea(areaSlug: string): Promise<Area> {
+  return API.get(
+    "climbing-topos",
+    `/areas/${areaSlug}`,
+    {}
   );
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
 }
 
 export async function updateArea(
   areaSlug: string,
-  patch: AreaPatch,
-  token: string
+  patch: AreaPatch
 ): Promise<{ success: boolean }> {
-  const res = await fetch(
-    `${process.env.REACT_APP_API_URL}/areas/${areaSlug}`,
+  return API.patch(
+    "climbing-tops",
+    `/areas/${areaSlug}`,
     {
-      method: "PATCH",
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
       body: JSON.stringify(patch),
     }
   );
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
 }

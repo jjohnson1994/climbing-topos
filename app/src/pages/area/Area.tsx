@@ -1,5 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Area, Crag, Topo } from "core/types";
 import { areas, crags, topos } from "../../api";
@@ -10,15 +9,16 @@ import TopoImage from "../../components/TopoImage";
 import { popupSuccess, popupError } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 import Button, { Color } from "../../elements/Button";
+import useUser from "../../api/user";
 
 function AreaView() {
-  const { getAccessTokenSilently, isAuthenticated, isLoading, user } = useAuth0();
   const { areaSlug, cragSlug } =
     useParams<{ areaSlug: string; cragSlug: string }>();
   const [area, setArea] = useState<Area>();
   const [crag, setCrag] = useState<Crag>();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const { userAttributes } = useUser();
 
   usePageTitle(area?.title);
 
@@ -26,11 +26,10 @@ function AreaView() {
     const doGetArea = async () => {
       try {
         setLoading(true);
-        const token = isAuthenticated ? await getAccessTokenSilently() : "";
         const [area, crag] = await Promise.all([
-          areas.getArea(areaSlug, token),
-          crags.getCragBySlug(cragSlug, token)
-        ])
+          areas.getArea(areaSlug),
+          crags.getCragBySlug(cragSlug),
+        ]);
         setArea(area);
         setCrag(crag);
       } catch (error) {
@@ -41,19 +40,16 @@ function AreaView() {
       }
     };
 
-    if (isLoading === false) {
-      doGetArea();
-    }
-  }, [areaSlug, isAuthenticated, isLoading]);
+    doGetArea();
+  }, [areaSlug, cragSlug]);
 
   useEffect(() => {
-    if (!crag?.managedBy.sub || !user?.sub) {
+    if (!crag?.managedBy.sub || !userAttributes?.attributes?.sub) {
       setIsAdmin(false);
-    } else if (crag.managedBy.sub === user.sub) {
-      console.log('setting admin true')
+    } else if (crag.managedBy.sub === userAttributes?.attributes?.sub) {
       setIsAdmin(true);
     }
-  }, [user, crag])
+  }, [userAttributes, crag]);
 
   const btnVerifyOnClick = async () => {
     try {
@@ -66,8 +62,7 @@ function AreaView() {
       );
 
       if (verify) {
-        const token = await getAccessTokenSilently();
-        await areas.updateArea(area.slug, { verified: true }, token);
+        await areas.updateArea(area.slug, { verified: true });
         setArea({
           ...area,
           verified: true,
@@ -90,8 +85,7 @@ function AreaView() {
       );
 
       if (verify) {
-        const token = await getAccessTokenSilently();
-        await topos.updateTopo(topoSlug, { verified: true }, token);
+        await topos.updateTopo(topoSlug, { verified: true });
 
         const newTopos = area.topos.reduce((acc: Topo[], cur) => {
           if (cur.slug === topoSlug) {
@@ -99,17 +93,17 @@ function AreaView() {
               ...acc,
               {
                 ...cur,
-                verified: true
-              }
-            ]
+                verified: true,
+              },
+            ];
           }
 
-          return [ ...acc, cur ]
-        }, [])
+          return [...acc, cur];
+        }, []);
 
         setArea({
           ...area,
-          topos: newTopos
+          topos: newTopos,
         });
         popupSuccess("Topo Verified");
       }
@@ -131,7 +125,9 @@ function AreaView() {
         <div className="container">
           <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
-              <li><a href={`/crags/${area?.cragSlug}`}>{ area?.cragTitle }</a></li>                  
+              <li>
+                <a href={`/crags/${area?.cragSlug}`}>{area?.cragTitle}</a>
+              </li>
             </ul>
           </nav>
           <div className="columns">
@@ -140,7 +136,7 @@ function AreaView() {
               <h6 className="subtitle is-6">{area?.description}</h6>
               <h6 className="subtitle is-6">{area?.approachNotes}</h6>
               <h6 className="subtitle is-6">{area?.accessDetails}</h6>
-              {(isAdmin === true && area?.verified === false) && (
+              {isAdmin === true && area?.verified === false && (
                 <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
                   <span className="icon">
                     <i className="fas fa-check"></i>
@@ -204,8 +200,11 @@ function AreaView() {
                   <div className="column">
                     <div className="block is-flex is-justify-content-space-between is-align-items-center">
                       <span>
-                        {(isAdmin === true && topo.verified === false) && (
-                          <Button color={Color.isSuccess} onClick={ () => btnVerifyTopoOnClick(`${topo.slug}`) }>
+                        {isAdmin === true && topo.verified === false && (
+                          <Button
+                            color={Color.isSuccess}
+                            onClick={() => btnVerifyTopoOnClick(`${topo.slug}`)}
+                          >
                             <span className="icon">
                               <i className="fas fa-check"></i>
                             </span>

@@ -1,103 +1,60 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
-import { Auth0User, Auth0UserPublicData } from "core/types";
-import fetch from "node-fetch";
+import { User, UserPublicData } from "core/types";
+import { inspect } from "util";
+import { CognitoIdentity } from "aws-sdk"
 
-export const getAuth0UserFromEvent = async (
+export const getUserFromEvent = async (
   event: APIGatewayProxyEventV2
-): Promise<Auth0User> => {
-  try {
-    const { authorization } = event.headers;
+): Promise<User> => {
+  const authorizer = event.requestContext.authorizer as any;
+  const identityId = authorizer.iam.cognitoIdentity.identityId;
 
-    if (authorization) {
-      const userInfoResponse = await fetch(
-        `${process.env.AUTH0_DOMAIN}userinfo`,
-        {
-          headers: {
-            Authorization: `${authorization}`,
-          },
-        }
-      );
-
-      if (userInfoResponse.status !== 200) {
-        console.error("auth0 response", userInfoResponse);
-        throw new Error("Auth0 did not respond with 200");
-      }
-
-      const userInfo = await userInfoResponse.json();
-
-      return userInfo;
-    } else {
-      return {
-        sub: "",
-        name: "",
-        updated_at: "",
-        email: "",
-        email_verified: false,
-        picture: "",
-        nickname: "",
-      };
+  const a = new CognitoIdentity({
+    credentials: {
+      accessKeyId: '',
+      secretAccessKey: ''
     }
-  } catch (error) {
-    console.error("Error getting Auth0 user info", error);
-    throw new Error("Error getting Auth0 user info");
-  }
+  })
+
+
+  console.log(inspect(event, false, null, true))
+
+  return {
+    sub: identityId,
+    nickname: 'todo', // TODO
+    picture: 'todo', // TODO
+    name: 'todo', // TODO
+    email: 'todo' // TODO
+  };
 };
 
-export const getAuth0UserPublicDataFromEvent = async (
+export const getUserPublicDataFromEvent = async (
   event: APIGatewayProxyEventV2
-): Promise<Auth0UserPublicData> => {
-  try {
-    const { authorization } = event.headers;
+): Promise<UserPublicData> => {
+  const authorizer = event.requestContext.authorizer as any;
+  const identityId = authorizer.iam.cognitoIdentity.identityId;
 
-    if (authorization) {
-      const userInfoResponse = await fetch(
-        `${process.env.AUTH0_DOMAIN}userinfo`,
-        {
-          headers: {
-            Authorization: `${authorization}`,
-          },
-        }
-      );
-
-      if (userInfoResponse.status !== 200) {
-        console.error("auth0 response", userInfoResponse);
-        throw new Error("Auth0 did not respond with 200");
-      }
-
-      const userInfo = await userInfoResponse.json();
-
-      return {
-        nickname: userInfo.nickname,
-        sub: userInfo.sub,
-        picture: userInfo.picture,
-      };
-    } else {
-      return {
-        sub: "",
-        picture: "",
-        nickname: "",
-      };
-    }
-  } catch (error) {
-    console.error("Error getting Auth0 user info", error);
-    throw new Error("Error getting Auth0 user info");
-  }
+  return {
+    sub: identityId,
+    nickname: 'todo', // TODO
+    picture: 'todo', // TODO
+  };
 };
 
 const getTokenFromAuthHeader = (authHeader: string) => {
-  return authHeader.split(" ")[1]
-}
+  return authHeader.split(" ")[1];
+};
 
-export const getAuth0UserSubFromAuthHeader = (authorization: string) => {
+export const getUserSubFromAuthHeader = (authorization: string) => {
   try {
-    const token = getTokenFromAuthHeader(authorization)
+    const token = getTokenFromAuthHeader(authorization);
     const payload = JSON.parse(
       Buffer.from(token.split(".")[1], "base64url").toString()
     );
     const userSub = payload.sub;
 
     return userSub;
-  } catch(error) {
-    return null
+  } catch (error) {
+    return null;
   }
 };

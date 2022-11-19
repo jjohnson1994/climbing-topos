@@ -1,29 +1,28 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { Area, Crag, Route, Topo } from "core/types";
 import { useEffect, useState } from "react";
 import { popupError } from "../helpers/alerts";
 import { getCragItemsAwaitingAproval } from "../api/crags";
 import LoadingSpinner from "./LoadingSpinner";
 import { Link } from "react-router-dom";
+import useUser from "../api/user";
 
 interface CragAdminProps {
   crag: Crag;
 }
 
 const CragAdmin = (props: CragAdminProps) => {
-  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
+  const { isAuthenticated } = useUser();
   const [loading, setLoading] = useState<Boolean>(false);
-  const [itemsAwaitingApproval, setItemsAwaitingApproval] =
-    useState<Array<Topo | Area | Route>>([]);
+  const [itemsAwaitingApproval, setItemsAwaitingApproval] = useState<
+    Array<Topo | Area | Route>
+  >([]);
 
   useEffect(() => {
     const getAdminCragActions = async () => {
       try {
         setLoading(true);
-        const token = await getAccessTokenSilently();
         const itemsAwaitingAproval = await getCragItemsAwaitingAproval(
-          props.crag.slug,
-          token
+          props.crag.slug
         );
 
         setItemsAwaitingApproval(itemsAwaitingAproval);
@@ -38,20 +37,20 @@ const CragAdmin = (props: CragAdminProps) => {
     if (isAuthenticated) {
       getAdminCragActions();
     }
-  }, [isAuthenticated, user, getAccessTokenSilently, props.crag.slug]);
+  }, [isAuthenticated, props.crag.slug]);
 
   const renderTopoListItem = (topo: Topo) => (
-    <Link to={ `/crags/${topo.cragSlug}/areas/${topo.areaSlug}#${topo.slug}` }>
-      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
+    <Link to={`/crags/${topo.cragSlug}/areas/${topo.areaSlug}#${topo.slug}`}>
+      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
         <div className="columns is-mobile is-gapless">
           <div className="column is-narrow">
-            <img 
-              src={ `${topo.image}` } 
-              className="image is-128x128" 
-              alt="new topo" 
+            <img
+              src={`${topo.image}`}
+              className="image is-128x128"
+              alt="new topo"
               style={{
-                objectFit: 'cover',
-                height: '100%',
+                objectFit: "cover",
+                height: "100%",
               }}
             />
           </div>
@@ -59,52 +58,58 @@ const CragAdmin = (props: CragAdminProps) => {
             <div className="tags">
               <span className="tag is-info">New Topos</span>
             </div>
-            <p className="is-size-7">Uploaded by { topo.createdBy.nickname }</p>
+            <p className="is-size-7">Uploaded by {topo.createdBy.nickname}</p>
           </div>
         </div>
       </div>
     </Link>
-  )
+  );
 
   const renderRouteListItem = (route: Route) => (
-    <Link to={ `/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }>
-      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
+    <Link
+      to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+    >
+      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
         <div className="columns is-mobile is-gapless">
           <div className="column m-3">
-            <p className="is-capitalized mb-1"><b>{ route.title }</b></p>
+            <p className="is-capitalized mb-1">
+              <b>{route.title}</b>
+            </p>
             <div className="tags">
               <span className="tag is-info">New Route</span>
-              { route.tags.map(tag => (
-                <span className="tag">{ tag }</span>
+              {route.tags.map((tag) => (
+                <span className="tag">{tag}</span>
               ))}
             </div>
-            <p className="is-size-7">Uploaded by { route.createdBy.nickname }</p>
+            <p className="is-size-7">Uploaded by {route.createdBy.nickname}</p>
           </div>
         </div>
       </div>
     </Link>
-  )
+  );
 
   const renderAreaListItem = (area: Area) => (
-    <Link to={ `/crags/${area.cragSlug}/areas/${area.slug}` }>
-      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
+    <Link to={`/crags/${area.cragSlug}/areas/${area.slug}`}>
+      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
         <div className="columns is-mobile is-gapless">
           <div className="column m-3">
-            <p className="is-capitalized mb-1"><b>{ area.title }</b></p>
+            <p className="is-capitalized mb-1">
+              <b>{area.title}</b>
+            </p>
             <div className="tags">
               <span className="tag is-info">New Area</span>
-              <span className="tag">{ area.rockType }</span>
-              <span className="tag">Access { area.access }</span>
-              { area.tags.map(tag => (
-                <span className="tag">{ tag }</span>
+              <span className="tag">{area.rockType}</span>
+              <span className="tag">Access {area.access}</span>
+              {area.tags.map((tag) => (
+                <span className="tag">{tag}</span>
               ))}
             </div>
-            <p className="is-size-7">Uploaded by { area.createdBy.nickname }</p>
+            <p className="is-size-7">Uploaded by {area.createdBy.nickname}</p>
           </div>
         </div>
       </div>
     </Link>
-  )
+  );
 
   return (
     <>
@@ -115,44 +120,48 @@ const CragAdmin = (props: CragAdminProps) => {
           </div>
         </section>
       )}
-      { !loading && (
+      {!loading && (
         <div className="container">
           <h1 className="title">Awaiting Approval</h1>
           <div>
-            { itemsAwaitingApproval.length === 0 && (
+            {itemsAwaitingApproval.length === 0 && (
               <p>There are no items awaiting approval</p>
             )}
           </div>
           <div>
-            {
-              itemsAwaitingApproval.map(itemAwaitingApproval => {
-                if (itemAwaitingApproval.model === 'route') {
-                  return (
-                    <div key={ itemAwaitingApproval.slug }>
-                      { renderRouteListItem(itemAwaitingApproval as unknown as Route) }
-                    </div>
-                  )
-                }
+            {itemsAwaitingApproval.map((itemAwaitingApproval) => {
+              if (itemAwaitingApproval.model === "route") {
+                return (
+                  <div key={itemAwaitingApproval.slug}>
+                    {renderRouteListItem(
+                      itemAwaitingApproval as unknown as Route
+                    )}
+                  </div>
+                );
+              }
 
-                if (itemAwaitingApproval.model === 'area') {
-                  return (
-                    <div key={ itemAwaitingApproval.slug }>
-                      { renderAreaListItem(itemAwaitingApproval as unknown as Area) }
-                    </div>
-                  )
-                }
+              if (itemAwaitingApproval.model === "area") {
+                return (
+                  <div key={itemAwaitingApproval.slug}>
+                    {renderAreaListItem(
+                      itemAwaitingApproval as unknown as Area
+                    )}
+                  </div>
+                );
+              }
 
-                if (itemAwaitingApproval.model === 'topo') {
-                  return (
-                    <div key={ itemAwaitingApproval.slug }>
-                      { renderTopoListItem(itemAwaitingApproval as unknown as Topo) }
-                    </div>
-                  )
-                }
+              if (itemAwaitingApproval.model === "topo") {
+                return (
+                  <div key={itemAwaitingApproval.slug}>
+                    {renderTopoListItem(
+                      itemAwaitingApproval as unknown as Topo
+                    )}
+                  </div>
+                );
+              }
 
-                return '';
-              })
-            }
+              return "";
+            })}
           </div>
         </div>
       )}

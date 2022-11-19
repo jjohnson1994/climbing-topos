@@ -3,11 +3,11 @@ import { DateTime } from "luxon";
 import { ExpressionAttributeNameMap, UpdateExpression } from "aws-sdk/clients/dynamodb";
 
 import { dynamodb } from "../db";
-import { Auth0UserPublicData, Topo, TopoRequest } from "core/types";
+import { UserPublicData, Topo, TopoRequest } from "core/types";
 
 export async function createTopo(
   topoDetails: TopoRequest,
-  auth0UserPublicData: Auth0UserPublicData,
+  auth0UserPublicData: UserPublicData,
   topoVerified: boolean
 ) {
   const date = DateTime.utc().toString();

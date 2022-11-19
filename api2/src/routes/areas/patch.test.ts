@@ -1,9 +1,9 @@
 import { areas } from "../../services";
 import { handler } from "./patch";
-import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../utils/auth";
 
 jest.mock("../../utils/auth", () => ({
-  getAuth0UserSubFromAuthHeader: jest.fn(() => "user-sub"),
+  getUserSubFromAuthHeader: jest.fn(() => "user-sub"),
 }));
 
 jest.mock("../../services", () => ({
@@ -83,7 +83,7 @@ describe("Areas PATCH", () => {
   });
 
   it("Retuns an error if the user does not have permssions to update the area", async () => {
-    (getAuth0UserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
+    (getUserSubFromAuthHeader as jest.Mock).mockImplementationOnce(
       jest.fn(() => "not-crag-maintainers-user-sub")
     );
 

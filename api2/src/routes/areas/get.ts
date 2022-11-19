@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { areas } from "../../services";
-import { getAuth0UserFromEvent } from "../../utils/auth";
+import { getUserFromEvent } from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
@@ -21,7 +21,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       };
     }
 
-    const user = await getAuth0UserFromEvent(event);
+    const user = await getUserFromEvent(event);
     const userSub = user ? user.sub : undefined;
     const area = await areas.getAreaBySlug(areaSlug, userSub);
 

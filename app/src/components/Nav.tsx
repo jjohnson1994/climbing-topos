@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
-import Button from "../elements/Button";
+import useUser from "../api/user";
+import Button, { Color } from "../elements/Button";
 import NavbarItem from "../elements/NavbarItem";
 
 function Nav() {
   const [navBarMenuClass, setNavBarMenuClass] = useState("");
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useUser();
 
-  const btnBurgerMenuOnClick = () => {
+  const toggleNavMenu = () => {
     if (navBarMenuClass === "is-active") {
       setNavBarMenuClass("");
     } else {
@@ -28,7 +28,7 @@ function Nav() {
           aria-label="menu"
           aria-expanded="false"
           data-target="navbarBasicExample"
-          onClick={ btnBurgerMenuOnClick }
+          onClick={ toggleNavMenu }
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -39,6 +39,7 @@ function Nav() {
       <div
         id="navbarBasicExample"
         className={`navbar-menu ${navBarMenuClass}`}
+        onClick={ toggleNavMenu }
       >
         <div className="navbar-start">
           <Link
@@ -62,16 +63,24 @@ function Nav() {
             </Link>
           </NavbarItem>
           <div className="navbar-item">
-          { isAuthenticated 
-            ? <Link to="/profile">
-                <Button icon="fas fa-user">
-                  Profile
-                </Button>
+            {isAuthenticated ? (
+              <Link to="/profile">
+                <Button icon="fas fa-user">Profile</Button>
               </Link>
-            : <Button onClick={ loginWithRedirect } icon="fas fa-user">
-                Login
-              </Button>
-          }
+            ) : (
+              <div className="field is-grouped">
+                <p className="control">
+                  <Link to="/login">
+                    <Button>Login</Button>
+                  </Link>
+                </p>
+                <p className="control">
+                  <Link to="/signup">
+                    <Button color={ Color.isPrimary }>Signup</Button>
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

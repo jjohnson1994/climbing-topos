@@ -1,15 +1,17 @@
-import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
-import {lists} from "../../services";
-import {getAuth0UserFromEvent} from "../../utils/auth";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
+import { lists } from "../../services";
+import { getUserFromEvent } from "../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    const { sub } = await getAuth0UserFromEvent(event);
-    const { slug } = event.pathParameters ?? {} as {
-      slug: string;
-    };
+    const { sub } = await getUserFromEvent(event);
+    const { slug } =
+      event.pathParameters ??
+      ({} as {
+        slug: string;
+      });
 
     if (slug) {
       const listReponse = await lists.getListBySlug(sub, slug);
@@ -17,16 +19,16 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(listReponse)
-      }
+        body: JSON.stringify(listReponse),
+      };
     } else {
       const userLists = await lists.getLists(sub);
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userLists)
-      }
+        body: JSON.stringify(userLists),
+      };
     }
   } catch (error) {
     console.error("Error getting lists", error);
@@ -34,7 +36,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: true })
-    }
+      body: JSON.stringify({ error: true }),
+    };
   }
-}
+};

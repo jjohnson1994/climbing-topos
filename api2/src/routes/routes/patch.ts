@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { RoutePatch } from "core/types";
 import { UpdateRouteScheme } from "core/schemas";
 import { crags, routes } from "../../services";
-import { getAuth0UserSubFromAuthHeader } from "../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../utils/auth";
 import {
   RequestValidator,
   validateRequest,
@@ -71,7 +71,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const routePatch = JSON.parse(`${event.body}`) as RoutePatch;
-    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const userSub = getUserSubFromAuthHeader(event.headers.authorization);
     const route = await routes.getRouteBySlug(routeSlug);
     const crag = await crags.getCragBySlug(route.cragSlug, userSub);
 

@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { crags } from "../../../services";
-import { getAuth0UserSubFromAuthHeader } from "../../../utils/auth";
+import { getUserSubFromAuthHeader } from "../../../utils/auth";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
@@ -21,7 +21,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       };
     }
 
-    const userSub = getAuth0UserSubFromAuthHeader(event.headers.authorization);
+    const userSub = getUserSubFromAuthHeader(event.headers.authorization);
 
     if (!userSub) {
       return {

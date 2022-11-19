@@ -1,28 +1,34 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Crag, Log, Route } from "core/types";
 import { routes, logs, crags } from "../../api";
 import { useGradeHelpers } from "../../api/grades";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import RatingStarsDisplay from '../../components/RatingStarsDisplay';
-import { RouteLogContext } from '../../components/RouteLogContext';
+import RatingStarsDisplay from "../../components/RatingStarsDisplay";
+import { RouteLogContext } from "../../components/RouteLogContext";
 import TopoImage from "../../components/TopoImage";
-import RouteLogs from '../../components/RouteLogs';
+import RouteLogs from "../../components/RouteLogs";
 import { popupError, popupSuccess } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
-import Button, {Color} from "../../elements/Button";
+import Button, { Color } from "../../elements/Button";
+import useUser from "../../api/user";
 
 function RoutePage() {
-  const { user, getAccessTokenSilently, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-  const { cragSlug, areaSlug, topoSlug, routeSlug } = useParams<{ cragSlug: string; areaSlug: string; topoSlug: string; routeSlug: string }>();
+  const history = useHistory();
+  const { cragSlug, areaSlug, topoSlug, routeSlug } =
+    useParams<{
+      cragSlug: string;
+      areaSlug: string;
+      topoSlug: string;
+      routeSlug: string;
+    }>();
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<Route>();
   const [crag, setCrag] = useState<Crag>();
   const [routeLogs, setRouteLogs] = useState<Log[]>();
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
-
+  const { userCredentials, isAuthenticating, isAuthenticated } = useUser()
   const context = useContext(RouteLogContext);
 
   usePageTitle(route?.title);
@@ -31,13 +37,11 @@ function RoutePage() {
     const doGetRoute = async () => {
       try {
         setLoading(true);
-        const token = isAuthenticated
-          ? await getAccessTokenSilently()
-          : "";
+
         const [newRoute, newCrag] = await Promise.all([
-          routes.getRoute(token, cragSlug, areaSlug, topoSlug, routeSlug),
-          crags.getCragBySlug(cragSlug, token)
-        ])
+          routes.getRoute(cragSlug, areaSlug, topoSlug, routeSlug),
+          crags.getCragBySlug(cragSlug),
+        ]);
         setRoute(newRoute);
         setCrag(newCrag);
       } catch (error) {
@@ -46,31 +50,35 @@ function RoutePage() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     const doGetRouteLogs = async () => {
       try {
-        const newRouteLogs = await logs.getRouteLogs(cragSlug, areaSlug, topoSlug, routeSlug);
+        const newRouteLogs = await logs.getRouteLogs(
+          cragSlug,
+          areaSlug,
+          topoSlug,
+          routeSlug
+        );
         setRouteLogs(newRouteLogs);
       } catch (error) {
         console.error("Error loading route logs", error);
       }
-    }
+    };
 
-    if (isLoading === false) {
+    if (isAuthenticating === false) {
       doGetRoute();
       doGetRouteLogs();
     }
-  }, [routeSlug, isAuthenticated, isLoading]);
+  }, [routeSlug, cragSlug, areaSlug, topoSlug, isAuthenticating ]);
 
   useEffect(() => {
-    if (!crag?.managedBy.sub || !user?.sub) {
+    if (!crag?.managedBy.sub || !userCredentials?.identityId) {
       setIsAdmin(false);
-    } else if (crag.managedBy.sub === user.sub) {
-      console.log('setting admin true')
+    } else if (crag.managedBy.sub === userCredentials.identityId) {
       setIsAdmin(true);
     }
-  }, [user, crag])
+  }, [userCredentials, crag]);
 
   const btnVerifyOnClick = async () => {
     try {
@@ -83,8 +91,7 @@ function RoutePage() {
       );
 
       if (verify) {
-        const token = await getAccessTokenSilently();
-        await routes.updateRoute(route.slug, { verified: true }, token);
+        await routes.updateRoute(route.slug, { verified: true }, );
         setRoute({
           ...route,
           verified: true,
@@ -98,62 +105,83 @@ function RoutePage() {
 
   const btnDoneOnClick = () => {
     if (!isAuthenticated) {
-      loginWithRedirect(); 
+      history.push("/login");
     } else if (route) {
       context.onSingleRouteDone(route);
     }
-  }
+  };
 
   const btnSaveToListOnClick = () => {
     if (!isAuthenticated) {
-      loginWithRedirect(); 
+      history.push("/login");
     } else if (route) {
       context.onSingleRouteAddToList(route);
     }
-  }
+  };
 
   const hasUserLoggedRoute = () => {
     if (route) {
-      return route.userLogs.length
-        || context.routesJustLogged.findIndex(route => route.slug === routeSlug) !== -1;
+      return (
+        route.userLogs.length ||
+        context.routesJustLogged.findIndex(
+          (route) => route.slug === routeSlug
+        ) !== -1
+      );
     }
 
     return false;
-  }
+  };
 
   return (
     <>
-      { loading && (
+      {loading && (
         <section className="section">
           <LoadingSpinner />
         </section>
       )}
-      { !loading && (
+      {!loading && (
         <>
           <section className="section pt-5">
             <div className="container">
               <nav className="breadcrumb" aria-label="breadcrumbs">
                 <ul>
-                  <li><a href={`/crags/${route?.cragSlug}`}>{ route?.cragTitle }</a></li>                  
-                  <li><a href={`/crags/${route?.cragSlug}/areas/${route?.areaSlug}`}>{ route?.areaTitle }</a></li>
+                  <li>
+                    <a href={`/crags/${route?.cragSlug}`}>{route?.cragTitle}</a>
+                  </li>
+                  <li>
+                    <a
+                      href={`/crags/${route?.cragSlug}/areas/${route?.areaSlug}`}
+                    >
+                      {route?.areaTitle}
+                    </a>
+                  </li>
                 </ul>
               </nav>
               <div className="block">
-                <div className="columns">
-                </div>
+                <div className="columns"></div>
                 <div className="columns">
                   <div className="column is-two-thirds">
-                    <h1 className="title is-spaced is-capitalized">{ route?.title }</h1>
+                    <h1 className="title is-spaced is-capitalized">
+                      {route?.title}
+                    </h1>
                     <h6 className="subtitle is-6">
-                      { route ? convertGradeValueToGradeLabel(route.gradeModal, route.gradingSystem) : "" }
+                      {route
+                        ? convertGradeValueToGradeLabel(
+                            route.gradeModal,
+                            route.gradingSystem
+                          )
+                        : ""}
                       <span> </span>
-                      { route?.routeType }
+                      {route?.routeType}
                       <span> </span>
-                      <RatingStarsDisplay stars={ route?.rating || 0 } />
+                      <RatingStarsDisplay stars={route?.rating || 0} />
                     </h6>
-                    <h6 className="subtitle is-6">{ route?.description }</h6>
-                    {(isAdmin === true && route?.verified === false) && (
-                      <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
+                    <h6 className="subtitle is-6">{route?.description}</h6>
+                    {isAdmin === true && route?.verified === false && (
+                      <Button
+                        color={Color.isSuccess}
+                        onClick={btnVerifyOnClick}
+                      >
                         <span className="icon">
                           <i className="fas fa-check"></i>
                         </span>
@@ -162,44 +190,49 @@ function RoutePage() {
                     )}
                   </div>
                   <div className="column">
-                    <div className="is-flex is-flex-direction-column is-justify-content-space-between" style={{ height: "100%" }}>
+                    <div
+                      className="is-flex is-flex-direction-column is-justify-content-space-between"
+                      style={{ height: "100%" }}
+                    >
                       <div className="is-flex is-justify-content-flex-end">
                         <div className="tags mb-1">
-                          { route?.verified === false && (
-                            <span className="tag is-info">Awaiting Verification</span>
+                          {route?.verified === false && (
+                            <span className="tag is-info">
+                              Awaiting Verification
+                            </span>
                           )}
-                          {route?.tags.map(tag => (
-                            <label key={ tag } className="tag is-capitalize">
-                              { tag }
+                          {route?.tags.map((tag) => (
+                            <label key={tag} className="tag is-capitalize">
+                              {tag}
                             </label>
-                          ))} 
+                          ))}
                         </div>
                       </div>
                       <div className="field has-addons has-addons-right is-horizontal">
                         <p className="control">
-                          <button className="button" onClick={ btnDoneOnClick }>
-                            { hasUserLoggedRoute()
-                              ? (
-                                <>
-                                  <span className="icon is-small">
-                                    <i className="fas fw fa-check"></i>
-                                  </span>
-                                  <span>Done</span>
-                                </>
-                              )
-                              : (
-                                <>
-                                  <span className="icon is-small">
-                                    <i className="fas fw fa-plus"></i>
-                                  </span>
-                                  <span>Log Book</span>
-                                </>
-                              )
-                            }
+                          <button className="button" onClick={btnDoneOnClick}>
+                            {hasUserLoggedRoute() ? (
+                              <>
+                                <span className="icon is-small">
+                                  <i className="fas fw fa-check"></i>
+                                </span>
+                                <span>Done</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="icon is-small">
+                                  <i className="fas fw fa-plus"></i>
+                                </span>
+                                <span>Log Book</span>
+                              </>
+                            )}
                           </button>
                         </p>
                         <p className="control">
-                          <button className="button" onClick={ btnSaveToListOnClick }>
+                          <button
+                            className="button"
+                            onClick={btnSaveToListOnClick}
+                          >
                             <span className="icon is-small">
                               <i className="fas fw fa-list"></i>
                             </span>
@@ -213,21 +246,22 @@ function RoutePage() {
               </div>
             </div>
           </section>
-          <section  className="section">
+          <section className="section">
             <div className="container">
               <div className="block">
-                { route?.drawing
-                  ? <TopoImage
-                      routes={[route, ...route.siblingRoutes]}
-                      highlightedRouteSlug={ route.slug }
-                      background={ `${route?.topo?.image}` }
-                    />
-                  : ""
-                }
+                {route?.drawing ? (
+                  <TopoImage
+                    routes={[route, ...route.siblingRoutes]}
+                    highlightedRouteSlug={route.slug}
+                    background={`${route?.topo?.image}`}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
-              { routeLogs && (
+              {routeLogs && (
                 <div className="block">
-                  <RouteLogs logs={ routeLogs } />
+                  <RouteLogs logs={routeLogs} />
                 </div>
               )}
             </div>

@@ -1,63 +1,36 @@
+import { API } from "aws-amplify";
 import { RouteRequest, Route, RoutePatch } from "core/types";
 
-export async function createRoute(routeDescription: RouteRequest, token: string): Promise<{ routeSlug: string }> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/routes`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(routeDescription)
-    });
-
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return { routeSlug: json.routeSlug };
+export function createRoute(
+  routeDescription: RouteRequest
+): Promise<{ routeSlug: string }> {
+  return API.post("climbing-topos", `/routes`, {
+    body: routeDescription,
+  });
 }
 
-export async function getRoute(token: string, cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string): Promise<Route> {
-  const res = await fetch(
-    `${process.env.REACT_APP_API_URL}/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
-    {
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` })
-      }
-    }
+export function getRoute(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string
+): Promise<Route> {
+  return API.get(
+    "climbing-topos",
+    `/routes?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
+    {}
   );
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
 }
 
-export async function updateRoute(
+export function updateRoute(
   routeSlug: string,
-  patch: RoutePatch,
-  token: string
+  patch: RoutePatch
 ): Promise<{ success: boolean }> {
-  const res = await fetch(
-    `${process.env.REACT_APP_API_URL}/routes/${routeSlug}`,
+  return API.patch(
+    "climbing-topos",
+    `/routes/${routeSlug}`,
     {
-      method: "PATCH",
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify(patch),
+      body: patch,
     }
   );
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
 }

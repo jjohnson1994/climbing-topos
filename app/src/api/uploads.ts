@@ -1,13 +1,9 @@
-export async function getPresignedUploadURL(token: string) {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/pre-signed-upload-url`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  const json = await res.json();
-  if (res.status !== 200) {
-    throw json;
-  }
+import { API } from "aws-amplify";
 
-  return json;
+export function getPresignedUploadURL() {
+  return API.get(
+    "climbing-topos",
+    '/pre-signed-upload-url',
+    {}
+  );
 }

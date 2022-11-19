@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Log } from "core/types";
@@ -6,9 +5,10 @@ import { logs } from "../api";
 import { useGradeHelpers } from "../api/grades";
 import { popupError } from "../helpers/alerts";
 import LoadingSpinner from "./LoadingSpinner";
+import useUser from "../api/user";
 
 function ProfileLogs() {
-  const { getAccessTokenSilently, isLoading, isAuthenticated } = useAuth0();
+  const { isAuthenticated, isAuthenticating } = useUser();
   const [loggedRoutes, setLoggedRoutes] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
@@ -17,31 +17,34 @@ function ProfileLogs() {
     const getProfileDate = async () => {
       try {
         setLoading(true);
-        const token = await getAccessTokenSilently();
-        const newLoggedRoutes = await logs.getProfileLogs(token);
-        setLoggedRoutes(newLoggedRoutes); 
+        const newLoggedRoutes = await logs.getProfileLogs();
+        setLoggedRoutes(newLoggedRoutes);
       } catch (error) {
         console.error("Error loading user profile", error);
-        popupError("Something has gone wrong, your profile couldn't be loaded. sorry");
+        popupError(
+          "Something has gone wrong, your profile couldn't be loaded. sorry"
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    if (isLoading === false && isAuthenticated === true) {
+    if (isAuthenticating === false && isAuthenticated === true) {
       getProfileDate();
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isAuthenticating, isAuthenticated]);
 
   return (
     <>
-      { loading && ( <LoadingSpinner /> ) }
-      { !loading && !loggedRoutes.length ? (
+      {loading && <LoadingSpinner />}
+      {!loading && !loggedRoutes.length ? (
         <div className="block box">
           <p>It looks like you haven't logged any routes yet</p>
         </div>
-      ) : "" }
-      { !loading && loggedRoutes.length ? (
+      ) : (
+        ""
+      )}
+      {!loading && loggedRoutes.length ? (
         <table className="box table is-fullwidth">
           <thead>
             <tr>
@@ -52,21 +55,30 @@ function ProfileLogs() {
             </tr>
           </thead>
           <tbody>
-            { loggedRoutes.map(log => (
-              <tr key={ log.slug } >
+            {loggedRoutes.map((log) => (
+              <tr key={log.slug}>
                 <td>
-                  <Link to={ `/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}` }>
-                    { log.routeTitle }
+                  <Link
+                    to={`/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}`}
+                  >
+                    {log.routeTitle}
                   </Link>
                 </td>
-                <td>{ convertGradeValueToGradeLabel(parseInt(log.gradeTaken), log.gradingSystem) }</td>
-                <td>{ log.rating }</td>
-                <td>{ log.dateSent }</td>
+                <td>
+                  {convertGradeValueToGradeLabel(
+                    parseInt(log.gradeTaken),
+                    log.gradingSystem
+                  )}
+                </td>
+                <td>{log.rating}</td>
+                <td>{log.dateSent}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      ) : "" }
+      ) : (
+        ""
+      )}
     </>
   );
 }

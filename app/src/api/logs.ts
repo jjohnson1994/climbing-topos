@@ -1,114 +1,95 @@
-import {useState} from "react";
-import {Log, LogRequest} from "core/types";
-import {queryStringFromObject} from "../helpers/queryString";
+import { useState } from "react";
+import { Log, LogRequest } from "core/types";
+import { queryStringFromObject } from "../helpers/queryString";
+import { API } from "aws-amplify";
 
-export async function logRoutes(logs: LogRequest[], token: string) {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/logs`, {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ logs }),
+export function logRoutes(logs: LogRequest[]) {
+  return API.post("climbing-topos", `/logs`, {
+    body: { logs },
   });
-
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json
 }
 
-export async function getProfileLogs(token: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+export function getProfileLogs(
+  cragSlug?: string,
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string
+): Promise<Log[]> {
   const queryString = queryStringFromObject({
     cragSlug,
     areaSlug,
     topoSlug,
-    routeSlug
+    routeSlug,
   });
 
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/profile/logs${queryString}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
+  return API.get("climbing-topos", `/profile/logs${queryString}`, {});
 }
 
-export async function getUserLogs(userSub: string, token: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`, {
-    headers: {
-      ...(token && { Authorization: `Bearer ${token}` })
-    }
-  });
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json;
+export function getUserLogs(
+  userSub: string,
+  cragSlug?: string,
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string
+): Promise<Log[]> {
+  return API.get(
+    "climbing-topos",
+    `/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
+    {}
+  );
 }
 
-export async function getRouteLogs(cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
-  const queryString = queryStringFromObject({
-    cragSlug,
-    areaSlug,
-    topoSlug,
-    routeSlug
+export function getRouteLogs(
+  cragSlug?: string,
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string
+): Promise<Log[]> {
+  return API.get("climbing-topos", "/routes/logs", {
+    queryStringParameters: { cragSlug, areaSlug, topoSlug, routeSlug },
   });
-
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/routes/logs${queryString}`);
-
-  const json = await res.json();
-
-  if (res.status !== 200) {
-    throw json;
-  }
-
-  return json.logs;
 }
 
+// TODO can delete?
 export function useLogRoutes() {
   const [selectedRoutes, setSelectedRoutes] = useState<string[]>([]);
-  const [isSelectingMultipleRoutes, setIsSelectingMultipleRoutes] = useState(false);
+  const [isSelectingMultipleRoutes, setIsSelectingMultipleRoutes] =
+    useState(false);
 
   const clearSelectedRoutes = () => {
     setSelectedRoutes([]);
-  }
+  };
 
-  const onInitSelectMultipleRoutes = (selectMultiple: boolean, routeSlug: string) => {
+  const onInitSelectMultipleRoutes = (
+    selectMultiple: boolean,
+    routeSlug: string
+  ) => {
     setIsSelectingMultipleRoutes(selectMultiple);
-    setSelectedRoutes([ routeSlug ]);
-  }
+    setSelectedRoutes([routeSlug]);
+  };
 
   const onRouteSelected = (routeSlug: string) => {
-    const newSelectedRoutes = Array.from(new Set([ ...selectedRoutes, routeSlug ]));
+    const newSelectedRoutes = Array.from(
+      new Set([...selectedRoutes, routeSlug])
+    );
     setSelectedRoutes(newSelectedRoutes);
-  }
-  
+  };
+
   const onRouteDeselected = (routeSlug: string) => {
-    const newSelectedRoutes = selectedRoutes.filter(_routeSlug => _routeSlug !== routeSlug)
+    const newSelectedRoutes = selectedRoutes.filter(
+      (_routeSlug) => _routeSlug !== routeSlug
+    );
     setSelectedRoutes(newSelectedRoutes);
 
     if (newSelectedRoutes.length === 0) {
       setIsSelectingMultipleRoutes(false);
     }
-  } 
+  };
 
   const onSingleRouteDone = (routeSlug: string) => {
-    const newSelectedRoutes = [ routeSlug ];
+    const newSelectedRoutes = [routeSlug];
     setSelectedRoutes(newSelectedRoutes);
-  }
+  };
 
   return {
     clearSelectedRoutes,
@@ -117,6 +98,6 @@ export function useLogRoutes() {
     onInitSelectMultipleRoutes,
     onRouteSelected,
     onRouteDeselected,
-    onSingleRouteDone
-  }
+    onSingleRouteDone,
+  };
 }
