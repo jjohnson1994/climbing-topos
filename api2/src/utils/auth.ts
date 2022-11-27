@@ -44,27 +44,40 @@ const getUserAttributes = async (event: APIGatewayProxyEventV2) => {
 
 export const getUserFromEvent = async (
   event: APIGatewayProxyEventV2
-): Promise<User> => {
-  const userAttributes = await getUserAttributes(event)
+): Promise<User | { sub: false }> => {
+  try {
+    const userAttributes = await getUserAttributes(event)
 
-  return {
-    sub: userAttributes.sub,
-    nickname: userAttributes.nickname,
-    picture: userAttributes.picture,
-    email: userAttributes.email
-  };
+    return {
+      sub: userAttributes.sub,
+      nickname: userAttributes.nickname,
+      picture: userAttributes.picture,
+      email: userAttributes.email
+    };
+
+  } catch (_error) {
+    return {
+      sub: false
+    }
+  }
 };
 
 export const getUserPublicDataFromEvent = async (
   event: APIGatewayProxyEventV2
-): Promise<UserPublicData> => {
-  const userAttributes = await getUserAttributes(event)
+): Promise<UserPublicData | { sub: false }> => {
+  try {
+    const userAttributes = await getUserAttributes(event)
 
-  return {
-    sub: userAttributes.sub,
-    nickname: userAttributes.nickname,
-    picture: userAttributes.picture
-  };
+    return {
+      sub: userAttributes.sub,
+      nickname: userAttributes.nickname,
+      picture: userAttributes.picture
+    };
+  } catch (_error) {
+    return {
+      sub: false
+    }
+  }
 };
 
 const getTokenFromAuthHeader = (authHeader: string) => {
@@ -78,6 +91,7 @@ export const getUserSubFromAuthHeader = (authorization: string) => {
       Buffer.from(token.split(".")[1], "base64url").toString()
     );
     const userSub = payload.sub;
+
 
     return userSub;
   } catch (error) {

@@ -22,7 +22,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       });
 
     if (slug) {
-      const crag = await crags.getCragBySlug(slug, user.sub);
+      const crag = await crags.getCragBySlug(slug, user.sub || '');
 
       return {
         statusCode: 200,
@@ -31,7 +31,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       };
     } else {
       const allCrags = await crags.getAllCrags(
-        user.sub,
+        user.sub || '',
         sortBy,
         sortOrder,
         parseInt(limit, 10),

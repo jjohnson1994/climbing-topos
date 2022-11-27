@@ -47,6 +47,16 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   try {
     const user = await getUserPublicDataFromEvent(event);
 
+    if (user.sub === false) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: false,
+        }),
+      }
+    }
+
     const validationResponse = await validateRequest(
       [cragExists(user.sub)],
       event
@@ -70,7 +80,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   } catch (error) {
     console.error("Error creating area", error);
     return {
-      statusCode: 200,
+      statusCode: 500,
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
         error: true,

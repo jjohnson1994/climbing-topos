@@ -36,6 +36,17 @@ export const handler: APIGatewayProxyHandlerV2 = async (
 ) => {
   try {
     const user = await getUserPublicDataFromEvent(event);
+
+    if (user.sub === false) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: false,
+        }),
+      }
+    }
+
     const areaExistsResponse = await areaExists(user.sub)(event);
 
     if (areaExistsResponse !== true) {

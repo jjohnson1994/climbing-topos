@@ -13,7 +13,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (
       routeSlug: string;
     };
     const { sub } = await getUserFromEvent(event);
-    const route = await routes.listRoutes(sub, cragSlug, areaSlug, topoSlug, routeSlug);
+
+    const route = await routes.listRoutes(sub || '', cragSlug, areaSlug, topoSlug, routeSlug);
 
     return {
       statusCode: 200,

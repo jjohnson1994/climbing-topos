@@ -65,7 +65,7 @@ function Nav() {
           <div className="navbar-item">
             {isAuthenticated ? (
               <Link to="/profile">
-                <Button icon="fas fa-user">{ userAttributes.username }</Button>
+                <Button icon="fas fa-user">{ userAttributes?.username }</Button>
               </Link>
             ) : (
               <div className="field is-grouped">

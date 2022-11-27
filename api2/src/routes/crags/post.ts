@@ -33,6 +33,17 @@ export const handler: APIGatewayProxyHandlerV2 = async (
 
     const cragDetails = JSON.parse(`${event.body}`);
     const user = await getUserPublicDataFromEvent(event);
+
+    if (user.sub === false) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: false,
+        }),
+      }
+    }
+
     const resp = await crags.createCrag(cragDetails, user);
 
     return {

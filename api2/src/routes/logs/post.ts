@@ -9,6 +9,17 @@ export const handler: APIGatewayProxyHandlerV2 = async (
   try {
     const logsDetails = JSON.parse(`${event.body}`).logs as LogRequest[];
     const user = await getUserPublicDataFromEvent(event);
+
+    if (user.sub === false) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: false,
+        }),
+      }
+    }
+
     await logs.logRoutes(logsDetails, user);
 
     return {

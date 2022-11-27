@@ -59,6 +59,17 @@ export const handler: APIGatewayProxyHandlerV2 = async (
     }
 
     const { sub } = await getUserFromEvent(event);
+
+    if (sub === false) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: false,
+        }),
+      }
+    }
+
     const { slug } = event.pathParameters as {
       slug: string;
     };
