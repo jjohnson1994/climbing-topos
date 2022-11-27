@@ -7,6 +7,7 @@ import { popupError, toastSuccess } from "../helpers/alerts";
 import Modal from "./Modal";
 import "./RoutesAddToLogModal.css";
 import { yup } from "core/schemas";
+import { log } from "console";
 
 interface Props {
   routes: Route[];
@@ -55,6 +56,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
       newOrExisting: "existing",
       title: "",
       listSlug: "",
+      routes: "",
     },
   });
 
@@ -104,6 +106,8 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
   };
 
   const btnSaveToListConfirmOnClick = handleSubmit(async (data) => {
+  console.log('log', data);
+  
     try {
       const listSlug =
         data.newOrExisting === "new"
@@ -142,18 +146,16 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
             <label className="radio">
               <input
                 type="radio"
-                name="newOrExisting"
                 value="existing"
-                {...register}
+                {...register("newOrExisting")}
               />
               Existing List
             </label>
             <label className="radio">
               <input
                 type="radio"
-                name="newOrExisting"
                 value="new"
-                {...register}
+                {...register("newOrExisting")}
                 placeholder="e.g. 'Projects' or 'Font 2021'"
               />
               New List
@@ -166,7 +168,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
             <label className="label">List</label>
             <div className="control is-expanded">
               <div className="select is-fullwidth">
-                <select name="listSlug" {...register}>
+                <select {...register("listSlug")}>
                   {userLists.map((list) => (
                     <option key={list.slug} value={list.slug}>
                       {list.title}
@@ -183,7 +185,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
           <div className="field">
             <label className="label">Title</label>
             <div className="control">
-              <input type="text" className="input" name="title" {...register} />
+              <input type="text" className="input" {...register("title")} />
             </div>
             <p className="help is-danger">{errors.title?.message}</p>
           </div>
@@ -192,8 +194,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
         <input
           type="text"
           className="input is-hidden"
-          name="routes"
-          {...register}
+          {...register("routes")}
           defaultValue={JSON.stringify(routes)}
         />
       </form>

@@ -13,13 +13,6 @@ const schema = NewCragSchema();
 
 let image: File;
 
-type CarPark = {
-  title: string;
-  latitude: string;
-  longitude: string;
-  description: string;
-};
-
 function CreateCrag() {
   const history = useHistory();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] =
@@ -52,7 +45,7 @@ function CreateCrag() {
           longitude: "",
           description: "",
         },
-      ] as CarPark[],
+      ],
       description: "",
       latitude: "",
       longitude: "",
@@ -91,7 +84,7 @@ function CreateCrag() {
     name: "carParks",
   });
 
-  const watchTags = watch("tags", []);
+  const watchAllFields = watch();
 
   useEffect(() => {
     doGetTags();
@@ -185,22 +178,19 @@ function CreateCrag() {
         >
           <input
             type="text"
-            name="imageFileName"
-            { ...register }
+            { ...register("imageFileName") }
             className="is-hidden"
           />
 
           <Message color={Color.isWarning} header="Terms & Conditions">
             <p>
-              By creating a crag you agree to become the crag maintainer. This
-              means you're in charge of approving any new routes and keeping
-              things up to date.
+              By creating a crag you agree to become the crag maintainer. That means you're in charge of approving new routes and keeping everything up to date. Please respect any access restrictions!
             </p>
             <br />
-            <div className="is-flex is-justify-content-flex-end	">
+            <div className="is-flex">
               <div className="is-flex is-flex-direction-column is-align-items-flex-end">
                 <label className="checkbox">
-                  <input type="checkbox" name="acceptTerms" { ...register } />
+                  <input type="checkbox" { ...register("acceptTerms") } />
                   <span className="ml-2">Agree</span>
                 </label>
                 <p className="help is-danger">{errors.acceptTerms?.message}</p>
@@ -216,8 +206,7 @@ function CreateCrag() {
               <input
                 className="input"
                 type="text"
-                name="title"
-                { ...register }
+                { ...register("title") }
               />
             </div>
             <p className="help is-danger">{errors.title?.message}</p>
@@ -264,8 +253,7 @@ function CreateCrag() {
             <div className="control">
               <textarea
                 className="textarea"
-                name="description"
-                { ...register }
+                { ...register("description") }
               ></textarea>
             </div>
             <p className="help is-danger">{errors.description?.message}</p>
@@ -279,8 +267,7 @@ function CreateCrag() {
               <textarea
                 id="approachNotes"
                 className="textarea"
-                name="approachNotes"
-                { ...register }
+                { ...register("approachNotes") }
               ></textarea>
             </div>
             <p className="help is-danger">{errors.approachNotes?.message}</p>
@@ -295,14 +282,13 @@ function CreateCrag() {
                     key={tag}
                     className={`
                       tag
-                      ${watchTags?.includes(tag) ? "is-primary" : ""}
+                      ${watchAllFields?.tags?.includes?.(tag) ? "is-primary" : ""}
                     `}
                   >
                     <input
                       type="checkbox"
-                      name="tags"
                       value={tag}
-                      { ...register }
+                      { ...register("tags") }
                       style={{ display: "none" }}
                     />
                     {tag}
@@ -323,8 +309,7 @@ function CreateCrag() {
                     className="input"
                     type="text"
                     placeholder="Latitude"
-                    name="latitude"
-                    { ...register }
+                    { ...register("latitude") }
                   />
                 </div>
                 <div className="control is-expanded has-icons-right">
@@ -333,8 +318,7 @@ function CreateCrag() {
                     className="input"
                     type="text"
                     placeholder="Logitude"
-                    name="longitude"
-                    { ...register }
+                    { ...register("longitude") }
                   />
                 </div>
                 <div className="control">
@@ -368,8 +352,7 @@ function CreateCrag() {
                       type="text"
                       placeholder="Name"
                       className="input"
-                      name={`carParks[${index}].title`}
-                      { ...register }
+                      { ...register(`carParks.${index}.title`) }
                     />
                   </div>
                   {carParks.length && (
@@ -395,8 +378,7 @@ function CreateCrag() {
                       className="input"
                       type="text"
                       placeholder="Latitude"
-                      name={`carParks[${index}].latitude`}
-                      { ...register }
+                      { ...register(`carParks.${index}.latitude`) }
                     />
                   </div>
                   <div className="control is-expanded has-icons-right">
@@ -404,8 +386,7 @@ function CreateCrag() {
                       className="input"
                       type="text"
                       placeholder="Longitude"
-                      name={`carParks[${index}].longitude`}
-                      { ...register }
+                      { ...register(`carParks.${index}.longitude`) }
                     />
                   </div>
                   <div className="control">
@@ -439,8 +420,7 @@ function CreateCrag() {
                     <textarea
                       placeholder="Description"
                       className="textarea"
-                      name={`carParks[${index}].description`}
-                      { ...register }
+                      { ...register(`carParks.${index}.description`) }
                     ></textarea>
                   </div>
                 </div>
@@ -472,36 +452,32 @@ function CreateCrag() {
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="unknown"
-                  { ...register }
+                  { ...register("access") }
                 />
                 Unknown
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="permitted"
-                  { ...register }
+                  { ...register("access") }
                 />
                 Permitted
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="restricted"
-                  { ...register }
+                  { ...register("access") }
                 />
                 Restricted
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="banned"
-                  { ...register }
+                  { ...register("access") }
                 />
                 Banned
               </label>
@@ -516,8 +492,7 @@ function CreateCrag() {
             <div className="control">
               <textarea
                 className="textarea"
-                name="accessDetails"
-                { ...register }
+                { ...register("accessDetails") }
               />
             </div>
           </div>
@@ -530,8 +505,7 @@ function CreateCrag() {
               <input
                 className="input"
                 type="text"
-                name="accessLink"
-                { ...register }
+                { ...register("accessLink") }
               />
             </div>
             <p className="help is-danger">{errors.accessLink?.message}</p>

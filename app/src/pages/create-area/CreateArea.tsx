@@ -109,7 +109,7 @@ function CreateArea() {
               Title
             </label>
             <div className="control">
-              <input className="input" type="text" name="title" {...register} />
+              <input className="input" type="text" {...register("title")} />
             </div>
             <p className="help is-danger">{errors.title?.message}</p>
           </div>
@@ -121,8 +121,7 @@ function CreateArea() {
             <div className="control">
               <textarea
                 className="textarea"
-                name="description"
-                {...register}
+                {...register("description")}
               ></textarea>
             </div>
             <p className="help is-danger">{errors.description?.message}</p>
@@ -136,8 +135,7 @@ function CreateArea() {
               <textarea
                 id="approachNotes"
                 className="textarea"
-                name="approachNotes"
-                {...register}
+                {...register("approachNotes")}
               ></textarea>
             </div>
             <p className="help is-danger">{errors.approachNotes?.message}</p>
@@ -157,9 +155,8 @@ function CreateArea() {
                   >
                     <input
                       type="checkbox"
-                      name="tags"
                       value={tag}
-                      {...register}
+                      {...register("tags")}
                       style={{ display: "none" }}
                     />
                     {tag}
@@ -174,7 +171,7 @@ function CreateArea() {
             <label className="label">Rock Type</label>
             <div className="control is-expanded">
               <div className="select is-fullwidth">
-                <select name="rockType" {...register}>
+                <select {...register("rockType")}>
                   {rockTypes.map((rockType) => (
                     <option key={rockType} value={rockType}>
                       {rockType}
@@ -196,8 +193,7 @@ function CreateArea() {
                     className="input"
                     type="text"
                     placeholder="Latitude"
-                    name="latitude"
-                    {...register}
+                    {...register("latitude")}
                   />
                 </div>
                 <div className="control is-expanded has-icons-right">
@@ -206,8 +202,7 @@ function CreateArea() {
                     className="input"
                     type="text"
                     placeholder="Logitude"
-                    name="longitude"
-                    {...register}
+                    {...register("longitude")}
                   />
                 </div>
                 <div className="control">
@@ -237,36 +232,32 @@ function CreateArea() {
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="unknown"
-                  {...register}
+                  {...register("access")}
                 />
                 Unknown
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="permitted"
-                  {...register}
+                  {...register("access")}
                 />
                 Permitted
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="restricted"
-                  {...register}
+                  {...register("access")}
                 />
                 Restricted
               </label>
               <label className="radio">
                 <input
                   type="radio"
-                  name="access"
                   value="banned"
-                  {...register}
+                  {...register("access")}
                 />
                 Banned
               </label>
@@ -281,8 +272,7 @@ function CreateArea() {
             <div className="control">
               <textarea
                 className="textarea"
-                name="accessDetails"
-                {...register}
+                {...register("accessDetails")}
               />
             </div>
           </div>

@@ -1,43 +1,69 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { User, UserPublicData } from "core/types";
-import { inspect } from "util";
-import { CognitoIdentity } from "aws-sdk"
+import { CognitoIdentityServiceProvider } from "aws-sdk"
+
+const cognito = new CognitoIdentityServiceProvider()
+
+const getUserAttributes = async (event: APIGatewayProxyEventV2) => {
+  const authorizer = event.requestContext.authorizer as any;
+  const identityId = authorizer.iam.cognitoIdentity.identityId;
+  const userPoolId = authorizer.iam.cognitoIdentity.amr.find(
+    (amr: string) => amr.includes('CognitoSignIn')
+  ).split(':').shift().split('/').pop()
+  const userPoolUserId = authorizer.iam.cognitoIdentity.amr.find(
+    (amr: string) => amr.includes('CognitoSignIn')
+  ).split(':').pop()
+
+  const { Users: users } = await cognito.listUsers({
+    Filter: `sub = "${userPoolUserId}"`,
+    UserPoolId: userPoolId,
+    Limit: 1
+  }).promise()
+
+  if (!users?.[0]) {
+    throw new Error('Error: User not found')
+  }
+
+  const attributes = users[0].Attributes
+  const email = attributes?.find(({ Name }) => Name === 'email')?.Value
+
+  const username = users[0].Username
+
+  if (!email) {
+    throw new Error('Error: could not get user email')
+  }
+
+  return {
+    sub: identityId,
+    nickname: `${username}`, // TODO
+    picture: 'todo', // TODO
+    name: 'todo',
+    email: email
+  }
+}
 
 export const getUserFromEvent = async (
   event: APIGatewayProxyEventV2
 ): Promise<User> => {
-  const authorizer = event.requestContext.authorizer as any;
-  const identityId = authorizer.iam.cognitoIdentity.identityId;
-
-  const a = new CognitoIdentity({
-    credentials: {
-      accessKeyId: '',
-      secretAccessKey: ''
-    }
-  })
-
-
-  console.log(inspect(event, false, null, true))
+  const userAttributes = await getUserAttributes(event)
 
   return {
-    sub: identityId,
-    nickname: 'todo', // TODO
-    picture: 'todo', // TODO
-    name: 'todo', // TODO
-    email: 'todo' // TODO
+    sub: userAttributes.sub,
+    nickname: userAttributes.nickname,
+    picture: userAttributes.picture,
+    email: userAttributes.email
   };
 };
 
 export const getUserPublicDataFromEvent = async (
   event: APIGatewayProxyEventV2
 ): Promise<UserPublicData> => {
-  const authorizer = event.requestContext.authorizer as any;
-  const identityId = authorizer.iam.cognitoIdentity.identityId;
+  const userAttributes = await getUserAttributes(event)
 
   return {
-    sub: identityId,
-    nickname: 'todo', // TODO
-    picture: 'todo', // TODO
+    sub: userAttributes.sub,
+    nickname: userAttributes.nickname,
+    picture: userAttributes.picture
   };
 };
 

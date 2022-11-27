@@ -6,7 +6,7 @@ import NavbarItem from "../elements/NavbarItem";
 
 function Nav() {
   const [navBarMenuClass, setNavBarMenuClass] = useState("");
-  const { isAuthenticated } = useUser();
+  const { userAttributes, isAuthenticated } = useUser();
 
   const toggleNavMenu = () => {
     if (navBarMenuClass === "is-active") {
@@ -65,7 +65,7 @@ function Nav() {
           <div className="navbar-item">
             {isAuthenticated ? (
               <Link to="/profile">
-                <Button icon="fas fa-user">Profile</Button>
+                <Button icon="fas fa-user">{ userAttributes.username }</Button>
               </Link>
             ) : (
               <div className="field is-grouped">

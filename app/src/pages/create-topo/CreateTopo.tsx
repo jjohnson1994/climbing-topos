@@ -77,22 +77,19 @@ function CreateTopo() {
         >
           <input
             type="text"
-            name="cragSlug"
             value={cragSlug}
-            {...register}
+            {...register("cragSlug")}
             className="is-hidden"
           />
           <input
             type="text"
-            name="areaSlug"
             value={areaSlug}
-            {...register}
+            {...register("areaSlug")}
             className="is-hidden"
           />
           <input
             type="text"
-            name="imageFileName"
-            {...register}
+            {...register("imageFileName")}
             className="is-hidden"
           />
 
@@ -134,7 +131,7 @@ function CreateTopo() {
             <label className="label">Orientation</label>
             <div className="control">
               <div className="select">
-                <select name="orientation" {...register}>
+                <select {...register("orientation")}>
                   <option value="unknown">Unknown</option>
                   <option value="north">North</option>
                   <option value="north-east">North East</option>

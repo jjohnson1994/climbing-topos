@@ -36,6 +36,7 @@ export const NewCragSchema = () =>
         .of(
           yup.object().shape({
             title: yup.string().required("Required"),
+            description: yup.string(),
             latitude: yup
               .number()
               .typeError("Latitude must be a number")

@@ -30,6 +30,7 @@ var NewCragSchema = function () {
             .array()
             .of(yup.object().shape({
             title: yup.string().required("Required"),
+            description: yup.string(),
             latitude: yup
                 .number()
                 .typeError("Latitude must be a number")

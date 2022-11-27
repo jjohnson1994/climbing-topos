@@ -1,7 +1,7 @@
-import * as iam from "@aws-cdk/aws-iam";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as sst from "@serverless-stack/resources";
-import { CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
-import { BucketAccessControl, HttpMethods, CorsRule } from "@aws-cdk/aws-s3";
+// import { CorsHttpMethod } from "aws-cdk-lib/aws-apigatewayv2";
+import { BucketAccessControl, HttpMethods } from "aws-cdk-lib/aws-s3";
 
 export default class MyStack extends sst.Stack {
   constructor(scope: sst.App, id: string, props?: sst.StackProps) {
@@ -11,32 +11,35 @@ export default class MyStack extends sst.Stack {
       this,
       `climbing-topos-images-${process.env.NODE_ENV}`,
       {
-        s3Bucket: {
-          accessControl: BucketAccessControl.PUBLIC_READ,
-          cors: <CorsRule[]>[
-            {
-              allowedHeaders: ["*"],
-              allowedMethods: [HttpMethods.PUT],
-              allowedOrigins: [
-                "http://localhost:3000",
-                "https://climbingtopos.com",
-              ],
-              maxAge: 30,
-            },
-          ],
+        // TODO
+        cdk: {
+          bucket: {
+            accessControl: BucketAccessControl.PUBLIC_READ
+          }
         },
+        cors: [
+          {
+            allowedHeaders: ["*"],
+            allowedMethods: [HttpMethods.PUT],
+            allowedOrigins: [
+              "http://localhost:3000",
+              "https://climbingtopos.com",
+            ],
+            maxAge: '30 seconds',
+          },
+        ],
       }
     );
 
     const table = new sst.Table(this, "climbing-topos-2", {
       fields: {
-        hk: sst.TableFieldType.STRING,
-        sk: sst.TableFieldType.STRING,
-        model: sst.TableFieldType.STRING,
-        slug: sst.TableFieldType.STRING,
+        hk: 'string',
+        sk: 'string',
+        model: 'string',
+        slug: 'string',
       },
       primaryIndex: { partitionKey: "hk", sortKey: "sk" },
-      secondaryIndexes: {
+      globalIndexes: {
         gsi1: {
           partitionKey: "model",
           sortKey: "sk",
@@ -50,213 +53,248 @@ export default class MyStack extends sst.Stack {
     });
 
     const topicAreaOnInsert = new sst.Topic(this, "areaOnInsert", {
-      subscribers: [
-        new sst.Function(this, "areaOnInsertHandler", {
-          handler: "src/events/area/areaOnInsert.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            srcPath: 'src/events/area/',
+            handler: "areaOnInsert.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      },
     });
 
     const topicAreaOnModify = new sst.Topic(this, "areaOnModify", {
-      subscribers: [
-        new sst.Function(this, "areaOnModifyHandler", {
-          handler: "src/events/area/areaOnModify.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
-    });
+      subscribers: {
+        subscriber: {
+          function: {
+            srcPath: "src/events/area/",
+            handler: "areaOnModify.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
+    })
 
     const topicAreaOnRemove = new sst.Topic(this, "areaOnRemove", {
-      subscribers: [
-        new sst.Function(this, "areaOnRemoveHandler", {
-          handler: "src/events/area/areaOnRemove.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
-    });
+      subscribers: {
+        subscriber: {
+          function: {
+            srcPath: "src/events/area/",
+            handler: "areaOnRemove.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
+    })
 
     const topicCragOnInsert = new sst.Topic(this, "cragOnInsert", {
-      subscribers: [
-        new sst.Function(this, "cragOnInsertHandler", {
-          handler: "src/events/crag/cragOnInsert.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            srcPath: "src/events/crag/",
+            handler: "cragOnInsert.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+
+          }
+        }
+      }
     });
 
     const topicCragOnModify = new sst.Topic(this, "cragOnModify", {
-      subscribers: [
-        new sst.Function(this, "cragOnModifyHandler", {
-          handler: "src/events/crag/cragOnModify.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
-    });
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/crag/cragOnModify.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
+    })
 
     const topicCragOnRemove = new sst.Topic(this, "cragOnRemove", {
-      subscribers: [
-        new sst.Function(this, "cragOnRemoveHandler", {
-          handler: "src/events/crag/cragOnRemove.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/crag/cragOnRemove.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
     });
 
     const topicLogOnInsert = new sst.Topic(this, "logOnInsert", {
-      subscribers: [
-        new sst.Function(this, "logOnInsertHandler", {
-          handler: "src/events/log/logOnInsert.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/log/logOnInsert.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+
+          }
+        }
+      }
     });
 
     const topicLogOnRemove = new sst.Topic(this, "logOnRemove", {
-      subscribers: [
-        new sst.Function(this, "logOnRemoveHandler", {
-          handler: "src/events/log/logOnRemove.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/log/logOnRemove.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
     });
 
     const topicRouteOnInsert = new sst.Topic(this, "routeOnInsert", {
-      subscribers: [
-        new sst.Function(this, "routeOnInsertHandler", {
-          handler: "src/events/route/routeOnInsert.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/route/routeOnInsert.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      },
     });
 
     const topicRouteOnModify = new sst.Topic(this, "routeOnModify", {
-      subscribers: [
-        new sst.Function(this, "routeOnModifyHandler", {
-          handler: "src/events/route/routeOnModify.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
-    });
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/route/routeOnModify.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      }
+    })
 
     const topicRouteOnRemove = new sst.Topic(this, "routeOnRemove", {
-      subscribers: [
-        new sst.Function(this, "routeOnRemoveHandler", {
-          handler: "src/events/route/routeOnRemove.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/route/routeOnRemove.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+
+          }
+        }
+      }
     });
 
     const topicTopoOnInsert = new sst.Topic(this, "topoOnInsert", {
-      subscribers: [
-        new sst.Function(this, "topoOnInsertHandler", {
-          handler: "src/events/topo/topoOnInsert.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/topo/topoOnInsert.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      },
     });
 
     const topicTopoOnModify = new sst.Topic(this, "topoOnModify", {
-      subscribers: [
-        new sst.Function(this, "topoOnModifyHandler", {
-          handler: "src/events/topo/topoOnModify.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/topo/topoOnModify.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      },
     });
 
     const topicTopoOnRemove = new sst.Topic(this, "topoOnRemove", {
-      subscribers: [
-        new sst.Function(this, "topoOnRemoveHandler", {
-          handler: "src/events/topo/topoOnRemove.handler",
-          environment: {
-            ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
-            ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
-            ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
-            tableName: table.dynamodbTable.tableName,
-          },
-          permissions: [table],
-        }),
-      ],
+      subscribers: {
+        subscriber: {
+          function: {
+            handler: "src/events/topo/topoOnRemove.handler",
+            environment: {
+              ALGOLIA_APP_ID: `${process.env.ALGOLIA_APP_ID}`,
+              ALGOLIA_ADMIN_KEY: `${process.env.ALGOLIA_ADMIN_KEY}`,
+              ALGOLIA_INDEX: `${process.env.ALGOLIA_INDEX}`,
+              tableName: table.tableName,
+            },
+            permissions: [table],
+          }
+        }
+      },
     });
 
     const dynamoConsumer = new sst.Function(
@@ -265,20 +303,20 @@ export default class MyStack extends sst.Stack {
       {
         handler: "src/events/dynamodb/stream.handler",
         environment: {
-          TOPIC_ARN_AREA_INSERT: topicAreaOnInsert.snsTopic.topicArn,
-          TOPIC_ARN_AREA_MODIFY: topicAreaOnModify.snsTopic.topicArn,
-          TOPIC_ARN_AREA_REMOVE: topicAreaOnRemove.snsTopic.topicArn,
-          TOPIC_ARN_CRAG_INSERT: topicCragOnInsert.snsTopic.topicArn,
-          TOPIC_ARN_CRAG_MODIFY: topicCragOnModify.snsTopic.topicArn,
-          TOPIC_ARN_CRAG_REMOVE: topicCragOnRemove.snsTopic.topicArn,
-          TOPIC_ARN_LOG_INSERT: topicLogOnInsert.snsTopic.topicArn,
-          TOPIC_ARN_LOG_REMOVE: topicLogOnRemove.snsTopic.topicArn,
-          TOPIC_ARN_ROUTE_INSERT: topicRouteOnInsert.snsTopic.topicArn,
-          TOPIC_ARN_ROUTE_MODIFY: topicRouteOnModify.snsTopic.topicArn,
-          TOPIC_ARN_ROUTE_REMOVE: topicRouteOnRemove.snsTopic.topicArn,
-          TOPIC_ARN_TOPO_INSERT: topicTopoOnInsert.snsTopic.topicArn,
-          TOPIC_ARN_TOPO_MODIFY: topicTopoOnModify.snsTopic.topicArn,
-          TOPIC_ARN_TOPO_REMOVE: topicTopoOnRemove.snsTopic.topicArn,
+          TOPIC_ARN_AREA_INSERT: topicAreaOnInsert.topicArn,
+          TOPIC_ARN_AREA_MODIFY: topicAreaOnModify.topicArn,
+          TOPIC_ARN_AREA_REMOVE: topicAreaOnRemove.topicArn,
+          TOPIC_ARN_CRAG_INSERT: topicCragOnInsert.topicArn,
+          TOPIC_ARN_CRAG_MODIFY: topicCragOnModify.topicArn,
+          TOPIC_ARN_CRAG_REMOVE: topicCragOnRemove.topicArn,
+          TOPIC_ARN_LOG_INSERT: topicLogOnInsert.topicArn,
+          TOPIC_ARN_LOG_REMOVE: topicLogOnRemove.topicArn,
+          TOPIC_ARN_ROUTE_INSERT: topicRouteOnInsert.topicArn,
+          TOPIC_ARN_ROUTE_MODIFY: topicRouteOnModify.topicArn,
+          TOPIC_ARN_ROUTE_REMOVE: topicRouteOnRemove.topicArn,
+          TOPIC_ARN_TOPO_INSERT: topicTopoOnInsert.topicArn,
+          TOPIC_ARN_TOPO_MODIFY: topicTopoOnModify.topicArn,
+          TOPIC_ARN_TOPO_REMOVE: topicTopoOnRemove.topicArn,
         },
         permissions: [
           topicAreaOnInsert,
@@ -304,7 +342,7 @@ export default class MyStack extends sst.Stack {
     // Create the HTTP API
     const api = new sst.Api(this, "Api", {
       cors: {
-        allowMethods: [CorsHttpMethod.ANY],
+        allowMethods: ['ANY'],
         allowHeaders: [
           "Content-Type",
           "X-Amz-Date",
@@ -317,13 +355,15 @@ export default class MyStack extends sst.Stack {
             ? ["http://localhost:3000"]
             : ["https://climbingtopos.com"],
       },
-      defaultAuthorizationType: sst.ApiAuthorizationType.AWS_IAM,
-      defaultFunctionProps: {
-        environment: {
-          tableName: table.dynamodbTable.tableName,
-          imageBucketName: imagesBucket.s3Bucket.bucketName,
-          AUTH0_DOMAIN: `${process.env.AUTH0_DOMAIN}`,
-        },
+      defaults: {
+        authorizer: "iam",
+        function: {
+          environment: {
+            tableName: table.tableName,
+            imageBucketName: imagesBucket.bucketName,
+            AUTH0_DOMAIN: `${process.env.AUTH0_DOMAIN}`,
+          },
+        }
       },
       routes: {
         "POST /areas": "src/routes/areas/post.handler",
@@ -353,10 +393,9 @@ export default class MyStack extends sst.Stack {
       },
     });
 
-    api.attachPermissions([imagesBucket, table]);
-
-    const auth = new sst.Auth(this, "climbing-topos-auth", {
-      cognito: {
+    const auth = new sst.Cognito(this, "climbing-topos-auth", {
+      login: ["email"],
+      cdk: {
         userPool: {
           passwordPolicy: {
             minLength: 8,
@@ -375,16 +414,22 @@ export default class MyStack extends sst.Stack {
       },
     });
 
-    auth.attachPermissionsForAuthUsers([
+    api.attachPermissions([imagesBucket, table, new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["cognito-idp:ListUsers"],
+      resources: [auth.userPoolArn],
+    })]);
+
+    auth.attachPermissionsForAuthUsers(this, [
       api,
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ["s3:PutObject", "s3:GetObject"],
         resources: [`${imagesBucket.bucketArn}/*`],
-      }),
+      })
     ]);
 
-    auth.attachPermissionsForUnauthUsers([
+    auth.attachPermissionsForUnauthUsers(this, [
       api,
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
@@ -395,9 +440,9 @@ export default class MyStack extends sst.Stack {
 
     this.addOutputs({
       ApiEndpoint: api.url,
-      UserPoolId: auth.cognitoUserPool!.userPoolId,
-      UserPoolClientId: auth.cognitoUserPoolClient!.userPoolClientId,
-      IdentityPoolId: auth.cognitoCfnIdentityPool.ref,
+      UserPoolId: auth.userPoolId,
+      UserPoolClientId: auth.userPoolClientId,
+      IdentityPoolId: `${auth.cognitoIdentityPoolId}`
     });
   }
 }

@@ -25,7 +25,7 @@ export async function updateArea(
     "climbing-tops",
     `/areas/${areaSlug}`,
     {
-      body: JSON.stringify(patch),
+      body: patch,
     }
   );
 }

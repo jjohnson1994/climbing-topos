@@ -1,14 +1,11 @@
-export interface Auth0UserPublicData {
+export interface UserPublicData {
   sub: string;
   nickname: string;
-  picture: string;
+  picture: string
 }
 
-export interface Auth0User extends Auth0UserPublicData {
-  name: string;
-  updated_at: string;
+export interface User extends UserPublicData {
   email: string;
-  email_verified: boolean;
 }
 
 export interface UserRegisterForm {
@@ -75,8 +72,8 @@ export interface Crag extends CragBrief {
   topos: Topo[];
   userLogs: Log[];
   verified: boolean;
-  managedBy: Auth0UserPublicData;
-  createdBy: Auth0UserPublicData;
+  managedBy: UserPublicData;
+  createdBy: UserPublicData;
 }
 
 export interface CragPatch {
@@ -135,7 +132,7 @@ export interface Area extends AreaRequest {
   topos: Topo[];
   userLogs: Log[];
   verified: boolean;
-  createdBy: Auth0UserPublicData;
+  createdBy: UserPublicData;
 }
 
 export interface TopoRequest {
@@ -150,7 +147,7 @@ export interface TopoRequest {
 export interface Topo extends TopoRequest {
   model: 'topo';
   verified: boolean;
-  createdBy: Auth0UserPublicData;
+  createdBy: UserPublicData;
 }
 
 export interface TopoPatch {
@@ -207,7 +204,7 @@ export interface Route extends RouteRequest {
     nickname: string;
     createdAt: string;
   }[],
-  createdBy: Auth0UserPublicData
+  createdBy: UserPublicData
 }
 
 export interface RoutePatch {
@@ -260,7 +257,7 @@ export interface LogRequest {
 export interface Log extends LogRequest {
   title: string;
   slug: string;
-  user: Auth0UserPublicData;
+  user: UserPublicData;
 };
 
 export interface ListRequest {

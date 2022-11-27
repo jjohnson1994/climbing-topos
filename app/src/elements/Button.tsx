@@ -25,6 +25,7 @@ interface ButtonProps {
   icon?: string;
   type?: ButtonType;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 const Button: FunctionComponent<ButtonProps> = forwardRef(
@@ -48,6 +49,9 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
         onClick={(e) => props.onClick?.(e)}
         {...(props.type && {
           type: props.type,
+        })}
+        {...(props.disabled && {
+          disabled: props.disabled
         })}
       >
         {props.icon && (

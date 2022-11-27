@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProfileLogs from "../../components/ProfileLogs";
 import ProfileLists from "../../components/ProfileLists";
 import { useHistory } from "react-router-dom";
@@ -15,20 +15,14 @@ function Profile() {
     history.replace("/login");
   };
 
-  useEffect(() => {
-    console.log({ userAttributes });
-  }, [userAttributes]);
-
   return (
     <>
       <section className="section">
         <div className="container box">
           <div className="columns is-mobile is-multiline is-centered">
-            <div className="column is-narrow">
-              {/**
+            {/** <div className="column is-narrow">
               <img src={userAttributes.picture} alt="profile" />
-              */}
-            </div>
+            </div> **/}
             <div className="column">
               <div
                 className="is-flex is-flex-column is-align-content-space-between"

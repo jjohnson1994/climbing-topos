@@ -145,23 +145,20 @@ function CreateRoute() {
           >
             <input
               className="is-hidden"
-              name="cragSlug"
               defaultValue={cragSlug}
-              { ...register }
+              { ...register("cragSlug") }
             />
             <input
               className="is-hidden"
-              name="areaSlug"
               defaultValue={areaSlug}
-              { ...register }
+              { ...register("areaSlug") }
             />
             <input
               className="is-hidden"
-              name="topoSlug"
               defaultValue={topoSlug}
-              { ...register }
+              { ...register("topoSlug") }
             />
-            <input className="is-hidden" name="drawing" { ...register } />
+            <input className="is-hidden" { ...register("drawing") } />
             <div className="field">
               <label className="label" htmlFor="title">
                 Title
@@ -170,8 +167,7 @@ function CreateRoute() {
                 <input
                   className="input"
                   type="text"
-                  name="title"
-                  { ...register }
+                  { ...register("title") }
                 />
               </div>
               <p className="help is-danger">{errors.title?.message}</p>
@@ -184,8 +180,7 @@ function CreateRoute() {
               <div className="control">
                 <textarea
                   className="textarea"
-                  name="description"
-                  { ...register }
+                  { ...register("description") }
                 ></textarea>
               </div>
               <p className="help is-danger">{errors.description?.message}</p>
@@ -205,9 +200,8 @@ function CreateRoute() {
                     >
                       <input
                         type="checkbox"
-                        name="tags"
                         value={tag}
-                        { ...register }
+                        { ...register("tags") }
                         style={{ display: "none" }}
                       />
                       {tag}
@@ -222,7 +216,7 @@ function CreateRoute() {
               <label className="label">Route Type</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="routeType" { ...register }>
+                  <select { ...register("routeType") }>
                     {routeTypes.map((routeType) => (
                       <option key={routeType} value={routeType}>
                         {routeType}
@@ -238,7 +232,7 @@ function CreateRoute() {
               <label className="label">Grading System</label>
               <div className="control is-expanded">
                 <div className="select is-fullwidth">
-                  <select name="gradingSystem" { ...register }>
+                  <select { ...register("gradingSystem") }>
                     {gradingSystems.map((gradingSystem) => (
                       <option
                         key={gradingSystem.title}
@@ -257,7 +251,7 @@ function CreateRoute() {
               <label className="label">Grade</label>
               <div className="contro is-expandedl">
                 <div className="select is-fullwidth">
-                  <select name="grade" { ...register }>
+                  <select { ...register("grade") }>
                     {watchGradingSystem &&
                       getGradesFromGradingSystem(
                         getValues("gradingSystem")

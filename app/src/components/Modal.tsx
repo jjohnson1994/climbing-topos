@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../elements/Button";
 
 interface Props {
   visible: boolean;
@@ -8,8 +9,9 @@ interface Props {
   btnCancelText?: string;
   btnConfirmText?: string;
   children: JSX.Element | JSX.Element[];
-  hasCancelButton?: boolean,
-  hasConfirmButton?: boolean
+  confirmActionLoading?: boolean;
+  hasCancelButton?: boolean;
+  hasConfirmButton?: boolean;
 }
 
 function Modal({
@@ -20,42 +22,43 @@ function Modal({
   children,
   hasCancelButton,
   hasConfirmButton,
+  confirmActionLoading = false,
   title,
   visible,
 }: Props) {
   return (
-    <div className={ `modal ${ visible ? "is-active" : "" }` } >
+    <div className={`modal ${visible ? "is-active" : ""}`} >
       <div className="modal-background"></div>
       <div className="modal-card">
         <header className="modal-card-head">
-          <p className="modal-card-title">{ title }</p>
+          <p className="modal-card-title">{title}</p>
         </header>
         <section className="modal-card-body">
-          { children }
+          {children}
         </section>
         <footer className="modal-card-foot is-flex-direction-row is-justify-content-flex-end">
           <div className="field is-grouped">
-            { hasCancelButton !== false && (
+            {hasCancelButton !== false && (
               <p className="control">
-                <button
-                  className="button"
-                  onClick={ () => btnCancelOnClick() }
+                <Button
+                  onClick={() => btnCancelOnClick()}
+                  disabled={confirmActionLoading}
                 >
-                  { btnCancelText }
-                </button>
+                  {btnCancelText}
+                </Button>
               </p>
             )}
-            { hasConfirmButton !== false && (
+            {hasConfirmButton !== false && (
               <p className="control">
-                <button
-                  className="button is-primary"
-                  onClick={ () => btnConfirmOnClick() }
+                <Button
+                  onClick={() => btnConfirmOnClick()}
+                  loading={confirmActionLoading}
                 >
                   <span className="icon">
                     <i className="fas fa-check"></i>
                   </span>
-                  <span>{ btnConfirmText }</span>
-                </button>
+                  <span>{btnConfirmText}</span>
+                </Button>
               </p>
             )}
           </div>

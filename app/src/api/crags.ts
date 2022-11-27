@@ -3,18 +3,6 @@ import Compressor from "compressorjs";
 import { Area, Crag, CragBrief, CragRequest, Route, Topo } from "core/types";
 import { uploads } from "../api";
 
-function generateQueryParams(params: object): string {
-  const queryParams = Object.entries(params).reduce((acc, [key, value]) => {
-    if (typeof value === "undefined" && value !== null) {
-      return acc;
-    }
-
-    return `${acc}${key}=${value}&`;
-  }, "?");
-
-  return queryParams;
-}
-
 const imageIsFile = (image: File) =>
   image && image.name && image.type && image.size;
 
@@ -40,7 +28,8 @@ export async function createCrag(
       });
     });
 
-    await API.put("climbing-topos", url, {
+    await fetch(url, {
+      method: "PUT",
       body: compressedFile,
     }).then(async (res) => {
       if (res.status !== 200) {
@@ -52,16 +41,23 @@ export async function createCrag(
     image = objectUrl;
   }
 
-  const imageUploadResponse = await API.post("climbing-topos", `/crags`, {
-    body: JSON.stringify({
+  console.log({
+    body: {
       ...cragDetails,
       image,
-    }),
+    },
+  });
+
+  const createCragResponse = await API.post("climbing-topos", `/crags`, {
+    body: {
+      ...cragDetails,
+      image,
+    },
   });
 
   return {
-    hk: imageUploadResponse.inserted.hk,
-    slug: imageUploadResponse.inserted.slug,
+    hk: createCragResponse.inserted.hk,
+    slug: createCragResponse.inserted.slug,
   };
 }
 

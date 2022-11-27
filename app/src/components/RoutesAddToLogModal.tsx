@@ -25,6 +25,7 @@ function RoutesAddToLogModal({
   onConfirm,
   onRoutesLogged,
 }: Props) {
+  const [loading, setLoading] = useState<boolean>(false)
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
 
@@ -72,11 +73,18 @@ function RoutesAddToLogModal({
   };
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async (data) => {
-    console.log({ data })
-    await logRoutes(data.logs as LogRequest[]);
+    setLoading(true)
 
-    if (onRoutesLogged) {
-      onRoutesLogged();
+    try {
+      await logRoutes(data.logs as LogRequest[]);
+
+      if (onRoutesLogged) {
+        onRoutesLogged();
+      }
+    } catch (error) {
+      console.error('Error logging routes', error)
+    } finally {
+      setLoading(false)
     }
   });
 
@@ -109,6 +117,7 @@ function RoutesAddToLogModal({
       btnConfirmText="Save to Log Book"
       title="Add Routes to Log Book"
       visible={visible}
+      confirmActionLoading={loading}
     >
       <form>
         {routes &&
@@ -145,7 +154,6 @@ function RoutesAddToLogModal({
                 <input
                   type="text"
                   {...register(`logs.[${index}].areaSlug`)}
-                  {...register}
                   defaultValue={route.areaSlug}
                   className="is-hidden"
                 />
@@ -338,11 +346,10 @@ function RoutesAddToLogModal({
                           key={tag}
                           className={`
                           tag
-                          ${
-                            watchFormFields?.logs?.[index]?.tags?.includes?.(tag)
+                          ${watchFormFields?.logs?.[index]?.tags?.includes?.(tag)
                               ? "is-primary"
                               : ""
-                          }
+                            }
                         `}
                         >
                           <input
