@@ -54,6 +54,10 @@ jobs:
           REACT_APP_AUTH0_AUDIENCE: ${{ secrets.REACT_APP_AUTH0_AUDIENCE }}
           REACT_APP_AUTH0_CLIENT_ID: ${{ secrets.REACT_APP_AUTH0_CLIENT_ID }}
           REACT_APP_AUTH0_DOMAIN: ${{ secrets.REACT_APP_AUTH0_DOMAIN }}
+          REACT_APP_REGION: ${{ secrets.AWS_REGION }}
+          REACT_APP_IDENTITY_POOL_ID: ${{ secrets.REACT_APP_IDENTITY_POOL_ID }}
+          REACT_APP_USER_POOL_CLIENT_ID: ${{ secrets.REACT_APP_USER_POOL_CLIENT_ID }}
+          REACT_APP_USER_POOL_ID: ${{ secrets.REACT_APP_USER_POOL_ID }}
       - name: Deploy app build to S3 bucket
         run: |
           cd app
