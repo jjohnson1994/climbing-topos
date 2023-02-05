@@ -120,11 +120,16 @@ function AreaView() {
         </section>
       )}
 
-      {area && (
+      {area && crag && (
         <Helmet>
           <title>{area.title} | {area.cragTitle} | ClimbingTopos.com</title>
           <link rel="canonical" href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}` }/>
           <meta name="description" content={`${area.title}, ${area.cragTitle} climbing guide and topo`}/>
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={`${area.title} | ${area.cragTitle} | ClimbingTopos.com`} />
+          <meta property="og:url" content={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}` } />
+          <meta property="og:description" content={`${area.title}, ${area.cragTitle} climbing guide and topo`} />
+          <meta property="og:image" content={`${crag.image}`} />
         </Helmet>
       )}
       <section className={`section pt-5 ${loading ? "is-hidden" : ""}`}>

@@ -142,11 +142,16 @@ function RoutePage() {
       )}
       {!loading && (
         <>
-          {route && (
+          {route && crag && (
             <Helmet>
               <title>{route.title} | {route.areaTitle} | ClimbingTopos.com</title>
               <link rel="canonical" href={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }/>
               <meta name="description" content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`}/>
+              <meta property="og:type" content="website" />
+              <meta property="og:title" content={`${route.title} | ${route.areaTitle} | ClimbingTopos.com`} />
+              <meta property="og:url" content={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` } />
+              <meta property="og:description" content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`} />
+              <meta property="og:image" content={`${crag.image}`} />
             </Helmet>
           )}
           <section className="section pt-5">

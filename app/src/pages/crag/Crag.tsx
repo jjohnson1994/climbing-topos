@@ -83,8 +83,13 @@ function CragView() {
         <>
           <Helmet>
             <title>{crag.title} | ClimbingTopos.com</title>
-            <link rel="canonical" href={`https://climbingtopos.com/crags/${crag.slug}` }/>
+            <link rel="canonical" href={`https://climbingtopos.com/crags/${crag.slug}`} />
             <meta name="description" content={`${crag.title} climbing guide and topo`} />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content={`${crag.title} | ClimbingTopos.com`} />
+            <meta property="og:url" content={`https://climbingtopos.com/crags/${crag.slug}`} />
+            <meta property="og:description" content={`${crag.title} climbing guide and topo`} />
+            <meta property="og:image" content={`${crag.image}`} />
           </Helmet>
           <div className="columns is-gapless mb-0">
             <div className="column">
