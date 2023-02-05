@@ -7,9 +7,9 @@ import ButtonCopyCoordinates from "../../components/ButtonCopyCoordinates";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import TopoImage from "../../components/TopoImage";
 import { popupSuccess, popupError } from "../../helpers/alerts";
-import { usePageTitle } from "../../helpers/pageTitle";
 import Button, { Color } from "../../elements/Button";
 import useUser from "../../api/user";
+import { Helmet } from "react-helmet";
 
 function AreaView() {
   const { areaSlug, cragSlug } =
@@ -19,8 +19,6 @@ function AreaView() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const { userAttributes } = useUser();
-
-  usePageTitle(area?.title);
 
   useEffect(() => {
     const doGetArea = async () => {
@@ -120,6 +118,14 @@ function AreaView() {
             <LoadingSpinner />
           </div>
         </section>
+      )}
+
+      {area && (
+        <Helmet>
+          <title>{area.title} | {area.cragTitle} | ClimbingTopos.com</title>
+          <link rel="canonical" href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}` }/>
+          <meta name="description" content={`${area.title}, ${area.cragTitle} climbing guide and topo`}/>
+        </Helmet>
       )}
       <section className={`section pt-5 ${loading ? "is-hidden" : ""}`}>
         <div className="container">

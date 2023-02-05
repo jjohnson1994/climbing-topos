@@ -12,6 +12,7 @@ import { popupError, popupSuccess } from "../../helpers/alerts";
 import { usePageTitle } from "../../helpers/pageTitle";
 import Button, { Color } from "../../elements/Button";
 import useUser from "../../api/user";
+import { Helmet } from "react-helmet";
 
 function RoutePage() {
   const history = useHistory();
@@ -141,6 +142,13 @@ function RoutePage() {
       )}
       {!loading && (
         <>
+          {route && (
+            <Helmet>
+              <title>{route.title} | {route.areaTitle} | ClimbingTopos.com</title>
+              <link rel="canonical" href={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }/>
+              <meta name="description" content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`}/>
+            </Helmet>
+          )}
           <section className="section pt-5">
             <div className="container">
               <nav className="breadcrumb" aria-label="breadcrumbs">

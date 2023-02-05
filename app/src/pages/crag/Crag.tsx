@@ -8,11 +8,11 @@ import CragMap from "../../components/CragMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import TopoImage from "../../components/TopoImage";
 import { popupError } from "../../helpers/alerts";
-import { usePageTitle } from "../../helpers/pageTitle";
 import CragTitleImage from "../../components/CragTitleImage";
 import CragAdmin from "../../components/CragAdmin";
 import { Auth } from "aws-amplify";
 import useUser from "../../api/user";
+import { Helmet } from "react-helmet";
 
 function CragView() {
   const { isAuthenticated } = useUser();
@@ -22,8 +22,6 @@ function CragView() {
   const [crag, setCrag] = useState<Crag>();
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const [activeTab, setActiveTab] = useState("routes");
-
-  usePageTitle(crag?.title);
 
   useEffect(() => {
     const doGetCrag = async () => {
@@ -83,6 +81,11 @@ function CragView() {
         </section>
       ) : (
         <>
+          <Helmet>
+            <title>{crag.title} | ClimbingTopos.com</title>
+            <link rel="canonical" href={`https://climbingtopos.com/crags/${crag.slug}` }/>
+            <meta name="description" content={`${crag.title} climbing guide and topo`} />
+          </Helmet>
           <div className="columns is-gapless mb-0">
             <div className="column">
               <CragTitleImage src={`${crag.image}`} />
