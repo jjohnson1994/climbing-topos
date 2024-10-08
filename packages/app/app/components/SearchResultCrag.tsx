@@ -1,9 +1,9 @@
-import { Crag } from "core/types";
-import { Link } from "react-router-dom";
+import { Crag } from "@climbingtopos/types";
+import Link from "next/link";
 
 function SearchResultCrag({ crag }: { crag: Crag }) {
   return (
-    <Link to={`/crags/${crag.slug}`} className="box p-0" style={{ overflow: 'hidden' }}>
+    <Link href={`/crags/${crag.slug}`} className="box p-0" style={{ overflow: 'hidden' }}>
       <div className="columns is-mobile is-gapless">
         <div className="column is-narrow">
           <img 

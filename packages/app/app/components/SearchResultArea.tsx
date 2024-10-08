@@ -1,9 +1,9 @@
-import { Area } from "core/types";
-import { Link } from "react-router-dom";
+import { Area } from "@climbingtopos/types";
+import Link from "next/link";
 
 function SearchResultCrag({ area }: { area: Area }) {
   return (
-    <Link className="box" to={`/crags/${area.cragSlug}/areas/${area.slug}`}>
+    <Link className="box" href={`/crags/${area.cragSlug}/areas/${area.slug}`}>
       <article className="media">
         <div className="media-content">
           <div className="content">

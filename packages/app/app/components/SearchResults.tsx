@@ -1,22 +1,22 @@
-import { connectHits } from 'react-instantsearch-dom';
-import SearchResultCrag from "../components/SearchResultCrag";
-import SearchResultArea from "../components/SearchResultArea";
-import SearchResultRoute from "../components/SearchResultRoute";
+import SearchResultCrag from "@/app/components/SearchResultCrag";
+import SearchResultArea from "@/app/components/SearchResultArea";
+import SearchResultRoute from "@/app/components/SearchResultRoute";
 
-const Hits = ({ hits }: { hits: any }) => (
+const Hits = ({ hit }: { hit: any }) => (
   <>
-    { hits.map((hit: any) => {
-      if (hit.model === "crag") {
-        return <SearchResultCrag key={ hit.objectID } crag={ hit } />
-      } else if (hit.model === "area") {
-        return <SearchResultArea key={ hit.objectID } area={ hit } />
-      } else if (hit.model === "route") {
-        return <SearchResultRoute key={ hit.objectID } route={ hit } />
-      } else {
-        return "";
-      }
-    })}
+    { 
+      hit.model === "crag"  &&
+        <SearchResultCrag key={ hit.objectID } crag={ hit } />
+    }
+
+    { hit.model === "area" &&
+        <SearchResultArea key={ hit.objectID } area={ hit } />
+    } 
+
+    { hit.model === "route" &&
+        <SearchResultRoute key={ hit.objectID } route={ hit } />
+    } 
   </>
 );
 
-export default connectHits(Hits);
+export default Hits;

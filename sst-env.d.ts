@@ -15,6 +15,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "AlgoliaSearchApiKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "Cognito": {
       "type": "sst.sst.Linkable"
       "userPoolClientId": string

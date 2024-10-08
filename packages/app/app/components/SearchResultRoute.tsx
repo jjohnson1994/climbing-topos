@@ -1,12 +1,12 @@
-import { Route } from "core/types";
-import { Link } from "react-router-dom";
-import { useGradeHelpers } from "../api/grades";
+import { Route } from "@climbingtopos/types";
+import Link from "next/link";
+import { useGradeHelpers } from "@/app/api/grades";
 
 function SearchResultsRoute({ route }: { route: Route }) {
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   return (
-    <Link className="box p-0" to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`} style={{ overflow: "hidden" }}>
+    <Link className="box p-0" href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`} style={{ overflow: "hidden" }}>
       <div className="columns is-mobile is-gapless">
         <div className="column is-narrow">
           <img 
