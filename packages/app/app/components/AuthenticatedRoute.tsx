@@ -1,26 +1,21 @@
-import React from "react";
-import { Route, Redirect, useLocation } from "react-router-dom";
-import useUser from "../api/user";
-import LoadingSpinner from "./LoadingSpinner";
+"use client"
 
-interface Props {
-  exact: boolean;
-  path: string;
-}
+import { PropsWithChildren } from "react"
+import useUser from '@/app/api/user';
+import { redirect } from 'next/navigation'
 
-const AuthenticatedRoute: React.FC<Props> = ({ children, ...rest }) => {
-  const { pathname, search } = useLocation();
-  const { isAuthenticated, isAuthenticating } = useUser();
+const AuthenticaedRoute = ({ children }: PropsWithChildren) => {
+  const { isAuthenticated } = useUser();
+
+  if (!isAuthenticated) {
+    redirect('/login')
+  }
 
   return (
-    <Route {...rest}>
-      {isAuthenticating && <LoadingSpinner />}
-      {isAuthenticated && !isAuthenticating && children}
-      {!isAuthenticated && !isAuthenticating && (
-        <Redirect to={`/login?redirect=${pathname}${search}`} />
-      )}
-    </Route>
-  );
-};
+    <>
+      {children}
+    </>
+  )
+}
 
-export default AuthenticatedRoute;
+export default AuthenticaedRoute

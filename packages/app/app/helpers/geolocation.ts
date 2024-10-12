@@ -9,7 +9,7 @@ export const getCurrentPosition = async () => {
       },
       {
         maximumAge: 0,
-      }
+      },
     );
   });
-}
+};

@@ -1,12 +1,15 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { NewLogsSchema } from "@climbingtopos/schemas";
-import { GradingSystem, LogRequest, Route } from "core/types";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { globals, logs } from "../api";
-import { popupError, toastSuccess } from "../helpers/alerts";
-import Modal from "./Modal";
-import "./RoutesAddToLogModal.css";
+// TODO https://github.com/users/jjohnson1994/projects/1/views/1?pane=issue&itemId=83148825
+// @ts-nocheck
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewLogsSchema } from '@climbingtopos/schemas';
+import { GradingSystem, LogRequest, Route } from '@climbingtopos/types';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { globals, logs } from '../api';
+import { popupError, toastSuccess } from '../helpers/alerts';
+import Modal from './Modal';
+import './RoutesAddToLogModal.css';
 
 interface Props {
   routes: Route[];
@@ -25,7 +28,7 @@ function RoutesAddToLogModal({
   onConfirm,
   onRoutesLogged,
 }: Props) {
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const [routeTags, setRouteTags] = useState<string[]>([]);
   const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
 
@@ -36,7 +39,7 @@ function RoutesAddToLogModal({
     watch,
   } = useForm({
     resolver: yupResolver(schema),
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   const watchFormFields = watch();
@@ -53,18 +56,18 @@ function RoutesAddToLogModal({
       setRouteTags(newRouteTags);
       setGradingSystems(newGradingSystem);
     } catch (error) {
-      console.error("Error loading route tags", error);
+      console.error('Error loading route tags', error);
     }
   };
 
   const getGradeOptions = (gradingSystemTitle: string) => {
     const gradingSystem = gradingSystems.find(
-      ({ title }) => title === gradingSystemTitle
+      ({ title }) => title === gradingSystemTitle,
     );
 
     if (!gradingSystem) {
       throw new Error(
-        `Error, could not find grading system matching ${gradingSystemTitle}`
+        `Error, could not find grading system matching ${gradingSystemTitle}`,
       );
     }
 
@@ -73,7 +76,7 @@ function RoutesAddToLogModal({
   };
 
   const btnLogRoutesConfirmOnClick = handleSubmit(async (data) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       await logRoutes(data.logs as LogRequest[]);
@@ -82,9 +85,9 @@ function RoutesAddToLogModal({
         onRoutesLogged();
       }
     } catch (error) {
-      console.error('Error logging routes', error)
+      console.error('Error logging routes', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   });
 
@@ -97,15 +100,15 @@ function RoutesAddToLogModal({
   const logRoutes = async (routes: LogRequest[]) => {
     try {
       await logs.logRoutes(routes);
-      toastSuccess("Routes Logged");
+      toastSuccess('Routes Logged');
 
       if (onConfirm) {
         onConfirm();
       }
     } catch (error) {
-      console.error("Error logging routes", error);
+      console.error('Error logging routes', error);
       popupError(
-        "Ah, there's been an error and your climbs could not be logged"
+        "Ah, there's been an error and your climbs could not be logged",
       );
     }
   };
@@ -122,7 +125,11 @@ function RoutesAddToLogModal({
       <form>
         {routes &&
           routes.map((route, index) => (
-            <div className="log-route-review-dropdown" key={route.slug} data-testid={`formSection-${route.slug}`}>
+            <div
+              className="log-route-review-dropdown"
+              key={route.slug}
+              data-testid={`formSection-${route.slug}`}
+            >
               <input
                 id={`chkRoute${route.slug}`}
                 type="radio"
@@ -135,7 +142,7 @@ function RoutesAddToLogModal({
               >
                 <span>{route.title}</span>
                 <span className="has-text-danger">
-                  {errors.logs?.[index] ? " Has Errors! " : ""}
+                  {errors.logs?.[index] ? ' Has Errors! ' : ''}
                 </span>
                 {routes.length > 1 && (
                   <>
@@ -272,7 +279,7 @@ function RoutesAddToLogModal({
                                 <option value={index} key={grade}>
                                   {grade}
                                 </option>
-                              )
+                              ),
                             )}
                           </select>
                         </div>
@@ -309,9 +316,7 @@ function RoutesAddToLogModal({
                       <label className="label">Attempts</label>
                       <div className="control">
                         <div className="select">
-                          <select
-                            {...register(`logs.[${index}].attempts`)}
-                          >
+                          <select {...register(`logs.[${index}].attempts`)}>
                             <option value="0">Flash</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -346,17 +351,20 @@ function RoutesAddToLogModal({
                           key={tag}
                           className={`
                           tag
-                          ${watchFormFields?.logs?.[index]?.tags?.includes?.(tag)
-                              ? "is-primary"
-                              : ""
-                            }
+                          ${
+                            watchFormFields?.logs?.[index]?.tags?.includes?.(
+                              tag,
+                            )
+                              ? 'is-primary'
+                              : ''
+                          }
                         `}
                         >
                           <input
                             type="checkbox"
                             {...register(`logs.[${index}].tags`)}
                             value={tag}
-                            style={{ display: "none" }}
+                            style={{ display: 'none' }}
                           />
                           {tag}
                         </label>

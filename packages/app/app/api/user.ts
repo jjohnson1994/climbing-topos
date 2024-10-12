@@ -1,11 +1,15 @@
-import Auth, { SignUpParams } from "@aws-amplify/auth";
-import { ICredentials } from "@aws-amplify/core";
-import { useEffect, useState } from "react";
+import Auth, { SignUpParams } from '@aws-amplify/auth';
+import { ICredentials } from '@aws-amplify/core';
+import { useEffect, useState } from 'react';
 
 const useUser = () => {
-  const [isAuthenticating, setIsAuthenticating] = useState()
-  const [isAuthenticated, setIsAuthenticated] = useState()
-  const [userAttributes, setUserAttributes] = useState()
+  const [isAuthenticating, setIsAuthenticating] = useState<boolean>();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
+  // const [userAttributes, setUserAttributes] = useState<CognitoUser>();
+  const [userAttributes, setUserAttributes] = useState<{
+    username: string;
+    attributes: Record<string, string>;
+  }>();
   const [userCredentials, setUserCredentials] = useState<ICredentials>();
 
   useEffect(() => {
@@ -22,8 +26,8 @@ const useUser = () => {
       setUserAttributes(userAttributes);
       setIsAuthenticated(true);
     } catch (error) {
-      if (error !== "No current user") {
-        console.error("error on load, no current user", error);
+      if (error !== 'No current user') {
+        console.error('error on load, no current user', error);
       }
     }
 
@@ -44,7 +48,7 @@ const useUser = () => {
       setUserAttributes(userAttributes);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error("sign in error", error);
+      console.error('sign in error', error);
       setIsAuthenticated(false);
       throw error;
     } finally {
@@ -58,7 +62,7 @@ const useUser = () => {
       setUserCredentials(undefined);
       setIsAuthenticated(false);
     } catch (error) {
-      console.error("error signing out");
+      console.error('error signing out');
       throw error;
     }
   };
@@ -71,7 +75,7 @@ const useUser = () => {
 
       await Auth.signUp(newUserAttributes);
     } catch (error) {
-      console.error("error in sign up", error);
+      console.error('error in sign up', error);
       throw error;
     } finally {
       setIsAuthenticating(false);
@@ -82,7 +86,8 @@ const useUser = () => {
     try {
       await Auth.confirmSignUp(username, confirmationCode);
       setIsAuthenticated(true);
-    } catch (error: any) {
+    } catch (error) {
+      console.error('error confirming sign up', error);
       throw error;
     } finally {
       setIsAuthenticating(false);

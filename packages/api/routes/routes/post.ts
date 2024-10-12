@@ -1,10 +1,10 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from "aws-lambda";
-import { RouteRequest } from "@climbingtopos/types";
-import { routes } from "@/services";
-import { getUserPublicDataFromEvent } from "@/utils/auth";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { RouteRequest } from '@climbingtopos/types';
+import { routes } from '@/services';
+import { getUserPublicDataFromEvent } from '@/utils/auth';
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     const routeDetails = JSON.parse(`${event.body}`) as RouteRequest;
@@ -13,26 +13,26 @@ export const handler: APIGatewayProxyHandler = async (
     if (user.sub === false) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           success: false,
         }),
-      }
+      };
     }
 
     const resp = await routes.createRoute(routeDetails, user);
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ success: true, inserted: resp }),
     };
   } catch (error) {
-    console.error("Error creating route", error);
+    console.error('Error creating route', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

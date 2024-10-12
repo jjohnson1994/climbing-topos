@@ -1,17 +1,18 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from "aws-lambda";
-import { crags } from "@/services";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { crags } from '@/services';
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
-    const userSub = event.requestContext.authorizer?.iam.cognitoIdentity.identityId
+    const userSub =
+      event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
 
     const {
       sortBy,
       sortOrder,
-      limit = "10",
-      offset = "0",
+      limit = '10',
+      offset = '0',
     } = event.queryStringParameters || ({} as Record<string, string>);
 
     const { cragSlug } =
@@ -25,7 +26,7 @@ export const handler: APIGatewayProxyHandler = async (
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(crag),
       };
     } else {
@@ -34,21 +35,21 @@ export const handler: APIGatewayProxyHandler = async (
         sortBy,
         sortOrder,
         parseInt(limit, 10),
-        parseInt(offset, 10)
+        parseInt(offset, 10),
       );
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(allCrags),
       };
     }
   } catch (error) {
-    console.error("Error getting crags", error);
+    console.error('Error getting crags', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

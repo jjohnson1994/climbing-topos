@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import Tippy from "@tippyjs/react";
-import { ChangeEvent, useContext } from "react";
-import Link from "next/link"
-import { Log, Route } from "@climbingtopos/types";
-import { RouteLogContext } from "./RouteLogContext";
-import { useGradeHelpers } from "@/app/api/grades";
-import RatingStarsDisplay from "@/app/components/RatingStarsDisplay";
-import useUser from "@/app/api/user";
-import { useRouter } from 'next/navigation'
+import Tippy from '@tippyjs/react';
+import { ChangeEvent, useContext } from 'react';
+import Link from 'next/link';
+import { Log, Route } from '@climbingtopos/types';
+import { RouteLogContext } from './RouteLogContext';
+import { useGradeHelpers } from '@/app/api/grades';
+import RatingStarsDisplay from '@/app/components/RatingStarsDisplay';
+import useUser from '@/app/api/user';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   routes: Route[] | undefined;
@@ -17,7 +17,7 @@ interface Props {
 
 function AreaRoutesTable({ routes, loggedRoutes }: Props) {
   const { isAuthenticated } = useUser();
-  const router = useRouter()
+  const router = useRouter();
 
   const context = useContext(RouteLogContext);
 
@@ -25,7 +25,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
 
   const chkRouteOnChange = (
     event: ChangeEvent<HTMLInputElement>,
-    route: Route
+    route: Route,
   ) => {
     if (
       context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) > -1
@@ -38,7 +38,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
 
   const btnSingleRouteDoneOnClick = (route: Route) => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else {
       context.onSingleRouteDone(route);
     }
@@ -46,7 +46,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
 
   const btnSingleRouteAddToListOnClick = (route: Route) => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else {
       context.onSingleRouteAddToList(route);
     }
@@ -56,7 +56,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
     return (
       loggedRoutes.findIndex((log) => log.routeSlug === routeSlug) !== -1 ||
       context.routesJustLogged.findIndex(
-        (route) => route.slug === routeSlug
+        (route) => route.slug === routeSlug,
       ) !== -1
     );
   };
@@ -74,7 +74,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
                 <Link
                   href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
                   className={
-                    hasUserLoggedRoute(String(route.slug)) ? "line-through" : ""
+                    hasUserLoggedRoute(String(route.slug)) ? 'line-through' : ''
                   }
                 >
                   {route.title}
@@ -89,7 +89,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
                 <span className="tag">
                   {convertGradeValueToGradeLabel(
                     route.gradeModal,
-                    route.gradingSystem
+                    route.gradingSystem,
                   )}
                 </span>
                 <span className="tag">{route.routeType}</span>
@@ -103,7 +103,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
                     type="checkbox"
                     checked={
                       context.selectedRoutes.findIndex(
-                        ({ slug }) => slug === route.slug
+                        ({ slug }) => slug === route.slug,
                       ) !== -1
                     }
                     onChange={(e) => chkRouteOnChange(e, route)}
@@ -119,7 +119,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
                       <div className="dropdown is-active">
                         <div
                           className="dropdown-menu"
-                          style={{ position: "relative" }}
+                          style={{ position: 'relative' }}
                         >
                           <div className="dropdown-content">
                             <button

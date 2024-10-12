@@ -1,9 +1,9 @@
-import { Crag } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { SNSHandler, SNSEvent } from "aws-lambda";
+import { Crag } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
 
-import { analytics, users } from "@/services";
+import { analytics, users } from '@/services';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -19,7 +19,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         users.incrementCragCreatedCount(createdBy.sub),
         algolaIndex.saveObject({
           ...normalizedRow,
-          model: "crag",
+          model: 'crag',
           objectID: slug,
         }),
       ];
@@ -27,7 +27,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises as unknown as Promise<any>[]);
   } catch (error) {
-    console.error("Error in cragOnInsert", error);
-    throw error
+    console.error('Error in cragOnInsert', error);
+    throw error;
   }
 };

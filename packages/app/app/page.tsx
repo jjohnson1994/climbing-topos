@@ -1,12 +1,11 @@
-import React  from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { crags } from '@/app/api';
 
-
 export default async function Home() {
   const popularCrags = await crags
-    .getCrags("logCount", "desc", 3)
-    .catch(error => console.error(error))
+    .getCrags('logCount', 'desc', 3)
+    .catch((error) => console.error(error));
 
   return (
     <>
@@ -17,24 +16,26 @@ export default async function Home() {
         </div>
       </section>
 
-      { popularCrags && (
+      {popularCrags && (
         <section className="section">
           <div className="container">
             <h1 className="title">Popular</h1>
             <div className="columns">
-              { popularCrags.map(crag => (
-                <div key={ crag.slug } className="column">
+              {popularCrags.map((crag) => (
+                <div key={crag.slug} className="column">
                   <Link href={`/crags/${crag.slug}`}>
                     <div className="card">
                       <div className="card-image">
                         <figure className="image is-4by3">
-                          <img loading="lazy" src={ `${crag.image}` } alt={ crag.title } />
+                          <img
+                            loading="lazy"
+                            src={`${crag.image}`}
+                            alt={crag.title}
+                          />
                         </figure>
                       </div>
                       <div className="card-content">
-                        <p className="title is-4">
-                          { crag.title }
-                        </p>
+                        <p className="title is-4">{crag.title}</p>
                       </div>
                     </div>
                   </Link>

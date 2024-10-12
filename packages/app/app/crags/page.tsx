@@ -1,17 +1,18 @@
-import React  from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
-import { getCrags } from "@/app/api/crags";
-import { CragBrief } from "@climbingtopos/types";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
+import { getCrags } from '@/app/api/crags';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 async function Crags() {
-  const loading = false
+  const loading = false;
 
-  const crags = await getCrags().then((crags) =>
-    crags.sort((cragA, cragB) => (cragA.title > cragB.title ? 1 : -1))
-  ).catch(error => {
-      console.error(error)
+  const crags = await getCrags()
+    .then((crags) =>
+      crags.sort((cragA, cragB) => (cragA.title > cragB.title ? 1 : -1)),
+    )
+    .catch((error) => {
+      console.error(error);
     });
 
   return (
@@ -48,7 +49,7 @@ async function Crags() {
           {crags?.map((crag) => (
             <div key={crag.slug} className="block">
               <Link key={crag.slug} href={`/crags/${crag.slug}`}>
-                <div className="block box p-0" style={{ overflow: "hidden" }}>
+                <div className="block box p-0" style={{ overflow: 'hidden' }}>
                   <div className="columns is-mobile is-gapless">
                     <div className="column is-narrow">
                       <img
@@ -56,14 +57,14 @@ async function Crags() {
                         className="image is-128x128"
                         alt={crag.title}
                         style={{
-                          objectFit: "cover",
-                          height: "100%",
+                          objectFit: 'cover',
+                          height: '100%',
                         }}
                       />
                     </div>
                     <div className="column m-3">
                       <p className="is-capitalized">
-                        <b>{crag.title}</b> {crag.osmData.address.county},{" "}
+                        <b>{crag.title}</b> {crag.osmData.address.county},{' '}
                         {crag.osmData.address.country}
                       </p>
                       <div className="tags">

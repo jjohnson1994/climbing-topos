@@ -1,6 +1,6 @@
-import { normalizeRow } from "@/db/dynamodb";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import { crags, areas, routes, analytics, users } from "@/services";
+import { normalizeRow } from '@/db/dynamodb';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { crags, areas, routes, analytics, users } from '@/services';
 
 interface EventRecordImage {
   hk: string;
@@ -44,7 +44,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
           crags.incrementLogCount(cragSlug),
           areas.incrementLogCount(cragSlug, areaSlug),
           routes.incrementLogCount(cragSlug, areaSlug, topoSlug, routeSlug),
-          users.incrementRoutesCompletedCount(user.sub)
+          users.incrementRoutesCompletedCount(user.sub),
         ]);
 
         await routes.updateMetricsOnLogInsert(
@@ -55,14 +55,14 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
           parseInt(`${rating}`, 10),
           parseInt(gradeTaken, 10),
           createdAt,
-          user
+          user,
         );
       }
     });
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("Error logOnInsert", error);
-     throw error
+    console.error('Error logOnInsert', error);
+    throw error;
   }
 };

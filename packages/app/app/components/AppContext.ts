@@ -1,20 +1,20 @@
-import { useContext, createContext } from "react";
+import { useContext, createContext } from 'react';
 
 type record = {
-  username?: string
+  username?: string;
   attributes?: {
-    sub: string
-    email: string
-  }
-}
+    sub: string;
+    email: string;
+  };
+};
 
 interface AppContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   isAuthenticating: boolean;
   setIsAuthenticating: (isAuthenticating: boolean) => void;
-  userAttributes: record
-  setUserAttributes: (userAttributes: record) => void
+  userAttributes: record;
+  setUserAttributes: (userAttributes: record) => void;
 }
 
 export const AppContext = createContext<AppContextType>({
@@ -23,7 +23,7 @@ export const AppContext = createContext<AppContextType>({
   isAuthenticating: false,
   setIsAuthenticating: () => {},
   userAttributes: {},
-  setUserAttributes: () => {}
+  setUserAttributes: () => {},
 });
 
 export function useAppContext() {

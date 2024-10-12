@@ -1,5 +1,9 @@
-import { UserPublicData, ListRequest, ListRoutePartial } from "@climbingtopos/types";
-import { lists } from "../models";
+import {
+  UserPublicData,
+  ListRequest,
+  ListRoutePartial,
+} from '@climbingtopos/types';
+import { lists } from '../models';
 
 export async function getListBySlug(userSub: string, listSlug: string) {
   const [metadata, routes] = await Promise.all([
@@ -9,8 +13,8 @@ export async function getListBySlug(userSub: string, listSlug: string) {
 
   return {
     ...metadata,
-    routes
-  }
+    routes,
+  };
 }
 export function getLists(userSub: string) {
   return lists.getUserLists(userSub);
@@ -20,20 +24,24 @@ export function createList(user: UserPublicData, params: ListRequest) {
   return lists.createList(user, params);
 }
 
-export function addRoutesToList(userSub: string, listSlug: string, routes: ListRoutePartial[]) {
-  return Promise.all(routes.map(route => 
-    lists.addRouteToList(userSub, listSlug, route)
-  ));
+export function addRoutesToList(
+  userSub: string,
+  listSlug: string,
+  routes: ListRoutePartial[],
+) {
+  return Promise.all(
+    routes.map((route) => lists.addRouteToList(userSub, listSlug, route)),
+  );
 }
 
 export async function incrementRoutesCount(listSlug: string, userSub: string) {
   return lists.update(listSlug, userSub, {
-    UpdateExpression: "set #routeCount = #routeCount + :inc",
-    ExpressionAttributeNames: { 
-      "#routeCount": "routeCount",
+    UpdateExpression: 'set #routeCount = #routeCount + :inc',
+    ExpressionAttributeNames: {
+      '#routeCount': 'routeCount',
     },
     ExpressionAttributeValues: {
-      ":inc": 1
+      ':inc': 1,
     },
   });
 }

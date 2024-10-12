@@ -1,8 +1,8 @@
-import {APIGatewayProxyEventV2, APIGatewayProxyHandler} from "aws-lambda";
-import {topos} from "@/services";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { topos } from '@/services';
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     const { topoSlug } = event.pathParameters as {
@@ -13,16 +13,16 @@ export const handler: APIGatewayProxyHandler = async (
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(topo)
-    }
-  } catch(error) {
-    console.error("Error getting Topo", error);
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(topo),
+    };
+  } catch (error) {
+    console.error('Error getting Topo', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: true })
-    }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: true }),
+    };
   }
-}
+};

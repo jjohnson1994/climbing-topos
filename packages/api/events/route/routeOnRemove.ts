@@ -1,8 +1,8 @@
-import { Route } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { analytics, areas, crags } from "@/services";
-import { SNSHandler, SNSEvent } from "aws-lambda";
+import { Route } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { analytics, areas, crags } from '@/services';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -14,7 +14,9 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const { areaSlug, cragSlug, slug } = normalizedRow;
 
       if (!(areaSlug && cragSlug && slug)) {
-        throw new Error('Missing required value. areaSlug: ${areaSlug}, cragSlug: ${cragSlug}, slug: ${slug}')
+        throw new Error(
+          'Missing required value. areaSlug: ${areaSlug}, cragSlug: ${cragSlug}, slug: ${slug}',
+        );
       }
 
       return [
@@ -27,7 +29,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises as unknown as Promise<any>[]);
   } catch (error) {
-    console.error("Error in routeOnRemove", error);
-     throw error
+    console.error('Error in routeOnRemove', error);
+    throw error;
   }
 };

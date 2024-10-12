@@ -1,23 +1,20 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler} from "aws-lambda";
-import { AreaPatch } from "@climbingtopos/types";
-import { UpdateAreaSchema } from "@climbingtopos/schemas";
-import { areas, crags } from "@/services";
-import { getUserSubFromAuthHeader } from "@/utils/auth";
-import {
-  RequestValidator,
-  validateRequest,
-} from "@/utils/request-validator";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { AreaPatch } from '@climbingtopos/types';
+import { UpdateAreaSchema } from '@climbingtopos/schemas';
+import { areas, crags } from '@/services';
+import { getUserSubFromAuthHeader } from '@/utils/auth';
+import { RequestValidator, validateRequest } from '@/utils/request-validator';
 
 const isValidAreaPatch: RequestValidator = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   if (!event.body) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: true,
-        message: "Invalid Request: No body",
+        message: 'Invalid Request: No body',
       }),
     };
   }
@@ -30,10 +27,10 @@ const isValidAreaPatch: RequestValidator = async (
   if (!isValid) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: true,
-        message: "Invalid Request: Body Does Not Match Schema",
+        message: 'Invalid Request: Body Does Not Match Schema',
       }),
     };
   }
@@ -41,8 +38,8 @@ const isValidAreaPatch: RequestValidator = async (
   return true;
 };
 
-export const handler: APIGatewayProxyHandler= async (
-  event: APIGatewayProxyEventV2
+export const handler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     const { areaSlug } = event.pathParameters as {
@@ -57,32 +54,33 @@ export const handler: APIGatewayProxyHandler= async (
 
     if (!event.headers.authorization) {
       console.error(
-        "PATCH area request received without authorization header",
-        event
+        'PATCH area request received without authorization header',
+        event,
       );
       return {
         statusCode: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           error: true,
-          message: "Invalid Request",
+          message: 'Invalid Request',
         }),
       };
     }
 
     const areaPatch = JSON.parse(`${event.body}`) as AreaPatch;
-    const userSub = event.requestContext.authorizer?.iam.cognitoIdentity.identityId
+    const userSub =
+      event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
     const area = await areas.getAreaBySlug(areaSlug);
     const crag = await crags.getCragBySlug(area.cragSlug, userSub);
 
     if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           error: true,
           message:
-            "Permission Error: You Do Not Have Permission to Patch this Area",
+            'Permission Error: You Do Not Have Permission to Patch this Area',
         }),
       };
     }
@@ -91,16 +89,16 @@ export const handler: APIGatewayProxyHandler= async (
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
       }),
     };
   } catch (error) {
-    console.error("Error updating area", error);
+    console.error('Error updating area', error);
     return {
       statusCode: 500,
-      headers: { "Content-Type": "text/plain" },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         error: true,
         message: error.message,

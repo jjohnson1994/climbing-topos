@@ -3,12 +3,12 @@ import {
   Route,
   UserPublicData,
   RoutePatch,
-} from "@climbingtopos/types";
-import { areas, crags, logs, routes, topos } from "../models";
+} from '@climbingtopos/types';
+import { areas, crags, logs, routes, topos } from '../models';
 
 export const createRoute = async (
   routeDescription: RouteRequest,
-  user: UserPublicData
+  user: UserPublicData,
 ) => {
   const topo = await topos.getTopoBySlug(routeDescription.topoSlug);
   const crag = await crags.getCragBySlug(routeDescription.cragSlug);
@@ -26,7 +26,7 @@ export const createRoute = async (
   const newRoute = await routes.createRoute(
     newRouteDescription,
     user,
-    routeVerified
+    routeVerified,
   );
 
   return newRoute;
@@ -41,13 +41,13 @@ export async function listRoutes(
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
-  routeSlug: string
+  routeSlug: string,
 ): Promise<Route> {
   const [route] = await routes.listRoutes(
     cragSlug,
     areaSlug,
     topoSlug,
-    routeSlug
+    routeSlug,
   );
 
   const [topo, area, siblingRoutes, userLogs] = await Promise.all([
@@ -74,15 +74,15 @@ export async function decrementLogCount(
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
-  routeSlug: string
+  routeSlug: string,
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
-    UpdateExpression: "set #logCount = #logCount + :inc",
+    UpdateExpression: 'set #logCount = #logCount + :inc',
     ExpressionAttributeNames: {
-      "#logCount": "logCount",
+      '#logCount': 'logCount',
     },
     ExpressionAttributeValues: {
-      ":inc": -1,
+      ':inc': -1,
     },
   });
 }
@@ -91,15 +91,15 @@ export async function incrementLogCount(
   cragSlug: string,
   areaSlug: string,
   topoSlug: string,
-  routeSlug: string
+  routeSlug: string,
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
-    UpdateExpression: "set #logCount = #logCount + :inc",
+    UpdateExpression: 'set #logCount = #logCount + :inc',
     ExpressionAttributeNames: {
-      "#logCount": "logCount",
+      '#logCount': 'logCount',
     },
     ExpressionAttributeValues: {
-      ":inc": 1,
+      ':inc': 1,
     },
   });
 }
@@ -116,14 +116,14 @@ export async function updateMetricsOnLogInsert(
     picture: string;
     nickname: string;
     sub: string;
-  }
+  },
 ) {
   const { ratingTally, gradeTally, recentLogs } = await listRoutes(
     user.sub,
     cragSlug,
     areaSlug,
     topoSlug,
-    routeSlug
+    routeSlug,
   );
 
   // Calc new rating
@@ -131,11 +131,11 @@ export async function updateMetricsOnLogInsert(
   const newRatingTally = {
     ...ratingTally,
     [rating]:
-      typeof existingRatingTally !== "undefined" ? existingRatingTally + 1 : 1,
+      typeof existingRatingTally !== 'undefined' ? existingRatingTally + 1 : 1,
   };
   const newRating = parseInt(
     Object.entries(newRatingTally).sort((a, b) => b[1] - a[1])[0][0],
-    10
+    10,
   );
 
   // Calc new grade
@@ -143,17 +143,17 @@ export async function updateMetricsOnLogInsert(
   const newGradeTally = {
     ...gradeTally,
     [grade]:
-      typeof existingGradeTally !== "undefined" ? existingGradeTally + 1 : 1,
+      typeof existingGradeTally !== 'undefined' ? existingGradeTally + 1 : 1,
   };
   const newGrade = parseInt(
     Object.entries(newGradeTally).sort((a, b) => b[1] - a[1])[0][0],
-    10
+    10,
   );
 
   // Calc new recent logs listStyle
   const newRecentLogs = [{ ...user, createdAt }, ...(recentLogs || [])].slice(
     0,
-    10
+    10,
   );
 
   return Promise.all([
@@ -164,7 +164,7 @@ export async function updateMetricsOnLogInsert(
       routeSlug,
       newRating,
       rating,
-      existingRatingTally
+      existingRatingTally,
     ),
     updateRouteGradeAndGradeTally(
       cragSlug,
@@ -173,14 +173,14 @@ export async function updateMetricsOnLogInsert(
       routeSlug,
       newGrade,
       grade,
-      existingGradeTally
+      existingGradeTally,
     ),
     updateRouteRecentLogs(
       cragSlug,
       areaSlug,
       topoSlug,
       routeSlug,
-      newRecentLogs
+      newRecentLogs,
     ),
   ]);
 }
@@ -192,22 +192,22 @@ export async function updateRouteRatingAndRatingTally(
   routeSlug: string,
   rating: number,
   tallyItemToIncrement: number,
-  existingRatingTally: number | undefined
+  existingRatingTally: number | undefined,
 ) {
-  if (typeof existingRatingTally !== "undefined") {
+  if (typeof existingRatingTally !== 'undefined') {
     return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
       UpdateExpression: `
         set #ratingTally.#userVote = #ratingTally.#userVote + :inc,
         #rating = :rating
       `,
       ExpressionAttributeNames: {
-        "#ratingTally": "ratingTally",
-        "#rating": "rating",
-        "#userVote": `${tallyItemToIncrement}`,
+        '#ratingTally': 'ratingTally',
+        '#rating': 'rating',
+        '#userVote': `${tallyItemToIncrement}`,
       },
       ExpressionAttributeValues: {
-        ":rating": rating,
-        ":inc": 1,
+        ':rating': rating,
+        ':inc': 1,
       },
     });
   } else {
@@ -217,13 +217,13 @@ export async function updateRouteRatingAndRatingTally(
         #rating = :rating
       `,
       ExpressionAttributeNames: {
-        "#ratingTally": "ratingTally",
-        "#rating": "rating",
-        "#userVote": `${tallyItemToIncrement}`,
+        '#ratingTally': 'ratingTally',
+        '#rating': 'rating',
+        '#userVote': `${tallyItemToIncrement}`,
       },
       ExpressionAttributeValues: {
-        ":rating": rating,
-        ":inc": 1,
+        ':rating': rating,
+        ':inc': 1,
       },
     });
   }
@@ -236,22 +236,22 @@ export async function updateRouteGradeAndGradeTally(
   routeSlug: string,
   grade: number,
   tallyItemToIncrement: number,
-  existingGradeTally: number | undefined
+  existingGradeTally: number | undefined,
 ) {
-  if (typeof existingGradeTally !== "undefined") {
+  if (typeof existingGradeTally !== 'undefined') {
     return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
       UpdateExpression: `
         set #gradeTally.#userVote = #gradeTally.#userVote + :inc,
         #gradeModal = :gradeModal
       `,
       ExpressionAttributeNames: {
-        "#gradeTally": "gradeTally",
-        "#gradeModal": "gradeModal",
-        "#userVote": `${tallyItemToIncrement}`,
+        '#gradeTally': 'gradeTally',
+        '#gradeModal': 'gradeModal',
+        '#userVote': `${tallyItemToIncrement}`,
       },
       ExpressionAttributeValues: {
-        ":gradeModal": grade,
-        ":inc": 1,
+        ':gradeModal': grade,
+        ':inc': 1,
       },
     });
   } else {
@@ -261,13 +261,13 @@ export async function updateRouteGradeAndGradeTally(
         #gradeModal = :gradeModal
       `,
       ExpressionAttributeNames: {
-        "#gradeTally": "gradeTally",
-        "#gradeModal": "gradeModal",
-        "#userVote": `${tallyItemToIncrement}`,
+        '#gradeTally': 'gradeTally',
+        '#gradeModal': 'gradeModal',
+        '#userVote': `${tallyItemToIncrement}`,
       },
       ExpressionAttributeValues: {
-        ":gradeModal": grade,
-        ":inc": 1,
+        ':gradeModal': grade,
+        ':inc': 1,
       },
     });
   }
@@ -282,17 +282,17 @@ export async function updateRouteRecentLogs(
     picture: string;
     nickname: string;
     sub: string;
-  }[]
+  }[],
 ) {
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: `
       set #recentLogs = :recentLogs
     `,
     ExpressionAttributeNames: {
-      "#recentLogs": "recentLogs",
+      '#recentLogs': 'recentLogs',
     },
     ExpressionAttributeValues: {
-      ":recentLogs": recentLogs,
+      ':recentLogs': recentLogs,
     },
   });
 }
@@ -302,14 +302,14 @@ export async function updateRoute(
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
-  routePatch: RoutePatch
+  routePatch: RoutePatch,
 ) {
   const expressionAttributeNames = Object.entries(routePatch).reduce(
     (acc, [key]) => ({
       ...acc,
       [`#${key}`]: key,
     }),
-    {}
+    {},
   );
 
   const expressionAttributeValues = Object.entries(routePatch).reduce(
@@ -317,14 +317,14 @@ export async function updateRoute(
       ...acc,
       [`:${key}`]: value,
     }),
-    {}
+    {},
   );
 
   const updateExpression = Object.entries(routePatch)
     .map(([key]) => {
       return `#${key} = :${key}`;
     })
-    .join(", ");
+    .join(', ');
 
   return routes.update(cragSlug, areaSlug, topoSlug, routeSlug, {
     UpdateExpression: `set ${updateExpression}`,

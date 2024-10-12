@@ -1,7 +1,7 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { UpdateCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { UpdateCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
-import { Resource } from "sst";
+import { Resource } from 'sst';
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const update = async (
@@ -10,16 +10,16 @@ export const update = async (
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
     ExpressionAttributeValues: Record<string, any>;
-  }
+  },
 ) => {
   const params = {
     TableName: Resource.climbingtopos2.name,
     Key: {
-      "hk": userId,
-      "sk": "metadata#"
+      hk: userId,
+      sk: 'metadata#',
     },
-    ...updateProps
-  }
+    ...updateProps,
+  };
 
-  return dynamodb.send(new UpdateCommand( params ))
-}
+  return dynamodb.send(new UpdateCommand(params));
+};

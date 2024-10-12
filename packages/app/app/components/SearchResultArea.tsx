@@ -1,5 +1,5 @@
-import { Area } from "@climbingtopos/types";
-import Link from "next/link";
+import { Area } from '@climbingtopos/types';
+import Link from 'next/link';
 
 function SearchResultCrag({ area }: { area: Area }) {
   return (
@@ -9,16 +9,18 @@ function SearchResultCrag({ area }: { area: Area }) {
           <div className="content">
             <p>
               <span className="tag is-pulled-right">Area</span>
-              <b>{ area.title } </b>
-              <span>{ area.cragTitle }</span>
+              <b>{area.title} </b>
+              <span>{area.cragTitle}</span>
               <br />
-              <small>{ area.county }, { area.country }</small>
+              <small>
+                {area.county}, {area.country}
+              </small>
             </p>
           </div>
         </div>
       </article>
     </Link>
-  )
+  );
 }
 
 export default SearchResultCrag;

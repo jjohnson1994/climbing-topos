@@ -1,13 +1,15 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { List, Route } from "core/types";
-import { lists } from "../api";
-import { popupError, toastSuccess } from "../helpers/alerts";
-import Modal from "./Modal";
-import "./RoutesAddToLogModal.css";
-import { yup } from "@climbingtopos/schemas";
-import { log } from "console";
+// TODO https://github.com/users/jjohnson1994/projects/1/views/1?pane=issue&itemId=83148825
+// @ts-nocheck
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { List, Route } from '@climbingtopos/types';
+import { lists } from '../api';
+import { popupError, toastSuccess } from '../helpers/alerts';
+import Modal from './Modal';
+import './RoutesAddToLogModal.css';
+import { yup } from '@climbingtopos/schemas';
 
 interface Props {
   routes: Route[];
@@ -30,37 +32,37 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
       yup.object().shape({
         newOrExisting: yup
           .string()
-          .required("Required")
-          .oneOf(["new", "existing"]),
-        title: yup.string().when("newOrExisting", (newOrExisting: string) => {
-          if (newOrExisting === "new") {
-            return yup.string().required("Required");
+          .required('Required')
+          .oneOf(['new', 'existing']),
+        title: yup.string().when('newOrExisting', (newOrExisting: string) => {
+          if (newOrExisting === 'new') {
+            return yup.string().required('Required');
           } else {
             return yup.string();
           }
         }),
         listSlug: yup
           .string()
-          .when("newOrExisting", (newOrExisting: string) => {
-            if (newOrExisting === "existing") {
-              return yup.string().required("Required");
+          .when('newOrExisting', (newOrExisting: string) => {
+            if (newOrExisting === 'existing') {
+              return yup.string().required('Required');
             } else {
               return yup.string();
             }
           }),
         routes: yup.array().of(yup.string()),
-      })
+      }),
     ),
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      newOrExisting: "existing",
-      title: "",
-      listSlug: "",
-      routes: "",
+      newOrExisting: 'existing',
+      title: '',
+      listSlug: '',
+      routes: [],
     },
   });
 
-  const watchNewOrExisting = watch("newOrExisting");
+  const watchNewOrExisting = watch('newOrExisting');
 
   useEffect(() => {
     getUserLists();
@@ -71,7 +73,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
       const newUserLists = await lists.getLists();
       setUserLists(newUserLists);
     } catch (error) {
-      console.error("Error getting user lists", error);
+      console.error('Error getting user lists', error);
     }
   };
 
@@ -81,8 +83,8 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
 
       return slug;
     } catch (error) {
-      console.error("Error creating new list", error);
-      popupError("There was an error creating your new list, try again");
+      console.error('Error creating new list', error);
+      popupError('There was an error creating your new list, try again');
       throw error;
     }
   };
@@ -96,33 +98,32 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
           areaSlug: route.areaSlug,
           topoSlug: route.topoSlug,
           routeSlug: route.slug,
-        }))
+        })),
       );
     } catch (error) {
-      console.error("Error creating new list", error);
-      popupError("There was an error adding routes to your list, try again");
+      console.error('Error creating new list', error);
+      popupError('There was an error adding routes to your list, try again');
       throw error;
     }
   };
 
   const btnSaveToListConfirmOnClick = handleSubmit(async (data) => {
-  
     try {
       const listSlug =
-        data.newOrExisting === "new"
+        data.newOrExisting === 'new'
           ? await createNewList(data.title)
           : data.listSlug;
 
       getUserLists();
-      setValue("newOrExisting", "existing");
-      setValue("listSlug", listSlug);
+      setValue('newOrExisting', 'existing');
+      setValue('listSlug', listSlug);
 
       await addRoutesToList(listSlug);
 
-      toastSuccess("Routes Saved to List");
+      toastSuccess('Routes Saved to List');
       onConfirm();
     } catch (error) {
-      console.error("Error saving routes to list", error);
+      console.error('Error saving routes to list', error);
     }
   });
 
@@ -146,7 +147,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
               <input
                 type="radio"
                 value="existing"
-                {...register("newOrExisting")}
+                {...register('newOrExisting')}
               />
               Existing List
             </label>
@@ -154,7 +155,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
               <input
                 type="radio"
                 value="new"
-                {...register("newOrExisting")}
+                {...register('newOrExisting')}
                 placeholder="e.g. 'Projects' or 'Font 2021'"
               />
               New List
@@ -162,12 +163,12 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
           </div>
         </div>
 
-        {watchNewOrExisting === "existing" && (
+        {watchNewOrExisting === 'existing' && (
           <div className="field">
             <label className="label">List</label>
             <div className="control is-expanded">
               <div className="select is-fullwidth">
-                <select {...register("listSlug")}>
+                <select {...register('listSlug')}>
                   {userLists.map((list) => (
                     <option key={list.slug} value={list.slug}>
                       {list.title}
@@ -180,11 +181,11 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
           </div>
         )}
 
-        {watchNewOrExisting === "new" && (
+        {watchNewOrExisting === 'new' && (
           <div className="field">
             <label className="label">Title</label>
             <div className="control">
-              <input type="text" className="input" {...register("title")} />
+              <input type="text" className="input" {...register('title')} />
             </div>
             <p className="help is-danger">{errors.title?.message}</p>
           </div>
@@ -193,7 +194,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
         <input
           type="text"
           className="input is-hidden"
-          {...register("routes")}
+          {...register('routes')}
           defaultValue={JSON.stringify(routes)}
         />
       </form>

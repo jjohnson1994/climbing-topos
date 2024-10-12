@@ -1,4 +1,4 @@
-import { useTable, useSortBy, Column } from "react-table";
+import { useTable, useSortBy, Column } from 'react-table';
 
 interface Props {
   columns: Column[];
@@ -19,7 +19,7 @@ const Table = ({ columns, data, sortBy }: Props) => {
         ...(sortBy && { sortBy: [sortBy] }),
       },
     },
-    useSortBy
+    useSortBy,
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -32,7 +32,7 @@ const Table = ({ columns, data, sortBy }: Props) => {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
               <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                {column.render("Header")}
+                {column.render('Header')}
                 <span>
                   {column.isSorted ? (
                     column.isSortedDesc ? (
@@ -41,7 +41,7 @@ const Table = ({ columns, data, sortBy }: Props) => {
                       <i className="ml-1 fas fa-chevron-up" />
                     )
                   ) : (
-                    ""
+                    ''
                   )}
                 </span>
               </th>
@@ -55,7 +55,7 @@ const Table = ({ columns, data, sortBy }: Props) => {
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
               })}
             </tr>
           );

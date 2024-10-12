@@ -1,16 +1,17 @@
-import React from "react";
+import React from 'react';
 
 function CragQuickActions(crag: any) {
-  const btnLikeOnClick = () => {
-  }
+  const btnLikeOnClick = () => {};
 
   return (
     <div className="buttons has-addons is-right">
-      <button className="button is-rounded" onClick={ btnLikeOnClick }>
-        <span className={`
+      <button className="button is-rounded" onClick={btnLikeOnClick}>
+        <span
+          className={`
           icon is-small
           ${crag.liked ? 'has-text-danger' : ''}
-        `}>
+        `}
+        >
           <i
             className={`
               far fa-heart
@@ -18,7 +19,7 @@ function CragQuickActions(crag: any) {
             `}
           ></i>
         </span>
-        { (crag.liked === true && <span>Liked</span>) || <span>Like</span> }
+        {(crag.liked === true && <span>Liked</span>) || <span>Like</span>}
       </button>
     </div>
   );

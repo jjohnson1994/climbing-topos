@@ -1,8 +1,8 @@
-import { Crag } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import { analytics } from "@/services";
+import { Crag } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { analytics } from '@/services';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -15,13 +15,13 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
       return [
         analytics.incrementGlobalCragCount(-1),
-        algolaIndex.deleteObject(slug)
+        algolaIndex.deleteObject(slug),
       ];
     });
 
     await Promise.all(promises as unknown as Promise<any>[]);
   } catch (error) {
-    console.error("Error in cragOnRemove", error);
-    throw error
+    console.error('Error in cragOnRemove', error);
+    throw error;
   }
 };

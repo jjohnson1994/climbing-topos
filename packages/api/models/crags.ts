@@ -1,18 +1,23 @@
-import { DateTime } from "luxon";
-import { nanoid } from "nanoid";
-import { Resource } from "sst";
+import { DateTime } from 'luxon';
+import { nanoid } from 'nanoid';
+import { Resource } from 'sst';
 
-import { UserPublicData, Crag, CragRequest } from "@climbingtopos/types";
-import { createSlug } from "@/helpers/slug";
+import { UserPublicData, Crag, CragRequest } from '@climbingtopos/types';
+import { createSlug } from '@/helpers/slug';
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, UpdateCommand, QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  PutCommand,
+  UpdateCommand,
+  QueryCommand,
+  DynamoDBDocumentClient,
+} from '@aws-sdk/lib-dynamodb';
 
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const createCrag = async (
   cragDetails: CragRequest,
-  auth0UserPublicData: UserPublicData
+  auth0UserPublicData: UserPublicData,
 ) => {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${cragDetails.title}-${nanoid(5)}`);
@@ -36,7 +41,7 @@ export const createCrag = async (
     TableName: Resource.climbingtopos2.name,
     Item: {
       hk: slug,
-      sk: "metadata#",
+      sk: 'metadata#',
       ...cragData,
       verified: false,
       areaCount: 0,
@@ -48,7 +53,7 @@ export const createCrag = async (
       managedBy: auth0UserPublicData,
       createdBy: auth0UserPublicData,
       logCount: 0,
-      model: "crag",
+      model: 'crag',
       routeCount: 0,
       slug,
       state: cragDetails.osmData.address.state,
@@ -56,7 +61,7 @@ export const createCrag = async (
     },
   };
 
-  await dynamoDb.send(new PutCommand(params))
+  await dynamoDb.send(new PutCommand(params));
 
   return {
     slug,
@@ -67,17 +72,17 @@ export async function getAllCrags(
   sortBy?: string,
   sortOrder?: string,
   limit?: number,
-  offset?: number
+  offset?: number,
 ): Promise<Crag[]> {
   const params = {
     TableName: Resource.climbingtopos2.name,
-    IndexName: "gsi1",
-    KeyConditionExpression: "#model = :entity",
+    IndexName: 'gsi1',
+    KeyConditionExpression: '#model = :entity',
     ExpressionAttributeNames: {
-      "#model": "model",
+      '#model': 'model',
     },
     ExpressionAttributeValues: {
-      ":entity": "crag",
+      ':entity': 'crag',
     },
   };
 
@@ -86,9 +91,9 @@ export async function getAllCrags(
     .then(({ Items }) => {
       if (sortBy) {
         return Items!.sort((cragA, cragB) => {
-          if (sortOrder === "DESC") {
+          if (sortOrder === 'DESC') {
             return cragB[sortBy] - cragA[sortBy];
-          } else if (sortOrder === "ASC") {
+          } else if (sortOrder === 'ASC') {
             return cragA[sortBy] - cragB[sortBy];
           } else {
             return 0;
@@ -99,15 +104,15 @@ export async function getAllCrags(
       }
     })
     .then((crags) => {
-      if (typeof offset !== "undefined" && typeof limit !== "undefined") {
+      if (typeof offset !== 'undefined' && typeof limit !== 'undefined') {
         return crags!.slice(offset, offset + limit);
       }
 
-      if (typeof offset !== "undefined") {
+      if (typeof offset !== 'undefined') {
         return crags!.slice(offset);
       }
 
-      if (typeof limit !== "undefined") {
+      if (typeof limit !== 'undefined') {
         return crags!.slice(0, limit);
       }
 
@@ -120,19 +125,18 @@ export async function getAllCrags(
 export const getCragBySlug = async (slug: string): Promise<Crag> => {
   const params = {
     TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression: "#hk = :hk AND #sk = :sk",
+    KeyConditionExpression: '#hk = :hk AND #sk = :sk',
     ExpressionAttributeNames: {
-      "#hk": "hk",
-      "#sk": "sk",
+      '#hk': 'hk',
+      '#sk': 'sk',
     },
     ExpressionAttributeValues: {
-      ":hk": slug,
-      ":sk": "metadata#",
+      ':hk': slug,
+      ':sk': 'metadata#',
     },
   };
 
-  const crag = await dynamoDb.send(new QueryCommand(params))
-  console.log(crag?.Items?.[0])
+  const crag = await dynamoDb.send(new QueryCommand(params));
   return crag?.Items?.[0] as Crag;
 };
 
@@ -140,33 +144,33 @@ export const getAllCragsByCountry = async (countryCode: string) => {
   const params = {
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression:
-      "begins_with(PK, :entity) AND begins_with(SK, :countryCode)",
+      'begins_with(PK, :entity) AND begins_with(SK, :countryCode)',
     ExpressionAttributeValues: {
-      ":entity": "crag",
-      ":countryCode": countryCode,
+      ':entity': 'crag',
+      ':countryCode': countryCode,
     },
   };
 
-  const crags = await dynamoDb.send(new QueryCommand(params))
+  const crags = await dynamoDb.send(new QueryCommand(params));
 
   return crags;
 };
 
 export const getAllCragsByCountryAndRegion = async (
   countryCode: string,
-  region: string
+  region: string,
 ) => {
   const params = {
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression:
-      "begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)",
+      'begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)',
     ExpressionAttributeValues: {
-      ":entity": "crag",
-      ":countryCodeRegion": `${countryCode}#${region}`,
+      ':entity': 'crag',
+      ':countryCodeRegion': `${countryCode}#${region}`,
     },
   };
 
-  const crags = await dynamoDb.send(new QueryCommand(params))
+  const crags = await dynamoDb.send(new QueryCommand(params));
 
   return crags;
 };
@@ -177,23 +181,23 @@ export async function update(
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
     ExpressionAttributeValues: Record<string, any>;
-  }
+  },
 ) {
   try {
     const params = {
       TableName: Resource.climbingtopos2.name,
       Key: {
         hk: cragSlug,
-        sk: "metadata#",
+        sk: 'metadata#',
       },
       ...updateProps,
     };
 
-    const response = await dynamoDb.send(new UpdateCommand(params))
+    const response = await dynamoDb.send(new UpdateCommand(params));
 
     return response;
   } catch (error) {
-    console.error("Error updating crag", error);
+    console.error('Error updating crag', error);
     throw error;
   }
 }

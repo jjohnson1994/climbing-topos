@@ -12,7 +12,7 @@
     "@climbingtopos/globals": "*"
   },
   "peerDependencies": {
-    "yup": "^1.4.0"
+    "yup": "^0.32.11"
   },
   "keywords": [],
   "author": "",

@@ -1,15 +1,19 @@
-import { Crag } from "@climbingtopos/types";
-import Link from "next/link";
+import { Crag } from '@climbingtopos/types';
+import Link from 'next/link';
 
 function SearchResultCrag({ crag }: { crag: Crag }) {
   return (
-    <Link href={`/crags/${crag.slug}`} className="box p-0" style={{ overflow: 'hidden' }}>
+    <Link
+      href={`/crags/${crag.slug}`}
+      className="box p-0"
+      style={{ overflow: 'hidden' }}
+    >
       <div className="columns is-mobile is-gapless">
         <div className="column is-narrow">
-          <img 
-            src={ `${crag.image}` } 
-            alt={ crag.title } 
-            className="image is-128x128" 
+          <img
+            src={`${crag.image}`}
+            alt={crag.title}
+            className="image is-128x128"
             style={{
               objectFit: 'cover',
               height: '100%',
@@ -19,14 +23,16 @@ function SearchResultCrag({ crag }: { crag: Crag }) {
         <div className="column m-3">
           <p>
             <span className="tag is-pulled-right">Crag</span>
-            <b>{ crag.title } </b>
+            <b>{crag.title} </b>
             <br />
-            <small>{ crag.osmData.address.county }, { crag.osmData.address.country }</small>
+            <small>
+              {crag.osmData.address.county}, {crag.osmData.address.country}
+            </small>
           </p>
         </div>
       </div>
     </Link>
-  )
+  );
 }
 
 export default SearchResultCrag;

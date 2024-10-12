@@ -1,8 +1,8 @@
 @charset "utf-8";
-@import "~bulma/sass/utilities/initial-variables.sass";
-@import "~bulma/sass/utilities/functions.sass";
-@import "~bulma/sass/utilities/derived-variables.sass";
-@import "~sweetalert2/src/sweetalert2.scss";
+@import '~bulma/sass/utilities/initial-variables.sass';
+@import '~bulma/sass/utilities/functions.sass';
+@import '~bulma/sass/utilities/derived-variables.sass';
+@import '~sweetalert2/src/sweetalert2.scss';
 @import '~leaflet/dist/leaflet.css';
 @import '~react-leaflet-markercluster/dist/styles.min.css';
 @import '~leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
@@ -13,15 +13,10 @@ body {
   background-color: $scheme-main-bis;
 }
 
-@import
-  'styles/flex',
-  'styles/table',
-  'styles/text',
-  'styles/cursor',
-  'styles/radio',
-  'styles/whitespace';
+@import 'styles/flex', 'styles/table', 'styles/text', 'styles/cursor',
+  'styles/radio', 'styles/whitespace';
 
-@import "~bulma/bulma";
+@import '~bulma/bulma';
 
 #sapper {
   display: flex;
@@ -32,5 +27,3 @@ body {
 main {
   flex-grow: 1;
 }
-
-

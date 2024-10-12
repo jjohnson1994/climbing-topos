@@ -1,7 +1,7 @@
 export interface UserPublicData {
   sub: string;
   nickname: string;
-  picture: string
+  picture: string;
 }
 
 export interface User extends UserPublicData {
@@ -9,18 +9,18 @@ export interface User extends UserPublicData {
 }
 
 export interface UserRegisterForm {
-  username: string,
-  password: string,
-  givenName: string,
-  familyName: string,
-  email: string,
-  birthdate: string,
-  phoneNumber: string
+  username: string;
+  password: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+  birthdate: string;
+  phoneNumber: string;
 }
 
 export interface UserRegisterConfirmationForm {
-  username: string,
-  confirmationCode: string
+  username: string;
+  confirmationCode: string;
 }
 
 export interface OsmData {
@@ -31,7 +31,7 @@ export interface OsmData {
     country_code: string;
     county: string;
     state: string;
-  }
+  };
 }
 
 export interface CarPark {
@@ -53,14 +53,14 @@ export interface CragRequest {
   longitude: string;
   osmData: OsmData;
   tags: string[];
-  title: string; 
+  title: string;
 }
 
 export interface CragBrief extends CragRequest {
   areaCount: number;
-  logCount: number; 
+  logCount: number;
   routeCount: number;
-  slug: string; 
+  slug: string;
   userLogCount: number;
 }
 
@@ -68,7 +68,7 @@ export interface Crag extends CragBrief {
   areas: Area[];
   model: 'Crag';
   routes: Route[];
-  slug: string; 
+  slug: string;
   topos: Topo[];
   userLogs: Log[];
   verified: boolean;
@@ -107,7 +107,7 @@ export interface AreaRequest {
   longitude: string;
   rockType: string;
   state: string;
-  tags: string[],
+  tags: string[];
   title: string;
 }
 
@@ -176,7 +176,7 @@ export interface RouteRequest {
   rockType: string;
   routeType: string;
   state: string;
-  tags: string[],
+  tags: string[];
   title: string;
   topoSlug: string;
 }
@@ -203,8 +203,8 @@ export interface Route extends RouteRequest {
     picture: string;
     nickname: string;
     createdAt: string;
-  }[],
-  createdBy: UserPublicData
+  }[];
+  createdBy: UserPublicData;
 }
 
 export interface RoutePatch {
@@ -212,7 +212,7 @@ export interface RoutePatch {
   description?: string;
   newTags?: string[];
   removeTags?: string[];
-  drawing?: Pick<Route, 'drawing'>,
+  drawing?: Pick<Route, 'drawing'>;
   routeType?: string;
   gradingSystem?: string;
   grade?: string;
@@ -258,7 +258,7 @@ export interface Log extends LogRequest {
   title: string;
   slug: string;
   user: UserPublicData;
-};
+}
 
 export interface ListRequest {
   title?: string;

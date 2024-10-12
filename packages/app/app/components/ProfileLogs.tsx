@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Log } from "@climbingtopos/types";
-import { logs } from "@/app/api";
-import { useGradeHelpers } from "@/app/api/grades";
-import { popupError } from "@/app/helpers/alerts";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
-import useUser from "@/app/api/user";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Log } from '@climbingtopos/types';
+import { logs } from '@/app/api';
+import { useGradeHelpers } from '@/app/api/grades';
+import { popupError } from '@/app/helpers/alerts';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import useUser from '@/app/api/user';
 
 function ProfileLogs() {
   const { isAuthenticated, isAuthenticating } = useUser();
@@ -20,9 +20,9 @@ function ProfileLogs() {
         const newLoggedRoutes = await logs.getProfileLogs();
         setLoggedRoutes(newLoggedRoutes);
       } catch (error) {
-        console.error("Error loading user profile", error);
+        console.error('Error loading user profile', error);
         popupError(
-          "Something has gone wrong, your profile couldn't be loaded. sorry"
+          "Something has gone wrong, your profile couldn't be loaded. sorry",
         );
       } finally {
         setLoading(false);
@@ -42,7 +42,7 @@ function ProfileLogs() {
           <p>It looks like you haven't logged any routes yet</p>
         </div>
       ) : (
-        ""
+        ''
       )}
       {!loading && loggedRoutes.length ? (
         <table className="box table is-fullwidth">
@@ -59,7 +59,7 @@ function ProfileLogs() {
               <tr key={log.slug}>
                 <td>
                   <Link
-                    to={`/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}`}
+                    href={`/crags/${log.cragSlug}/areas/${log.areaSlug}/topo/${log.topoSlug}/routes/${log.routeSlug}`}
                   >
                     {log.routeTitle}
                   </Link>
@@ -67,7 +67,7 @@ function ProfileLogs() {
                 <td>
                   {convertGradeValueToGradeLabel(
                     parseInt(log.gradeTaken),
-                    log.gradingSystem
+                    log.gradingSystem,
                   )}
                 </td>
                 <td>{log.rating}</td>
@@ -77,7 +77,7 @@ function ProfileLogs() {
           </tbody>
         </table>
       ) : (
-        ""
+        ''
       )}
     </>
   );

@@ -1,14 +1,13 @@
-import React from "react";
-import Button from "../elements/Button";
+import React, { PropsWithChildren } from 'react';
+import Button from '../elements/Button';
 
-interface Props {
+interface Props extends PropsWithChildren {
   visible: boolean;
   title: string;
   btnConfirmOnClick: Function;
   btnCancelOnClick: Function;
   btnCancelText?: string;
   btnConfirmText?: string;
-  children: JSX.Element | JSX.Element[];
   confirmActionLoading?: boolean;
   hasCancelButton?: boolean;
   hasConfirmButton?: boolean;
@@ -16,9 +15,9 @@ interface Props {
 
 function Modal({
   btnCancelOnClick,
-  btnCancelText = "Cancel",
+  btnCancelText = 'Cancel',
   btnConfirmOnClick,
-  btnConfirmText = "Confirm",
+  btnConfirmText = 'Confirm',
   children,
   hasCancelButton,
   hasConfirmButton,
@@ -27,15 +26,13 @@ function Modal({
   visible,
 }: Props) {
   return (
-    <div className={`modal ${visible ? "is-active" : ""}`} >
+    <div className={`modal ${visible ? 'is-active' : ''}`}>
       <div className="modal-background"></div>
       <div className="modal-card">
         <header className="modal-card-head">
           <p className="modal-card-title">{title}</p>
         </header>
-        <section className="modal-card-body">
-          {children}
-        </section>
+        <section className="modal-card-body">{children}</section>
         <footer className="modal-card-foot is-flex-direction-row is-justify-content-flex-end">
           <div className="field is-grouped">
             {hasCancelButton !== false && (
@@ -66,6 +63,6 @@ function Modal({
       </div>
     </div>
   );
-};
+}
 
-export default Modal
+export default Modal;

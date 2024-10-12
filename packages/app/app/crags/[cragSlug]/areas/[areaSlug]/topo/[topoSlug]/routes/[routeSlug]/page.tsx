@@ -1,22 +1,31 @@
-"use client"
+'use client';
 
-import Head from "next/head"
-import { useContext, useEffect, useState } from "react";
-import { useRouter } from 'next/navigation'
-import { Crag, Log, Route } from "@climbingtopos/types";
-import { routes, logs, crags } from "@/app/api";
-import { useGradeHelpers } from "@/app/api/grades";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
-import RatingStarsDisplay from "@/app/components/RatingStarsDisplay";
-import { RouteLogContext } from "@/app/components/RouteLogContext";
-import TopoImage from "@/app/components/TopoImage";
-import RouteLogs from "@/app/components/RouteLogs";
-import { popupError, popupSuccess } from "@/app/helpers/alerts";
-import { usePageTitle } from "@/app/helpers/pageTitle";
-import Button, { Color } from "@/app/elements/Button";
-import useUser from "@/app/api/user";
+import Head from 'next/head';
+import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Crag, Log, Route } from '@climbingtopos/types';
+import { routes, logs, crags } from '@/app/api';
+import { useGradeHelpers } from '@/app/api/grades';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import RatingStarsDisplay from '@/app/components/RatingStarsDisplay';
+import { RouteLogContext } from '@/app/components/RouteLogContext';
+import TopoImage from '@/app/components/TopoImage';
+import RouteLogs from '@/app/components/RouteLogs';
+import { popupError, popupSuccess } from '@/app/helpers/alerts';
+import { usePageTitle } from '@/app/helpers/pageTitle';
+import Button, { Color } from '@/app/elements/Button';
+import useUser from '@/app/api/user';
 
-function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, topoSlug: string, routeSlug: string } }) {
+function RoutePage({
+  params,
+}: {
+  params: {
+    cragSlug: string;
+    areaSlug: string;
+    topoSlug: string;
+    routeSlug: string;
+  };
+}) {
   const router = useRouter();
   const { cragSlug, areaSlug, topoSlug, routeSlug } = params;
   const [loading, setLoading] = useState(true);
@@ -25,7 +34,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
   const [routeLogs, setRouteLogs] = useState<Log[]>();
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
-  const { userCredentials, isAuthenticating, isAuthenticated } = useUser()
+  const { userCredentials, isAuthenticating, isAuthenticated } = useUser();
   const context = useContext(RouteLogContext);
 
   usePageTitle(route?.title);
@@ -42,8 +51,8 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
         setRoute(newRoute);
         setCrag(newCrag);
       } catch (error) {
-        console.error("Error loading route", error);
-        popupError("Oh dear, there was a problem loading this route");
+        console.error('Error loading route', error);
+        popupError('Oh dear, there was a problem loading this route');
       } finally {
         setLoading(false);
       }
@@ -55,11 +64,11 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
           cragSlug,
           areaSlug,
           topoSlug,
-          routeSlug
+          routeSlug,
         );
         setRouteLogs(newRouteLogs);
       } catch (error) {
-        console.error("Error loading route logs", error);
+        console.error('Error loading route logs', error);
       }
     };
 
@@ -67,7 +76,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
       doGetRoute();
       doGetRouteLogs();
     }
-  }, [routeSlug, cragSlug, areaSlug, topoSlug, isAuthenticating ]);
+  }, [routeSlug, cragSlug, areaSlug, topoSlug, isAuthenticating]);
 
   useEffect(() => {
     if (!crag?.managedBy.sub || !userCredentials?.identityId) {
@@ -84,25 +93,25 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
       }
 
       const verify = window.confirm(
-        "Are you sure you want to verify this route?"
+        'Are you sure you want to verify this route?',
       );
 
       if (verify) {
-        await routes.updateRoute(route.slug, { verified: true }, );
+        await routes.updateRoute(route.slug, { verified: true });
         setRoute({
           ...route,
           verified: true,
         });
-        popupSuccess("Route Verified");
+        popupSuccess('Route Verified');
       }
     } catch (error) {
-      console.error("error updating area", error);
+      console.error('error updating area', error);
     }
   };
 
   const btnDoneOnClick = () => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else if (route) {
       context.onSingleRouteDone(route);
     }
@@ -110,7 +119,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
 
   const btnSaveToListOnClick = () => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else if (route) {
       context.onSingleRouteAddToList(route);
     }
@@ -121,7 +130,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
       return (
         route.userLogs.length ||
         context.routesJustLogged.findIndex(
-          (route) => route.slug === routeSlug
+          (route) => route.slug === routeSlug,
         ) !== -1
       );
     }
@@ -140,13 +149,30 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
         <>
           {route && crag && (
             <Head>
-              <title>{route.title} | {route.areaTitle} | ClimbingTopos.com</title>
-              <link rel="canonical" href={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` }/>
-              <meta name="description" content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`}/>
+              <title>
+                {route.title} | {route.areaTitle} | ClimbingTopos.com
+              </title>
+              <link
+                rel="canonical"
+                href={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+              />
+              <meta
+                name="description"
+                content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`}
+              />
               <meta property="og:type" content="website" />
-              <meta property="og:title" content={`${route.title} | ${route.areaTitle} | ClimbingTopos.com`} />
-              <meta property="og:url" content={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}` } />
-              <meta property="og:description" content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`} />
+              <meta
+                property="og:title"
+                content={`${route.title} | ${route.areaTitle} | ClimbingTopos.com`}
+              />
+              <meta
+                property="og:url"
+                content={`https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+              />
+              <meta
+                property="og:description"
+                content={`${route.title}, ${route.areaTitle}, ${route.cragTitle} climbing guide and topo`}
+              />
               <meta property="og:image" content={`${crag.image}`} />
             </Head>
           )}
@@ -177,9 +203,9 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
                       {route
                         ? convertGradeValueToGradeLabel(
                             route.gradeModal,
-                            route.gradingSystem
+                            route.gradingSystem,
                           )
-                        : ""}
+                        : ''}
                       <span> </span>
                       {route?.routeType}
                       <span> </span>
@@ -201,7 +227,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
                   <div className="column">
                     <div
                       className="is-flex is-flex-direction-column is-justify-content-space-between"
-                      style={{ height: "100%" }}
+                      style={{ height: '100%' }}
                     >
                       <div className="is-flex is-justify-content-flex-end">
                         <div className="tags mb-1">
@@ -265,7 +291,7 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
                     background={`${route?.topo?.image}`}
                   />
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
               {routeLogs && (
@@ -282,4 +308,3 @@ function RoutePage({ params }: { params: { cragSlug: string, areaSlug: string, t
 }
 
 export default RoutePage;
-

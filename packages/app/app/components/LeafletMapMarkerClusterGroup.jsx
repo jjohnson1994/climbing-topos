@@ -8,11 +8,9 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
  */
 
 const MMarkerClustorGroup = ({ children }) => {
-    return (
-      <MarkerClusterGroup chunkedLoading={true} >
-        { children }
-      </MarkerClusterGroup>
-    );
-}
+  return (
+    <MarkerClusterGroup chunkedLoading={true}>{children}</MarkerClusterGroup>
+  );
+};
 
 export default MMarkerClustorGroup;

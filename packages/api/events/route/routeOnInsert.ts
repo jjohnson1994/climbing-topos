@@ -1,9 +1,9 @@
-import { Route } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { analytics, areas, crags, users } from "@/services";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import { gradingSystems } from "@climbingtopos/globals";
+import { Route } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { analytics, areas, crags, users } from '@/services';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { gradingSystems } from '@climbingtopos/globals';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -19,11 +19,11 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         verified,
         gradingSystem: routeGradingSystem,
         grade,
-        createdBy
+        createdBy,
       } = normalizedRow;
 
       const normalizedGrade = gradingSystems.find(
-        (gradingSystem) => gradingSystem.title === routeGradingSystem
+        (gradingSystem) => gradingSystem.title === routeGradingSystem,
       )?.grades[parseInt(grade, 10)];
 
       const tasks: Promise<any>[] = [];
@@ -36,10 +36,10 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
           users.incrementRouteCreatedCount(createdBy.sub),
           algolaIndex.saveObject({
             ...normalizedRow,
-            model: "route",
+            model: 'route',
             objectID: slug,
             grade: normalizedGrade,
-          })
+          }),
         );
       }
 
@@ -48,7 +48,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("Error in routesOnInsert", error);
-     throw error
+    console.error('Error in routesOnInsert', error);
+    throw error;
   }
 };

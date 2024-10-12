@@ -1,24 +1,28 @@
-"use client"
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link"
-import { Area, Crag, Topo } from "@climbingtopos/types";
-import { areas, crags, topos } from "@/app/api";
-import AreaRoutesTable from "@/app/components/AreaRoutesTable";
-import ButtonCopyCoordinates from "@/app/components/ButtonCopyCoordinates";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
-import TopoImage from "@/app/components/TopoImage";
-import { popupSuccess, popupError } from "@/app/helpers/alerts";
-import Button, { Color } from "@/app/elements/Button";
-import useUser from "@/app/api/user";
-import Head from "next/head";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Area, Crag, Topo } from '@climbingtopos/types';
+import { areas, crags, topos } from '@/app/api';
+import AreaRoutesTable from '@/app/components/AreaRoutesTable';
+import ButtonCopyCoordinates from '@/app/components/ButtonCopyCoordinates';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import TopoImage from '@/app/components/TopoImage';
+import { popupSuccess, popupError } from '@/app/helpers/alerts';
+import Button, { Color } from '@/app/elements/Button';
+import useUser from '@/app/api/user';
+import Head from 'next/head';
 
-function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }) {
+function AreaView({
+  params,
+}: {
+  params: { areaSlug: string; cragSlug: string };
+}) {
   const { areaSlug, cragSlug } = params;
   const [area, setArea] = useState<Area>();
   const [crag, setCrag] = useState<Crag>();
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { userAttributes } = useUser();
 
   useEffect(() => {
@@ -32,8 +36,8 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
         setArea(area);
         setCrag(crag);
       } catch (error) {
-        console.error("Error loading area", error);
-        popupError("Oh dear, there was a problem loading this area");
+        console.error('Error loading area', error);
+        popupError('Oh dear, there was a problem loading this area');
       } finally {
         setLoading(false);
       }
@@ -43,11 +47,12 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
   }, [areaSlug, cragSlug]);
 
   useEffect(() => {
-    if (!crag?.managedBy.sub || !userAttributes?.attributes?.sub) {
-      setIsAdmin(false);
-    } else if (crag.managedBy.sub === userAttributes?.attributes?.sub) {
-      setIsAdmin(true);
-    }
+    // TODO https://github.com/users/jjohnson1994/projects/1?pane=issue&itemId=83148812
+    // if (!crag?.managedBy.sub || !userAttributes?.attributes?.sub) {
+    //   setIsAdmin(false);
+    // } else if (crag.managedBy.sub === userAttributes?.attributes?.sub) {
+    //   setIsAdmin(true);
+    // }
   }, [userAttributes, crag]);
 
   const btnVerifyOnClick = async () => {
@@ -57,7 +62,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
       }
 
       const verify = window.confirm(
-        "Are you sure you want to verify this area?"
+        'Are you sure you want to verify this area?',
       );
 
       if (verify) {
@@ -66,10 +71,10 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
           ...area,
           verified: true,
         });
-        popupSuccess("Area Verified");
+        popupSuccess('Area Verified');
       }
     } catch (error) {
-      console.error("error updating area", error);
+      console.error('error updating area', error);
     }
   };
 
@@ -80,7 +85,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
       }
 
       const verify = window.confirm(
-        "Are you sure you want to verify this topo?"
+        'Are you sure you want to verify this topo?',
       );
 
       if (verify) {
@@ -104,10 +109,10 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
           ...area,
           topos: newTopos,
         });
-        popupSuccess("Topo Verified");
+        popupSuccess('Topo Verified');
       }
     } catch (error) {
-      console.error("error updating area", error);
+      console.error('error updating area', error);
     }
   };
 
@@ -123,17 +128,34 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
 
       {area && crag && (
         <Head>
-          <title>{area.title} | {area.cragTitle} | ClimbingTopos.com</title>
-          <link rel="canonical" href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}` }/>
-          <meta name="description" content={`${area.title}, ${area.cragTitle} climbing guide and topo`}/>
+          <title>
+            {area.title} | {area.cragTitle} | ClimbingTopos.com
+          </title>
+          <link
+            rel="canonical"
+            href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
+          />
+          <meta
+            name="description"
+            content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
+          />
           <meta property="og:type" content="website" />
-          <meta property="og:title" content={`${area.title} | ${area.cragTitle} | ClimbingTopos.com`} />
-          <meta property="og:url" content={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}` } />
-          <meta property="og:description" content={`${area.title}, ${area.cragTitle} climbing guide and topo`} />
+          <meta
+            property="og:title"
+            content={`${area.title} | ${area.cragTitle} | ClimbingTopos.com`}
+          />
+          <meta
+            property="og:url"
+            content={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
+          />
+          <meta
+            property="og:description"
+            content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
+          />
           <meta property="og:image" content={`${crag.image}`} />
         </Head>
       )}
-      <section className={`section pt-5 ${loading ? "is-hidden" : ""}`}>
+      <section className={`section pt-5 ${loading ? 'is-hidden' : ''}`}>
         <div className="container">
           <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
@@ -164,7 +186,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
                 )}
                 <span
                   className={`tag is-capitalized ${
-                    area?.access === "banned" ? "is-danger " : ""
+                    area?.access === 'banned' ? 'is-danger ' : ''
                   }`}
                 >
                   Access {area?.access}
@@ -204,7 +226,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
                   <div className="column">
                     <TopoImage
                       routes={area.routes?.filter(
-                        (route) => route.topoSlug === topo.slug
+                        (route) => route.topoSlug === topo.slug,
                       )}
                       background={`${topo.image}`}
                     />
@@ -243,18 +265,18 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
                       </Link>
                     </div>
                     {area.routes?.filter(
-                      (route) => route.topoSlug === topo.slug
+                      (route) => route.topoSlug === topo.slug,
                     ).length ? (
                       <div className="block">
                         <AreaRoutesTable
                           routes={area.routes?.filter(
-                            (route) => route.topoSlug === topo.slug
+                            (route) => route.topoSlug === topo.slug,
                           )}
                           loggedRoutes={area.userLogs}
                         />
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
                   </div>
                 </div>
@@ -262,7 +284,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
             ))}
         </section>
       ) : (
-        ""
+        ''
       )}
 
       {loading === false && area?.topos.length === 0 ? (
@@ -276,7 +298,7 @@ function AreaView({ params }: { params: { areaSlug: string; cragSlug: string } }
           </div>
         </section>
       ) : (
-        ""
+        ''
       )}
     </>
   );

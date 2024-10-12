@@ -1,11 +1,11 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from "aws-lambda";
-import { NewListSchema } from "@climbingtopos/schemas";
-import { lists } from "@/services";
-import { getUserPublicDataFromEvent } from "@/utils/auth";
-import { RequestValidator } from "@/utils/request-validator";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { NewListSchema } from '@climbingtopos/schemas';
+import { lists } from '@/services';
+import { getUserPublicDataFromEvent } from '@/utils/auth';
+import { RequestValidator } from '@/utils/request-validator';
 
 const validateBody: RequestValidator = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   const schema = NewListSchema();
   const isValid = await schema.isValid(JSON.parse(`${event.body}`));
@@ -15,14 +15,14 @@ const validateBody: RequestValidator = async (
   } else {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }
 };
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     const bodyIsValid = await validateBody(event);
@@ -36,11 +36,11 @@ export const handler: APIGatewayProxyHandler = async (
     if (user.sub === false) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           success: false,
         }),
-      }
+      };
     }
 
     const listDescription = JSON.parse(`${event.body}`);
@@ -48,15 +48,15 @@ export const handler: APIGatewayProxyHandler = async (
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ success: true, ...newList }),
     };
   } catch (error) {
-    console.error("Error creating new list", error);
+    console.error('Error creating new list', error);
 
     return {
       statuscode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

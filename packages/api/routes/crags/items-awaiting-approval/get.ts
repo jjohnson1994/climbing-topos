@@ -1,31 +1,32 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandlern } from "aws-lambda";
-import { crags } from "@/services";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandlern } from 'aws-lambda';
+import { crags } from '@/services';
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     if (!event.headers.authorization) {
       console.error(
-        "POST crag request received without authorization header",
-        event
+        'POST crag request received without authorization header',
+        event,
       );
       return {
         statusCode: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           error: true,
-          message: "Invalid Request",
+          message: 'Invalid Request',
         }),
       };
     }
 
-    const userSub = event.requestContext.authorizer?.iam.cognitoIdentity.identityId
+    const userSub =
+      event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
 
     if (!userSub) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           error: true,
         }),
@@ -38,26 +39,26 @@ export const handler: APIGatewayProxyHandler = async (
     if (crag.managedBy.sub !== userSub) {
       return {
         statusCode: 403,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: true }),
       };
     }
 
     const itemsAwaitingAproval = await crags.getCragItemsAwaitingAproval(
-      crag.slug
+      crag.slug,
     );
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(itemsAwaitingAproval),
     };
   } catch (error) {
-    console.error("Error getting crag items pending approval", error);
+    console.error('Error getting crag items pending approval', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

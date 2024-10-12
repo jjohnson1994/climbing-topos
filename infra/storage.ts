@@ -1,3 +1,3 @@
-const bucket = new sst.aws.Bucket("climbingtopos2Images");
+const bucket = new sst.aws.Bucket('climbingtopos2Images');
 
-export { bucket }
+export { bucket };

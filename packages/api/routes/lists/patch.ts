@@ -1,13 +1,13 @@
-import * as yup from "yup";
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from "aws-lambda";
-import { ListAddRouteRequest } from "@climbingtopos/types";
-import { lists, routes } from "@/services";
-import { getUserFromEvent } from "@/utils/auth";
-import { NewListSchema } from "@climbingtopos/schemas";
-import { RequestValidator } from "@/utils/request-validator";
+import * as yup from 'yup';
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { ListAddRouteRequest } from '@climbingtopos/types';
+import { lists, routes } from '@/services';
+import { getUserFromEvent } from '@/utils/auth';
+import { NewListSchema } from '@climbingtopos/schemas';
+import { RequestValidator } from '@/utils/request-validator';
 
 const validateBody: RequestValidator = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   const schema = NewListSchema();
   const isValid = await schema.isValid(JSON.parse(`${event.body}`));
@@ -17,14 +17,14 @@ const validateBody: RequestValidator = async (
   } else {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }
 };
 
 const validateQuery: RequestValidator = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   const schema = yup.object().shape({
     listSlug: yup.string().required(),
@@ -36,14 +36,14 @@ const validateQuery: RequestValidator = async (
   } else {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }
 };
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
     const bodyIsValid = await validateBody(event);
@@ -58,17 +58,17 @@ export const handler: APIGatewayProxyHandler = async (
       return queryIsValid;
     }
 
-    const userSub = event.requestContext.authorizer?.iam.cognitoIdentity.identityId
-
+    const userSub =
+      event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
 
     if (!userSub) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           success: false,
         }),
-      }
+      };
     }
 
     const { slug } = event.pathParameters as {
@@ -84,9 +84,9 @@ export const handler: APIGatewayProxyHandler = async (
           routeReq.cragSlug,
           routeReq.areaSlug,
           routeReq.topoSlug,
-          routeReq.routeSlug
-        )
-      )
+          routeReq.routeSlug,
+        ),
+      ),
     );
 
     const updateResponse = await lists.addRoutesToList(
@@ -114,24 +114,24 @@ export const handler: APIGatewayProxyHandler = async (
         state: route.state,
         title: route.title,
         topoSlug: route.topoSlug,
-      }))
+      })),
     );
 
     lists.incrementRoutesCount(slug, userSub).catch((error) => {
-      console.error("Error incrementing list routes count", error);
+      console.error('Error incrementing list routes count', error);
     });
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ success: true, ...updateResponse }),
     };
   } catch (error) {
-    console.error("Error creating new list", error);
+    console.error('Error creating new list', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

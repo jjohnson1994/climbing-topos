@@ -1,8 +1,8 @@
-import { API } from "aws-amplify";
-import { List } from "core/types";
+import { API } from 'aws-amplify';
+import { List } from '@climbingtopos/types';
 
 export function addList(title: string): Promise<List> {
-  return API.post("climbingtopos2-api", `/lists`, {
+  return API.post('climbingtopos2-api', `/lists`, {
     body: { title },
   });
 }
@@ -14,29 +14,17 @@ export function addRoutesToList(
     areaSlug: string;
     topoSlug: string;
     routeSlug: string;
-  }[]
+  }[],
 ) {
-  return API.patch(
-    "climbingtopos2-api",
-    `/lists?listSlug=${listSlug}`,
-    {
-      body: { routes },
-    }
-  );
+  return API.patch('climbingtopos2-api', `/lists?listSlug=${listSlug}`, {
+    body: { routes },
+  });
 }
 
 export function getLists(): Promise<List[]> {
-  return API.get(
-    "climbingtopos2-api",
-    `/lists`,
-    {}
-  );
+  return API.get('climbingtopos2-api', `/lists`, {});
 }
 
 export function getList(listSlug: string): Promise<List> {
-  return API.get(
-    "climbingtopos2-api",
-    `/lists/${listSlug}`,
-    {}
-  );
+  return API.get('climbingtopos2-api', `/lists/${listSlug}`, {});
 }

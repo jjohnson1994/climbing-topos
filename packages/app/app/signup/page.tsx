@@ -1,15 +1,15 @@
-"use client"
+'use client';
 
-import { SubmitHandler, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Button, { ButtonType, Color } from "@/app/elements/Button";
-import Form, { AutoComplete } from "@/app/elements/Form";
-import Input, { InputType } from "@/app/elements/Input";
-import { yup } from "@climbingtopos/schemas";
-import { popupError } from "@/app/helpers/alerts";
-import { useState } from "react";
-import useUser from "@/app/api/user";
-import { useRouter } from 'next/navigation'
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Button, { ButtonType, Color } from '@/app/elements/Button';
+import Form, { AutoComplete } from '@/app/elements/Form';
+import Input, { InputType } from '@/app/elements/Input';
+import { yup } from '@climbingtopos/schemas';
+import { popupError } from '@/app/helpers/alerts';
+import { useState } from 'react';
+import useUser from '@/app/api/user';
+import { useRouter } from 'next/navigation';
 
 export interface SignupForm {
   username: string;
@@ -20,13 +20,13 @@ export interface SignupForm {
 
 const SignupFormSchema = yup
   .object({
-    username: yup.string().required("Required"),
-    email: yup.string().email("Not an email address").required("Required"),
-    password: yup.string().required("Required").min(8),
+    username: yup.string().required('Required'),
+    email: yup.string().email('Not an email address').required('Required'),
+    password: yup.string().required('Required').min(8),
     confirmPassword: yup
       .string()
-      .required("Required")
-      .test("confirmPassword", "Passwords Do Not Match", function (value) {
+      .required('Required')
+      .test('confirmPassword', 'Passwords Do Not Match', function (value) {
         const { password } = this.parent;
         return value === password;
       }),
@@ -34,7 +34,7 @@ const SignupFormSchema = yup
   .required();
 
 const Signup = () => {
-  const router = useRouter()
+  const router = useRouter();
   const { signUp } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -58,13 +58,13 @@ const Signup = () => {
         },
       });
 
-      const url = `/signup-confirm?${new URLSearchParams({ username: value.username })}`
+      const url = `/signup-confirm?${new URLSearchParams({ username: value.username })}`;
       router.replace(url);
-    } catch (error) {
-      if (error.code === "UsernameExistsException") {
-        popupError("Email is already registered, try logging instead");
+    } catch (error: any) {
+      if (error && error.code === 'UsernameExistsException') {
+        popupError('Email is already registered, try logging instead');
       } else {
-        popupError("Something has gone wrong, try again");
+        popupError('Something has gone wrong, try again');
       }
     } finally {
       setIsLoading(false);
@@ -81,23 +81,23 @@ const Signup = () => {
         >
           <Input
             label="Username"
-            {...register("username")}
+            {...register('username')}
             error={errors.username?.message}
           />
           <Input
             label="Email"
-            {...register("email")}
+            {...register('email')}
             error={errors.email?.message}
           />
           <Input
             label="Password"
-            {...register("password")}
+            {...register('password')}
             error={errors.password?.message}
             type={InputType.Password}
           />
           <Input
             label="Confirm Password"
-            {...register("confirmPassword")}
+            {...register('confirmPassword')}
             error={errors.confirmPassword?.message}
             type={InputType.Password}
           />

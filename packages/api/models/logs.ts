@@ -1,15 +1,22 @@
-import { nanoid } from "nanoid";
-import { DateTime } from "luxon";
-import { Resource } from "sst";
+import { nanoid } from 'nanoid';
+import { DateTime } from 'luxon';
+import { Resource } from 'sst';
 
-import { UserPublicData, Log, LogRequest } from "@climbingtopos/types";
+import { UserPublicData, Log, LogRequest } from '@climbingtopos/types';
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  PutCommand,
+  QueryCommand,
+  DynamoDBDocumentClient,
+} from '@aws-sdk/lib-dynamodb';
 
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-export async function createRouteLog(logRequest: LogRequest, user: UserPublicData) {
+export async function createRouteLog(
+  logRequest: LogRequest,
+  user: UserPublicData,
+) {
   const date = DateTime.utc().toString();
   const cragLogSlug = nanoid();
   const userLogSlug = nanoid();
@@ -46,7 +53,7 @@ export async function createRouteLog(logRequest: LogRequest, user: UserPublicDat
       hk: logRequest.cragSlug,
       sk: `log#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${cragLogSlug}`,
       ...logData,
-      model: "log",
+      model: 'log',
       slug: userLogSlug,
       user: {
         nickname: user.nickname,
@@ -54,9 +61,9 @@ export async function createRouteLog(logRequest: LogRequest, user: UserPublicDat
         picture: user.picture,
       },
       createdAt: date,
-      updatedAt: date
-    }
-  }
+      updatedAt: date,
+    },
+  };
 
   const userLogParams = {
     TableName: Resource.climbingtopos2.name,
@@ -64,7 +71,7 @@ export async function createRouteLog(logRequest: LogRequest, user: UserPublicDat
       hk: `user#${user.sub}`,
       sk: `log#crag#${logRequest.cragSlug}#area#${logRequest.areaSlug}#topo#${logRequest.topoSlug}#route#${logRequest.routeSlug}#${userLogSlug}`,
       ...logData,
-      model: "log",
+      model: 'log',
       slug: userLogSlug,
       user: {
         nickname: user.nickname,
@@ -72,13 +79,13 @@ export async function createRouteLog(logRequest: LogRequest, user: UserPublicDat
         picture: user.picture,
       },
       createdAt: date,
-      updatedAt: date
-    }
-  }
+      updatedAt: date,
+    },
+  };
 
   await Promise.all([
     dynamodb.send(new PutCommand(cragLogParams)),
-    dynamodb.send(new PutCommand(userLogParams))
+    dynamodb.send(new PutCommand(userLogParams)),
   ]);
 }
 
@@ -88,22 +95,22 @@ export async function getLogs(
   topoSlug?: string,
   routeSlug?: string,
 ): Promise<Log[]> {
-  let sk = 'log#'
+  let sk = 'log#';
 
   if (cragSlug) {
-    sk += `crag#${cragSlug}#`
+    sk += `crag#${cragSlug}#`;
   }
 
   if (cragSlug && areaSlug) {
-    sk += `area#${areaSlug}#`
+    sk += `area#${areaSlug}#`;
   }
 
   if (cragSlug && areaSlug && topoSlug) {
-    sk += `topo#${topoSlug}#`
+    sk += `topo#${topoSlug}#`;
   }
 
   if (cragSlug && areaSlug && topoSlug && routeSlug) {
-    sk += `route#${routeSlug}`
+    sk += `route#${routeSlug}`;
   }
 
   const params = {
@@ -111,21 +118,27 @@ export async function getLogs(
     IndexName: 'gsi1',
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
     ExpressionAttributeNames: {
-      "#hk": "model",
-      "#sk": "sk"
+      '#hk': 'model',
+      '#sk': 'sk',
     },
     ExpressionAttributeValues: {
-      ":hk": 'log',
-      ":sk": sk
-    }
+      ':hk': 'log',
+      ':sk': sk,
+    },
   };
 
-  const response = await dynamodb.send(new QueryCommand(params))
+  const response = await dynamodb.send(new QueryCommand(params));
 
   return response?.Items as Log[];
 }
 
-export async function getLogsForUser(userSub: string, cragSlug?: string, areaSlug?: string, topoSlug?: string, routeSlug?: string): Promise<Log[]> {
+export async function getLogsForUser(
+  userSub: string,
+  cragSlug?: string,
+  areaSlug?: string,
+  topoSlug?: string,
+  routeSlug?: string,
+): Promise<Log[]> {
   let queryString = `log#`;
 
   if (cragSlug) {
@@ -146,18 +159,18 @@ export async function getLogsForUser(userSub: string, cragSlug?: string, areaSlu
 
   const params = {
     TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
-    ExpressionAttributeNames:{
-      "#hk": "hk",
-      "#sk": "sk"
+    KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ExpressionAttributeNames: {
+      '#hk': 'hk',
+      '#sk': 'sk',
     },
     ExpressionAttributeValues: {
-      ":hk": `user#${userSub}`,
-      ":sk": queryString
-    }
-  }
+      ':hk': `user#${userSub}`,
+      ':sk': queryString,
+    },
+  };
 
-  const response = await dynamodb.send(new QueryCommand(params))
+  const response = await dynamodb.send(new QueryCommand(params));
 
   return response?.Items as Log[];
 }

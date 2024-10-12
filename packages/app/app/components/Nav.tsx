@@ -1,13 +1,13 @@
-"use client"
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import useUser from "@/app/api/user";
-import Button, { Color } from "@/app/elements/Button";
-import NavbarItem from "@/app/elements/NavbarItem";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import useUser from '@/app/api/user';
+import Button, { Color } from '@/app/elements/Button';
+import NavbarItem from '@/app/elements/NavbarItem';
 
-import { Amplify } from "aws-amplify";
-import config from "@/app/config";
+import { Amplify } from 'aws-amplify';
+import config from '@/app/config';
 
 Amplify.configure({
   Auth: {
@@ -25,7 +25,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "climbingtopos2-api",
+        name: 'climbingtopos2-api',
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,
       },
@@ -34,19 +34,23 @@ Amplify.configure({
 });
 
 function Nav() {
-  const [navBarMenuClass, setNavBarMenuClass] = useState("");
+  const [navBarMenuClass, setNavBarMenuClass] = useState('');
   const { userAttributes, isAuthenticated } = useUser();
 
   const toggleNavMenu = () => {
-    if (navBarMenuClass === "is-active") {
-      setNavBarMenuClass("");
+    if (navBarMenuClass === 'is-active') {
+      setNavBarMenuClass('');
     } else {
-      setNavBarMenuClass("is-active");
+      setNavBarMenuClass('is-active');
     }
   };
 
   return (
-    <nav className="navbar has-shadow" role="navigation" aria-label="main navigation">
+    <nav
+      className="navbar has-shadow"
+      role="navigation"
+      aria-label="main navigation"
+    >
       <div className="navbar-brand">
         <Link className="navbar-item has-text-weight-medium" href="/">
           ClimbingTopos.com
@@ -57,7 +61,7 @@ function Nav() {
           aria-label="menu"
           aria-expanded="false"
           data-target="navbarBasicExample"
-          onClick={ toggleNavMenu }
+          onClick={toggleNavMenu}
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -68,19 +72,13 @@ function Nav() {
       <div
         id="navbarBasicExample"
         className={`navbar-menu ${navBarMenuClass}`}
-        onClick={ toggleNavMenu }
+        onClick={toggleNavMenu}
       >
         <div className="navbar-start">
-          <Link
-            className="navbar-item"
-            href="/crags"
-          >
+          <Link className="navbar-item" href="/crags">
             Crags
           </Link>
-          <Link
-            className="navbar-item"
-            href="/crags-map"
-          >
+          <Link className="navbar-item" href="/crags-map">
             Map
           </Link>
         </div>
@@ -94,7 +92,7 @@ function Nav() {
           <div className="navbar-item">
             {isAuthenticated ? (
               <Link href="/profile">
-                <Button icon="fas fa-user">{ userAttributes?.username }</Button>
+                <Button icon="fas fa-user">{userAttributes?.username}</Button>
               </Link>
             ) : (
               <div className="field is-grouped">
@@ -105,7 +103,7 @@ function Nav() {
                 </p>
                 <p className="control">
                   <Link href="/signup">
-                    <Button color={ Color.isPrimary }>Signup</Button>
+                    <Button color={Color.isPrimary}>Signup</Button>
                   </Link>
                 </p>
               </div>

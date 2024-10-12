@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from 'react';
 
 export enum Color {
   isWhite = 'is-white',
@@ -12,40 +12,37 @@ export enum Color {
   isInfo = 'is-info',
   isSuccess = 'is-success',
   isWarning = 'is-warning',
-  isDanger = 'is-danger '
+  isDanger = 'is-danger ',
 }
 
-interface MessageProps {
+interface MessageProps extends PropsWithChildren {
   header?: string;
   color: Color;
-  children: any;
 }
 
 const Message: FunctionComponent<MessageProps> = (props: MessageProps) => {
   const getColor = (): Color | undefined => {
     return props.color;
-  }
+  };
 
   const getClasses = (): string => {
     const color: Color | undefined = getColor();
 
     return `message ${color ? color : ''}`.trim();
-  }
+  };
 
   const classes = getClasses();
 
   return (
-    <article className={ classes } >
-      { props.header && (
+    <article className={classes}>
+      {props.header && (
         <div className="message-header">
-          <p>{ props.header }</p>
+          <p>{props.header}</p>
         </div>
       )}
-      <div className="message-body">
-        { props.children }
-      </div>
+      <div className="message-body">{props.children}</div>
     </article>
-  )
-}
+  );
+};
 
-export default Message
+export default Message;

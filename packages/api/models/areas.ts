@@ -1,19 +1,24 @@
-import { nanoid } from "nanoid";
-import { DateTime } from "luxon";
-import { Resource } from "sst";
+import { nanoid } from 'nanoid';
+import { DateTime } from 'luxon';
+import { Resource } from 'sst';
 
-import { Area, AreaRequest, UserPublicData } from "@climbingtopos/types";
-import { createSlug } from "@/helpers/slug";
+import { Area, AreaRequest, UserPublicData } from '@climbingtopos/types';
+import { createSlug } from '@/helpers/slug';
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, UpdateCommand, QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  PutCommand,
+  UpdateCommand,
+  QueryCommand,
+  DynamoDBDocumentClient,
+} from '@aws-sdk/lib-dynamodb';
 
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export async function createArea(
   areaDescription: AreaRequest,
   auth0UserPublicData: UserPublicData,
-  areaVerified: boolean
+  areaVerified: boolean,
 ) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${areaDescription.title}-${nanoid(5)}`);
@@ -43,7 +48,7 @@ export async function createArea(
       sk: `area#${slug}#`,
       ...areaData,
       logCount: 0,
-      model: "area",
+      model: 'area',
       routeCount: 0,
       slug,
       verified: areaVerified,
@@ -53,7 +58,7 @@ export async function createArea(
     },
   };
 
-  await dynamoDb.send(new PutCommand(params))
+  await dynamoDb.send(new PutCommand(params));
 
   return {
     slug,
@@ -63,18 +68,18 @@ export async function createArea(
 export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
   const params = {
     TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
+    KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
     ExpressionAttributeNames: {
-      "#hk": "hk",
-      "#sk": "sk",
+      '#hk': 'hk',
+      '#sk': 'sk',
     },
     ExpressionAttributeValues: {
-      ":hk": cragSlug,
-      ":sk": "area#",
+      ':hk': cragSlug,
+      ':sk': 'area#',
     },
   };
 
-  const crag = await dynamoDb.send(new QueryCommand(params))
+  const crag = await dynamoDb.send(new QueryCommand(params));
 
   return crag?.Items as Area[];
 }
@@ -82,19 +87,19 @@ export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
 export async function getAreaBySlug(slug: string): Promise<Area> {
   const params = {
     TableName: Resource.climbingtopos2.name,
-    IndexName: "gsi2",
-    KeyConditionExpression: "#model = :model AND #slug = :slug",
+    IndexName: 'gsi2',
+    KeyConditionExpression: '#model = :model AND #slug = :slug',
     ExpressionAttributeNames: {
-      "#model": "model",
-      "#slug": "slug",
+      '#model': 'model',
+      '#slug': 'slug',
     },
     ExpressionAttributeValues: {
-      ":model": "area",
-      ":slug": slug,
+      ':model': 'area',
+      ':slug': slug,
     },
   };
 
-  const area = await dynamoDb.send(new QueryCommand(params))
+  const area = await dynamoDb.send(new QueryCommand(params));
 
   return area?.Items?.[0] as Area;
 }
@@ -106,7 +111,7 @@ export async function update(
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
     ExpressionAttributeValues: Record<string, any>;
-  }
+  },
 ) {
   const params = {
     TableName: Resource.climbingtopos2.name,

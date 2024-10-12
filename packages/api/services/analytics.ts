@@ -1,7 +1,7 @@
-import { Resource } from "sst";
+import { Resource } from 'sst';
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { UpdateCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { UpdateCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
@@ -12,17 +12,17 @@ export const incrementGlobalCragCount = (count = 1) => {
       hk: 'globals',
       sk: 'metadata',
     },
-    UpdateExpression: "add #cragCount :inc",
-    ExpressionAttributeNames: { 
-      "#cragCount": "cragCount",
+    UpdateExpression: 'add #cragCount :inc',
+    ExpressionAttributeNames: {
+      '#cragCount': 'cragCount',
     },
     ExpressionAttributeValues: {
-      ":inc": count
-    }
-  }
+      ':inc': count,
+    },
+  };
 
-  return dynamoDb.send(new UpdateCommand(params))
-}
+  return dynamoDb.send(new UpdateCommand(params));
+};
 
 export const incrementGlobalRouteCount = (count = 1) => {
   const params = {
@@ -31,17 +31,17 @@ export const incrementGlobalRouteCount = (count = 1) => {
       hk: 'globals',
       sk: 'metadata',
     },
-    UpdateExpression: "add #routeCount :inc",
-    ExpressionAttributeNames: { 
-      "#routeCount": "routeCount",
+    UpdateExpression: 'add #routeCount :inc',
+    ExpressionAttributeNames: {
+      '#routeCount': 'routeCount',
     },
     ExpressionAttributeValues: {
-      ":inc": count
+      ':inc': count,
     },
-  }
+  };
 
-  return dynamoDb.send(new UpdateCommand(params))
-}
+  return dynamoDb.send(new UpdateCommand(params));
+};
 
 export const incrementGlobalLogCount = (count = 1) => {
   const params = {
@@ -50,14 +50,14 @@ export const incrementGlobalLogCount = (count = 1) => {
       hk: 'globals',
       sk: 'metadata',
     },
-    UpdateExpression: "add #logCount :inc",
-    ExpressionAttributeNames: { 
-      "#logCount": "logCount",
+    UpdateExpression: 'add #logCount :inc',
+    ExpressionAttributeNames: {
+      '#logCount': 'logCount',
     },
     ExpressionAttributeValues: {
-      ":inc": count
+      ':inc': count,
     },
-  }
+  };
 
-  return dynamoDb.send(new UpdateCommand(params))
-}
+  return dynamoDb.send(new UpdateCommand(params));
+};

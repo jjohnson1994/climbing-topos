@@ -1,8 +1,8 @@
-import { Area } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import { crags } from "@/services";
+import { Area } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { crags } from '@/services';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -21,7 +21,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises as unknown as Promise<any>[]);
   } catch (error) {
-    console.error("Error in areaOnRemove", error);
-    throw error
+    console.error('Error in areaOnRemove', error);
+    throw error;
   }
 };

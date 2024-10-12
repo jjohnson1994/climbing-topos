@@ -1,10 +1,10 @@
-import { Area, Crag, Route, Topo } from "core/types";
-import { useEffect, useState } from "react";
-import { popupError } from "../helpers/alerts";
-import { getCragItemsAwaitingAproval } from "../api/crags";
-import LoadingSpinner from "./LoadingSpinner";
-import Link from "next/link"
-import useUser from "../api/user";
+import { Area, Crag, Route, Topo } from '@climbingtopos/types';
+import { useEffect, useState } from 'react';
+import { popupError } from '../helpers/alerts';
+import { getCragItemsAwaitingAproval } from '../api/crags';
+import LoadingSpinner from './LoadingSpinner';
+import Link from 'next/link';
+import useUser from '../api/user';
 
 interface CragAdminProps {
   crag: Crag;
@@ -12,7 +12,7 @@ interface CragAdminProps {
 
 const CragAdmin = (props: CragAdminProps) => {
   const { isAuthenticated } = useUser();
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [itemsAwaitingApproval, setItemsAwaitingApproval] = useState<
     Array<Topo | Area | Route>
   >([]);
@@ -22,13 +22,13 @@ const CragAdmin = (props: CragAdminProps) => {
       try {
         setLoading(true);
         const itemsAwaitingAproval = await getCragItemsAwaitingAproval(
-          props.crag.slug
+          props.crag.slug,
         );
 
         setItemsAwaitingApproval(itemsAwaitingAproval);
       } catch (error) {
-        console.error("Error loading crag admin actions", error);
-        popupError("There was an error loading this crag. Please try again.");
+        console.error('Error loading crag admin actions', error);
+        popupError('There was an error loading this crag. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -41,7 +41,7 @@ const CragAdmin = (props: CragAdminProps) => {
 
   const renderTopoListItem = (topo: Topo) => (
     <Link href={`/crags/${topo.cragSlug}/areas/${topo.areaSlug}#${topo.slug}`}>
-      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
+      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
         <div className="columns is-mobile is-gapless">
           <div className="column is-narrow">
             <img
@@ -49,8 +49,8 @@ const CragAdmin = (props: CragAdminProps) => {
               className="image is-128x128"
               alt="new topo"
               style={{
-                objectFit: "cover",
-                height: "100%",
+                objectFit: 'cover',
+                height: '100%',
               }}
             />
           </div>
@@ -69,7 +69,7 @@ const CragAdmin = (props: CragAdminProps) => {
     <Link
       href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
     >
-      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
+      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
         <div className="columns is-mobile is-gapless">
           <div className="column m-3">
             <p className="is-capitalized mb-1">
@@ -90,7 +90,7 @@ const CragAdmin = (props: CragAdminProps) => {
 
   const renderAreaListItem = (area: Area) => (
     <Link href={`/crags/${area.cragSlug}/areas/${area.slug}`}>
-      <div className="block box p-0 mb-5" style={{ overflow: "hidden" }}>
+      <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
         <div className="columns is-mobile is-gapless">
           <div className="column m-3">
             <p className="is-capitalized mb-1">
@@ -130,37 +130,37 @@ const CragAdmin = (props: CragAdminProps) => {
           </div>
           <div>
             {itemsAwaitingApproval.map((itemAwaitingApproval) => {
-              if (itemAwaitingApproval.model === "route") {
+              if (itemAwaitingApproval.model === 'route') {
                 return (
                   <div key={itemAwaitingApproval.slug}>
                     {renderRouteListItem(
-                      itemAwaitingApproval as unknown as Route
+                      itemAwaitingApproval as unknown as Route,
                     )}
                   </div>
                 );
               }
 
-              if (itemAwaitingApproval.model === "area") {
+              if (itemAwaitingApproval.model === 'area') {
                 return (
                   <div key={itemAwaitingApproval.slug}>
                     {renderAreaListItem(
-                      itemAwaitingApproval as unknown as Area
+                      itemAwaitingApproval as unknown as Area,
                     )}
                   </div>
                 );
               }
 
-              if (itemAwaitingApproval.model === "topo") {
+              if (itemAwaitingApproval.model === 'topo') {
                 return (
                   <div key={itemAwaitingApproval.slug}>
                     {renderTopoListItem(
-                      itemAwaitingApproval as unknown as Topo
+                      itemAwaitingApproval as unknown as Topo,
                     )}
                   </div>
                 );
               }
 
-              return "";
+              return '';
             })}
           </div>
         </div>

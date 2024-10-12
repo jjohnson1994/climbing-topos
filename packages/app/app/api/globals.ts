@@ -4,8 +4,8 @@ import {
   gradingSystems,
   rockTypes,
   routeTags,
-  routeTypes
-} from "@climbingtopos/globals";
+  routeTypes,
+} from '@climbingtopos/globals';
 
 export async function getCragTags() {
   return cragTags;

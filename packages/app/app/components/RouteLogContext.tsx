@@ -1,10 +1,10 @@
-import { Route } from "@climbingtopos/types";
-import React, { createContext, useState } from "react";
-import RoutesAddToListModal from "./RoutesAddToListModal";
-import RoutesAddToLogModal from "./RoutesAddToLogModal";
-import { useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
-import useUser from "../api/user";
+import { Route } from '@climbingtopos/types';
+import React, { createContext, useState } from 'react';
+import RoutesAddToListModal from './RoutesAddToListModal';
+import RoutesAddToLogModal from './RoutesAddToLogModal';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import useUser from '../api/user';
 
 interface RouteLogContextType {
   isSelectingMultiple: boolean;
@@ -29,7 +29,7 @@ export const RouteLogContext = createContext<RouteLogContextType>({
 });
 
 function RouteLog({ children }: React.HTMLAttributes<Element>) {
-  const router = useRouter()
+  const router = useRouter();
   const { isAuthenticated } = useUser();
   const [selectedRoutes, setSelectedRoutes] = useState<Route[]>([]);
   const [isSelectingMultiple, setIsSelectingMultiple] =
@@ -37,9 +37,11 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const [showLogModal, setShowLogModal] = useState<boolean>(false);
   const [showAddToListModal, setShowAddToListModal] = useState<boolean>(false);
   const [routesJustLogged, setRoutedJustLogged] = useState<Route[]>([]);
-  const pathname = usePathname()
+  const pathname = usePathname();
 
-  const isAuthFlow = ['/login', '/signup', '/signup-confirm'].includes(pathname)
+  const isAuthFlow = ['/login', '/signup', '/signup-confirm'].includes(
+    pathname,
+  );
 
   const onRouteSelected = (route: Route) => {
     const newSelectedRoutes = Array.from(new Set([...selectedRoutes, route]));
@@ -49,7 +51,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const onRouteDeselected = (route: Route) => {
     const routeSlug: string = route.slug;
     const newSelectedRoutes = selectedRoutes.filter(
-      ({ slug }) => slug !== routeSlug
+      ({ slug }) => slug !== routeSlug,
     );
     setSelectedRoutes(newSelectedRoutes);
 
@@ -84,7 +86,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
 
   const btnDoneMultipleOnClick = () => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else {
       setShowLogModal(true);
     }
@@ -92,7 +94,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
 
   const btnSaveMultipleToListOnClick = () => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     } else {
       setShowAddToListModal(true);
     }
@@ -175,7 +177,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
           </div>
         </nav>
       ) : (
-        ""
+        ''
       )}
     </RouteLogContext.Provider>
   );

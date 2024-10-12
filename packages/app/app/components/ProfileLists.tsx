@@ -1,12 +1,12 @@
-import { List } from "@climbingtopos/types";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { lists } from "@/app/api";
-import { useGradeHelpers } from "@/app/api/grades";
-import useUser from "@/app/api/user";
-import { popupError } from "@/app/helpers/alerts";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
-import Modal from "@/app/components/Modal";
+import { List } from '@climbingtopos/types';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { lists } from '@/app/api';
+import { useGradeHelpers } from '@/app/api/grades';
+import useUser from '@/app/api/user';
+import { popupError } from '@/app/helpers/alerts';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import Modal from '@/app/components/Modal';
 
 function ProfileLists() {
   const { isAuthenticating, isAuthenticated } = useUser();
@@ -15,7 +15,7 @@ function ProfileLists() {
   const [loadingListView, setLoadingListView] = useState(false);
   const [loading, setLoading] = useState(true);
   const [listViewModalVisible, setListViewModalVisible] = useState(false);
-  const [viewingListSlug, setViewingListSlug] = useState("");
+  const [viewingListSlug, setViewingListSlug] = useState('');
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
   useEffect(() => {
@@ -25,9 +25,9 @@ function ProfileLists() {
         const newUserLists = await lists.getLists();
         setUserLists(newUserLists);
       } catch (error) {
-        console.error("Error loading user profile", error);
+        console.error('Error loading user profile', error);
         popupError(
-          "Something has gone wrong, your profile couldn't be loaded. sorry"
+          "Something has gone wrong, your profile couldn't be loaded. sorry",
         );
       } finally {
         setLoading(false);
@@ -86,7 +86,7 @@ function ProfileLists() {
                   <tr key={route.slug}>
                     <td>
                       <Link
-                        to={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.routeSlug}`}
+                        href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.routeSlug}`}
                       >
                         {route.title}
                       </Link>
@@ -96,7 +96,7 @@ function ProfileLists() {
                     <td>
                       {convertGradeValueToGradeLabel(
                         route.gradeModal,
-                        route.gradingSystem
+                        route.gradingSystem,
                       )}
                     </td>
                   </tr>
@@ -112,7 +112,7 @@ function ProfileLists() {
           <p>It looks like you haven't created any lists yet</p>
         </div>
       ) : (
-        ""
+        ''
       )}
       {!loading &&
         userLists.map((list) => (

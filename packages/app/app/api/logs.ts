@@ -1,9 +1,9 @@
-import { Log, LogRequest } from "@climbingtopos/types";
-import { queryStringFromObject } from "@/app/helpers/queryString";
-import { API } from "aws-amplify";
+import { Log, LogRequest } from '@climbingtopos/types';
+import { queryStringFromObject } from '@/app/helpers/queryString';
+import { API } from 'aws-amplify';
 
 export function logRoutes(logs: LogRequest[]) {
-  return API.post("climbingtopos2-api", `/logs`, {
+  return API.post('climbingtopos2-api', `/logs`, {
     body: { logs },
   });
 }
@@ -12,7 +12,7 @@ export function getProfileLogs(
   cragSlug?: string,
   areaSlug?: string,
   topoSlug?: string,
-  routeSlug?: string
+  routeSlug?: string,
 ): Promise<Log[]> {
   const queryString = queryStringFromObject({
     cragSlug,
@@ -21,7 +21,7 @@ export function getProfileLogs(
     routeSlug,
   });
 
-  return API.get("climbingtopos2-api", `/profile/logs${queryString}`, {});
+  return API.get('climbingtopos2-api', `/profile/logs${queryString}`, {});
 }
 
 export function getUserLogs(
@@ -29,12 +29,12 @@ export function getUserLogs(
   cragSlug?: string,
   areaSlug?: string,
   topoSlug?: string,
-  routeSlug?: string
+  routeSlug?: string,
 ): Promise<Log[]> {
   return API.get(
-    "climbingtopos2-api",
+    'climbingtopos2-api',
     `/${userSub}?cragSlug=${cragSlug}&areaSlug=${areaSlug}&topoSlug=${topoSlug}&routeSlug=${routeSlug}`,
-    {}
+    {},
   );
 }
 
@@ -42,9 +42,9 @@ export function getRouteLogs(
   cragSlug?: string,
   areaSlug?: string,
   topoSlug?: string,
-  routeSlug?: string
+  routeSlug?: string,
 ): Promise<Log[]> {
-  return API.get("climbingtopos2-api", "/routes/logs", {
+  return API.get('climbingtopos2-api', '/routes/logs', {
     queryStringParameters: { cragSlug, areaSlug, topoSlug, routeSlug },
   });
 }

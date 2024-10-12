@@ -1,26 +1,20 @@
-import SNS from "@/db/sns";
-import { SNSHandler } from "aws-lambda";
+import SNS from '@/db/sns';
+import { SNSHandler } from 'aws-lambda';
 
-// todo types
-export const handler: SNSHandler = async ( event: any ): Promise<void> => {
-  console.log('atreaming')
+export const handler: SNSHandler = async (event: any): Promise<void> => {
   try {
     const promises = event.Records.map((record) => {
       const { eventName } = record;
 
-      console.log('stream')
-
       if (!eventName) {
         throw new Error(
-          "Error in Dynamodb Stream Consumer: record.eventName does not exist"
+          'Error in Dynamodb Stream Consumer: record.eventName does not exist',
         );
       }
 
-      console.log('event name', { eventName })
-
       if (!record.dynamodb) {
         throw new Error(
-          "Error in Dynamodb Stream Consumer: record.dynamodb does not exist"
+          'Error in Dynamodb Stream Consumer: record.dynamodb does not exist',
         );
       }
 
@@ -34,8 +28,6 @@ export const handler: SNSHandler = async ( event: any ): Promise<void> => {
         return;
       }
 
-      console.log('model marshalled', { modelMarshalled })
-
       const { S: model } = modelMarshalled;
 
       if (!model) {
@@ -43,14 +35,10 @@ export const handler: SNSHandler = async ( event: any ): Promise<void> => {
         return;
       }
 
-      console.log('model', { model })
-
       const modelUpperCase = model.toUpperCase();
       const eventNameUpperCase = eventName.toUpperCase();
       const topicName = `TOPIC_ARN_${modelUpperCase}_${eventNameUpperCase}`;
       const topicArn = process.env[topicName];
-
-      console.log({ topicName, topicArn})
 
       if (!topicArn) {
         return;
@@ -59,12 +47,12 @@ export const handler: SNSHandler = async ( event: any ): Promise<void> => {
       return SNS.publish({
         Message: JSON.stringify(record),
         TopicArn: topicArn,
-      })
+      });
     });
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("error in stream", error);
+    console.error('error in stream', error);
     throw error;
   }
 };

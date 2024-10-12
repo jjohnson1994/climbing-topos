@@ -1,9 +1,9 @@
-import { Route } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { analytics, areas, crags } from "@/services";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import { gradingSystems } from "@climbingtopos/globals";
+import { Route } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { analytics, areas, crags } from '@/services';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { gradingSystems } from '@climbingtopos/globals';
 
 export const didBecomeVerified = (newImage: Route, oldImage: Route) => {
   if (newImage.verified === true && oldImage.verified === false) {
@@ -23,7 +23,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
       const normalizedOldImage = normalizeRow<Route>(oldImage);
       const normalizedGrade = gradingSystems.find(
         (gradingSystem) =>
-          gradingSystem.title === normalizedNewImage.gradingSystem
+          gradingSystem.title === normalizedNewImage.gradingSystem,
       )?.grades[parseInt(normalizedNewImage.grade, 10)];
 
       const { areaSlug, cragSlug, slug } = normalizedNewImage;
@@ -32,14 +32,14 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
       const becameVerified = didBecomeVerified(
         normalizedNewImage,
-        normalizedOldImage
+        normalizedOldImage,
       );
 
       if (becameVerified) {
         tasks.push(
           analytics.incrementGlobalRouteCount(),
           areas.incrementRouteCount(cragSlug, areaSlug),
-          crags.incrementRouteCount(cragSlug)
+          crags.incrementRouteCount(cragSlug),
         );
       }
 
@@ -47,10 +47,10 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         tasks.push(
           algolaIndex.saveObject({
             ...normalizedNewImage,
-            model: "route",
+            model: 'route',
             objectID: slug,
             grade: normalizedGrade,
-          })
+          }),
         );
       }
 
@@ -59,7 +59,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("Error in routesOnInsert", error);
+    console.error('Error in routesOnInsert', error);
     throw error;
   }
 };

@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 export function usePageTitle(pageTitle: string | undefined) {
   useEffect(() => {
-    document.title = pageTitle ? `${pageTitle} | Climbing Topos` : "Climbing Topos";
+    document.title = pageTitle
+      ? `${pageTitle} | Climbing Topos`
+      : 'Climbing Topos';
 
     return () => {
-      document.title = "Climbing Topos"
+      document.title = 'Climbing Topos';
     };
   }, [pageTitle]);
 }

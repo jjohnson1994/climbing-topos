@@ -1,21 +1,21 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from "aws-lambda";
-import { lists } from "@/services";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandler } from 'aws-lambda';
+import { lists } from '@/services';
 
 export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
 ) => {
   try {
-    const userSub = event.requestContext.authorizer?.iam.cognitoIdentity.identityId
-
+    const userSub =
+      event.requestContext.authorizer?.iam.cognitoIdentity.identityId;
 
     if (!userSub) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           success: false,
         }),
-      }
+      };
     }
 
     const { slug } =
@@ -29,7 +29,7 @@ export const handler: APIGatewayProxyHandler = async (
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(listReponse),
       };
     } else {
@@ -37,16 +37,16 @@ export const handler: APIGatewayProxyHandler = async (
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userLists),
       };
     }
   } catch (error) {
-    console.error("Error getting lists", error);
+    console.error('Error getting lists', error);
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: true }),
     };
   }

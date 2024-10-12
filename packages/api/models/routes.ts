@@ -1,16 +1,25 @@
-import { nanoid } from "nanoid";
-import { DateTime } from "luxon";
-import { Resource } from "sst";
+import { nanoid } from 'nanoid';
+import { DateTime } from 'luxon';
+import { Resource } from 'sst';
 
-import { UserPublicData, Route, RouteRequest } from "@climbingtopos/types";
-import { createSlug } from "../helpers/slug";
+import { UserPublicData, Route, RouteRequest } from '@climbingtopos/types';
+import { createSlug } from '../helpers/slug';
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, UpdateCommand, QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  PutCommand,
+  UpdateCommand,
+  QueryCommand,
+  DynamoDBDocumentClient,
+} from '@aws-sdk/lib-dynamodb';
 
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-export async function createRoute(routeDescription: RouteRequest, auth0UserPublicData: UserPublicData, verified: boolean) {
+export async function createRoute(
+  routeDescription: RouteRequest,
+  auth0UserPublicData: UserPublicData,
+  verified: boolean,
+) {
   const date = DateTime.utc().toString();
   const slug = createSlug(`${routeDescription.title}-${nanoid(5)}`);
 
@@ -45,18 +54,18 @@ export async function createRoute(routeDescription: RouteRequest, auth0UserPubli
       gradeTally: {},
       gradeModal: routeDescription.grade,
       logCount: 0,
-      model: "route",
+      model: 'route',
       rating: 0,
       ratingTally: {},
       slug,
       verified,
       createdBy: auth0UserPublicData,
       createdAt: date,
-      updatedAt: date
-    }
-  }
+      updatedAt: date,
+    },
+  };
 
-  await dynamodb.send(new PutCommand(params))
+  await dynamodb.send(new PutCommand(params));
 
   return {
     slug,
@@ -67,7 +76,7 @@ export async function listRoutes(
   cragSlug: string,
   areaSlug?: string,
   topoSlug?: string,
-  routeSlug?: string
+  routeSlug?: string,
 ): Promise<Route[]> {
   let queryString = `route#`;
 
@@ -85,40 +94,38 @@ export async function listRoutes(
 
   const params = {
     TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression: "#hk = :hk AND begins_with(#sk, :sk)",
+    KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
     ExpressionAttributeNames: {
-      "#hk": "hk",
-      "#sk": "sk"
+      '#hk': 'hk',
+      '#sk': 'sk',
     },
     ExpressionAttributeValues: {
-      ":hk": cragSlug,
-      ":sk": queryString
-    }
-  }
+      ':hk': cragSlug,
+      ':sk': queryString,
+    },
+  };
 
-  const route = await dynamodb.send(new QueryCommand(params))
+  const route = await dynamodb.send(new QueryCommand(params));
 
   return route?.Items as Route[];
 }
 
-export async function getRouteBySlug(
-  routeSlug: string
-): Promise<Route> {
+export async function getRouteBySlug(routeSlug: string): Promise<Route> {
   const params = {
     TableName: Resource.climbingtopos2.name,
     IndexName: 'gsi2',
-    KeyConditionExpression: "#model = :model AND #slug = :slug",
+    KeyConditionExpression: '#model = :model AND #slug = :slug',
     ExpressionAttributeNames: {
-      "#model": "model",
-      "#slug": "slug"
+      '#model': 'model',
+      '#slug': 'slug',
     },
     ExpressionAttributeValues: {
-      ":model": "route",
-      ":slug": routeSlug
-    }
-  }
+      ':model': 'route',
+      ':slug': routeSlug,
+    },
+  };
 
-  const route = await dynamodb.send(new QueryCommand(params))
+  const route = await dynamodb.send(new QueryCommand(params));
 
   return route?.Items?.[0] as Route;
 }
@@ -132,16 +139,16 @@ export async function update(
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
     ExpressionAttributeValues: Record<string, any>;
-  }
+  },
 ) {
   const params = {
     TableName: Resource.climbingtopos2.name,
     Key: {
-      "hk": cragSlug,
-      "sk": `route#area#${areaSlug}#topo#${topoSlug}#${routeSlug}`
+      hk: cragSlug,
+      sk: `route#area#${areaSlug}#topo#${topoSlug}#${routeSlug}`,
     },
-    ...updateProps
-  }
+    ...updateProps,
+  };
 
   return dynamodb.send(new UpdateCommand(params), (err) => {
     if (err) {

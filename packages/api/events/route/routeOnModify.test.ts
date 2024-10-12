@@ -1,14 +1,14 @@
-import { analytics, areas, crags } from "@/services";
-import { handler } from "./routeOnModify";
-import algolaIndex from "@/db/algolia";
+import { analytics, areas, crags } from '@/services';
+import { handler } from './routeOnModify';
+import algolaIndex from '@/db/algolia';
 
-jest.mock("../../db/algolia");
+jest.mock('../../db/algolia');
 
-jest.mock("../../db/dynamodb", () => ({
+jest.mock('../../db/dynamodb', () => ({
   normalizeRow: (row: Record<string, string | boolean | number>) => row,
 }));
 
-jest.mock("../../services", () => ({
+jest.mock('../../services', () => ({
   analytics: {
     incrementGlobalRouteCount: jest.fn(),
   },
@@ -20,7 +20,7 @@ jest.mock("../../services", () => ({
   },
 }));
 
-describe("routeOnModify", () => {
+describe('routeOnModify', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -28,35 +28,32 @@ describe("routeOnModify", () => {
   it.each([
     ['incrementGlobalRouteCount', analytics.incrementGlobalRouteCount],
     ['area.incrementRouteCount', areas.incrementRouteCount],
-    ['crags.incrementRouteCount', crags.incrementRouteCount]
-  ])(
-    "Calls %s when a route become verified",
-    async (_title, func) => {
-      // @ts-ignore
-      await handler({
-        Records: [
-          {
-            Sns: {
-              Message: JSON.stringify({
-                dynamodb: {
-                  NewImage: {
-                    verified: true,
-                  },
-                  OldImage: {
-                    verified: false,
-                  },
+    ['crags.incrementRouteCount', crags.incrementRouteCount],
+  ])('Calls %s when a route become verified', async (_title, func) => {
+    // @ts-ignore
+    await handler({
+      Records: [
+        {
+          Sns: {
+            Message: JSON.stringify({
+              dynamodb: {
+                NewImage: {
+                  verified: true,
                 },
-              }),
-            },
+                OldImage: {
+                  verified: false,
+                },
+              },
+            }),
           },
-        ],
-      });
+        },
+      ],
+    });
 
-      expect(func).toHaveBeenCalled();
-    },
-  )
+    expect(func).toHaveBeenCalled();
+  });
 
-  it("Does not call incrementGlobalRouteCount if a route is not verified", async () => {
+  it('Does not call incrementGlobalRouteCount if a route is not verified', async () => {
     // @ts-ignore
     await handler({
       Records: [
@@ -80,7 +77,7 @@ describe("routeOnModify", () => {
     expect(analytics.incrementGlobalRouteCount).not.toHaveBeenCalled();
   });
 
-  it("Does not call incrementGlobalRouteCount if a route is already verified", async () => {
+  it('Does not call incrementGlobalRouteCount if a route is already verified', async () => {
     // @ts-ignore
     await handler({
       Records: [
@@ -104,7 +101,7 @@ describe("routeOnModify", () => {
     expect(analytics.incrementGlobalRouteCount).not.toHaveBeenCalled();
   });
 
-  it("Calls algoliaIndex.saveObject aslong as the route is verified", async () => {
+  it('Calls algoliaIndex.saveObject aslong as the route is verified', async () => {
     // @ts-ignore
     await handler({
       Records: [
@@ -128,7 +125,7 @@ describe("routeOnModify", () => {
     expect(algolaIndex.saveObject).toHaveBeenCalled();
   });
 
-  it("Saves normalised grade to Algolia", async () => {
+  it('Saves normalised grade to Algolia', async () => {
     // @ts-ignore
     await handler({
       Records: [
@@ -139,7 +136,7 @@ describe("routeOnModify", () => {
                 NewImage: {
                   verified: true,
                   gradingSystem: 'Font',
-                  grade: '6'
+                  grade: '6',
                 },
                 OldImage: {
                   verified: true,
@@ -153,16 +150,16 @@ describe("routeOnModify", () => {
 
     expect(algolaIndex.saveObject).toHaveBeenCalledWith(
       expect.objectContaining({
-        grade: '6B'
-      })
-    )
+        grade: '6B',
+      }),
+    );
   });
 
-  it("Throws is task fails", () => {
+  it('Throws is task fails', () => {
     (analytics.incrementGlobalRouteCount as jest.Mock).mockImplementationOnce(
       () => {
-        throw new Error("An Error");
-      }
+        throw new Error('An Error');
+      },
     );
 
     return expect(
@@ -174,7 +171,7 @@ describe("routeOnModify", () => {
               Message: JSON.stringify({
                 dynamodb: {
                   NewImage: {
-                    verified: true
+                    verified: true,
                   },
                   OldImage: {
                     verified: false,
@@ -184,7 +181,7 @@ describe("routeOnModify", () => {
             },
           },
         ],
-      })
+      }),
     ).rejects.toThrowError();
   });
 });

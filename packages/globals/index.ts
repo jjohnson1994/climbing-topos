@@ -110,7 +110,7 @@ export const gradingSystems = [
       'E11 7b',
       'E12 7a',
       'E12 7b',
-    ]
+    ],
   },
   {
     title: 'Font',
@@ -140,7 +140,7 @@ export const gradingSystems = [
       '9A',
       '9A+',
       '9B',
-    ]
+    ],
   },
   {
     title: 'French',
@@ -201,7 +201,7 @@ export const gradingSystems = [
       'V15',
       'V16',
       'V17',
-    ]
+    ],
   },
   {
     title: 'Kurtyka',
@@ -411,7 +411,7 @@ export const rockTypes = [
 ];
 
 export const routeTypeDefaultGradingSystem = {
-  'Sport': 'French',
-  'Trad': 'British',
-  'Boulder': 'Font'
-}
+  Sport: 'French',
+  Trad: 'British',
+  Boulder: 'Font',
+};

@@ -1,8 +1,8 @@
-import { Area } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { SNSHandler, SNSEvent } from "aws-lambda";
-import {crags} from "@/services";
+import { Area } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
+import { crags } from '@/services';
 
 export const didBecomeVerified = (newImage: Area, oldImage: Area) => {
   if (newImage.verified === true && oldImage.verified === false) {
@@ -10,7 +10,7 @@ export const didBecomeVerified = (newImage: Area, oldImage: Area) => {
   }
 
   return false;
-}
+};
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -23,15 +23,18 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
       const { cragSlug, slug } = normalizedNewImage;
 
-      const tasks: Promise<any>[] = []
+      const tasks: Promise<any>[] = [];
 
-      const becameVerified = didBecomeVerified(normalizedNewImage, normalizedOldImage);
+      const becameVerified = didBecomeVerified(
+        normalizedNewImage,
+        normalizedOldImage,
+      );
       if (becameVerified) {
         tasks.push(
           crags.incrementAreaCount(cragSlug),
           algolaIndex.saveObject({
             ...normalizedNewImage,
-            model: "area",
+            model: 'area',
             objectID: slug,
           }),
         );
@@ -42,7 +45,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("Error in areaOnInsert", error);
-     throw error
+    console.error('Error in areaOnInsert', error);
+    throw error;
   }
 };

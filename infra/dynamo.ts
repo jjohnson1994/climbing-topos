@@ -1,22 +1,22 @@
-const table = new sst.aws.Dynamo("climbingtopos2", {
+const table = new sst.aws.Dynamo('climbingtopos2', {
   fields: {
     hk: 'string',
     sk: 'string',
     model: 'string',
     slug: 'string',
   },
-  primaryIndex: { hashKey: "hk", rangeKey: "sk" },
+  primaryIndex: { hashKey: 'hk', rangeKey: 'sk' },
   globalIndexes: {
     gsi1: {
-      hashKey: "model",
-      rangeKey: "sk",
+      hashKey: 'model',
+      rangeKey: 'sk',
     },
     gsi2: {
-      hashKey: "model",
-      rangeKey: "slug",
+      hashKey: 'model',
+      rangeKey: 'slug',
     },
   },
   stream: 'new-and-old-images',
 });
 
-export { table }
+export { table };

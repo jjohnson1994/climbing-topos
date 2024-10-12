@@ -1,6 +1,6 @@
 export async function reverseLookup(latitude: string, longitude: string) {
   const res = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+    `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
   );
 
   if (res.status !== 200) {
@@ -13,5 +13,5 @@ export async function reverseLookup(latitude: string, longitude: string) {
     throw json;
   }
 
-  return json
+  return json;
 }

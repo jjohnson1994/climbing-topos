@@ -1,8 +1,8 @@
-import { Area } from "@climbingtopos/types";
-import algolaIndex from "@/db/algolia";
-import { normalizeRow } from "@/db/dynamodb";
-import { crags } from "@/services";
-import { SNSHandler, SNSEvent } from "aws-lambda";
+import { Area } from '@climbingtopos/types';
+import algolaIndex from '@/db/algolia';
+import { normalizeRow } from '@/db/dynamodb';
+import { crags } from '@/services';
+import { SNSHandler, SNSEvent } from 'aws-lambda';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   try {
@@ -13,17 +13,17 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
       const { cragSlug, slug, verified } = normalizedRow;
 
-      const tasks: Promise<any>[] = []
+      const tasks: Promise<any>[] = [];
 
       if (verified) {
         tasks.push(
           crags.incrementAreaCount(cragSlug),
           algolaIndex.saveObject({
             ...normalizedRow,
-            model: "area",
+            model: 'area',
             objectID: slug,
-          })
-        )
+          }),
+        );
       }
 
       return tasks;
@@ -31,7 +31,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 
     await Promise.all(promises);
   } catch (error) {
-    console.error("Error in areaOnInsert", error);
-    throw error
+    console.error('Error in areaOnInsert', error);
+    throw error;
   }
 };

@@ -1,19 +1,26 @@
-"use client"
+// TODO https://github.com/users/jjohnson1994/projects/1/views/1?pane=issue&itemId=83148825
+// @ts-nocheck
 
-import { yupResolver } from "@hookform/resolvers/yup";
-import { NewAreaSchema } from "@climbingtopos/schemas";
-import { Crag } from "@climbingtopos/types";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from 'next/navigation'
-import { areas, crags } from "@/app/api";
-import { areaTags as tags, rockTypes } from "@climbingtopos/globals";
-import { popupError, popupSuccess } from "@/app/helpers/alerts";
-import { getCurrentPosition } from "@/app/helpers/geolocation";
+'use client';
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewAreaSchema } from '@climbingtopos/schemas';
+import { Crag } from '@climbingtopos/types';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { areas, crags } from '@/app/api';
+import { areaTags as tags, rockTypes } from '@climbingtopos/globals';
+import { popupError, popupSuccess } from '@/app/helpers/alerts';
+import { getCurrentPosition } from '@/app/helpers/geolocation';
 
 const schema = NewAreaSchema();
 
-function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) {
+function CreateArea({
+  params: { cragSlug },
+}: {
+  params: { cragSlug: string };
+}) {
   const router = useRouter();
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,21 +34,21 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
     watch,
   } = useForm({
     resolver: yupResolver(schema),
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      access: "unknown",
-      accessDetails: "",
-      approachNotes: "",
-      description: "",
-      latitude: "",
-      longitude: "",
-      rockType: "",
+      access: 'unknown',
+      accessDetails: '',
+      approachNotes: '',
+      description: '',
+      latitude: '',
+      longitude: '',
+      rockType: '',
       tags: [] as string[],
-      title: "",
+      title: '',
     },
   });
 
-  const watchTags = watch("tags", []);
+  const watchTags = watch('tags', []);
 
   useEffect(() => {
     const getCrag = async () => {
@@ -49,7 +56,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
         const newCrag = await crags.getCragBySlug(cragSlug);
         setCrag(newCrag);
       } catch (error) {
-        console.error("Error getting area crag", error);
+        console.error('Error getting area crag', error);
       }
     };
 
@@ -61,10 +68,10 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
 
     try {
       const location = await getCurrentPosition();
-      setValue("latitude", `${location.coords.latitude}`);
-      setValue("longitude", `${location.coords.longitude}`);
+      setValue('latitude', `${location.coords.latitude}`);
+      setValue('longitude', `${location.coords.longitude}`);
     } catch (error) {
-      console.error("Error loading user location", error);
+      console.error('Error loading user location', error);
     } finally {
       setLocationLoading(false);
     }
@@ -75,7 +82,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
 
     try {
       if (!crag) {
-        throw new Error("Cannot create new route, crag not found");
+        throw new Error('Cannot create new route, crag not found');
       }
 
       const { slug: areaSlug } = await areas.createArea({
@@ -87,11 +94,11 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
         cragTitle: crag.title,
         state: crag.osmData.address.state,
       });
-      await popupSuccess("Area Created!");
+      await popupSuccess('Area Created!');
       router.push(`/crags/${cragSlug}/areas/${areaSlug}`);
     } catch (error) {
-      console.error("Error creating crag", error);
-      popupError("Ahh, something has gone wrong...");
+      console.error('Error creating crag', error);
+      popupError('Ahh, something has gone wrong...');
     } finally {
       setLoading(false);
     }
@@ -102,7 +109,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
       <div className="container box">
         <form
           onSubmit={formOnSubmit}
-          style={{ display: "flex", flexDirection: "column" }}
+          style={{ display: 'flex', flexDirection: 'column' }}
           autoComplete="off"
         >
           <div className="field">
@@ -110,7 +117,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
               Title
             </label>
             <div className="control">
-              <input className="input" type="text" {...register("title")} />
+              <input className="input" type="text" {...register('title')} />
             </div>
             <p className="help is-danger">{errors.title?.message}</p>
           </div>
@@ -122,7 +129,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
             <div className="control">
               <textarea
                 className="textarea"
-                {...register("description")}
+                {...register('description')}
               ></textarea>
             </div>
             <p className="help is-danger">{errors.description?.message}</p>
@@ -136,7 +143,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
               <textarea
                 id="approachNotes"
                 className="textarea"
-                {...register("approachNotes")}
+                {...register('approachNotes')}
               ></textarea>
             </div>
             <p className="help is-danger">{errors.approachNotes?.message}</p>
@@ -151,14 +158,14 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
                     key={tag}
                     className={`
                       tag
-                      ${watchTags?.includes(tag) ? "is-primary" : ""}
+                      ${watchTags?.includes(tag) ? 'is-primary' : ''}
                     `}
                   >
                     <input
                       type="checkbox"
                       value={tag}
-                      {...register("tags")}
-                      style={{ display: "none" }}
+                      {...register('tags')}
+                      style={{ display: 'none' }}
                     />
                     {tag}
                   </label>
@@ -172,7 +179,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
             <label className="label">Rock Type</label>
             <div className="control is-expanded">
               <div className="select is-fullwidth">
-                <select {...register("rockType")}>
+                <select {...register('rockType')}>
                   {rockTypes.map((rockType) => (
                     <option key={rockType} value={rockType}>
                       {rockType}
@@ -194,7 +201,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
                     className="input"
                     type="text"
                     placeholder="Latitude"
-                    {...register("latitude")}
+                    {...register('latitude')}
                   />
                 </div>
                 <div className="control is-expanded has-icons-right">
@@ -203,7 +210,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
                     className="input"
                     type="text"
                     placeholder="Logitude"
-                    {...register("longitude")}
+                    {...register('longitude')}
                   />
                 </div>
                 <div className="control">
@@ -211,7 +218,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
                     type="button"
                     className={`
                       button
-                      ${locationLoading ? "is-loading" : ""}
+                      ${locationLoading ? 'is-loading' : ''}
                     `}
                     onClick={() => btnFindMeOnClick()}
                   >
@@ -231,35 +238,23 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
             <label className="label">Access</label>
             <div className="control">
               <label className="radio">
-                <input
-                  type="radio"
-                  value="unknown"
-                  {...register("access")}
-                />
+                <input type="radio" value="unknown" {...register('access')} />
                 Unknown
               </label>
               <label className="radio">
-                <input
-                  type="radio"
-                  value="permitted"
-                  {...register("access")}
-                />
+                <input type="radio" value="permitted" {...register('access')} />
                 Permitted
               </label>
               <label className="radio">
                 <input
                   type="radio"
                   value="restricted"
-                  {...register("access")}
+                  {...register('access')}
                 />
                 Restricted
               </label>
               <label className="radio">
-                <input
-                  type="radio"
-                  value="banned"
-                  {...register("access")}
-                />
+                <input type="radio" value="banned" {...register('access')} />
                 Banned
               </label>
             </div>
@@ -271,10 +266,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
               Access Details
             </label>
             <div className="control">
-              <textarea
-                className="textarea"
-                {...register("accessDetails")}
-              />
+              <textarea className="textarea" {...register('accessDetails')} />
             </div>
           </div>
 
@@ -283,7 +275,7 @@ function CreateArea({ params: { cragSlug } }: { params: { cragSlug: string } }) 
               <div className="control">
                 <button
                   type="submit"
-                  className={`button is-primary ${loading ? "is-loading" : ""}`}
+                  className={`button is-primary ${loading ? 'is-loading' : ''}`}
                 >
                   <span>Continue</span>
                 </button>
