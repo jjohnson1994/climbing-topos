@@ -1,43 +1,37 @@
+'use server';
+
 import { Area, Crag, Route, Topo } from '@climbingtopos/types';
-import { useEffect, useState } from 'react';
 import { popupError } from '../helpers/alerts';
-import { getCragItemsAwaitingAproval } from '../api/crags';
-import LoadingSpinner from './LoadingSpinner';
+import { get as getCragItemsAwaitingApproval } from '@/app/data/actions/crags/items-awaiting-approval/get';
 import Link from 'next/link';
-import useUser from '../api/user';
+import { auth } from '../actions';
 
 interface CragAdminProps {
   crag: Crag;
 }
 
-const CragAdmin = (props: CragAdminProps) => {
-  const { isAuthenticated } = useUser();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [itemsAwaitingApproval, setItemsAwaitingApproval] = useState<
-    Array<Topo | Area | Route>
-  >([]);
+const isNotError = (items: any): items is Array<Topo | Area | Route> => {
+  return items?.error === undefined;
+};
 
-  useEffect(() => {
-    const getAdminCragActions = async () => {
-      try {
-        setLoading(true);
-        const itemsAwaitingAproval = await getCragItemsAwaitingAproval(
-          props.crag.slug,
-        );
+async function CragAdmin(props: CragAdminProps) {
+  const isAuthenticated = await auth();
 
-        setItemsAwaitingApproval(itemsAwaitingAproval);
-      } catch (error) {
-        console.error('Error loading crag admin actions', error);
-        popupError('There was an error loading this crag. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  let itemsAwaitingApproval: Array<Topo | Area | Route> = [];
 
-    if (isAuthenticated) {
-      getAdminCragActions();
+  try {
+    const newItemsAwaitingApproval = await getCragItemsAwaitingApproval(
+      props.crag.slug,
+    );
+
+    if (isNotError(newItemsAwaitingApproval)) {
+      itemsAwaitingApproval = newItemsAwaitingApproval;
     }
-  }, [isAuthenticated, props.crag.slug]);
+  } catch (error) {
+    console.error('Error loading crag admin actions', error);
+    popupError('There was an error loading this crag. Please try again.');
+  } finally {
+  }
 
   const renderTopoListItem = (topo: Topo) => (
     <Link href={`/crags/${topo.cragSlug}/areas/${topo.areaSlug}#${topo.slug}`}>
@@ -67,7 +61,7 @@ const CragAdmin = (props: CragAdminProps) => {
 
   const renderRouteListItem = (route: Route) => (
     <Link
-      href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+      href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.slug}`}
     >
       <div className="block box p-0 mb-5" style={{ overflow: 'hidden' }}>
         <div className="columns is-mobile is-gapless">
@@ -113,60 +107,47 @@ const CragAdmin = (props: CragAdminProps) => {
 
   return (
     <>
-      {loading && (
-        <section className="section">
-          <div className="container">
-            <LoadingSpinner />
-          </div>
-        </section>
-      )}
-      {!loading && (
-        <div className="container">
-          <h1 className="title">Awaiting Approval</h1>
-          <div>
-            {itemsAwaitingApproval.length === 0 && (
-              <p>There are no items awaiting approval</p>
-            )}
-          </div>
-          <div>
-            {itemsAwaitingApproval.map((itemAwaitingApproval) => {
-              if (itemAwaitingApproval.model === 'route') {
-                return (
-                  <div key={itemAwaitingApproval.slug}>
-                    {renderRouteListItem(
-                      itemAwaitingApproval as unknown as Route,
-                    )}
-                  </div>
-                );
-              }
-
-              if (itemAwaitingApproval.model === 'area') {
-                return (
-                  <div key={itemAwaitingApproval.slug}>
-                    {renderAreaListItem(
-                      itemAwaitingApproval as unknown as Area,
-                    )}
-                  </div>
-                );
-              }
-
-              if (itemAwaitingApproval.model === 'topo') {
-                return (
-                  <div key={itemAwaitingApproval.slug}>
-                    {renderTopoListItem(
-                      itemAwaitingApproval as unknown as Topo,
-                    )}
-                  </div>
-                );
-              }
-
-              return '';
-            })}
-          </div>
+      <div className="container">
+        <h1 className="title">Awaiting Approval</h1>
+        <div>
+          {itemsAwaitingApproval.length === 0 && (
+            <p>There are no items awaiting approval</p>
+          )}
         </div>
-      )}
+        <div>
+          {itemsAwaitingApproval.map((itemAwaitingApproval) => {
+            if (itemAwaitingApproval.model === 'route') {
+              return (
+                <div key={itemAwaitingApproval.slug}>
+                  {renderRouteListItem(
+                    itemAwaitingApproval as unknown as Route,
+                  )}
+                </div>
+              );
+            }
+
+            if (itemAwaitingApproval.model === 'area') {
+              return (
+                <div key={itemAwaitingApproval.slug}>
+                  {renderAreaListItem(itemAwaitingApproval as unknown as Area)}
+                </div>
+              );
+            }
+
+            if (itemAwaitingApproval.model === 'topo') {
+              return (
+                <div key={itemAwaitingApproval.slug}>
+                  {renderTopoListItem(itemAwaitingApproval as unknown as Topo)}
+                </div>
+              );
+            }
+
+            return '';
+          })}
+        </div>
+      </div>
     </>
   );
-};
+}
 
 export default CragAdmin;

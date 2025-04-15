@@ -1,12 +1,14 @@
 // TODO https://github.com/users/jjohnson1994/projects/1/views/1?pane=issue&itemId=83148825
 // @ts-nocheck
 
+'use client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NewLogsSchema } from '@climbingtopos/schemas';
 import { GradingSystem, LogRequest, Route } from '@climbingtopos/types';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { globals, logs } from '../api';
+import { logRoutes } from './RouteAddToLogModalActions';
+import { routeTags, gradingSystems } from '@climbingtopos/globals';
 import { popupError, toastSuccess } from '../helpers/alerts';
 import Modal from './Modal';
 import './RoutesAddToLogModal.css';
@@ -29,8 +31,6 @@ function RoutesAddToLogModal({
   onRoutesLogged,
 }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [routeTags, setRouteTags] = useState<string[]>([]);
-  const [gradingSystems, setGradingSystems] = useState<GradingSystem[]>([]);
 
   const {
     register,
@@ -43,22 +43,6 @@ function RoutesAddToLogModal({
   });
 
   const watchFormFields = watch();
-
-  useEffect(() => {
-    getGlobals();
-  }, []);
-
-  const getGlobals = async () => {
-    try {
-      const newRouteTags = await globals.getRouteTags();
-      const newGradingSystem = await globals.getGradingSystems();
-
-      setRouteTags(newRouteTags);
-      setGradingSystems(newGradingSystem);
-    } catch (error) {
-      console.error('Error loading route tags', error);
-    }
-  };
 
   const getGradeOptions = (gradingSystemTitle: string) => {
     const gradingSystem = gradingSystems.find(
@@ -81,11 +65,20 @@ function RoutesAddToLogModal({
     try {
       await logRoutes(data.logs as LogRequest[]);
 
+      toastSuccess('Routes Logged');
+
+      if (onConfirm) {
+        onConfirm();
+      }
+
       if (onRoutesLogged) {
         onRoutesLogged();
       }
     } catch (error) {
       console.error('Error logging routes', error);
+      popupError(
+        "Ah, there's been an error and your climbs could not be logged",
+      );
     } finally {
       setLoading(false);
     }
@@ -94,22 +87,6 @@ function RoutesAddToLogModal({
   const btnLogRoutesCancelOnClick = () => {
     if (onCancel) {
       onCancel();
-    }
-  };
-
-  const logRoutes = async (routes: LogRequest[]) => {
-    try {
-      await logs.logRoutes(routes);
-      toastSuccess('Routes Logged');
-
-      if (onConfirm) {
-        onConfirm();
-      }
-    } catch (error) {
-      console.error('Error logging routes', error);
-      popupError(
-        "Ah, there's been an error and your climbs could not be logged",
-      );
     }
   };
 
@@ -351,13 +328,12 @@ function RoutesAddToLogModal({
                           key={tag}
                           className={`
                           tag
-                          ${
-                            watchFormFields?.logs?.[index]?.tags?.includes?.(
-                              tag,
-                            )
+                          ${watchFormFields?.logs?.[index]?.tags?.includes?.(
+                            tag,
+                          )
                               ? 'is-primary'
                               : ''
-                          }
+                            }
                         `}
                         >
                           <input

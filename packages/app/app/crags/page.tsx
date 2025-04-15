@@ -1,19 +1,17 @@
+'use server';
 import React from 'react';
 import Link from 'next/link';
 
-import { getCrags } from '@/app/api/crags';
+import { get as getCrags } from '@/app/data/actions/crags/get';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 async function Crags() {
   const loading = false;
 
-  const crags = await getCrags()
-    .then((crags) =>
-      crags.sort((cragA, cragB) => (cragA.title > cragB.title ? 1 : -1)),
-    )
-    .catch((error) => {
-      console.error(error);
-    });
+  const response = await getCrags();
+  const crags = response.sort((cragA, cragB) =>
+    cragA.title > cragB.title ? 1 : -1,
+  );
 
   return (
     <React.Fragment>

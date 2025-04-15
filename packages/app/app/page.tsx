@@ -1,11 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { crags } from '@/app/api';
+import { get as getCrags } from '@/app/data/actions/crags/get';
+import Button, { Color } from './elements/Button';
 
 export default async function Home() {
-  const popularCrags = await crags
-    .getCrags('logCount', 'desc', 3)
-    .catch((error) => console.error(error));
+  const popularCrags = await getCrags(undefined, 'logCount', 'desc', 3).catch(
+    (error) => console.error(error),
+  );
 
   return (
     <>
@@ -41,6 +42,12 @@ export default async function Home() {
                   </Link>
                 </div>
               ))}
+            </div>
+
+            <div className="is-flex is-justified-end">
+              <Link href="/crags">
+                <Button>All Crags</Button>
+              </Link>
             </div>
           </div>
         </section>

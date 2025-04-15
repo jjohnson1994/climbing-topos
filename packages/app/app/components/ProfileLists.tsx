@@ -1,58 +1,49 @@
-import { List } from '@climbingtopos/types';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { lists } from '@/app/api';
-import { useGradeHelpers } from '@/app/api/grades';
-import useUser from '@/app/api/user';
-import { popupError } from '@/app/helpers/alerts';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
-import Modal from '@/app/components/Modal';
+'use server';
 
-function ProfileLists() {
-  const { isAuthenticating, isAuthenticated } = useUser();
-  const [userLists, setUserLists] = useState<List[]>([]);
-  const [activeList, setActiveList] = useState<List>();
-  const [loadingListView, setLoadingListView] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [listViewModalVisible, setListViewModalVisible] = useState(false);
-  const [viewingListSlug, setViewingListSlug] = useState('');
+import { List } from '@climbingtopos/types';
+import Link from 'next/link';
+import { get as getLists } from '@/app/data/actions/lists/get';
+import { useGradeHelpers } from '@/app/api/grades';
+import { popupError } from '@/app/helpers/alerts';
+import Modal from '@/app/components/Modal';
+import { auth } from '../actions';
+
+async function ProfileLists({
+  searchParams,
+}: {
+  searchParams: { openList?: string };
+}) {
+  const user = await auth();
+
+  let userLists: List[] = [];
+  let activeList: List;
+
+  const viewingListSlug = searchParams?.openList;
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
 
-  useEffect(() => {
-    const getProfileDate = async () => {
-      try {
-        setLoading(true);
-        const newUserLists = await lists.getLists();
-        setUserLists(newUserLists);
-      } catch (error) {
-        console.error('Error loading user profile', error);
-        popupError(
-          "Something has gone wrong, your profile couldn't be loaded. sorry",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isAuthenticating === false && isAuthenticated === true) {
-      getProfileDate();
-    }
-  }, [isAuthenticating, isAuthenticated]);
-
-  const btnListRouteOnClick = async (listSlug: string) => {
+  if (viewingListSlug) {
     try {
-      setViewingListSlug(listSlug);
-      setLoadingListView(true);
-      setListViewModalVisible(true);
-
-      const newActiveList = await lists.getList(listSlug);
+      const newActiveList = await getLists(viewingListSlug);
 
       setActiveList(newActiveList);
     } catch (error) {
-    } finally {
-      setLoadingListView(false);
+      console.error('Error loading list', error);
+      popupError(
+        "Something has gone wrong, the list couldn't be loaded. sorry",
+      );
     }
-  };
+  }
+
+  try {
+    const newUserLists = await getLists();
+    userLists = newUserLists;
+  } catch (error) {
+    console.error('Error loading user profile', error);
+    popupError(
+      "Something has gone wrong, your profile couldn't be loaded. sorry",
+    );
+  } finally {
+  }
 
   const modalTitle = () => {
     return userLists.find(({ slug }) => slug === viewingListSlug)?.title;
@@ -62,16 +53,14 @@ function ProfileLists() {
     <>
       <Modal
         title={`${modalTitle()}`}
-        visible={listViewModalVisible}
-        btnConfirmOnClick={() => setListViewModalVisible(false)}
-        btnCancelOnClick={() => setListViewModalVisible(false)}
+        visible={viewingListSlug}
+        btnConfirmOnClick="/"
+        btnCancelOnClick="/"
         hasConfirmButton={false}
         btnCancelText="Close"
       >
         <>
-          {loadingListView ? (
-            <LoadingSpinner />
-          ) : (
+          {
             <table className="table is-fullwidth">
               <thead>
                 <tr>
@@ -103,30 +92,26 @@ function ProfileLists() {
                 ))}
               </tbody>
             </table>
-          )}
+          }
         </>
       </Modal>
-      {loading && <LoadingSpinner />}
-      {!loading && !userLists.length ? (
+      {!userLists.length ? (
         <div className="block box">
           <p>It looks like you haven't created any lists yet</p>
         </div>
       ) : (
         ''
       )}
-      {!loading &&
-        userLists.map((list) => (
-          <div
-            key={list.slug}
-            className="box block"
-            onClick={() => btnListRouteOnClick(list.slug)}
-          >
+      {userLists.map((list) => (
+        <Link href={`?tab=lists&openList=${list.slug}`}>
+          <div key={list.slug} className="box block">
             <p>
               <b>{list.title}</b>
             </p>
             <span className="tag">Routes {list.routeCount}</span>
           </div>
-        ))}
+        </Link>
+      ))}
     </>
   );
 }

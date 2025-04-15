@@ -9,10 +9,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "sst": "3.0.83"
+    "server-only": "^0.0.1",
+    "sst": "^3.9.36"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint", "prettier"],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint",
+      "prettier"
+    ],
     "*.{ts,tsx}": "tsc-files --noEmit"
   },
   "devDependencies": {

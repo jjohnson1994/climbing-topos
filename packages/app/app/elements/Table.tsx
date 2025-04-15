@@ -2,7 +2,7 @@ import { useTable, useSortBy, Column } from 'react-table';
 
 interface Props {
   columns: Column[];
-  data: Object[];
+  data: object[];
   sortBy?: {
     id: string;
     desc: boolean;

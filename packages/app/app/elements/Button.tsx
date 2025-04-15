@@ -19,7 +19,7 @@ export const enum Color {
 }
 
 interface ButtonProps {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: Function;
   children?: any;
   color?: Color;
   icon?: string;
@@ -46,7 +46,9 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
       <button
         className={classes}
         ref={ref}
-        onClick={(e) => props.onClick?.(e)}
+        {...(props.onClick && {
+          onClick: (e) => props.onClick(e),
+        })}
         {...(props.type && {
           type: props.type,
         })}

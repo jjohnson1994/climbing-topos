@@ -1,21 +1,16 @@
-"use client"
+'use server';
 
-import { PropsWithChildren } from "react"
-import useUser from '@/app/api/user';
-import { redirect } from 'next/navigation'
+import { PropsWithChildren } from 'react';
+import { auth, login } from '@/app/actions';
 
-const AuthenticaedRoute = ({ children }: PropsWithChildren) => {
-  const { isAuthenticated } = useUser();
+async function AuthenticaedRoute({ children }: PropsWithChildren) {
+  const subject = await auth();
 
-  if (!isAuthenticated) {
-    redirect('/login')
+  if (!subject) {
+    return login();
   }
 
-  return (
-    <>
-      {children}
-    </>
-  )
+  return <>{children}</>;
 }
 
-export default AuthenticaedRoute
+export default AuthenticaedRoute;

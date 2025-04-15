@@ -8,7 +8,7 @@ export default $config({
       home: 'aws',
       providers: {
         aws: {
-          // region: 'eu-west-1'
+          region: 'eu-west-1',
         },
       },
     };
@@ -16,9 +16,10 @@ export default $config({
   async run() {
     const region = aws.getRegionOutput().name;
 
-    await import('./infra/storage');
+    const { table } = await import('./infra/dynamo');
+    const { bucket } = await import('./infra/storage');
     const { api } = await import('./infra/api');
-    const { userPool, identityPool, userPoolClient } = await import(
+    const { auth, userPool, identityPool, userPoolClient } = await import(
       './infra/auth'
     );
     const { algoliaAppId, algoliaIndex, algoliaAdminKey, algoliaSearchApiKey } =
@@ -27,6 +28,7 @@ export default $config({
 
     return new sst.aws.Nextjs('climbingtopos2-frontend', {
       path: 'packages/app/',
+      link: [auth, table, bucket],
       environment: {
         NEXT_PUBLIC_API_URL: api.url,
         NEXT_PUBLIC_REGION: region,

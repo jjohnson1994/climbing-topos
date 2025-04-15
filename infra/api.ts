@@ -66,10 +66,11 @@ api.route(
   {
     auth: { iam: true },
   },
-),
-  api.route('GET /lists', 'packages/api/routes/lists/get.handler', {
-    auth: { iam: true },
-  });
+);
+
+api.route('GET /lists', 'packages/api/routes/lists/get.handler', {
+  auth: { iam: true },
+});
 
 api.route('PATCH /lists', 'packages/api/routes/lists/patch.handler', {
   auth: { iam: true },
@@ -108,8 +109,9 @@ api.route(
   {
     auth: { iam: true },
   },
-),
-  api.route('GET /routes/logs', 'packages/api/routes/routes/logs/get.handler');
+);
+
+api.route('GET /routes/logs', 'packages/api/routes/routes/logs/get.handler');
 
 api.route('POST /topos', 'packages/api/routes/topos/post.handler', {
   auth: { iam: true },

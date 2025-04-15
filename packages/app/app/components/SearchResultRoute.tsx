@@ -8,7 +8,7 @@ function SearchResultsRoute({ route }: { route: Route }) {
   return (
     <Link
       className="box p-0"
-      href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+      href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.slug}`}
       style={{ overflow: 'hidden' }}
     >
       <div className="columns is-mobile is-gapless">

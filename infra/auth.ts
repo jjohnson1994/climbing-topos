@@ -1,6 +1,8 @@
 import { Resource } from 'sst';
 import { api } from './api';
 import { bucket } from './storage';
+import { table } from './dynamo';
+import { email } from './email';
 
 const region = aws.getRegionOutput().name;
 
@@ -74,4 +76,15 @@ export const identityPool = new sst.aws.CognitoIdentityPool('IdentityPool', {
       //   }
     ],
   },
+});
+
+export const auth = new sst.aws.Auth('ClimbingToposOpenAuth', {
+  issuer: {
+    handler: 'packages/api/auth.handler',
+    link: [table, email],
+  },
+  domain:
+    $app.stage === 'production'
+      ? 'auth.climbingtopos.com'
+      : `${$app.stage}.auth.climbingtopos.com`,
 });

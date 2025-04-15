@@ -1,3 +1,5 @@
+'use client';
+
 import { popupError, toastSuccess } from '../helpers/alerts';
 import { clipboardWriteText } from '../helpers/clipboard';
 

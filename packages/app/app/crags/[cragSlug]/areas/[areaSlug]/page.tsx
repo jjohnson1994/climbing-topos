@@ -1,161 +1,136 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Area, Crag, Topo } from '@climbingtopos/types';
-import { areas, crags, topos } from '@/app/api';
+import { Area, Crag } from '@climbingtopos/types';
+import { get as getAreaBySlug } from '@/app/data/actions/areas/get';
+import { get as getCragBySlug } from '@/app/data/actions/crags/get';
 import AreaRoutesTable from '@/app/components/AreaRoutesTable';
 import ButtonCopyCoordinates from '@/app/components/ButtonCopyCoordinates';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
 import TopoImage from '@/app/components/TopoImage';
-import { popupSuccess, popupError } from '@/app/helpers/alerts';
-import Button, { Color } from '@/app/elements/Button';
-import useUser from '@/app/api/user';
 import Head from 'next/head';
+import { auth } from '@/app/actions';
 
-function AreaView({
+async function AreaView({
   params,
 }: {
   params: { areaSlug: string; cragSlug: string };
 }) {
   const { areaSlug, cragSlug } = params;
-  const [area, setArea] = useState<Area>();
-  const [crag, setCrag] = useState<Crag>();
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const { userAttributes } = useUser();
+  const user = await auth();
 
-  useEffect(() => {
-    const doGetArea = async () => {
-      try {
-        setLoading(true);
-        const [area, crag] = await Promise.all([
-          areas.getArea(areaSlug),
-          crags.getCragBySlug(cragSlug),
-        ]);
-        setArea(area);
-        setCrag(crag);
-      } catch (error) {
-        console.error('Error loading area', error);
-        popupError('Oh dear, there was a problem loading this area');
-      } finally {
-        setLoading(false);
-      }
-    };
+  let area: Area;
+  let crag: Crag;
 
-    doGetArea();
-  }, [areaSlug, cragSlug]);
+  const isAdmin = false;
 
-  useEffect(() => {
-    // TODO https://github.com/users/jjohnson1994/projects/1?pane=issue&itemId=83148812
-    // if (!crag?.managedBy.sub || !userAttributes?.attributes?.sub) {
-    //   setIsAdmin(false);
-    // } else if (crag.managedBy.sub === userAttributes?.attributes?.sub) {
-    //   setIsAdmin(true);
-    // }
-  }, [userAttributes, crag]);
-
-  const btnVerifyOnClick = async () => {
+  const doGetArea = async () => {
     try {
-      if (!area) {
-        return;
-      }
+      const [newArea, newCrag] = await Promise.all([
+        getAreaBySlug(areaSlug),
+        getCragBySlug(cragSlug),
+      ]);
 
-      const verify = window.confirm(
-        'Are you sure you want to verify this area?',
-      );
-
-      if (verify) {
-        await areas.updateArea(area.slug, { verified: true });
-        setArea({
-          ...area,
-          verified: true,
-        });
-        popupSuccess('Area Verified');
-      }
+      area = newArea;
+      crag = newCrag;
     } catch (error) {
-      console.error('error updating area', error);
+      console.error('Error loading area', error);
+      // todo error page
     }
   };
 
-  const btnVerifyTopoOnClick = async (topoSlug: string) => {
-    try {
-      if (!area) {
-        return;
-      }
+  await doGetArea();
 
-      const verify = window.confirm(
-        'Are you sure you want to verify this topo?',
-      );
+  // TODO verification
+  //const btnVerifyOnClick = async () => {
+  //  try {
+  //    if (!area) {
+  //      return;
+  //    }
+  //
+  //    const verify = window.confirm(
+  //      'Are you sure you want to verify this area?',
+  //    );
+  //
+  //    if (verify) {
+  //      await areas.updateArea(area.slug, { verified: true });
+  //      setArea({
+  //        ...area,
+  //        verified: true,
+  //      });
+  //      popupSuccess('Area Verified');
+  //    }
+  //  } catch (error) {
+  //    console.error('error updating area', error);
+  //  }
+  //};
 
-      if (verify) {
-        await topos.updateTopo(topoSlug, { verified: true });
-
-        const newTopos = area.topos.reduce((acc: Topo[], cur) => {
-          if (cur.slug === topoSlug) {
-            return [
-              ...acc,
-              {
-                ...cur,
-                verified: true,
-              },
-            ];
-          }
-
-          return [...acc, cur];
-        }, []);
-
-        setArea({
-          ...area,
-          topos: newTopos,
-        });
-        popupSuccess('Topo Verified');
-      }
-    } catch (error) {
-      console.error('error updating area', error);
-    }
-  };
+  // TODO verification
+  //const btnVerifyTopoOnClick = async (topoSlug: string) => {
+  //  try {
+  //    if (!area) {
+  //      return;
+  //    }
+  //
+  //    const verify = window.confirm(
+  //      'Are you sure you want to verify this topo?',
+  //    );
+  //
+  //    if (verify) {
+  //      await topos.updateTopo(topoSlug, { verified: true });
+  //
+  //      const newTopos = area.topos.reduce((acc: Topo[], cur) => {
+  //        if (cur.slug === topoSlug) {
+  //          return [
+  //            ...acc,
+  //            {
+  //              ...cur,
+  //              verified: true,
+  //            },
+  //          ];
+  //        }
+  //
+  //        return [...acc, cur];
+  //      }, []);
+  //
+  //      setArea({
+  //        ...area,
+  //        topos: newTopos,
+  //      });
+  //      popupSuccess('Topo Verified');
+  //    }
+  //  } catch (error) {
+  //    console.error('error updating area', error);
+  //  }
+  //};
 
   return (
     <>
-      {loading && (
-        <section className="section">
-          <div className="container">
-            <LoadingSpinner />
-          </div>
-        </section>
-      )}
-
-      {area && crag && (
-        <Head>
-          <title>
-            {area.title} | {area.cragTitle} | ClimbingTopos.com
-          </title>
-          <link
-            rel="canonical"
-            href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
-          />
-          <meta
-            name="description"
-            content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
-          />
-          <meta property="og:type" content="website" />
-          <meta
-            property="og:title"
-            content={`${area.title} | ${area.cragTitle} | ClimbingTopos.com`}
-          />
-          <meta
-            property="og:url"
-            content={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
-          />
-          <meta
-            property="og:description"
-            content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
-          />
-          <meta property="og:image" content={`${crag.image}`} />
-        </Head>
-      )}
-      <section className={`section pt-5 ${loading ? 'is-hidden' : ''}`}>
+      <Head>
+        <title>
+          {area.title} | {area.cragTitle} | ClimbingTopos.com
+        </title>
+        <link
+          rel="canonical"
+          href={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
+        />
+        <meta
+          name="description"
+          content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content={`${area.title} | ${area.cragTitle} | ClimbingTopos.com`}
+        />
+        <meta
+          property="og:url"
+          content={`https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`}
+        />
+        <meta
+          property="og:description"
+          content={`${area.title}, ${area.cragTitle} climbing guide and topo`}
+        />
+        <meta property="og:image" content={`${crag.image}`} />
+      </Head>
+      <section className="section pt-5">
         <div className="container">
           <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
@@ -170,6 +145,7 @@ function AreaView({
               <h6 className="subtitle is-6">{area?.description}</h6>
               <h6 className="subtitle is-6">{area?.approachNotes}</h6>
               <h6 className="subtitle is-6">{area?.accessDetails}</h6>
+              {/* TODO verification
               {isAdmin === true && area?.verified === false && (
                 <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
                   <span className="icon">
@@ -178,6 +154,7 @@ function AreaView({
                   <span>Verify Area</span>
                 </Button>
               )}
+              */}
             </div>
             <div className="column">
               <div role="group" className="tags">
@@ -185,9 +162,8 @@ function AreaView({
                   <span className="tag is-info">Awaiting Verification</span>
                 )}
                 <span
-                  className={`tag is-capitalized ${
-                    area?.access === 'banned' ? 'is-danger ' : ''
-                  }`}
+                  className={`tag is-capitalized ${area?.access === 'banned' ? 'is-danger ' : ''
+                    }`}
                 >
                   Access {area?.access}
                 </span>
@@ -217,7 +193,7 @@ function AreaView({
         </div>
       </section>
 
-      {loading === false && area?.topos.length ? (
+      {area?.topos.length ? (
         <section className="section">
           {area?.topos &&
             area?.topos.map((topo) => (
@@ -234,7 +210,8 @@ function AreaView({
                   <div className="column">
                     <div className="block is-flex is-justify-content-space-between is-align-items-center">
                       <span>
-                        {isAdmin === true && topo.verified === false && (
+                        {/* TODO verification
+                            isAdmin === true && topo.verified === false && (
                           <Button
                             color={Color.isSuccess}
                             onClick={() => btnVerifyTopoOnClick(`${topo.slug}`)}
@@ -244,7 +221,7 @@ function AreaView({
                             </span>
                             <span>Verify Topo</span>
                           </Button>
-                        )}
+                        )*/}
                         <span className="icon-text">
                           <span className="icon">
                             <i className="fas fa-compass"></i>
@@ -287,7 +264,7 @@ function AreaView({
         ''
       )}
 
-      {loading === false && area?.topos.length === 0 ? (
+      {area?.topos.length === 0 ? (
         <section className="section">
           <div className="container box">
             <p>

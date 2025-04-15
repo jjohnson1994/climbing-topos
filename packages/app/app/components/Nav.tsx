@@ -1,10 +1,8 @@
-'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
-import useUser from '@/app/api/user';
 import Button, { Color } from '@/app/elements/Button';
 import NavbarItem from '@/app/elements/NavbarItem';
+import { auth, login, logout } from '@/app/actions';
 
 import { Amplify } from 'aws-amplify';
 import config from '@/app/config';
@@ -33,18 +31,7 @@ Amplify.configure({
   },
 });
 
-function Nav() {
-  const [navBarMenuClass, setNavBarMenuClass] = useState('');
-  const { userAttributes, isAuthenticated } = useUser();
-
-  const toggleNavMenu = () => {
-    if (navBarMenuClass === 'is-active') {
-      setNavBarMenuClass('');
-    } else {
-      setNavBarMenuClass('is-active');
-    }
-  };
-
+export default function Nav({ subject }) {
   return (
     <nav
       className="navbar has-shadow"
@@ -61,25 +48,23 @@ function Nav() {
           aria-label="menu"
           aria-expanded="false"
           data-target="navbarBasicExample"
-          onClick={toggleNavMenu}
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div
         id="navbarBasicExample"
-        className={`navbar-menu ${navBarMenuClass}`}
-        onClick={toggleNavMenu}
+        className="navbar-menu"
+        className={`navbar-menu`}
       >
         <div className="navbar-start">
           <Link className="navbar-item" href="/crags">
             Crags
           </Link>
-          <Link className="navbar-item" href="/crags-map">
-            Map
+          <Link className="navbar-item" href="/explore">
+            Explore
           </Link>
         </div>
 
@@ -90,22 +75,17 @@ function Nav() {
             </Link>
           </NavbarItem>
           <div className="navbar-item">
-            {isAuthenticated ? (
+            {subject ? (
               <Link href="/profile">
-                <Button icon="fas fa-user">{userAttributes?.username}</Button>
+                <Button icon="fas fa-user">
+                  {subject.properties.nickname}
+                </Button>
               </Link>
             ) : (
               <div className="field is-grouped">
-                <p className="control">
-                  <Link href="/login">
-                    <Button>Login</Button>
-                  </Link>
-                </p>
-                <p className="control">
-                  <Link href="/signup">
-                    <Button color={Color.isPrimary}>Signup</Button>
-                  </Link>
-                </p>
+                <form className="control" action={login}>
+                  <Button>Login</Button>
+                </form>
               </div>
             )}
           </div>
@@ -114,5 +94,3 @@ function Nav() {
     </nav>
   );
 }
-
-export default Nav;

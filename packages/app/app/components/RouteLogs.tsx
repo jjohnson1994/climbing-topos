@@ -1,3 +1,4 @@
+'use client';
 import { Log } from '@climbingtopos/types';
 import React from 'react';
 import Table from '../elements/Table';

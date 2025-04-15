@@ -1,19 +1,16 @@
-'use client';
+'use server';
 
-import { useState } from 'react';
 import ProfileLogs from '@/app/components/ProfileLogs';
 import ProfileLists from '@/app/components/ProfileLists';
-import { useRouter } from 'next/navigation';
-import useUser from '@/app/api/user';
+import { auth, logout } from '@/app/actions';
+import Link from 'next/link';
 
-function Profile() {
-  const { userAttributes, signOut } = useUser();
-  const [activeTab, setActiveTab] = useState('logs');
-  const router = useRouter();
+async function Profile({ searchParams }) {
+  const activeTab = searchParams.tab || 'logs';
+  const user = await auth();
 
   const handleLogout = async () => {
-    await signOut();
-    router.replace('/login');
+    logout();
   };
 
   return (
@@ -21,27 +18,39 @@ function Profile() {
       <section className="section">
         <div className="container box">
           <div className="columns is-mobile is-multiline is-centered">
-            {/** <div className="column is-narrow">
-              <img src={userAttributes.picture} alt="profile" />
-            </div> **/}
+            <div
+              className="column is-one-quarter is-narrow"
+              style={{ maxWidth: '200px' }}
+            >
+              <figure className="image">
+                <img
+                  src={user.properties.picture}
+                  alt="profile"
+                  className="is-rounded"
+                />
+              </figure>
+            </div>
             <div className="column">
-              <div
-                className="is-flex is-flex-column is-align-content-space-between"
-                style={{ height: '100%' }}
-              >
-                <div className="is-flex-grow-1">
-                  <span>
-                    <b>Username </b> {userAttributes?.username}{' '}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Email </b> {userAttributes?.attributes?.email}{' '}
-                  </span>
+              <div className="is-flex is-flex-column is-align-content-space-between">
+                <div className="mb-4">
+                  <h5 className="title is-5">{user.properties.nickname}</h5>
+                </div>
+                <div className="is-flex is-flex-row">
+                  <div className="mr-2">
+                    <p>
+                      <b>0</b> Climbs Logged
+                    </p>
+                  </div>{' '}
+                  <div>
+                    <p>
+                      <b>0</b> Crags Visited
+                    </p>
+                  </div>
                 </div>
                 <div className="is-flex is-justify-content-flex-end mt-2">
-                  <button className="button" onClick={handleLogout}>
-                    Logout
-                  </button>
+                  <form action={logout}>
+                    <button className="button">Logout</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -52,20 +61,20 @@ function Profile() {
         <div className="tabs">
           <ul>
             <li className={activeTab === 'logs' ? 'is-active' : ''}>
-              <a onClick={() => setActiveTab('logs')}>Logs</a>
+              <Link href="?tab=logs">Logs</Link>
             </li>
             <li className={activeTab === 'lists' ? 'is-active' : ''}>
-              <a onClick={() => setActiveTab('lists')}>Lists</a>
+              <Link href="?tab=lists">Lists</Link>
             </li>
           </ul>
         </div>
         <div className={`container ${activeTab === 'logs' ? '' : 'is-hidden'}`}>
-          <ProfileLogs />
+          {<ProfileLogs />}
         </div>
         <div
           className={`container ${activeTab === 'lists' ? '' : 'is-hidden'}`}
         >
-          <ProfileLists />
+          {<ProfileLists />}
         </div>
       </section>
     </>

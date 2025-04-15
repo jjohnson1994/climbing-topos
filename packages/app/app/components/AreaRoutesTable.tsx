@@ -1,63 +1,28 @@
-'use client';
-
-import Tippy from '@tippyjs/react';
-import { ChangeEvent, useContext } from 'react';
 import Link from 'next/link';
 import { Log, Route } from '@climbingtopos/types';
-import { RouteLogContext } from './RouteLogContext';
 import { useGradeHelpers } from '@/app/api/grades';
 import RatingStarsDisplay from '@/app/components/RatingStarsDisplay';
-import useUser from '@/app/api/user';
-import { useRouter } from 'next/navigation';
+import AreaRouteTableMenu from './AreaRouteTableMenu';
+import { auth } from '../actions';
 
 interface Props {
   routes: Route[] | undefined;
   loggedRoutes: Log[];
 }
 
-function AreaRoutesTable({ routes, loggedRoutes }: Props) {
-  const { isAuthenticated } = useUser();
-  const router = useRouter();
-
-  const context = useContext(RouteLogContext);
-
+async function AreaRoutesTable({ routes, loggedRoutes }: Props) {
+  const subject = await auth();
+  const isAuthenticated = !!subject;
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
-
-  const chkRouteOnChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    route: Route,
-  ) => {
-    if (
-      context.selectedRoutes.findIndex(({ slug }) => slug === route.slug) > -1
-    ) {
-      context.onRouteDeselected(route);
-    } else {
-      context.onRouteSelected(route);
-    }
-  };
-
-  const btnSingleRouteDoneOnClick = (route: Route) => {
-    if (!isAuthenticated) {
-      router.push('/login');
-    } else {
-      context.onSingleRouteDone(route);
-    }
-  };
-
-  const btnSingleRouteAddToListOnClick = (route: Route) => {
-    if (!isAuthenticated) {
-      router.push('/login');
-    } else {
-      context.onSingleRouteAddToList(route);
-    }
-  };
 
   const hasUserLoggedRoute = (routeSlug: string) => {
     return (
-      loggedRoutes.findIndex((log) => log.routeSlug === routeSlug) !== -1 ||
-      context.routesJustLogged.findIndex(
-        (route) => route.slug === routeSlug,
-      ) !== -1
+      // TODO
+      //loggedRoutes.findIndex((log) => log.routeSlug === routeSlug) !== -1 ||
+      //context.routesJustLogged.findIndex(
+      //  (route) => route.slug === routeSlug,
+      //) !== -1
+      loggedRoutes.findIndex((log) => log.routeSlug === routeSlug) !== -1
     );
   };
 
@@ -72,7 +37,7 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
             <div className="is-flex is-flex-direction-column is-flex-grow-1">
               <span className="mb-2">
                 <Link
-                  href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topo/${route.topoSlug}/routes/${route.slug}`}
+                  href={`/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.slug}`}
                   className={
                     hasUserLoggedRoute(String(route.slug)) ? 'line-through' : ''
                   }
@@ -97,74 +62,10 @@ function AreaRoutesTable({ routes, loggedRoutes }: Props) {
               </div>
             </div>
             <div>
-              <span>
-                {context.isSelectingMultiple ? (
-                  <input
-                    type="checkbox"
-                    checked={
-                      context.selectedRoutes.findIndex(
-                        ({ slug }) => slug === route.slug,
-                      ) !== -1
-                    }
-                    onChange={(e) => chkRouteOnChange(e, route)}
-                  />
-                ) : (
-                  <Tippy
-                    trigger="click"
-                    interactive={true}
-                    theme="light-border"
-                    placement="bottom-end"
-                    hideOnClick={true}
-                    content={
-                      <div className="dropdown is-active">
-                        <div
-                          className="dropdown-menu"
-                          style={{ position: 'relative' }}
-                        >
-                          <div className="dropdown-content">
-                            <button
-                              className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={() => {
-                                btnSingleRouteDoneOnClick(route);
-                              }}
-                            >
-                              <span className="icon">
-                                <i className="fas fw fa-check"></i>
-                              </span>
-                              <span>Done</span>
-                            </button>
-                            <button
-                              className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={() => {
-                                btnSingleRouteAddToListOnClick(route);
-                              }}
-                            >
-                              <span className="icon">
-                                <i className="fas fw fa-list"></i>
-                              </span>
-                              <span>Save to List</span>
-                            </button>
-                            <hr className="dropdown-divider" />
-                            <button
-                              className="dropdown-item button is-white is-cursor-pointer"
-                              onClick={() =>
-                                context.onInitSelectMultiple(true, route)
-                              }
-                            >
-                              <span className="icon">
-                                <i className="far fw fa-check-square"></i>
-                              </span>
-                              <span>Select Multiple</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    }
-                  >
-                    <i className="fas fa-ellipsis-h"></i>
-                  </Tippy>
-                )}
-              </span>
+              <AreaRouteTableMenu
+                isAuthenticated={isAuthenticated}
+                route={route}
+              />
             </div>
           </div>
         ))}

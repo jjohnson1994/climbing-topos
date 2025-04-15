@@ -5,7 +5,7 @@ import leaflet from 'leaflet';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import Link from 'next/link';
-import { crags } from '@/app/api';
+import { get as getCrags } from '@/app/data/actions/crags/get';
 import ButtonCopyCoordinates from '@/app/components/ButtonCopyCoordinates';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 
@@ -13,12 +13,14 @@ function CragsMap() {
   const [allCrags, setCrags] = useState<CragBrief[]>();
 
   useEffect(() => {
-    const getCrags = async () => {
-      const newCrags = await crags.getCrags('');
-      setCrags(newCrags);
+    const _getCrags = async () => {
+      try {
+        const newCrags = await getCrags('');
+        setCrags(newCrags);
+      } catch (error) { }
     };
 
-    getCrags();
+    _getCrags();
   }, []);
 
   const cragIcon = () => {

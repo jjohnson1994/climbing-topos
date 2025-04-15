@@ -4,7 +4,7 @@ import RoutesAddToListModal from './RoutesAddToListModal';
 import RoutesAddToLogModal from './RoutesAddToLogModal';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import useUser from '../api/user';
+import { auth } from '@/app/actions';
 
 interface RouteLogContextType {
   isSelectingMultiple: boolean;
@@ -30,7 +30,6 @@ export const RouteLogContext = createContext<RouteLogContextType>({
 
 function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const router = useRouter();
-  const { isAuthenticated } = useUser();
   const [selectedRoutes, setSelectedRoutes] = useState<Route[]>([]);
   const [isSelectingMultiple, setIsSelectingMultiple] =
     useState<boolean>(false);
@@ -38,10 +37,6 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
   const [showAddToListModal, setShowAddToListModal] = useState<boolean>(false);
   const [routesJustLogged, setRoutedJustLogged] = useState<Route[]>([]);
   const pathname = usePathname();
-
-  const isAuthFlow = ['/login', '/signup', '/signup-confirm'].includes(
-    pathname,
-  );
 
   const onRouteSelected = (route: Route) => {
     const newSelectedRoutes = Array.from(new Set([...selectedRoutes, route]));
@@ -84,7 +79,9 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
     }
   };
 
-  const btnDoneMultipleOnClick = () => {
+  const btnDoneMultipleOnClick = async () => {
+    const isAuthenticated = await auth();
+
     if (!isAuthenticated) {
       router.push('/login');
     } else {
@@ -92,7 +89,9 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
     }
   };
 
-  const btnSaveMultipleToListOnClick = () => {
+  const btnSaveMultipleToListOnClick = async () => {
+    const isAuthenticated = await auth();
+
     if (!isAuthenticated) {
       router.push('/login');
     } else {
@@ -146,7 +145,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
         onConfirm={addToListModalOnConfirm}
         onCancel={addToListModalOnCancel}
       />
-      {selectedRoutes.length && !isAuthFlow ? (
+      {selectedRoutes.length ? (
         <nav className="navbar has-shadow is-fixed-bottom" role="navigation">
           <div className="is-flex is-flex-grow-1 is-justify-content-space-between">
             <span className="is-flex is-flex-column is-justify-content-center ml-3">

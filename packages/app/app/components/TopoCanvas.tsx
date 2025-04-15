@@ -191,7 +191,8 @@ function TopoCanvas({ backgroundImageURL, onDrawingChanged, routes }: Props) {
   return (
     <>
       <div className="notification is-primary">
-        Make sure to draw route lines from <strong>start to finish</strong>
+        Make sure to draw route lines from <strong>start</strong> to{' '}
+        <strong>finish</strong>
       </div>
       <div id="canvas-container">
         <img
@@ -216,7 +217,7 @@ function TopoCanvas({ backgroundImageURL, onDrawingChanged, routes }: Props) {
             {lines()}
             {existingStations()}
             {newStations()}
-            {startTags()}
+            {/* startTags() */}
           </svg>
         </div>
       </div>

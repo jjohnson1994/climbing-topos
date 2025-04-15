@@ -7,7 +7,7 @@ var sourceAWSConfig = {
 };
 
 var destinationAWSConfig = {
-  region: 'us-east-1',
+  region: 'eu-west-1',
 };
 
 copy(
@@ -18,7 +18,7 @@ copy(
       config: sourceAWSConfig,
     },
     destination: {
-      tableName: 'climbingtopos2-jamesjohnson-climbingtopos2Table',
+      tableName: 'climbingtopos2-jamesjohnson-climbingtopos2Table-nkecrsdc',
       config: destinationAWSConfig,
     },
     log: true,

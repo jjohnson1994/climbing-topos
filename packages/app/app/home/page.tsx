@@ -1,16 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { crags } from '@/app/api';
+import { get as getCrags } from '@/app/data/actions/crags/get';
 
 export default async function Home() {
-  const popularCrags = await crags
-    .getCrags('logCount', 'desc', 3)
-    .catch((error) => {
+  const popularCrags = await getCrags(undefined, 'logCount', 'desc', 3).catch(
+    (error) => {
       console.error(error);
-    });
+    },
+  );
 
   return (
-    <React.Fragment>
+    <>
       <section className="section">
         <div className="container">
           <h1 className="title">Welcome to ClimbingTopos.com</h1>
@@ -47,6 +47,6 @@ export default async function Home() {
           </div>
         </section>
       )}
-    </React.Fragment>
+    </>
   );
 }

@@ -27,3 +27,10 @@ body {
 main {
   flex-grow: 1;
 }
+
+.navbar-menu {
+  transition: display 2s;
+}
+.navbar-burger:focus + .navbar-menu {
+  display: block;
+}
