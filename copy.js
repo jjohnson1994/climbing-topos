@@ -18,7 +18,7 @@ copy(
       config: sourceAWSConfig,
     },
     destination: {
-      tableName: 'climbingtopos2-jamesjohnson-climbingtopos2Table-nkecrsdc',
+      tableName: 'climbingtopos2-production-climbingtopos2Table-rtwfonuw',
       config: destinationAWSConfig,
     },
     log: true,

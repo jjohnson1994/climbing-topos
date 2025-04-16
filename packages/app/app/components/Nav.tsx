@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import Button, { Color } from '@/app/elements/Button';
+import Button from '@/app/elements/Button';
 import NavbarItem from '@/app/elements/NavbarItem';
-import { auth, login, logout } from '@/app/actions';
+import { login } from '@/app/actions';
 
 import { Amplify } from 'aws-amplify';
 import config from '@/app/config';

@@ -5,9 +5,9 @@ import { crags } from '@/app/data/services';
 export const get = async (
   cragSlug?: string,
   sortBy?: string,
-  sortOrder?: string,
-  offset = '0',
+  sortOrder?: 'DESC' | 'ASC',
   limit = '10',
+  offset = '0',
 ) => {
   try {
     const user = await auth();

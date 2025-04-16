@@ -17,7 +17,7 @@ export const createCrag = async (cragDetails: Crag, user: UserPublicData) => {
 export async function getAllCrags(
   userSub: string,
   sortBy?: string,
-  sortOrder?: string,
+  sortOrder?: 'DESC' | 'ASC',
   limit?: number,
   offset?: number,
 ): Promise<CragBrief[]> {

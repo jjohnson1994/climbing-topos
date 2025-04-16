@@ -72,7 +72,7 @@ export const createCrag = async (
 
 export async function getAllCrags(
   sortBy?: string,
-  sortOrder?: string,
+  sortOrder?: 'DESC' | 'ASC',
   limit?: number,
   offset?: number,
 ): Promise<Crag[]> {

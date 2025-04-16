@@ -6,9 +6,17 @@ import { client, setTokens, subjects } from './auth';
 import { UserPublicData } from '@climbingtopos/types';
 
 export async function auth(): Promise<false | { properties: UserPublicData }> {
+  console.log('checking auth');
+
   const cookies = await getCookies();
   const accessToken = cookies.get('access_token');
   const refreshToken = cookies.get('refresh_token');
+
+  console.log('cookies');
+  console.log({
+    accessToken,
+    refreshToken,
+  });
 
   if (!accessToken) {
     return false;
@@ -18,6 +26,7 @@ export async function auth(): Promise<false | { properties: UserPublicData }> {
     refresh: refreshToken?.value,
   });
 
+  console.log({ verified });
   if (verified.err) {
     return false;
   }
