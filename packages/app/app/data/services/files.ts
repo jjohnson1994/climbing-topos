@@ -1,3 +1,5 @@
+'use server';
+
 import { Resource } from 'sst';
 import { nanoid } from 'nanoid';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';

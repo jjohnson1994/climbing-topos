@@ -1,7 +1,7 @@
 import { Resource } from 'sst';
 import { createClient } from '@openauthjs/openauth/client';
 import { cookies as getCookies } from 'next/headers';
-import { object, string } from 'valibot';
+import { object, string, optional } from 'valibot';
 import { createSubjects } from '@openauthjs/openauth/subject';
 
 export const client = createClient({
@@ -15,12 +15,12 @@ export const subjects = createSubjects({
     id: string(),
     sub: string(),
     email: string(),
-    picture: string(),
-    nickname: string(),
+    picture: optional(string()),
+    nickname: optional(string()),
   }),
 });
 
-export async function setTokens(access: string, refresh: string) {
+export async function setTokens(access: string, refresh?: string) {
   const cookies = await getCookies();
 
   cookies.set({
@@ -31,12 +31,15 @@ export async function setTokens(access: string, refresh: string) {
     path: '/',
     maxAge: 34560000,
   });
-  cookies.set({
-    name: 'refresh_token',
-    value: refresh,
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 34560000,
-  });
+
+  if (refresh) {
+    cookies.set({
+      name: 'refresh_token',
+      value: refresh,
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 34560000,
+    });
+  }
 }

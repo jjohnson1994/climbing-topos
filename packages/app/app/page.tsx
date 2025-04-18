@@ -21,7 +21,7 @@ export default async function Home() {
         <div className="container">
           <h1 className="title">Popular</h1>
           <div className="columns">
-            {popularCrags.map((crag) => (
+            {popularCrags?.map((crag) => (
               <div key={crag.slug} className="column">
                 <Link href={`/crags/${crag.slug}`}>
                   <div className="card">

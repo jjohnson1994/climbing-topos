@@ -47,8 +47,6 @@ function CreateTopoForm({
     const files = (
       document.querySelector('input[type=file]') as HTMLInputElement
     ).files;
-    console.log('image selected', files);
-
     if (files) {
       const file = files.item(0);
       const imagePreviewUrl = URL.createObjectURL(file);

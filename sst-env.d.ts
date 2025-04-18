@@ -21,27 +21,13 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "ClimbingTopos2AuthTable": {
+      "name": string
+      "type": "sst.sst.Linkable"
+    }
     "ClimbingToposOpenAuth": {
       "type": "sst.aws.Auth"
       "url": string
-    }
-    "Cognito": {
-      "type": "sst.sst.Linkable"
-      "userPoolClientId": string
-      "userPoolId": string
-    }
-    "IdentityPool": {
-      "id": string
-      "type": "sst.aws.CognitoIdentityPool"
-    }
-    "UserPool": {
-      "id": string
-      "type": "sst.aws.CognitoUserPool"
-    }
-    "UserPoolClient": {
-      "id": string
-      "secret": string
-      "type": "sst.aws.CognitoUserPoolClient"
     }
     "areaOnInsert": {
       "arn": string
@@ -58,10 +44,6 @@ declare module "sst" {
     "climbingtopos2": {
       "name": string
       "type": "sst.aws.Dynamo"
-    }
-    "climbingtopos2-api": {
-      "type": "sst.aws.ApiGatewayV2"
-      "url": string
     }
     "climbingtopos2-frontend": {
       "type": "sst.aws.Nextjs"

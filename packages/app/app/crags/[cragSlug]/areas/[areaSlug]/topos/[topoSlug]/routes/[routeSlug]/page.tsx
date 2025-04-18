@@ -40,7 +40,6 @@ async function RoutePage({
       const newCrag = await getCrags(cragSlug);
 
       route = newRoute;
-      console.log(newRoute);
       crag = newCrag;
     } catch (error) {
       console.error('Error loading route', error);

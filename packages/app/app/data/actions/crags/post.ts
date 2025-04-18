@@ -2,11 +2,10 @@
 
 import { auth } from '@/app/actions';
 import { crags } from '@/app/data/services';
-import { users, files } from '@/app/data/services';
+import { files } from '@/app/data/services';
 import { RequestValidator } from '@/app/helpers/request-validator';
-import { yup, NewCragSchema } from '@climbingtopos/schemas';
+import { NewCragSchema } from '@climbingtopos/schemas';
 import { Crag, CragRequest } from '@climbingtopos/types';
-import Compressor from 'compressorjs';
 
 const validateBody =
   (body: Crag): RequestValidator =>
@@ -68,11 +67,6 @@ export const post = async (request: FormData) => {
     // });
 
     const { fileUrl } = await files.uploadFile(cragDetails.image);
-
-    console.log({
-      ...cragDetails,
-      image: fileUrl,
-    });
 
     const resp = await crags.createCrag(
       {

@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { List, Route } from '@climbingtopos/types';
-import { lists } from '../api';
+import { get as getLists } from '@/app/data/actions/lists/get';
 import { popupError, toastSuccess } from '../helpers/alerts';
 import Modal from './Modal';
 import './RoutesAddToLogModal.css';
@@ -70,7 +70,7 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
 
   const getUserLists = async () => {
     try {
-      const newUserLists = await lists.getLists();
+      const newUserLists = await getLists();
       setUserLists(newUserLists);
     } catch (error) {
       console.error('Error getting user lists', error);

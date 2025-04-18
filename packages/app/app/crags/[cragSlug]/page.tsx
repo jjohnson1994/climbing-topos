@@ -7,7 +7,6 @@ import CragMap from '@/app/components/CragMap';
 import TopoImage from '@/app/components/TopoImage';
 import CragTitleImage from '@/app/components/CragTitleImage';
 import CragAdmin from '@/app/components/CragAdmin';
-import { Auth } from 'aws-amplify';
 import Head from 'next/head';
 import { auth } from '@/app/actions';
 
@@ -46,16 +45,7 @@ async function CragView({
     }
   };
 
-  const doGetUser = async () => {
-    try {
-      const credentials = await Auth.currentCredentials();
-    } catch (error) {
-      console.error('error getting user', error);
-    }
-  };
-
   await doGetCrag();
-  await doGetUser();
 
   if (crag?.managedBy.sub && crag?.managedBy.sub === user.id) {
     isAdmin = true;

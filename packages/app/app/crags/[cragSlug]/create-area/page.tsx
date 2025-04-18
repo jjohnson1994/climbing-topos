@@ -12,8 +12,6 @@ async function CreateArea({
 }) {
   const crag = await getCragBySlug(cragSlug);
 
-  console.log('crag', crag);
-
   return (
     <AuthenticaedRoute>
       <section className="section">

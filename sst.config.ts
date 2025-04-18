@@ -14,27 +14,31 @@ export default $config({
     };
   },
   async run() {
-    const region = aws.getRegionOutput().name;
+    const { auth } = await import('./infra/auth');
+
+    const authTable = new sst.Linkable('ClimbingTopos2AuthTable', {
+      properties: {
+        name: auth.nodes.table.name,
+      },
+      include: [
+        sst.aws.permission({
+          actions: ['dynamodb:Query'],
+          resources: [auth.nodes.table.arn],
+        }),
+      ],
+    });
 
     const { table } = await import('./infra/dynamo');
     const { bucket } = await import('./infra/storage');
-    const { api } = await import('./infra/api');
-    const { auth, userPool, identityPool, userPoolClient } = await import(
-      './infra/auth'
+    const { algoliaAppId, algoliaIndex, algoliaSearchApiKey } = await import(
+      './infra/secrets'
     );
-    const { algoliaAppId, algoliaIndex, algoliaAdminKey, algoliaSearchApiKey } =
-      await import('./infra/secrets');
     await import('./infra/sns');
 
-    return new sst.aws.Nextjs('climbingtopos2-frontend', {
+    const app = new sst.aws.Nextjs('climbingtopos2-frontend', {
       path: 'packages/app/',
-      link: [auth, table, bucket],
+      link: [auth, authTable, table, bucket],
       environment: {
-        NEXT_PUBLIC_API_URL: api.url,
-        NEXT_PUBLIC_REGION: region,
-        NEXT_PUBLIC_USER_POOL_ID: userPool.id,
-        NEXT_PUBLIC_IDENTITY_POOL_ID: identityPool.id,
-        NEXT_PUBLIC_USER_POOL_CLIENT_ID: userPoolClient.id,
         NEXT_PUBLIC_ALGOLIA_APP_ID: algoliaAppId.value,
         NEXT_PUBLIC_ALGOLIA_INDEX: algoliaIndex.value,
         NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: algoliaSearchApiKey.value,
@@ -43,5 +47,7 @@ export default $config({
         autostart: true,
       },
     });
+
+    return app;
   },
 });

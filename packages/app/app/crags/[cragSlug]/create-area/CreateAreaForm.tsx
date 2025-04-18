@@ -27,7 +27,6 @@ function CreateAreaForm({
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log({ crag });
   const {
     register,
     setValue,

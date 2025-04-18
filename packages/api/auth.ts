@@ -8,7 +8,6 @@ import { PasswordUI } from '@openauthjs/openauth/ui/password';
 import { PasswordProvider } from '@openauthjs/openauth/provider/password';
 import { Resource } from 'sst';
 import { nanoid } from 'nanoid';
-import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
@@ -31,6 +30,7 @@ async function createNewUser(email: string) {
     id: uid,
     slug: email,
   };
+
   const params = {
     TableName: Resource.climbingtopos2.name,
     Item: newUser,
@@ -75,8 +75,6 @@ const app = issuer({
     code: CodeProvider(
       CodeUI({
         sendCode: async (email, code) => {
-          console.log(email, code);
-
           await sendTransactional({
             subject: 'Login code',
             content: `Your login code is: ${code}`,

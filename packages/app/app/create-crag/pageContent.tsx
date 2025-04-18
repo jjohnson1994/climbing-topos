@@ -8,7 +8,7 @@ import { NewCragSchema } from '@climbingtopos/schemas';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { globals } from '@/app/api';
+import { cragTags } from '@climbingtopos/globals';
 import Message, { Color } from '@/app/components/Message';
 import { popupError, popupSuccess } from '@/app/helpers/alerts';
 import { getCurrentPosition } from '@/app/helpers/geolocation';
@@ -24,7 +24,6 @@ function CreateCrag({ post }) {
   const router = useRouter();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] =
     useState(-1);
-  const [cragTags, setCragTags] = useState<string[]>([]);
   const [cragLocationLoading, setCragLocationLoading] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -92,15 +91,6 @@ function CreateCrag({ post }) {
   });
 
   const watchAllFields = watch();
-
-  useEffect(() => {
-    doGetTags();
-  }, []);
-
-  const doGetTags = async () => {
-    const cragTags = await globals.getCragTags();
-    setCragTags(cragTags);
-  };
 
   const btnCragLocationFindMeOnClick = async () => {
     setCragLocationLoading(true);
