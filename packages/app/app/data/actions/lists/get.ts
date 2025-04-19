@@ -10,7 +10,7 @@ export const get = async (slug?: string) => {
     const userSub = user ? user.properties.sub : undefined;
 
     if (!userSub) {
-      return login();
+      return [];
     }
 
     if (slug) {
