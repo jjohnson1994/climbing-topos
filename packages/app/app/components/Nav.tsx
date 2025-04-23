@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Button from '@/app/elements/Button';
 import NavbarItem from '@/app/elements/NavbarItem';
 import { login } from '@/app/actions';
+import NavBurgerIcon from './NavBurgerIcon';
 
 export default function Nav({ subject }) {
   return (
@@ -16,22 +17,9 @@ export default function Nav({ subject }) {
           ClimbingTopos.com
         </Link>
 
-        <a
-          className="navbar-burger burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
+        <NavBurgerIcon />
       </div>
-      <div
-        id="navbarBasicExample"
-        className="navbar-menu"
-        className={`navbar-menu`}
-      >
+      <div id="navbarBasicExample" className="navbar-menu">
         <div className="navbar-start">
           <Link className="navbar-item" href="/crags">
             Crags
