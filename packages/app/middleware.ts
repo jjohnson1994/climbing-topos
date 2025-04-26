@@ -1,28 +1,31 @@
+'use server';
+
 import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/app/actions';
-import { subjects } from '@/app/auth';
-import * as v from 'valibot';
-
-const isAccountSetupComplete = (
-  properties: v.InferOutput<typeof subjects.user>,
-) => {
-  return properties.picture;
-};
 
 export async function middleware(request: NextRequest) {
+  const user = await auth();
+
+  if (!user) {
+    return;
+  }
+
+  const isAccountSetupComplete = !!user?.properties?.picture;
+  const isPendingUser = user?.properties.status === 'pending';
+
+  const isDirectingToSignupConfirmPage =
+    request.nextUrl.pathname === '/signup-confirm';
   const isDirectingToSetupPage = request.nextUrl.pathname === '/first-login';
 
-  if (isDirectingToSetupPage) {
+  if (isDirectingToSignupConfirmPage) {
     return;
   }
 
-  const subject = await auth();
-
-  if (!subject) {
-    return;
+  if (isPendingUser) {
+    return NextResponse.redirect(new URL('/signup-confirm', request.url));
   }
 
-  if (!isAccountSetupComplete(subject.properties)) {
+  if (!isAccountSetupComplete && !isDirectingToSetupPage) {
     return NextResponse.redirect(new URL('/first-login', request.url));
   }
 }

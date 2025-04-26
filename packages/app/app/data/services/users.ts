@@ -1,7 +1,59 @@
 'use server';
 
-import { users } from '../models';
+import { update, getUserByEmail } from '@/app/data/models/users';
 import { UserPublicData } from '@climbingtopos/types';
+import { DateTime } from 'luxon';
+import bcrypt from 'bcrypt';
+
+export const verifyUser = async (email: string, verificationCode: number) => {
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (user.verificationCode !== verificationCode) {
+    throw new Error('Verification code mismatch');
+  }
+
+  if (DateTime.fromISO(user.createdAt).plus({ minutes: 15 }) < DateTime.utc()) {
+    throw new Error('Verification code expired');
+  }
+
+  await patchUser(user.id, { status: 'verified' });
+
+  return {
+    id: user.id,
+    sub: user.id,
+    email: user.email,
+    nickname: user.nickname,
+    picture: user.picture,
+    status: 'verified',
+  };
+};
+
+export const verifyLogin = async (email: string, password: string) => {
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+
+  if (!passwordMatch) {
+    throw new Error('invalid password');
+  }
+
+  return {
+    id: user.id,
+    sub: user.id,
+    email: user.email,
+    nickname: user.nickname,
+    picture: user.picture,
+    status: user.status,
+  };
+};
 
 export const patchUser = (
   userSub: string,
@@ -29,7 +81,7 @@ export const patchUser = (
     })
     .join(', ');
 
-  return users.update(userSub, {
+  return update(userSub, {
     UpdateExpression: `set ${updateExpression}`,
     ExpressionAttributeNames: expressionAttributeNames,
     ExpressionAttributeValues: expressionAttributeValues,
@@ -37,7 +89,7 @@ export const patchUser = (
 };
 
 export const incrementCragCreatedCount = (userSub: string) => {
-  return users.update(userSub, {
+  return update(userSub, {
     UpdateExpression: 'add #cragsCreated :inc',
     ExpressionAttributeNames: {
       '#cragsCreated': 'cragsCreated',
@@ -49,7 +101,7 @@ export const incrementCragCreatedCount = (userSub: string) => {
 };
 
 export const incrementRouteCreatedCount = (userSub: string) => {
-  return users.update(userSub, {
+  return update(userSub, {
     UpdateExpression: 'add #routesCreated :inc',
     ExpressionAttributeNames: {
       '#routesCreated': 'routesCreated',
@@ -61,7 +113,7 @@ export const incrementRouteCreatedCount = (userSub: string) => {
 };
 
 export const incrementRoutesCompletedCount = (userSub: string) => {
-  return users.update(userSub, {
+  return update(userSub, {
     UpdateExpression: 'add #routesCompleted :inc',
     ExpressionAttributeNames: {
       '#routesCompleted': 'routesCompleted',

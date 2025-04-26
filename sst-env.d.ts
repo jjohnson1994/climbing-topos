@@ -29,6 +29,22 @@ declare module "sst" {
       "type": "sst.aws.Auth"
       "url": string
     }
+    "JwtPrivateKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "JwtPublicKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "PostHogHost": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "PostHogKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "areaOnInsert": {
       "arn": string
       "type": "sst.aws.SnsTopic"

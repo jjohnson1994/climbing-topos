@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { cookies as getCookies, headers as getHeaders } from 'next/headers';
 import { client, setTokens, subjects } from './auth';
 import { UserPublicData } from '@climbingtopos/types';
+import { verifyJwt } from '@/app/lib/jwt';
 
 export async function auth(): Promise<false | { properties: UserPublicData }> {
   const cookies = await getCookies();
@@ -14,19 +15,9 @@ export async function auth(): Promise<false | { properties: UserPublicData }> {
     return false;
   }
 
-  const verified = await client.verify(subjects, accessToken.value, {
-    refresh: refreshToken?.value,
-  });
+  const verified = await verifyJwt(accessToken.value);
 
-  if (verified.err) {
-    return false;
-  }
-
-  if (verified.tokens) {
-    await setTokens(verified.tokens.access, verified.tokens.refresh);
-  }
-
-  return verified.subject;
+  return verified;
 }
 
 export async function login() {

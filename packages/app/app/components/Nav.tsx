@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '@/app/elements/Button';
 import NavbarItem from '@/app/elements/NavbarItem';
-import { login } from '@/app/actions';
 import NavBurgerIcon from './NavBurgerIcon';
 
 export default function Nav({ subject }) {
@@ -44,9 +43,9 @@ export default function Nav({ subject }) {
               </Link>
             ) : (
               <div className="field is-grouped">
-                <form className="control" action={login}>
+                <Link href="/login">
                   <Button>Login</Button>
-                </form>
+                </Link>
               </div>
             )}
           </div>
