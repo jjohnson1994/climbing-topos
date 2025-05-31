@@ -54,38 +54,30 @@ const LoginContent = ({ signIn }) => {
   };
 
   return (
-    <section className="section">
-      <div className="container">
-        <h1 className="title">Login</h1>
-        <Form
-          onSubmit={handleSubmit(formOnSubmit)}
-          autoComplete={AutoComplete.on}
+    <Form onSubmit={handleSubmit(formOnSubmit)} autoComplete={AutoComplete.on}>
+      <Input
+        label="Email"
+        {...register('email')}
+        error={errors.email?.message}
+      />
+      <Input
+        label="Password"
+        {...register('password')}
+        error={errors.password?.message}
+        type={InputType.Password}
+      />
+      <hr />
+      <div className="level">
+        <Link href="/reset-password">Forgot Password?</Link>
+        <Button
+          color={Color.isPrimary}
+          type={ButtonType.Submit}
+          loading={isAuthenticating}
         >
-          <Input
-            label="Email"
-            {...register('email')}
-            error={errors.email?.message}
-          />
-          <Input
-            label="Password"
-            {...register('password')}
-            error={errors.password?.message}
-            type={InputType.Password}
-          />
-          <hr />
-          <div className="level">
-            <Link href="/reset-password">Forgot Password?</Link>
-            <Button
-              color={Color.isPrimary}
-              type={ButtonType.Submit}
-              loading={isAuthenticating}
-            >
-              Login
-            </Button>
-          </div>
-        </Form>
+          Login
+        </Button>
       </div>
-    </section>
+    </Form>
   );
 };
 

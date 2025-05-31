@@ -48,6 +48,9 @@ export const createUser = async (
       hk: uid,
       sk: 'metadata#',
       ...pendingUserData,
+      verificationCodeExpiration: DateTime.utc()
+        .plus({ minutes: 15 })
+        .toString(),
       model: 'user',
       status,
       id: uid,

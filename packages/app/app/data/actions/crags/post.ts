@@ -9,16 +9,16 @@ import { Crag, CragRequest } from '@climbingtopos/types';
 
 const validateBody =
   (body: Crag): RequestValidator =>
-    async () => {
-      const schema = NewCragSchema();
-      try {
-        await schema.validate(body);
-        return true;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Invalid request: schema not valid');
-      }
-    };
+  async () => {
+    const schema = NewCragSchema();
+    try {
+      await schema.validate(body);
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Invalid request: schema not valid');
+    }
+  };
 
 export const post = async (request: FormData) => {
   const cragDetails = {
@@ -66,6 +66,7 @@ export const post = async (request: FormData) => {
     //   });
     // });
 
+    console.log({ cragDetails });
     const { fileUrl } = await files.uploadFile(cragDetails.image);
 
     const resp = await crags.createCrag(

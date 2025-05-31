@@ -44,8 +44,8 @@ const Signup = () => {
       const url = '/signup-confirm';
       router.replace(url);
     } catch (error: any) {
-      if (error && error.code === 'UsernameExistsException') {
-        popupError('Email is already registered, try logging instead');
+      if (error && error.message === 'User exists') {
+        popupError('Email is already registered, try logging in instead');
       } else {
         popupError('Something has gone wrong, try again');
       }
@@ -56,7 +56,7 @@ const Signup = () => {
 
   return (
     <section className="section">
-      <div className="container">
+      <div className="container box">
         <h1 className="title">Sign up</h1>
         <Form
           onSubmit={handleSubmit(formOnSubmit)}

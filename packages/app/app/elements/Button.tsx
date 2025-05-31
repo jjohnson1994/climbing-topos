@@ -2,6 +2,7 @@ import { ForwardedRef, forwardRef, FunctionComponent } from 'react';
 
 export const enum ButtonType {
   Submit = 'submit',
+  Button = 'button',
 }
 
 export const enum Color {
@@ -18,6 +19,10 @@ export const enum Color {
   isDanger = 'is-danger ',
 }
 
+export const enum Style {
+  isOutlined = 'is-outlined',
+}
+
 interface ButtonProps {
   onClick?: Function;
   children?: any;
@@ -26,18 +31,16 @@ interface ButtonProps {
   type?: ButtonType;
   loading?: boolean;
   disabled?: boolean;
+  style?: Style;
 }
 
 const Button: FunctionComponent<ButtonProps> = forwardRef(
   (props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
-    const getColor = (): Color | undefined => {
-      return props.color;
-    };
-
     const getClasses = (): string => {
-      const color: Color | undefined = getColor();
+      const color = props.color;
+      const style = props.style;
 
-      return `button ${color ? color : ''} ${props.loading ? 'is-loading' : ''}`.trim();
+      return `button ${color ? color : ''} ${style ? style : ''} ${props.loading ? 'is-loading' : ''}`.trim();
     };
 
     const classes = getClasses();
@@ -47,7 +50,7 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
         className={classes}
         ref={ref}
         {...(props.onClick && {
-          onClick: (e) => props.onClick(e),
+          onClick: (e) => props.onClick?.(e),
         })}
         {...(props.type && {
           type: props.type,

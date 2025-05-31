@@ -4,14 +4,15 @@ import ProfileLogs from '@/app/components/ProfileLogs';
 import ProfileLists from '@/app/components/ProfileLists';
 import { auth, logout } from '@/app/actions';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 async function Profile({ searchParams }) {
   const activeTab = searchParams.tab || 'logs';
   const user = await auth();
 
-  const handleLogout = async () => {
-    logout();
-  };
+  if (!user) {
+    redirect('/login');
+  }
 
   return (
     <>
@@ -22,11 +23,19 @@ async function Profile({ searchParams }) {
               className="column is-one-quarter is-narrow"
               style={{ maxWidth: '200px' }}
             >
-              <figure className="image">
+              <figure
+                className="image is-1by1"
+                style={{ width: '100%', maxWidth: '150px' }}
+              >
                 <img
                   src={user.properties.picture}
                   alt="profile"
                   className="is-rounded"
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                    borderRadius: '4px',
+                  }}
                 />
               </figure>
             </div>

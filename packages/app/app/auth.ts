@@ -20,7 +20,7 @@ export const subjects = createSubjects({
   }),
 });
 
-export async function setTokens(access: string, refresh?: string) {
+export async function setTokens(access: string) {
   const cookies = await getCookies();
 
   cookies.set({
@@ -29,17 +29,6 @@ export async function setTokens(access: string, refresh?: string) {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
-    maxAge: 34560000,
+    maxAge: 14 * 24 * 60 * 60 * 1000,
   });
-
-  if (refresh) {
-    cookies.set({
-      name: 'refresh_token',
-      value: refresh,
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 34560000,
-    });
-  }
 }

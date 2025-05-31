@@ -1,12 +1,18 @@
 'use client';
 
-import { Suspense } from 'react';
 import { signIn } from '@/app/data/actions/user';
 
 import LoginContent from './pageContent';
 
 const Login = () => {
-  return <LoginContent signIn={signIn} />;
+  return (
+    <section className="section">
+      <div className="container box">
+        <h1 className="title">Login</h1>
+        <LoginContent signIn={signIn} />
+      </div>
+    </section>
+  );
 };
 
 export default Login;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Button from '@/app/elements/Button';
+import Button, { Color } from '@/app/elements/Button';
 import NavbarItem from '@/app/elements/NavbarItem';
 import NavBurgerIcon from './NavBurgerIcon';
 
@@ -34,7 +34,7 @@ export default function Nav({ subject }) {
               <i className="fas fa-search"></i>
             </Link>
           </NavbarItem>
-          <div className="navbar-item">
+          <NavbarItem>
             {subject ? (
               <Link href="/profile">
                 <Button icon="fas fa-user">
@@ -42,13 +42,16 @@ export default function Nav({ subject }) {
                 </Button>
               </Link>
             ) : (
-              <div className="field is-grouped">
-                <Link href="/login">
-                  <Button>Login</Button>
+              <div className="buttons">
+                <Link href="/signup" className="button is-primary">
+                  Sign up
+                </Link>
+                <Link href="/login" className="button">
+                  Log in
                 </Link>
               </div>
             )}
-          </div>
+          </NavbarItem>
         </div>
       </div>
     </nav>

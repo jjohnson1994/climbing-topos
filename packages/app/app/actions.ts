@@ -1,54 +1,63 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { cookies as getCookies, headers as getHeaders } from 'next/headers';
-import { client, setTokens, subjects } from './auth';
+import { cookies as getCookies } from 'next/headers';
 import { UserPublicData } from '@climbingtopos/types';
-import { verifyJwt } from '@/app/lib/jwt';
+import { createAccessTokenJwt, verifyJwt } from '@/app/lib/jwt';
 
 export async function auth(): Promise<false | { properties: UserPublicData }> {
   const cookies = await getCookies();
   const accessToken = cookies.get('access_token');
-  const refreshToken = cookies.get('refresh_token');
 
-  if (!accessToken) {
+  if (!accessToken?.value) {
     return false;
   }
 
-  const verified = await verifyJwt(accessToken.value);
+  const verified = await verifyJwt(accessToken.value).catch(async (error) => {
+    console.error('Could not verify access token', error.code);
+
+    if (error.code === 'ERR_JWT_EXPIRED') {
+      try {
+        cookies.delete('access_token');
+        console.log('expired token removed');
+      } catch (_error) {}
+    }
+
+    return false;
+  });
+
+  if (!verified) {
+    return false;
+  }
+
+  // TODO does this work?
+  try {
+    const newAccessToken = await createAccessTokenJwt(verified.properties);
+
+    cookies.set({
+      name: 'access_token',
+      value: newAccessToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 14 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log('valid token extended');
+  } catch (error) {}
 
   return verified;
 }
 
 export async function login() {
-  const cookies = await getCookies();
-  const accessToken = cookies.get('access_token');
-  const refreshToken = cookies.get('refresh_token');
-
-  if (accessToken) {
-    const verified = await client.verify(subjects, accessToken.value, {
-      refresh: refreshToken?.value,
-    });
-    if (!verified.err && verified.tokens) {
-      await setTokens(verified.tokens.access, verified.tokens.refresh);
-      redirect('/');
-    }
-  }
-
-  const headers = await getHeaders();
-  const host = headers.get('host');
-  const protocol = host?.includes('localhost') ? 'http' : 'https';
-  const { url } = await client.authorize(
-    `${protocol}://${host}/api/callback`,
-    'code',
-  );
-  redirect(url);
+  redirect('/login');
 }
 
 export async function logout() {
   const cookies = await getCookies();
+
   cookies.delete('access_token');
-  cookies.delete('refresh_token');
 
   redirect('/');
 }

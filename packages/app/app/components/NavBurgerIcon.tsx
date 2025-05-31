@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function NavBurgerIcon() {
   const [open, setOpen] = useState(false);
@@ -11,6 +11,20 @@ export default function NavBurgerIcon() {
 
     setOpen(!open);
   }
+
+  useEffect(() => {
+    const menu = document.getElementById('navbarBasicExample');
+    const menuClickListener = menu?.addEventListener('click', (event) => {
+      setTimeout(() => {
+        menu?.classList.remove('is-active');
+        setOpen(false);
+      });
+    });
+
+    return () => {
+      menu?.removeEventListener('click', menuClickListener);
+    };
+  });
 
   return (
     <a

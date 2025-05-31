@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   if (exchanged.err) return NextResponse.json(exchanged.err, { status: 400 });
 
-  await setTokens(exchanged.tokens.access, exchanged.tokens.refresh);
+  await setTokens(exchanged.tokens.access);
 
   return NextResponse.redirect(`${url.origin}/`);
 }

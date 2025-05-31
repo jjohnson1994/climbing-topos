@@ -1,7 +1,7 @@
 'use server';
 
 import { verifyLogin } from '@/app/data/services/users';
-import { createJwt } from '@/app/lib/jwt';
+import { createAccessTokenJwt } from '@/app/lib/jwt';
 import { cookies as getCookies } from 'next/headers';
 
 export async function signIn(email: string, password: string) {
@@ -11,16 +11,17 @@ export async function signIn(email: string, password: string) {
 
   const user = await verifyLogin(email, password);
 
-  const newToken = await createJwt(user);
+  const newAccessToken = await createAccessTokenJwt(user);
 
   const cookies = await getCookies();
 
   cookies.set({
     name: 'access_token',
-    value: newToken,
+    value: newAccessToken,
     httpOnly: true,
-    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     path: '/',
-    maxAge: 34560000,
+    maxAge: 14 * 24 * 60 * 60 * 1000,
   });
 }

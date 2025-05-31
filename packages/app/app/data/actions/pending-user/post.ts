@@ -4,7 +4,7 @@ import { cookies as getCookies } from 'next/headers';
 import { createPendingUser } from '@/app/data/services/pending-users';
 
 import { sendTransactional } from '@/app/lib/email';
-import { createJwt } from '@/app/lib/jwt';
+import { createAccessTokenJwt } from '@/app/lib/jwt';
 
 export async function post(email: string, password: string) {
   const verificationCode = await createPendingUser(email, password);
@@ -16,7 +16,7 @@ export async function post(email: string, password: string) {
     recipientEmail: email,
   });
 
-  const newToken = await createJwt({
+  const newToken = await createAccessTokenJwt({
     email,
     status: 'pending',
   });
@@ -29,6 +29,6 @@ export async function post(email: string, password: string) {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
-    maxAge: 34560000,
+    maxAge: 14 * 24 * 60 * 60 * 1000,
   });
 }

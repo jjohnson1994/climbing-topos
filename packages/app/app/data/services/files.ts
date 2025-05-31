@@ -36,7 +36,7 @@ export const uploadFile = async (file: File, preferredKey?: string) => {
     },
   }).then(async (res) => {
     if (res.status !== 200) {
-      console.error('Error uploading file', res.json());
+      console.error('Error uploading file', res);
       console.error(JSON.stringify(res, null, 4));
 
       throw res;

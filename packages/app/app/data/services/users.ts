@@ -16,7 +16,7 @@ export const verifyUser = async (email: string, verificationCode: number) => {
     throw new Error('Verification code mismatch');
   }
 
-  if (DateTime.fromISO(user.createdAt).plus({ minutes: 15 }) < DateTime.utc()) {
+  if (DateTime.fromISO(user.verificationCodeExpiration) < DateTime.utc()) {
     throw new Error('Verification code expired');
   }
 

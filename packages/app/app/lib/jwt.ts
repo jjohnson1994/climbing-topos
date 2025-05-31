@@ -3,7 +3,7 @@
 import * as jose from 'jose';
 import { Resource } from 'sst';
 
-export const createJwt = async (payload: {
+export const createAccessTokenJwt = async (payload: {
   email: string;
   status: 'verified' | 'pending';
   nickname?: string;
@@ -23,26 +23,22 @@ export const createJwt = async (payload: {
     .setIssuedAt()
     .setIssuer('https://climbingtopos.com')
     .setAudience('climbing-topos-app')
-    .setExpirationTime('2h')
+    .setExpirationTime('14d')
     .sign(privateKey);
 
   return newAccessToken;
 };
 
 export const verifyJwt = async (token: string) => {
-  try {
-    const publicKey = await jose.importSPKI(
-      Resource.JwtPublicKey.value,
-      'RS256',
-    );
+  const publicKey = await jose.importSPKI(Resource.JwtPublicKey.value, 'RS256');
 
-    const { payload } = await jose.jwtVerify(token, publicKey, {
-      algorithms: ['RS256'],
-    });
+  const { payload } = await jose.jwtVerify(token, publicKey, {
+    algorithms: ['RS256'],
+  });
 
-    return payload;
-  } catch (error) {
-    console.error('Could not verify jwt', error);
-    return false;
-  }
+  return payload;
 };
+
+createAccessTokenJwt({
+
+})
