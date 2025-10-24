@@ -9,3 +9,8 @@ api/uploads/**
 
 # sst
 .sst
+
+# Secrets and keys
+*.pem
+secrets.env
+*.key

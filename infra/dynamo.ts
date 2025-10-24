@@ -17,6 +17,7 @@ const table = new sst.aws.Dynamo('climbingtopos2', {
     },
   },
   stream: 'new-and-old-images',
+  ttl: 'expiresAt',
 });
 
 export { table };

@@ -12,6 +12,7 @@ import { auth } from '@/app/actions';
 import { get as getRoutes } from '@/app/data/actions/routes/get';
 import { get as getCrags } from '@/app/data/actions/crags/get';
 import { get as getLogs } from '@/app/data/actions/routes/logs/get';
+import Link from 'next/link';
 
 async function RoutePage({
   params,
@@ -145,9 +146,9 @@ async function RoutePage({
                 <h6 className="subtitle is-6">
                   {route
                     ? convertGradeValueToGradeLabel(
-                      route.gradeModal,
-                      route.gradingSystem,
-                    )
+                        route.gradeModal,
+                        route.gradingSystem,
+                      )
                     : ''}
                   <span> </span>
                   {route?.routeType}
@@ -155,13 +156,29 @@ async function RoutePage({
                   <RatingStarsDisplay stars={route?.rating || 0} />
                 </h6>
                 <h6 className="subtitle is-6">{route?.description}</h6>
-                {isAdmin === true && route?.verified === false && (
-                  <Button color={Color.isSuccess} onClick={btnVerifyOnClick}>
-                    <span className="icon">
-                      <i className="fas fa-check"></i>
-                    </span>
-                    <span>Verify</span>
-                  </Button>
+                {isAdmin === true && (
+                  <div className="buttons">
+                    <Link
+                      href={`/crags/${cragSlug}/areas/${areaSlug}/topos/${topoSlug}/routes/${routeSlug}/edit`}
+                      className="button is-info"
+                    >
+                      <span className="icon">
+                        <i className="fas fa-edit"></i>
+                      </span>
+                      <span>Edit Route</span>
+                    </Link>
+                    {route?.verified === false && (
+                      <Button
+                        color={Color.isSuccess}
+                        onClick={btnVerifyOnClick}
+                      >
+                        <span className="icon">
+                          <i className="fas fa-check"></i>
+                        </span>
+                        <span>Verify</span>
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="column">

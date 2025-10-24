@@ -59,11 +59,9 @@ function SignupConfirmContent({
 
       router.push('/profile');
     } catch (error: any) {
-      if (error.message) {
-        setVerificationError(error.message);
-      } else {
-        popupError('Somethings gone wrong');
-      }
+      // Display the actual error message (includes rate limit info)
+      const errorMessage = error?.message || 'Something has gone wrong';
+      setVerificationError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -88,9 +86,15 @@ function SignupConfirmContent({
   }, [verificationCodeExpiration]);
 
   const doRequestNewCode = async () => {
-    const newExpirationTime = await requestVerificationCode();
-    setVerificationCodeExpiration(newExpirationTime);
-    popupSuccess('New Verification Code Sent');
+    try {
+      const newExpirationTime = await requestVerificationCode();
+      setVerificationCodeExpiration(newExpirationTime);
+      popupSuccess('New Verification Code Sent');
+    } catch (error: any) {
+      // Display the actual error message (includes rate limit info)
+      const errorMessage = error?.message || 'Failed to send verification code';
+      popupError(errorMessage);
+    }
   };
 
   return (

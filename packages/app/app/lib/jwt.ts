@@ -38,7 +38,3 @@ export const verifyJwt = async (token: string) => {
 
   return payload;
 };
-
-createAccessTokenJwt({
-
-})

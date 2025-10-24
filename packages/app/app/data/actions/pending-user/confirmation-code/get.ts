@@ -2,6 +2,11 @@
 
 import { auth } from '@/app/actions';
 import { resendConfirmationCode } from '@/app/data/services/pending-users';
+import {
+  enforceRateLimit,
+  recordAttempt,
+  RateLimitType,
+} from '@/app/lib/rate-limit';
 
 export async function get() {
   const user = await auth();
@@ -10,9 +15,22 @@ export async function get() {
     throw new Error('Not authorised');
   }
 
-  const email = user.properties.email;
+  const email = user.properties.email.toLowerCase().trim();
 
-  const expiration = await resendConfirmationCode(email);
+  // Rate limit resend requests to prevent email spam
+  await enforceRateLimit(RateLimitType.RESEND_CODE, email);
 
-  return expiration;
+  try {
+    const expiration = await resendConfirmationCode(email);
+
+    // Record successful resend (to prevent rapid successive requests)
+    await recordAttempt(RateLimitType.RESEND_CODE, email);
+
+    return expiration;
+  } catch (error) {
+    // Record failed attempt
+    await recordAttempt(RateLimitType.RESEND_CODE, email);
+
+    throw error;
+  }
 }

@@ -4,6 +4,12 @@ import { auth } from '@/app/actions';
 import { verifyUser } from '@/app/data/services/users';
 import { createAccessTokenJwt } from '@/app/lib/jwt';
 import { cookies as getCookies } from 'next/headers';
+import {
+  enforceRateLimit,
+  recordAttempt,
+  clearRateLimit,
+  RateLimitType,
+} from '@/app/lib/rate-limit';
 
 export async function post(email: string, verificationCode: string) {
   const user = await auth();
@@ -14,25 +20,48 @@ export async function post(email: string, verificationCode: string) {
 
   const verificationCodeAsInt = parseInt(verificationCode, 10);
 
-  if (!verificationCode) {
+  if (!verificationCode || isNaN(verificationCodeAsInt)) {
     throw new Error('Verification code invalid');
   }
 
-  const newUser = await verifyUser(
-    user.properties.email,
-    verificationCodeAsInt,
-  );
+  // Normalize email for consistent rate limiting
+  const normalizedEmail = user.properties.email.toLowerCase().trim();
 
-  const newToken = await createAccessTokenJwt(newUser);
+  // Check rate limit before attempting verification
+  await enforceRateLimit(RateLimitType.VERIFICATION, normalizedEmail);
 
-  const cookies = await getCookies();
+  try {
+    const newUser = await verifyUser(normalizedEmail, verificationCodeAsInt);
 
-  cookies.set({
-    name: 'access_token',
-    value: newToken,
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 14 * 24 * 60 * 60 * 1000,
-  });
+    const newToken = await createAccessTokenJwt(newUser);
+
+    const cookies = await getCookies();
+
+    cookies.set({
+      name: 'access_token',
+      value: newToken,
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 14 * 24 * 60 * 60 * 1000,
+    });
+
+    // Clear rate limit on successful verification
+    await clearRateLimit(RateLimitType.VERIFICATION, normalizedEmail);
+  } catch (error) {
+    // Record failed verification attempt
+    await recordAttempt(RateLimitType.VERIFICATION, normalizedEmail);
+
+    // Use generic error message to prevent enumeration
+    if (
+      error instanceof Error &&
+      (error.message === 'Verification code mismatch' ||
+        error.message === 'Verification code expired' ||
+        error.message === 'User not found')
+    ) {
+      throw new Error('Invalid or expired verification code');
+    }
+
+    throw error;
+  }
 }

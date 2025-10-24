@@ -44,11 +44,9 @@ const Signup = () => {
       const url = '/signup-confirm';
       router.replace(url);
     } catch (error: any) {
-      if (error && error.message === 'User exists') {
-        popupError('Email is already registered, try logging in instead');
-      } else {
-        popupError('Something has gone wrong, try again');
-      }
+      // Display the actual error message (includes rate limit info)
+      const errorMessage = error?.message || 'Something has gone wrong, try again';
+      popupError(errorMessage);
     } finally {
       setIsLoading(false);
     }

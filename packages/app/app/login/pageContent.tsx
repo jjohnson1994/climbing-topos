@@ -45,11 +45,10 @@ const LoginContent = ({ signIn }) => {
       router.replace(path);
     } catch (error: any) {
       console.error(error);
-      if (error.code === 'UserNotFoundException') {
-        popupError('Could not find a matching account');
-      } else {
-        popupError('Something has gone wrong, try again');
-      }
+
+      // Display the actual error message (includes rate limit info)
+      const errorMessage = error?.message || 'Something has gone wrong, try again';
+      popupError(errorMessage);
     }
   };
 
