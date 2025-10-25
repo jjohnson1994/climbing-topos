@@ -6,12 +6,14 @@ import TopoImage from '@/app/components/TopoImage';
 import RouteLogs from '@/app/components/RouteLogs';
 import ButtonLogRoute from '@/app/components/ButtonLogRoute';
 import ButtonSaveToList from '@/app/components/ButtonSaveToList';
+import SavedToListsIndicator from '@/app/components/SavedToListsIndicator';
 import { popupSuccess } from '@/app/helpers/alerts';
 import Button, { Color } from '@/app/elements/Button';
 import { auth } from '@/app/actions';
 import { get as getRoutes } from '@/app/data/actions/routes/get';
 import { get as getCrags } from '@/app/data/actions/crags/get';
 import { get as getLogs } from '@/app/data/actions/routes/logs/get';
+import { getListsContainingRoute } from '@/app/data/actions/lists/get';
 import Link from 'next/link';
 
 async function RoutePage({
@@ -30,6 +32,7 @@ async function RoutePage({
   let route: Route;
   let crag: Crag;
   let routeLogs: Log[];
+  let listsContainingRoute: { listSlug: string; listTitle: string }[] = [];
   let isAdmin = false;
   const isAuthenticated = !!user;
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
@@ -65,6 +68,14 @@ async function RoutePage({
 
   await doGetRoute();
   await doGetRouteLogs();
+
+  if (user) {
+    try {
+      listsContainingRoute = await getListsContainingRoute(routeSlug);
+    } catch (error) {
+      console.error('Error loading lists containing route', error);
+    }
+  }
 
   if (crag.managedBy.sub === user?.id) {
     isAdmin = true;
@@ -193,6 +204,13 @@ async function RoutePage({
                           Awaiting Verification
                         </span>
                       )}
+                      <SavedToListsIndicator
+                        lists={listsContainingRoute}
+                        cragSlug={cragSlug}
+                        areaSlug={areaSlug}
+                        topoSlug={topoSlug}
+                        routeSlug={routeSlug}
+                      />
                       {route?.tags.map((tag) => (
                         <label key={tag} className="tag is-capitalize">
                           {tag}

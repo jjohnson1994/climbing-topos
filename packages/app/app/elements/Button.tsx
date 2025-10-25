@@ -19,6 +19,11 @@ export const enum Color {
   isDanger = 'is-danger ',
 }
 
+export const enum Size {
+  isSmall = 'is-small',
+  isLarge = 'is-large',
+}
+
 export const enum Style {
   isOutlined = 'is-outlined',
 }
@@ -27,6 +32,7 @@ interface ButtonProps {
   onClick?: Function;
   children?: any;
   color?: Color;
+  size?: Size;
   icon?: string;
   type?: ButtonType;
   loading?: boolean;
@@ -38,9 +44,10 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
   (props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
     const getClasses = (): string => {
       const color = props.color;
+      const size = props.size;
       const style = props.style;
 
-      return `button ${color ? color : ''} ${style ? style : ''} ${props.loading ? 'is-loading' : ''}`.trim();
+      return `button ${color ? color : ''} ${size ? size : ''} ${style ? style : ''} ${props.loading ? 'is-loading' : ''}`.trim();
     };
 
     const classes = getClasses();

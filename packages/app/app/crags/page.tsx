@@ -62,8 +62,7 @@ async function Crags() {
                     </div>
                     <div className="column m-3">
                       <p className="is-capitalized">
-                        <b>{crag.title}</b> {crag.osmData.address.county},{' '}
-                        {crag.osmData.address.country}
+                        <b>{crag.title}</b> {crag.county}, {crag.country}
                       </p>
                       <div className="tags">
                         <span className="tag">Routes {crag.routeCount}</span>

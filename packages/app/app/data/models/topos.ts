@@ -52,9 +52,19 @@ export async function getToposByCragSlug(cragSlug: string): Promise<Topo[]> {
   const params = {
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ProjectionExpression:
+      '#slug, #image, #imageFileName, #orientation, #areaSlug, #cragSlug, #verified, #createdBy',
     ExpressionAttributeNames: {
       '#hk': 'hk',
       '#sk': 'sk',
+      '#slug': 'slug',
+      '#image': 'image',
+      '#imageFileName': 'imageFileName',
+      '#orientation': 'orientation',
+      '#areaSlug': 'areaSlug',
+      '#cragSlug': 'cragSlug',
+      '#verified': 'verified',
+      '#createdBy': 'createdBy',
     },
     ExpressionAttributeValues: {
       ':hk': cragSlug,
@@ -74,9 +84,19 @@ export async function getToposByCragArea(
   const params = {
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ProjectionExpression:
+      '#slug, #image, #imageFileName, #orientation, #areaSlug, #cragSlug, #verified, #createdBy',
     ExpressionAttributeNames: {
       '#sk': 'sk',
       '#hk': 'hk',
+      '#slug': 'slug',
+      '#image': 'image',
+      '#imageFileName': 'imageFileName',
+      '#orientation': 'orientation',
+      '#areaSlug': 'areaSlug',
+      '#cragSlug': 'cragSlug',
+      '#verified': 'verified',
+      '#createdBy': 'createdBy',
     },
     ExpressionAttributeValues: {
       ':hk': cragSlug,

@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { List, Route } from '@climbingtopos/types';
 import { get as getLists } from '@/app/data/actions/lists/get';
+import { post as createList } from '@/app/data/actions/lists/post';
+import { patch as addRoutesToList } from '@/app/data/actions/lists/patch';
 import { popupError, toastSuccess } from '../helpers/alerts';
 import Modal from './Modal';
 import './RoutesAddToLogModal.css';
@@ -77,11 +79,11 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
     }
   };
 
-  const createNewList = async (title: string) => {
+  const createNewListHandler = async (title: string) => {
     try {
-      const { slug } = await lists.addList(title);
+      const result = await createList({ title });
 
-      return slug;
+      return result.slug;
     } catch (error) {
       console.error('Error creating new list', error);
       popupError('There was an error creating your new list, try again');
@@ -89,9 +91,9 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
     }
   };
 
-  const addRoutesToList = async (listSlug: string) => {
+  const addRoutesToListHandler = async (listSlug: string) => {
     try {
-      await lists.addRoutesToList(
+      await addRoutesToList(
         listSlug,
         routes.map((route) => ({
           cragSlug: route.cragSlug,
@@ -111,14 +113,14 @@ function RoutesAddToListModal({ routes, visible, onCancel, onConfirm }: Props) {
     try {
       const listSlug =
         data.newOrExisting === 'new'
-          ? await createNewList(data.title)
+          ? await createNewListHandler(data.title)
           : data.listSlug;
 
       getUserLists();
       setValue('newOrExisting', 'existing');
       setValue('listSlug', listSlug);
 
-      await addRoutesToList(listSlug);
+      await addRoutesToListHandler(listSlug);
 
       toastSuccess('Routes Saved to List');
       onConfirm();

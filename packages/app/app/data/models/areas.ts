@@ -69,9 +69,25 @@ export async function getAreasByCragSlug(cragSlug: string): Promise<Area[]> {
     const params = {
         TableName: Resource.climbingtopos2.name,
         KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+        ProjectionExpression:
+            '#slug, #title, #description, #routeCount, #logCount, #latitude, #longitude, #tags, #rockType, #verified, #access, #cragSlug, #cragTitle, #createdBy',
         ExpressionAttributeNames: {
             '#hk': 'hk',
             '#sk': 'sk',
+            '#slug': 'slug',
+            '#title': 'title',
+            '#description': 'description',
+            '#routeCount': 'routeCount',
+            '#logCount': 'logCount',
+            '#latitude': 'latitude',
+            '#longitude': 'longitude',
+            '#tags': 'tags',
+            '#rockType': 'rockType',
+            '#verified': 'verified',
+            '#access': 'access',
+            '#cragSlug': 'cragSlug',
+            '#cragTitle': 'cragTitle',
+            '#createdBy': 'createdBy',
         },
         ExpressionAttributeValues: {
             ':hk': cragSlug,

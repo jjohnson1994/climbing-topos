@@ -21,29 +21,57 @@ export async function getAllCrags(
   limit?: number,
   offset?: number,
 ): Promise<CragBrief[]> {
-  const allCrags = await crags
-    .getAllCrags(sortBy, sortOrder, limit, offset)
-    .then(async (crags) => {
-      const createCragViews = crags.map(
-        (crag) =>
-          new Promise<CragBrief>((resolve) => {
-            Promise.all([
-              userSub ? logs.getLogsForUser(userSub, crag.slug) : [],
-            ]).then(([userLogs]) => {
-              resolve({
-                ...crag,
-                userLogCount: userLogs.length,
-              });
-            });
-          }),
-      );
+  // Fetch all crags - we need them all to add userLogCount and for sorting
+  let allCrags: Crag[] = [];
+  let lastEvaluatedKey: Record<string, any> | undefined = undefined;
 
-      const cragViews = await Promise.all(createCragViews);
+  // Paginate through all results
+  do {
+    const response = await crags.getAllCrags(undefined, lastEvaluatedKey);
+    allCrags = allCrags.concat(response.items);
+    lastEvaluatedKey = response.lastEvaluatedKey;
+  } while (lastEvaluatedKey);
 
-      return cragViews;
+  // Add userLogCount to each crag
+  const createCragViews = allCrags.map(
+    (crag) =>
+      new Promise<CragBrief>((resolve) => {
+        Promise.all([
+          userSub ? logs.getLogsForUser(userSub, crag.slug) : [],
+        ]).then(([userLogs]) => {
+          resolve({
+            ...crag,
+            userLogCount: userLogs.length,
+          });
+        });
+      }),
+  );
+
+  let cragViews = await Promise.all(createCragViews);
+
+  // Apply sorting if requested
+  if (sortBy) {
+    cragViews = cragViews.sort((cragA, cragB) => {
+      const valueA = cragA[sortBy as keyof CragBrief];
+      const valueB = cragB[sortBy as keyof CragBrief];
+
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return sortOrder === 'DESC' ? valueB - valueA : valueA - valueB;
+      }
+      return 0;
     });
+  }
 
-  return allCrags;
+  // Apply pagination if requested
+  if (typeof offset !== 'undefined' && typeof limit !== 'undefined') {
+    cragViews = cragViews.slice(offset, offset + limit);
+  } else if (typeof offset !== 'undefined') {
+    cragViews = cragViews.slice(offset);
+  } else if (typeof limit !== 'undefined') {
+    cragViews = cragViews.slice(0, limit);
+  }
+
+  return cragViews;
 }
 
 export async function getCragBySlug(

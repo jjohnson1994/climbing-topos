@@ -28,34 +28,48 @@ const Table = ({ columns, data, sortBy }: Props) => {
   return (
     <table className="table is-fullwidth" {...getTableProps()}>
       <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                {column.render('Header')}
-                <span>
-                  {column.isSorted ? (
-                    column.isSortedDesc ? (
-                      <i className="ml-1 fas fa-chevron-down" />
-                    ) : (
-                      <i className="ml-1 fas fa-chevron-up" />
-                    )
-                  ) : (
-                    ''
-                  )}
-                </span>
-              </th>
-            ))}
-          </tr>
-        ))}
+        {headerGroups.map((headerGroup) => {
+          const { key: headerGroupKey, ...headerGroupProps } =
+            headerGroup.getHeaderGroupProps();
+          return (
+            <tr key={headerGroupKey} {...headerGroupProps}>
+              {headerGroup.headers.map((column) => {
+                const { key: headerKey, ...headerProps } =
+                  column.getHeaderProps(column.getSortByToggleProps());
+                return (
+                  <th key={headerKey} {...headerProps}>
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <i className="ml-1 fas fa-chevron-down" />
+                        ) : (
+                          <i className="ml-1 fas fa-chevron-up" />
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </span>
+                  </th>
+                );
+              })}
+            </tr>
+          );
+        })}
       </thead>
       <tbody {...getTableBodyProps()}>
         {rows.map((row) => {
           prepareRow(row);
+          const { key: rowKey, ...rowProps } = row.getRowProps();
           return (
-            <tr {...row.getRowProps()}>
+            <tr key={rowKey} {...rowProps}>
               {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                const { key: cellKey, ...cellProps } = cell.getCellProps();
+                return (
+                  <td key={cellKey} {...cellProps}>
+                    {cell.render('Cell')}
+                  </td>
+                );
               })}
             </tr>
           );

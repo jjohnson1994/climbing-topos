@@ -8,7 +8,7 @@ import { lists } from '../models';
 export async function getListBySlug(userSub: string, listSlug: string) {
   const [metadata, routes] = await Promise.all([
     lists.getListBySlug(userSub, listSlug),
-    lists.getListRoutes(listSlug),
+    lists.getListRoutes(userSub, listSlug),
   ]);
 
   return {
@@ -44,4 +44,38 @@ export async function incrementRoutesCount(listSlug: string, userSub: string) {
       ':inc': 1,
     },
   });
+}
+
+export async function decrementRoutesCount(listSlug: string, userSub: string) {
+  return lists.update(listSlug, userSub, {
+    UpdateExpression: 'set #routeCount = #routeCount - :dec',
+    ExpressionAttributeNames: {
+      '#routeCount': 'routeCount',
+    },
+    ExpressionAttributeValues: {
+      ':dec': 1,
+    },
+  });
+}
+
+export function getListsContainingRoute(userSub: string, routeSlug: string) {
+  return lists.getListsContainingRoute(userSub, routeSlug);
+}
+
+export function removeRouteFromList(
+  userSub: string,
+  listSlug: string,
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string,
+) {
+  return lists.removeRouteFromList(
+    userSub,
+    listSlug,
+    cragSlug,
+    areaSlug,
+    topoSlug,
+    routeSlug,
+  );
 }

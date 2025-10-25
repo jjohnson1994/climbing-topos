@@ -90,39 +90,51 @@ export async function createRouteLog(
 }
 
 export async function getLogs(
-  cragSlug?: string,
+  cragSlug: string,
   areaSlug?: string,
   topoSlug?: string,
   routeSlug?: string,
 ): Promise<Log[]> {
+  // Build sk pattern matching the actual data structure:
+  // sk = log#area#{areaSlug}#topo#{topoSlug}#route#{routeSlug}#{logId}
   let sk = 'log#';
 
-  if (cragSlug) {
-    sk += `crag#${cragSlug}#`;
-  }
-
-  if (cragSlug && areaSlug) {
+  if (areaSlug) {
     sk += `area#${areaSlug}#`;
   }
 
-  if (cragSlug && areaSlug && topoSlug) {
+  if (areaSlug && topoSlug) {
     sk += `topo#${topoSlug}#`;
   }
 
-  if (cragSlug && areaSlug && topoSlug && routeSlug) {
-    sk += `route#${routeSlug}`;
+  if (areaSlug && topoSlug && routeSlug) {
+    sk += `route#${routeSlug}#`;
   }
 
   const params = {
     TableName: Resource.climbingtopos2.name,
-    IndexName: 'gsi1',
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ProjectionExpression:
+      '#slug, #dateSent, #attempts, #comment, #rating, #grade, #gradeTaken, #gradingSystem, #routeSlug, #routeTitle, #user, #cragTitle, #areaTitle',
     ExpressionAttributeNames: {
-      '#hk': 'model',
+      '#hk': 'hk',
       '#sk': 'sk',
+      '#slug': 'slug',
+      '#dateSent': 'dateSent',
+      '#attempts': 'attempts',
+      '#comment': 'comment',
+      '#rating': 'rating',
+      '#grade': 'grade',
+      '#gradeTaken': 'gradeTaken',
+      '#gradingSystem': 'gradingSystem',
+      '#routeSlug': 'routeSlug',
+      '#routeTitle': 'routeTitle',
+      '#user': 'user',
+      '#cragTitle': 'cragTitle',
+      '#areaTitle': 'areaTitle',
     },
     ExpressionAttributeValues: {
-      ':hk': 'log',
+      ':hk': cragSlug,
       ':sk': sk,
     },
   };
@@ -160,9 +172,27 @@ export async function getLogsForUser(
   const params = {
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+    ProjectionExpression:
+      '#slug, #dateSent, #attempts, #comment, #rating, #grade, #gradeTaken, #gradingSystem, #routeSlug, #routeTitle, #user, #cragTitle, #cragSlug, #areaTitle, #areaSlug, #topoSlug',
     ExpressionAttributeNames: {
       '#hk': 'hk',
       '#sk': 'sk',
+      '#slug': 'slug',
+      '#dateSent': 'dateSent',
+      '#attempts': 'attempts',
+      '#comment': 'comment',
+      '#rating': 'rating',
+      '#grade': 'grade',
+      '#gradeTaken': 'gradeTaken',
+      '#gradingSystem': 'gradingSystem',
+      '#routeSlug': 'routeSlug',
+      '#routeTitle': 'routeTitle',
+      '#user': 'user',
+      '#cragTitle': 'cragTitle',
+      '#cragSlug': 'cragSlug',
+      '#areaTitle': 'areaTitle',
+      '#areaSlug': 'areaSlug',
+      '#topoSlug': 'topoSlug',
     },
     ExpressionAttributeValues: {
       ':hk': `user#${userSub}`,

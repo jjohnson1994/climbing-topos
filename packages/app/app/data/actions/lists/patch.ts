@@ -3,14 +3,20 @@
 import * as yup from 'yup';
 import { ListAddRouteRequest } from '@climbingtopos/types';
 import { lists, routes } from '@/app/data/services';
-import { NewListSchema } from '@climbingtopos/schemas';
 import { RequestValidator } from '@/app/helpers/request-validator';
 import { auth, login } from '@/app/actions';
 
 const validateBody =
   (body: ListAddRouteRequest[]): RequestValidator =>
     async () => {
-      const schema = NewListSchema();
+      const schema = yup.array().of(
+        yup.object().shape({
+          cragSlug: yup.string().required(),
+          areaSlug: yup.string().required(),
+          topoSlug: yup.string().required(),
+          routeSlug: yup.string().required(),
+        }),
+      );
       const isValid = await schema.isValid(body);
 
       if (isValid) {
@@ -20,18 +26,16 @@ const validateBody =
       }
     };
 
-const validateQuery =
-  (body: ListAddRouteRequest[]): RequestValidator =>
+const validateSlug =
+  (slug: string): RequestValidator =>
     async () => {
-      const schema = yup.object().shape({
-        listSlug: yup.string().required(),
-      });
-      const isValid = await schema.isValid(body);
+      const schema = yup.string().required();
+      const isValid = await schema.isValid(slug);
 
       if (isValid) {
         return true;
       } else {
-        throw new Error('Invalid Request: Schema not valid');
+        throw new Error('Invalid Request: Slug not valid');
       }
     };
 
@@ -44,10 +48,10 @@ export const patch = async (slug: string, body: ListAddRouteRequest[]) => {
       return bodyIsValid;
     }
 
-    const queryIsValid = await validateQuery(body)();
+    const slugIsValid = await validateSlug(slug)();
 
-    if (queryIsValid !== true) {
-      return queryIsValid;
+    if (slugIsValid !== true) {
+      return slugIsValid;
     }
 
     const userSub = user ? user.properties.sub : undefined;

@@ -26,7 +26,7 @@ function SearchResultCrag({ crag }: { crag: Crag }) {
             <b>{crag.title} </b>
             <br />
             <small>
-              {crag.osmData.address.county}, {crag.osmData.address.country}
+              {crag.county}, {crag.country}
             </small>
           </p>
         </div>

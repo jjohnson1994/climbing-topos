@@ -71,57 +71,55 @@ export const createCrag = async (
 };
 
 export async function getAllCrags(
-  sortBy?: string,
-  sortOrder?: 'DESC' | 'ASC',
   limit?: number,
-  offset?: number,
-): Promise<Crag[]> {
-  const params = {
+  lastEvaluatedKey?: Record<string, any>,
+): Promise<{ items: Crag[]; lastEvaluatedKey?: Record<string, any> }> {
+  const params: any = {
     TableName: Resource.climbingtopos2.name,
     IndexName: 'gsi1',
     KeyConditionExpression: '#model = :entity',
+    ProjectionExpression:
+      '#slug, #title, #description, #image, #areaCount, #routeCount, #logCount, #latitude, #longitude, #tags, #city, #country, #countryCode, #county, #state, #verified, #access',
     ExpressionAttributeNames: {
       '#model': 'model',
+      '#slug': 'slug',
+      '#title': 'title',
+      '#description': 'description',
+      '#image': 'image',
+      '#areaCount': 'areaCount',
+      '#routeCount': 'routeCount',
+      '#logCount': 'logCount',
+      '#latitude': 'latitude',
+      '#longitude': 'longitude',
+      '#tags': 'tags',
+      '#city': 'city',
+      '#country': 'country',
+      '#countryCode': 'countryCode',
+      '#county': 'county',
+      '#state': 'state',
+      '#verified': 'verified',
+      '#access': 'access',
     },
     ExpressionAttributeValues: {
       ':entity': 'crag',
     },
   };
 
-  const crags = await dynamoDb
-    .send(new QueryCommand(params))
-    .then(({ Items }) => {
-      if (sortBy) {
-        return Items!.sort((cragA, cragB) => {
-          if (sortOrder === 'DESC') {
-            return cragB[sortBy] - cragA[sortBy];
-          } else if (sortOrder === 'ASC') {
-            return cragA[sortBy] - cragB[sortBy];
-          } else {
-            return 0;
-          }
-        });
-      } else {
-        return Items;
-      }
-    })
-    .then((crags) => {
-      if (typeof offset !== 'undefined' && typeof limit !== 'undefined') {
-        return crags!.slice(offset, offset + limit);
-      }
+  // Use DynamoDB native pagination
+  if (limit) {
+    params.Limit = limit;
+  }
 
-      if (typeof offset !== 'undefined') {
-        return crags!.slice(offset);
-      }
+  if (lastEvaluatedKey) {
+    params.ExclusiveStartKey = lastEvaluatedKey;
+  }
 
-      if (typeof limit !== 'undefined') {
-        return crags!.slice(0, limit);
-      }
+  const response = await dynamoDb.send(new QueryCommand(params));
 
-      return crags;
-    });
-
-  return crags as Crag[];
+  return {
+    items: (response.Items || []) as Crag[],
+    lastEvaluatedKey: response.LastEvaluatedKey,
+  };
 }
 
 export const getCragBySlug = async (slug: string): Promise<Crag> => {
@@ -140,41 +138,6 @@ export const getCragBySlug = async (slug: string): Promise<Crag> => {
 
   const crag = await dynamoDb.send(new QueryCommand(params));
   return crag?.Items?.[0] as Crag;
-};
-
-export const getAllCragsByCountry = async (countryCode: string) => {
-  const params = {
-    TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression:
-      'begins_with(PK, :entity) AND begins_with(SK, :countryCode)',
-    ExpressionAttributeValues: {
-      ':entity': 'crag',
-      ':countryCode': countryCode,
-    },
-  };
-
-  const crags = await dynamoDb.send(new QueryCommand(params));
-
-  return crags;
-};
-
-export const getAllCragsByCountryAndRegion = async (
-  countryCode: string,
-  region: string,
-) => {
-  const params = {
-    TableName: Resource.climbingtopos2.name,
-    KeyConditionExpression:
-      'begins_with(PK, :entity) AND begins_with(SK, :countryCodeAndRegion)',
-    ExpressionAttributeValues: {
-      ':entity': 'crag',
-      ':countryCodeRegion': `${countryCode}#${region}`,
-    },
-  };
-
-  const crags = await dynamoDb.send(new QueryCommand(params));
-
-  return crags;
 };
 
 export async function update(
