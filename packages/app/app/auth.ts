@@ -1,13 +1,13 @@
-import { Resource } from 'sst';
-import { createClient } from '@openauthjs/openauth/client';
+// import { Resource } from 'sst';
+// import { createClient } from '@openauthjs/openauth/client';
 import { cookies as getCookies } from 'next/headers';
 import { object, string, optional } from 'valibot';
 import { createSubjects } from '@openauthjs/openauth/subject';
 
-export const client = createClient({
-  clientID: 'nextjs',
-  issuer: Resource.ClimbingToposOpenAuth.url,
-});
+// export const client = createClient({
+//   clientID: 'nextjs',
+//   issuer: Resource.ClimbingToposOpenAuth.url,
+// });
 
 // TODO share with issuer
 export const subjects = createSubjects({

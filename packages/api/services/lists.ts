@@ -45,3 +45,15 @@ export async function incrementRoutesCount(listSlug: string, userSub: string) {
     },
   });
 }
+
+export async function decrementRoutesCount(listSlug: string, userSub: string) {
+  return lists.update(listSlug, userSub, {
+    UpdateExpression: 'set #routeCount = #routeCount - :dec',
+    ExpressionAttributeNames: {
+      '#routeCount': 'routeCount',
+    },
+    ExpressionAttributeValues: {
+      ':dec': 1,
+    },
+  });
+}

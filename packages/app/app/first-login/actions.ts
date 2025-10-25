@@ -41,5 +41,3 @@ export async function updateUser(accountSetupForm: FormData) {
 
   await setTokens(newAccessToken);
 }
-
-updateUser();

@@ -1,12 +1,14 @@
 'use client';
 
-import { List } from '@climbingtopos/types';
+import { List, ListRoute, Route } from '@climbingtopos/types';
 import Link from 'next/link';
 import { get as getLists } from '@/app/data/actions/lists/get';
 import { useGradeHelpers } from '@/app/api/grades';
-import { popupError } from '@/app/helpers/alerts';
 import Modal from '@/app/components/Modal';
 import { useEffect, useState } from 'react';
+import Button, { Color, Size, Style } from '../elements/Button';
+import { deleteRouteFromList } from '@/app/data/actions/lists/delete';
+import { popupError, toastSuccess } from '@/app/helpers/alerts';
 
 function ProfileLists() {
   const [userLists, setUserLists] = useState<List[]>([]);
@@ -44,6 +46,35 @@ function ProfileLists() {
     }
   };
 
+  const handleRemoveFromList = async (route: ListRoute) => {
+    setActiveList({
+      ...activeList,
+      routes: activeList?.routes.filter(
+        (listRoute) => listRoute.slug !== route.slug,
+      ),
+    });
+
+    try {
+      const result = await deleteRouteFromList(
+        activeList.slug,
+        route.cragSlug,
+        route.areaSlug,
+        route.topoSlug,
+        route.slug,
+      );
+
+      if (result.success) {
+        toastSuccess('Route removed from list');
+      } else {
+        popupError(result.error || 'Failed to remove route from list');
+      }
+    } catch (error) {
+      console.error('Error removing route from list', error);
+      popupError('An error occurred while removing the route from the list');
+    } finally {
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setActiveList(undefined);
@@ -67,6 +98,7 @@ function ProfileLists() {
                 <th>Crag</th>
                 <th>Type</th>
                 <th>Grade</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -86,6 +118,15 @@ function ProfileLists() {
                       route.gradeModal,
                       route.gradingSystem,
                     )}
+                  </td>
+                  <td className="has-text-right">
+                    <Button
+                      color={Color.isDanger}
+                      size={Size.isSmall}
+                      style={Style.isOutlined}
+                      icon="fas fa-trash"
+                      onClick={() => handleRemoveFromList(route)}
+                    ></Button>
                   </td>
                 </tr>
               ))}

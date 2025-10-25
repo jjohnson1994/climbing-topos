@@ -43,8 +43,6 @@ export async function auth(): Promise<false | { properties: UserPublicData }> {
       path: '/',
       maxAge: 14 * 24 * 60 * 60 * 1000,
     });
-
-    console.log('valid token extended');
   } catch (error) {}
 
   return verified;

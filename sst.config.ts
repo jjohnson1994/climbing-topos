@@ -14,20 +14,7 @@ export default $config({
     };
   },
   async run() {
-    const { auth } = await import('./infra/auth');
     const { email } = await import('./infra/email');
-
-    const authTable = new sst.Linkable('ClimbingTopos2AuthTable', {
-      properties: {
-        name: auth.nodes.table.name,
-      },
-      include: [
-        sst.aws.permission({
-          actions: ['dynamodb:Query'],
-          resources: [auth.nodes.table.arn],
-        }),
-      ],
-    });
 
     const { table } = await import('./infra/dynamo');
     const { bucket } = await import('./infra/storage');
@@ -45,8 +32,6 @@ export default $config({
     const app = new sst.aws.Nextjs('climbingtopos2-frontend', {
       path: 'packages/app/',
       link: [
-        auth,
-        authTable,
         table,
         bucket,
         postHogKey,

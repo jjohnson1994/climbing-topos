@@ -55,6 +55,18 @@ topicLogOnRemove.subscribe({
   link: [algoliaAdminKey, algoliaAppId, algoliaIndex, table],
 });
 
+const topicListRouteOnInsert = new sst.aws.SnsTopic('listRouteOnInsert');
+topicListRouteOnInsert.subscribe({
+  handler: 'packages/api/events/listRoute/listRouteOnInsert.handler',
+  link: [table],
+});
+
+const topicListRouteOnRemove = new sst.aws.SnsTopic('listRouteOnRemove');
+topicListRouteOnRemove.subscribe({
+  handler: 'packages/api/events/listRoute/listRouteOnRemove.handler',
+  link: [table],
+});
+
 const topicRouteOnInsert = new sst.aws.SnsTopic('routeOnInsert');
 topicRouteOnInsert.subscribe({
   handler: 'packages/api/events/route/routeOnInsert.handler',
@@ -100,6 +112,8 @@ table.subscribe({
     TOPIC_ARN_CRAG_INSERT: topicCragOnInsert.arn,
     TOPIC_ARN_CRAG_MODIFY: topicCragOnModify.arn,
     TOPIC_ARN_CRAG_REMOVE: topicCragOnRemove.arn,
+    TOPIC_ARN_LISTROUTE_INSERT: topicListRouteOnInsert.arn,
+    TOPIC_ARN_LISTROUTE_REMOVE: topicListRouteOnRemove.arn,
     TOPIC_ARN_LOG_INSERT: topicLogOnInsert.arn,
     TOPIC_ARN_LOG_REMOVE: topicLogOnRemove.arn,
     TOPIC_ARN_ROUTE_INSERT: topicRouteOnInsert.arn,

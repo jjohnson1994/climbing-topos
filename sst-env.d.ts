@@ -21,14 +21,6 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "ClimbingTopos2AuthTable": {
-      "name": string
-      "type": "sst.sst.Linkable"
-    }
-    "ClimbingToposOpenAuth": {
-      "type": "sst.aws.Auth"
-      "url": string
-    }
     "JwtPrivateKey": {
       "type": "sst.sst.Secret"
       "value": string
@@ -83,6 +75,14 @@ declare module "sst" {
       "type": "sst.aws.SnsTopic"
     }
     "cragOnRemove": {
+      "arn": string
+      "type": "sst.aws.SnsTopic"
+    }
+    "listRouteOnInsert": {
+      "arn": string
+      "type": "sst.aws.SnsTopic"
+    }
+    "listRouteOnRemove": {
       "arn": string
       "type": "sst.aws.SnsTopic"
     }

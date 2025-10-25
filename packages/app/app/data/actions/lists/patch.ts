@@ -8,36 +8,36 @@ import { auth, login } from '@/app/actions';
 
 const validateBody =
   (body: ListAddRouteRequest[]): RequestValidator =>
-    async () => {
-      const schema = yup.array().of(
-        yup.object().shape({
-          cragSlug: yup.string().required(),
-          areaSlug: yup.string().required(),
-          topoSlug: yup.string().required(),
-          routeSlug: yup.string().required(),
-        }),
-      );
-      const isValid = await schema.isValid(body);
+  async () => {
+    const schema = yup.array().of(
+      yup.object().shape({
+        cragSlug: yup.string().required(),
+        areaSlug: yup.string().required(),
+        topoSlug: yup.string().required(),
+        routeSlug: yup.string().required(),
+      }),
+    );
+    const isValid = await schema.isValid(body);
 
-      if (isValid) {
-        return true;
-      } else {
-        throw new Error('Invalid Request: Schema not valid');
-      }
-    };
+    if (isValid) {
+      return true;
+    } else {
+      throw new Error('Invalid Request: Schema not valid');
+    }
+  };
 
 const validateSlug =
   (slug: string): RequestValidator =>
-    async () => {
-      const schema = yup.string().required();
-      const isValid = await schema.isValid(slug);
+  async () => {
+    const schema = yup.string().required();
+    const isValid = await schema.isValid(slug);
 
-      if (isValid) {
-        return true;
-      } else {
-        throw new Error('Invalid Request: Slug not valid');
-      }
-    };
+    if (isValid) {
+      return true;
+    } else {
+      throw new Error('Invalid Request: Slug not valid');
+    }
+  };
 
 export const patch = async (slug: string, body: ListAddRouteRequest[]) => {
   try {
@@ -102,10 +102,6 @@ export const patch = async (slug: string, body: ListAddRouteRequest[]) => {
         topoSlug: route.topoSlug,
       })),
     );
-
-    lists.incrementRoutesCount(slug, userSub).catch((error) => {
-      console.error('Error incrementing list routes count', error);
-    });
 
     return { success: true, ...updateResponse };
   } catch (error) {

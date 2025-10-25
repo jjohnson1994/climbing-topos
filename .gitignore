@@ -2,9 +2,7 @@ node_modules
 .DS_Store
 .terraform
 
-**/.env
-**/.env.development
-**/.env.production
+*.env
 api/uploads/**
 
 # sst
@@ -12,5 +10,4 @@ api/uploads/**
 
 # Secrets and keys
 *.pem
-secrets.env
 *.key
