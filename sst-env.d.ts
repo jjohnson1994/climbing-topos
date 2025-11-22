@@ -5,122 +5,13 @@
 
 declare module "sst" {
   export interface Resource {
-    "AlgoliaAdminKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "AlgoliaAppId": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "AlgoliaIndex": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "AlgoliaSearchApiKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "JwtPrivateKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "JwtPublicKey": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "PostHogHost": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "PostHogKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "areaOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "areaOnModify": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "areaOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "climbingtopos2": {
-      "name": string
-      "type": "sst.aws.Dynamo"
-    }
     "climbingtopos2-frontend": {
       "type": "sst.aws.Nextjs"
       "url": string
-    }
-    "climbingtopos2Email": {
-      "configSet": string
-      "sender": string
-      "type": "sst.aws.Email"
-    }
-    "climbingtopos2Images": {
-      "name": string
-      "type": "sst.aws.Bucket"
-    }
-    "cragOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "cragOnModify": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "cragOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "listRouteOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "listRouteOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "logOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "logOnModify": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "logOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "routeOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "routeOnModify": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "routeOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "topoOnInsert": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "topoOnModify": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
-    "topoOnRemove": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
     }
   }
 }
