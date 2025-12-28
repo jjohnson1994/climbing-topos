@@ -33,24 +33,32 @@ export const verifyUser = async (email: string, verificationCode: number) => {
 };
 
 export const verifyLogin = async (email: string, password: string) => {
+  // Generic error message to prevent user enumeration attacks
+  const GENERIC_ERROR = 'Invalid email or password. Please try again or reset your password.';
+
   const user = await getUserByEmail(email);
 
   if (!user) {
-    throw new Error('User not found');
+    // Log internally for debugging, but show generic message to user
+    console.warn('Login attempt for non-existent email:', email);
+    throw new Error(GENERIC_ERROR);
   }
 
   if (!user.hashedPassword) {
-    throw new Error('Account not set up for password login. Please contact support.');
+    // Account exists but has no password (legacy account or setup incomplete)
+    console.warn('Login attempt for account without password:', email);
+    throw new Error(GENERIC_ERROR);
   }
 
   if (!password) {
-    throw new Error('Password is required');
+    throw new Error(GENERIC_ERROR);
   }
 
   const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
 
   if (!passwordMatch) {
-    throw new Error('invalid password');
+    console.warn('Failed login attempt for:', email);
+    throw new Error(GENERIC_ERROR);
   }
 
   return {

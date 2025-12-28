@@ -252,3 +252,9 @@ Route types: boulder, sport, trad, aid, alpine, mixed
 - The main branch for PRs is `main`
 - AWS region: eu-west-1
 - Production stage uses `removal: 'retain'` policy to prevent accidental deletions
+
+## Git Commit Guidelines
+
+- **DO NOT** include AI attribution (Claude Code, Co-Authored-By, etc.) in commit messages
+- Keep commit messages concise and focused on the technical changes
+- Use conventional commit format: `type: description` (e.g., `fix:`, `feat:`, `chore:`, `security:`)
