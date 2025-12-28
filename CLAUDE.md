@@ -8,6 +8,8 @@ This is a serverless full-stack climbing topos application built with SST (Serve
 
 ## Development Commands
 
+**Note:** This is an npm workspace monorepo.
+
 ### Running the Application
 
 ```bash
@@ -27,6 +29,13 @@ cd packages/app && npm run build
 cd packages/types && npm run build
 cd packages/globals && npm run build
 cd packages/schemas && npm run build
+```
+
+### Testing
+
+```bash
+# No test suite currently configured
+# packages/api has jest dependencies but no tests written yet
 ```
 
 ### Linting & Formatting
@@ -235,15 +244,6 @@ The app supports 8 climbing grading systems (defined in `packages/globals`):
 - Australian/Ewbank
 
 Route types: boulder, sport, trad, aid, alpine, mixed
-
-## Current State (Auth Branch)
-
-The repository is on the `auth` branch with recent authentication system changes:
-- Migration from previous auth to OpenAuth + custom JWT
-- Password-based login implementation
-- Email verification flow for new signups
-- JWT token generation using RS256 keys
-- Modified files: `packages/app/app/login/page.tsx`
 
 ## Notes
 
