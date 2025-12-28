@@ -39,6 +39,14 @@ export const verifyLogin = async (email: string, password: string) => {
     throw new Error('User not found');
   }
 
+  if (!user.hashedPassword) {
+    throw new Error('Account not set up for password login. Please contact support.');
+  }
+
+  if (!password) {
+    throw new Error('Password is required');
+  }
+
   const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
 
   if (!passwordMatch) {
