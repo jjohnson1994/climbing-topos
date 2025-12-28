@@ -55,7 +55,7 @@ export const verifyLogin = async (email: string, password: string) => {
   };
 };
 
-export const patchUser = (
+export const patchUser = async (
   userSub: string,
   patch: Pick<UserPublicData, 'picture' | 'nickname'>,
 ) => {
@@ -88,7 +88,7 @@ export const patchUser = (
   });
 };
 
-export const incrementCragCreatedCount = (userSub: string) => {
+export const incrementCragCreatedCount = async (userSub: string) => {
   return update(userSub, {
     UpdateExpression: 'add #cragsCreated :inc',
     ExpressionAttributeNames: {
@@ -100,7 +100,7 @@ export const incrementCragCreatedCount = (userSub: string) => {
   });
 };
 
-export const incrementRouteCreatedCount = (userSub: string) => {
+export const incrementRouteCreatedCount = async (userSub: string) => {
   return update(userSub, {
     UpdateExpression: 'add #routesCreated :inc',
     ExpressionAttributeNames: {
@@ -112,7 +112,7 @@ export const incrementRouteCreatedCount = (userSub: string) => {
   });
 };
 
-export const incrementRoutesCompletedCount = (userSub: string) => {
+export const incrementRoutesCompletedCount = async (userSub: string) => {
   return update(userSub, {
     UpdateExpression: 'add #routesCompleted :inc',
     ExpressionAttributeNames: {
