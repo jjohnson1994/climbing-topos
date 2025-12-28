@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/app/actions';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const user = await auth();
 
   if (!user) {
