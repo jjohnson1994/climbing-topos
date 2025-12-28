@@ -4,11 +4,18 @@ import CreateTopoForm from './CreateTopoForm';
 import { post } from '@/app/data/actions/topos/post';
 import AuthenticaedRoute from '@/app/components/AuthenticatedRoute';
 
-async function CreateTopo({
-  params: { cragSlug, areaSlug },
-}: {
-  params: { cragSlug: string; areaSlug: string };
-}) {
+async function CreateTopo(
+  props: {
+    params: Promise<{ cragSlug: string; areaSlug: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    cragSlug,
+    areaSlug
+  } = params;
+
   return (
     <AuthenticaedRoute>
       <section className="section">

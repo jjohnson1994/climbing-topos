@@ -10,13 +10,14 @@ import CragAdmin from '@/app/components/CragAdmin';
 import Head from 'next/head';
 import { auth } from '@/app/actions';
 
-async function CragView({
-  params,
-  searchParams,
-}: {
-  params: { cragSlug: string };
-  searchParams: { tab?: string };
-}) {
+async function CragView(
+  props: {
+    params: Promise<{ cragSlug: string }>;
+    searchParams: Promise<{ tab?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const user = await auth();
 
   const { cragSlug } = params;

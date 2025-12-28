@@ -5,11 +5,17 @@ import { post as createArea } from '@/app/data/actions/areas/post';
 import { get as getCragBySlug } from '@/app/data/actions/crags/get';
 import AuthenticaedRoute from '@/app/components/AuthenticatedRoute';
 
-async function CreateArea({
-  params: { cragSlug },
-}: {
-  params: { cragSlug: string };
-}) {
+async function CreateArea(
+  props: {
+    params: Promise<{ cragSlug: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    cragSlug
+  } = params;
+
   const crag = await getCragBySlug(cragSlug);
 
   return (

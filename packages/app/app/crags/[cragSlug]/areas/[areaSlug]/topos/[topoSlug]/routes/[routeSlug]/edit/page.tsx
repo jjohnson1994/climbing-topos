@@ -5,16 +5,17 @@ import { patch } from '@/app/data/actions/routes/patch';
 import { redirect } from 'next/navigation';
 import EditRouteForm from './EditRouteForm';
 
-async function EditRoutePage({
-  params,
-}: {
-  params: {
-    cragSlug: string;
-    areaSlug: string;
-    topoSlug: string;
-    routeSlug: string;
-  };
-}) {
+async function EditRoutePage(
+  props: {
+    params: Promise<{
+      cragSlug: string;
+      areaSlug: string;
+      topoSlug: string;
+      routeSlug: string;
+    }>;
+  }
+) {
+  const params = await props.params;
   const { cragSlug, areaSlug, topoSlug, routeSlug } = params;
   const user = await auth();
 

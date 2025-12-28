@@ -8,11 +8,12 @@ import TopoImage from '@/app/components/TopoImage';
 import Head from 'next/head';
 import { auth } from '@/app/actions';
 
-async function AreaView({
-  params,
-}: {
-  params: { areaSlug: string; cragSlug: string };
-}) {
+async function AreaView(
+  props: {
+    params: Promise<{ areaSlug: string; cragSlug: string }>;
+  }
+) {
+  const params = await props.params;
   const { areaSlug, cragSlug } = params;
   const user = await auth();
 

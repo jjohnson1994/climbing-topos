@@ -16,16 +16,17 @@ import { get as getLogs } from '@/app/data/actions/routes/logs/get';
 import { getListsContainingRoute } from '@/app/data/actions/lists/get';
 import Link from 'next/link';
 
-async function RoutePage({
-  params,
-}: {
-  params: {
-    cragSlug: string;
-    areaSlug: string;
-    topoSlug: string;
-    routeSlug: string;
-  };
-}) {
+async function RoutePage(
+  props: {
+    params: Promise<{
+      cragSlug: string;
+      areaSlug: string;
+      topoSlug: string;
+      routeSlug: string;
+    }>;
+  }
+) {
+  const params = await props.params;
   const { cragSlug, areaSlug, topoSlug, routeSlug } = params;
   const user = await auth();
 

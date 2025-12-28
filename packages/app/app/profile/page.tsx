@@ -6,7 +6,8 @@ import { auth, logout } from '@/app/actions';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-async function Profile({ searchParams }) {
+async function Profile(props) {
+  const searchParams = await props.searchParams;
   const activeTab = searchParams.tab || 'logs';
   const user = await auth();
 
