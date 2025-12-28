@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Form, { AutoComplete } from '@/app/elements/Form';
 import { popupError } from '@/app/helpers/alerts';
 import { redirect, useRouter } from 'next/navigation';
+import Compressor from 'compressorjs';
 
 import { updateUser, type AccountSetupForm } from './actions';
 import Input from '../elements/Input';
@@ -22,7 +23,9 @@ const AccountSetupFormSchema = yup
 function FirstLoginForm() {
   const [imageFileName, setImageFileName] = useState<string>();
   const [imagePreviewUrl, setImagePreview] = useState<string>();
+  const [compressedImage, setCompressedImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
 
   const router = useRouter();
 
@@ -39,7 +42,12 @@ function FirstLoginForm() {
     try {
       const formData = new FormData();
       formData.append('username', value.username);
-      formData.append('profilePicure', value.profilePicure[0]);
+
+      // Use compressed image if available, otherwise use original
+      const imageToUpload = compressedImage || value.profilePicure[0];
+      if (imageToUpload) {
+        formData.append('profilePicure', imageToUpload);
+      }
 
       await updateUser(formData);
 
@@ -58,15 +66,53 @@ function FirstLoginForm() {
     const files = (
       document.querySelector('input[type=file]') as HTMLInputElement
     ).files;
+
     if (files?.item(0)) {
       const file = files.item(0);
-      const imagePreviewUrl = URL.createObjectURL(file);
 
       setImageFileName(file?.name ?? 'Unnamed Image');
-      setImagePreview(imagePreviewUrl);
+      setCompressing(true);
+
+      // Compress the image
+      new Compressor(file, {
+        quality: 0.8, // 80% quality
+        maxWidth: 800, // Max width for profile images
+        maxHeight: 800, // Max height for profile images
+        mimeType: 'image/jpeg', // Convert to JPEG for better compression
+
+        success(compressedBlob) {
+          // Convert Blob to File
+          const compressedFile = new File(
+            [compressedBlob],
+            file.name.replace(/\.[^/.]+$/, '.jpg'), // Change extension to .jpg
+            { type: 'image/jpeg' }
+          );
+
+          // Create preview URL from compressed image
+          const imagePreviewUrl = URL.createObjectURL(compressedBlob);
+
+          setCompressedImage(compressedFile);
+          setImagePreview(imagePreviewUrl);
+          setCompressing(false);
+
+          console.log('Original size:', (file.size / 1024).toFixed(2), 'KB');
+          console.log('Compressed size:', (compressedFile.size / 1024).toFixed(2), 'KB');
+          console.log('Compression ratio:', ((1 - compressedFile.size / file.size) * 100).toFixed(1) + '%');
+        },
+
+        error(err) {
+          console.error('Image compression failed:', err);
+          // Fallback: use original image if compression fails
+          const imagePreviewUrl = URL.createObjectURL(file);
+          setImagePreview(imagePreviewUrl);
+          setCompressing(false);
+          popupError('Image compression failed, using original image');
+        },
+      });
     } else {
       setImageFileName('');
       setImagePreview('');
+      setCompressedImage(null);
     }
   }
 
@@ -121,7 +167,14 @@ function FirstLoginForm() {
           </label>
         </div>
 
-        <p className="help">Optional</p>
+        <p className="help">
+          Optional. Images will be automatically compressed and resized to 800x800px.
+        </p>
+        {compressing && (
+          <p className="help has-text-info">
+            <i className="fas fa-spinner fa-spin"></i> Compressing image...
+          </p>
+        )}
       </div>
       <p>{formState.errors.profilePicture?.message}</p>
       <hr />
@@ -129,6 +182,7 @@ function FirstLoginForm() {
         color={Color.isPrimary}
         type={ButtonType.Submit}
         loading={loading}
+        disabled={compressing}
       >
         Save
       </Button>
