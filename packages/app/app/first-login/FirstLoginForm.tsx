@@ -43,7 +43,6 @@ function FirstLoginForm() {
       const formData = new FormData();
       formData.append('username', value.username);
 
-      // Use compressed image if available, otherwise use original
       const imageToUpload = compressedImage || value.profilePicure[0];
       if (imageToUpload) {
         formData.append('profilePicure', imageToUpload);
@@ -75,34 +74,26 @@ function FirstLoginForm() {
 
       // Compress the image
       new Compressor(file, {
-        quality: 0.8, // 80% quality
-        maxWidth: 800, // Max width for profile images
-        maxHeight: 800, // Max height for profile images
-        mimeType: 'image/jpeg', // Convert to JPEG for better compression
+        quality: 0.8,
+        maxWidth: 800,
+        maxHeight: 800,
+        mimeType: 'image/jpeg',
 
         success(compressedBlob) {
-          // Convert Blob to File
           const compressedFile = new File(
             [compressedBlob],
-            file.name.replace(/\.[^/.]+$/, '.jpg'), // Change extension to .jpg
+            file.name.replace(/\.[^/.]+$/, '.jpg'),
             { type: 'image/jpeg' }
           );
 
-          // Create preview URL from compressed image
           const imagePreviewUrl = URL.createObjectURL(compressedBlob);
 
           setCompressedImage(compressedFile);
           setImagePreview(imagePreviewUrl);
           setCompressing(false);
-
-          console.log('Original size:', (file.size / 1024).toFixed(2), 'KB');
-          console.log('Compressed size:', (compressedFile.size / 1024).toFixed(2), 'KB');
-          console.log('Compression ratio:', ((1 - compressedFile.size / file.size) * 100).toFixed(1) + '%');
         },
 
         error(err) {
-          console.error('Image compression failed:', err);
-          // Fallback: use original image if compression fails
           const imagePreviewUrl = URL.createObjectURL(file);
           setImagePreview(imagePreviewUrl);
           setCompressing(false);

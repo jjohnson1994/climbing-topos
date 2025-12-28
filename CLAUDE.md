@@ -258,3 +258,11 @@ Route types: boulder, sport, trad, aid, alpine, mixed
 - **DO NOT** include AI attribution (Claude Code, Co-Authored-By, etc.) in commit messages
 - Keep commit messages concise and focused on the technical changes
 - Use conventional commit format: `type: description` (e.g., `fix:`, `feat:`, `chore:`, `security:`)
+
+## Code Style Guidelines
+
+- **DO NOT** add code comments - code should be self-explanatory
+- **DO NOT** add console.log statements - use proper logging if needed
+- Keep code clean and simple
+- Variable and function names should clearly describe their purpose
+- If code needs explanation, it should be refactored to be clearer

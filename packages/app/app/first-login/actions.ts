@@ -21,7 +21,6 @@ export async function updateUser(accountSetupForm: FormData) {
   const username = accountSetupForm.get('username');
   const profilePicure = accountSetupForm.get('profilePicure') as File;
 
-  // Image is compressed client-side before upload (see FirstLoginForm.tsx)
   const { fileUrl } = await files.uploadFile(profilePicure);
 
   await users.patchUser(subject.properties.id, {
