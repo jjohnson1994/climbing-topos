@@ -10,7 +10,11 @@ export async function get() {
     throw new Error('not authorised');
   }
 
-  const user = await getUserByEmail(subject.properties.email);
+  const user = await getUserByEmail(subject.properties.email.toLowerCase().trim());
 
-  return user.verificationCodeExpiration;
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user.verificationCodeExpiration ?? null;
 }

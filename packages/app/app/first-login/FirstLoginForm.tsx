@@ -39,26 +39,25 @@ function FirstLoginForm() {
   ) => {
     setLoading(true);
 
-    try {
-      const formData = new FormData();
-      formData.append('username', value.username);
+    const formData = new FormData();
+    formData.append('username', value.username);
 
-      const imageToUpload = compressedImage || value.profilePicure[0];
-      if (imageToUpload) {
-        formData.append('profilePicure', imageToUpload);
-      }
-
-      await updateUser(formData);
-
-      setTimeout(() => {
-        router.replace('/profile');
-      });
-    } catch (error: any) {
-      console.error(error);
-      popupError('Something has gone wrong, try again');
-    } finally {
-      setLoading(false);
+    const imageToUpload = compressedImage || value.profilePicure[0];
+    if (imageToUpload) {
+      formData.append('profilePicure', imageToUpload);
     }
+
+    const result = await updateUser(formData);
+    setLoading(false);
+
+    if (result?.error) {
+      popupError(result.error);
+      return;
+    }
+
+    setTimeout(() => {
+      router.replace('/profile');
+    });
   };
 
   async function onImageSelected() {

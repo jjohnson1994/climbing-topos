@@ -17,7 +17,7 @@ export default $config({
     const { email } = await import('./infra/email');
 
     const { table } = await import('./infra/dynamo');
-    const { bucket } = await import('./infra/storage');
+    const { bucket, imagesCdn } = await import('./infra/storage');
     const {
       algoliaAppId,
       algoliaIndex,
@@ -28,6 +28,10 @@ export default $config({
       jwtPublicKey,
     } = await import('./infra/secrets');
     await import('./infra/sns');
+
+    const app2 = new sst.aws.TanStackStart('climbingtopos2-app', {
+      path: 'my-app/',
+    });
 
     const app = new sst.aws.Nextjs('climbingtopos2-frontend', {
       path: 'packages/app/',
@@ -46,12 +50,28 @@ export default $config({
         NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: algoliaSearchApiKey.value,
         NEXT_PUBLIC_POSTHOG_KEY: postHogKey.value,
         NEXT_PUBLIC_POSTHOG_HOST: postHogHost.value,
+        IMAGES_CDN_URL: imagesCdn.url,
       },
       dev: {
         autostart: true,
       },
     });
 
-    return app;
+    if ($dev) {
+      const admin = new sst.aws.Nextjs('climbingtopos2-admin', {
+        path: 'packages/admin/',
+        link: [table, bucket],
+        environment: {
+          IMAGES_CDN_URL: imagesCdn.url,
+        },
+        dev: {
+          url: 'http://localhost:3001',
+          autostart: true,
+        },
+      });
+      return { app, admin, table, bucket };
+    }
+
+    return { app };
   },
 });

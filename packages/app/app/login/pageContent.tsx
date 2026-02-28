@@ -38,18 +38,17 @@ const LoginContent = ({ signIn }) => {
   });
 
   const formOnSubmit: SubmitHandler<LoginForm> = async (value: LoginForm) => {
-    try {
-      await signIn(value.email, value.password);
-      const redirect = searchParams.get('redirect');
-      const path = redirect ? redirect : '/profile';
-      router.replace(path);
-    } catch (error: any) {
-      console.error(error);
-
-      // Display the actual error message (includes rate limit info)
-      const errorMessage = error?.message || 'Something has gone wrong, try again';
-      popupError(errorMessage);
+    const result = await signIn(value.email, value.password);
+    if (result?.error) {
+      popupError(result.error);
+      return;
     }
+    const redirect = searchParams.get('redirect');
+    const path =
+      redirect && redirect.startsWith('/') && !redirect.startsWith('//')
+        ? redirect
+        : '/profile';
+    router.replace(path);
   };
 
   return (

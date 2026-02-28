@@ -12,7 +12,7 @@ const validateBody =
   async () => {
     const schema = NewCragSchema();
     try {
-      await schema.validate(body);
+      await schema.validate(body, { stripUnknown: true });
       return true;
     } catch (error) {
       console.error(error);
@@ -24,14 +24,16 @@ export const post = async (request: FormData) => {
   const cragDetails = {
     acceptTerms: request.get('acceptTerms'),
     accessLink: request.get('accessLink'),
-    carParks: JSON.parse(request.get('carParks')),
+    accessDetails: request.get('accessDetails'),
+    approachNotes: request.get('approachNotes'),
+    carParks: JSON.parse(request.get('carParks') as string),
     access: request.get('access'),
     longitude: request.get('longitude'),
     latitude: request.get('latitude'),
-    tags: JSON.parse(request.get('tags')),
+    tags: JSON.parse(request.get('tags') as string),
     description: request.get('description'),
     title: request.get('title'),
-    osmData: JSON.parse(request.get('osmData')),
+    osmData: JSON.parse(request.get('osmData') as string),
     image: request.get('image') as File,
   };
 
@@ -66,7 +68,6 @@ export const post = async (request: FormData) => {
     //   });
     // });
 
-    console.log({ cragDetails });
     const { fileUrl } = await files.uploadFile(cragDetails.image);
 
     const resp = await crags.createCrag(

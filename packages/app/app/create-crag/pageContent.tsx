@@ -5,7 +5,7 @@
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NewCragSchema } from '@climbingtopos/schemas';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { cragTags } from '@climbingtopos/globals';
@@ -27,6 +27,7 @@ function CreateCrag({ post }) {
   const [cragLocationLoading, setCragLocationLoading] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [pending, startTransition] = useTransition();
   const [imagePreview, setImagePreview] = useState('');
 
   const {
@@ -151,6 +152,8 @@ function CreateCrag({ post }) {
 
       formDataObject.set('acceptTerms', formData.acceptTerms);
       formDataObject.set('accessLink', formData.accessLink);
+      formDataObject.set('accessDetails', formData.accessDetails);
+      formDataObject.set('approachNotes', formData.approachNotes);
       formDataObject.set('carParks', JSON.stringify(formData.carParks));
       formDataObject.set('access', formData.access);
       formDataObject.set('longitude', formData.longitude);
@@ -161,9 +164,11 @@ function CreateCrag({ post }) {
       formDataObject.set('osmData', JSON.stringify(osmData));
       formDataObject.set('image', image);
 
-      const { slug } = await post(formDataObject);
-      await popupSuccess('Crag Created!');
-      router.push(`/crags/${slug}`);
+      startTransition(async () => {
+        const { slug } = await post(formDataObject);
+        await popupSuccess('Crag Created!');
+        router.push(`/crags/${slug}`);
+      });
     } catch (error: any) {
       console.error('Error creating crag', error);
 
@@ -294,10 +299,11 @@ function CreateCrag({ post }) {
                       key={tag}
                       className={`
                       tag
-                      ${watchAllFields?.tags?.includes?.(tag)
+                      ${
+                        watchAllFields?.tags?.includes?.(tag)
                           ? 'is-primary'
                           : ''
-                        }
+                      }
                     `}
                     >
                       <input
@@ -409,10 +415,11 @@ function CreateCrag({ post }) {
                         type="button"
                         className={`
                         button
-                        ${carParkLocationLoadingIndex === index
+                        ${
+                          carParkLocationLoadingIndex === index
                             ? 'is-loading'
                             : ''
-                          }
+                        }
                       `}
                         onClick={() => btnCarParkFindMeOnClick(index)}
                       >
@@ -519,8 +526,9 @@ function CreateCrag({ post }) {
                 <div className="control">
                   <button
                     type="submit"
-                    className={`button is-primary ${loading ? 'is-loading' : ''
-                      }`}
+                    className={`button is-primary ${
+                      loading || pending ? 'is-loading' : ''
+                    }`}
                   >
                     <span>Create Crag</span>
                   </button>

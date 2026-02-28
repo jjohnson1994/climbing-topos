@@ -1,5 +1,3 @@
-'use server';
-
 import { PropsWithChildren } from 'react';
 import { auth, login } from '@/app/actions';
 

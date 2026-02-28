@@ -28,9 +28,9 @@ function SignupConfirmContent({
   email,
 }: {
   email: string;
-  requestVerificationCode: () => void;
+  requestVerificationCode: () => Promise<{ data?: string; error?: string }>;
   verificationCodeExpiration: string;
-  confirmSignUp: () => void;
+  confirmSignUp: (email: string, verificationCode: string) => Promise<{ error?: string }>;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -52,19 +52,14 @@ function SignupConfirmContent({
     value: SignupConfirmForm,
   ) => {
     setIsLoading(true);
-
-    try {
-      await confirmSignUp(email, value.confirmationCode);
-      await popupSuccess('Account Confirmed!');
-
-      router.push('/profile');
-    } catch (error: any) {
-      // Display the actual error message (includes rate limit info)
-      const errorMessage = error?.message || 'Something has gone wrong';
-      setVerificationError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    const result = await confirmSignUp(email, value.confirmationCode);
+    setIsLoading(false);
+    if (result?.error) {
+      setVerificationError(result.error);
+      return;
     }
+    await popupSuccess('Account Confirmed!');
+    router.push('/profile');
   };
 
   let timeout;
@@ -86,15 +81,13 @@ function SignupConfirmContent({
   }, [verificationCodeExpiration]);
 
   const doRequestNewCode = async () => {
-    try {
-      const newExpirationTime = await requestVerificationCode();
-      setVerificationCodeExpiration(newExpirationTime);
-      popupSuccess('New Verification Code Sent');
-    } catch (error: any) {
-      // Display the actual error message (includes rate limit info)
-      const errorMessage = error?.message || 'Failed to send verification code';
-      popupError(errorMessage);
+    const result = await requestVerificationCode();
+    if (result?.error) {
+      popupError(result.error);
+      return;
     }
+    setVerificationCodeExpiration(result.data);
+    popupSuccess('New Verification Code Sent');
   };
 
   return (

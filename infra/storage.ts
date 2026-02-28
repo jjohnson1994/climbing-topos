@@ -1,5 +1,9 @@
 const bucket = new sst.aws.Bucket('climbingtopos2Images', {
-  access: 'public',
+  access: 'cloudfront',
 });
 
-export { bucket };
+const imagesCdn = new sst.aws.Router('climbingtopos2ImagesCdn', {
+  routes: { '/*': { bucket } },
+});
+
+export { bucket, imagesCdn };

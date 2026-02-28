@@ -37,19 +37,13 @@ const Signup = () => {
 
   const formOnSubmit: SubmitHandler<SignupForm> = async (value: SignupForm) => {
     setIsLoading(true);
-
-    try {
-      await signUp(value.email, value.password);
-
-      const url = '/signup-confirm';
-      router.replace(url);
-    } catch (error: any) {
-      // Display the actual error message (includes rate limit info)
-      const errorMessage = error?.message || 'Something has gone wrong, try again';
-      popupError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    const result = await signUp(value.email, value.password);
+    setIsLoading(false);
+    if (result?.error) {
+      popupError(result.error);
+      return;
     }
+    router.replace('/signup-confirm');
   };
 
   return (

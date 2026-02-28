@@ -1,42 +1,20 @@
 import Link from 'next/link';
 import { Log } from '@climbingtopos/types';
 import { useGradeHelpers } from '@/app/api/grades';
-import { popupError } from '@/app/helpers/alerts';
 
-import { get as getUserLogs } from '@/app/data/actions/profile/logs/get';
-import { auth } from '@/app/actions';
-
-async function ProfileLogs() {
+function ProfileLogs({ logs }: { logs: Log[] }) {
   const { convertGradeValueToGradeLabel } = useGradeHelpers();
-
-  const user = await auth();
-
-  if (!user) {
-    throw new Error('user not authorised');
-  }
-
-  let loggedRoutes: Log[] = [];
-
-  try {
-    loggedRoutes = await getUserLogs();
-  } catch (error) {
-    console.error('Error loading user profile', error);
-    popupError(
-      "Something has gone wrong, your profile couldn't be loaded. sorry",
-    );
-  } finally {
-  }
 
   return (
     <>
-      {!loggedRoutes.length ? (
+      {!logs.length ? (
         <div className="block box">
-          <p>It looks like you haven't logged any routes yet</p>
+          <p>It looks like you haven&apos;t logged any routes yet</p>
         </div>
       ) : (
         ''
       )}
-      {loggedRoutes.length ? (
+      {logs.length ? (
         <table className="box table is-fullwidth">
           <thead>
             <tr>
@@ -47,7 +25,7 @@ async function ProfileLogs() {
             </tr>
           </thead>
           <tbody>
-            {loggedRoutes.map((log) => (
+            {logs.map((log) => (
               <tr key={log.slug}>
                 <td>
                   <Link

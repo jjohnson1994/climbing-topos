@@ -4,7 +4,22 @@
 @import 'bulma/sass/utilities/derived-variables.sass';
 @import 'sweetalert2/src/sweetalert2.scss';
 @import 'leaflet/dist/leaflet.css';
-@import 'react-leaflet-markercluster/dist/styles.min.css';
+
+.crag-cluster-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #3388ff;
+  border: 2px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
 
 $footer-background-color: $scheme-main;
 

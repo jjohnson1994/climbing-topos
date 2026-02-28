@@ -123,7 +123,6 @@ function ProfileLists() {
                     <Button
                       color={Color.isDanger}
                       size={Size.isSmall}
-                      style={Style.isOutlined}
                       icon="fas fa-trash"
                       onClick={() => handleRemoveFromList(route)}
                     ></Button>

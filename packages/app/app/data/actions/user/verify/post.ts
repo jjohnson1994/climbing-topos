@@ -6,31 +6,28 @@ import { createAccessTokenJwt } from '@/app/lib/jwt';
 import { cookies as getCookies } from 'next/headers';
 import {
   enforceRateLimit,
-  recordAttempt,
   clearRateLimit,
   RateLimitType,
 } from '@/app/lib/rate-limit';
 
-export async function post(email: string, verificationCode: string) {
-  const user = await auth();
-
-  if (!user) {
-    throw new Error('Not authorised');
-  }
-
-  const verificationCodeAsInt = parseInt(verificationCode, 10);
-
-  if (!verificationCode || isNaN(verificationCodeAsInt)) {
-    throw new Error('Verification code invalid');
-  }
-
-  // Normalize email for consistent rate limiting
-  const normalizedEmail = user.properties.email.toLowerCase().trim();
-
-  // Check rate limit before attempting verification
-  await enforceRateLimit(RateLimitType.VERIFICATION, normalizedEmail);
-
+export async function post(email: string, verificationCode: string): Promise<{ error?: string }> {
   try {
+    const user = await auth();
+
+    if (!user) {
+      return { error: 'Not authorised' };
+    }
+
+    const verificationCodeAsInt = parseInt(verificationCode, 10);
+
+    if (!verificationCode || isNaN(verificationCodeAsInt)) {
+      return { error: 'Verification code invalid' };
+    }
+
+    const normalizedEmail = user.properties.email.toLowerCase().trim();
+
+    const { windowBucket } = await enforceRateLimit(RateLimitType.VERIFICATION, normalizedEmail);
+
     const newUser = await verifyUser(normalizedEmail, verificationCodeAsInt);
 
     const newToken = await createAccessTokenJwt(newUser);
@@ -41,27 +38,25 @@ export async function post(email: string, verificationCode: string) {
       name: 'access_token',
       value: newToken,
       httpOnly: true,
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       path: '/',
-      maxAge: 14 * 24 * 60 * 60 * 1000,
+      maxAge: 14 * 24 * 60 * 60,
     });
 
-    // Clear rate limit on successful verification
-    await clearRateLimit(RateLimitType.VERIFICATION, normalizedEmail);
-  } catch (error) {
-    // Record failed verification attempt
-    await recordAttempt(RateLimitType.VERIFICATION, normalizedEmail);
+    await clearRateLimit(RateLimitType.VERIFICATION, normalizedEmail, windowBucket);
 
-    // Use generic error message to prevent enumeration
+    return {};
+  } catch (error) {
     if (
       error instanceof Error &&
       (error.message === 'Verification code mismatch' ||
         error.message === 'Verification code expired' ||
         error.message === 'User not found')
     ) {
-      throw new Error('Invalid or expired verification code');
+      return { error: 'Invalid or expired verification code' };
     }
 
-    throw error;
+    return { error: error instanceof Error ? error.message : 'Something went wrong, please try again' };
   }
 }

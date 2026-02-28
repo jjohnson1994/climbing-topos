@@ -173,7 +173,7 @@ export async function getLogsForUser(
     TableName: Resource.climbingtopos2.name,
     KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
     ProjectionExpression:
-      '#slug, #dateSent, #attempts, #comment, #rating, #grade, #gradeTaken, #gradingSystem, #routeSlug, #routeTitle, #user, #cragTitle, #cragSlug, #areaTitle, #areaSlug, #topoSlug',
+      '#slug, #dateSent, #attempts, #comment, #rating, #grade, #gradeTaken, #gradingSystem, #routeSlug, #routeTitle, #routeType, #user, #cragTitle, #cragSlug, #areaTitle, #areaSlug, #topoSlug',
     ExpressionAttributeNames: {
       '#hk': 'hk',
       '#sk': 'sk',
@@ -187,6 +187,7 @@ export async function getLogsForUser(
       '#gradingSystem': 'gradingSystem',
       '#routeSlug': 'routeSlug',
       '#routeTitle': 'routeTitle',
+      '#routeType': 'routeType',
       '#user': 'user',
       '#cragTitle': 'cragTitle',
       '#cragSlug': 'cragSlug',

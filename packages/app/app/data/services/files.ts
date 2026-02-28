@@ -4,9 +4,7 @@ import { Resource } from 'sst';
 import { nanoid } from 'nanoid';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import sharp from 'sharp';
-
-const region = process.env.AWS_REGION;
+import { Jimp } from 'jimp';
 
 export const getUploadUrl = async (preferredKey?: string) => {
   const fileKey = preferredKey ? preferredKey : nanoid();
@@ -40,16 +38,10 @@ export const uploadFile = async (file: File, preferredKey?: string) => {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  const processedBuffer = await sharp(buffer)
-    .resize(800, 800, {
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
-    .jpeg({
-      quality: 85,
-      progressive: true,
-    })
-    .toBuffer();
+  const image = await Jimp.read(buffer);
+  await image.scaleToFit(800, 800);
+  await image.quality(85);
+  const processedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
 
   const processedFile = new File([processedBuffer], file.name, {
     type: 'image/jpeg',
@@ -73,6 +65,6 @@ export const uploadFile = async (file: File, preferredKey?: string) => {
   return {
     fileUploadUrl,
     fileKey,
-    fileUrl: `https://${Resource.climbingtopos2Images.name}.s3.${region}.amazonaws.com/${fileKey}`,
+    fileUrl: `${process.env.IMAGES_CDN_URL}/${fileKey}`,
   };
 };

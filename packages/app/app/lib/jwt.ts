@@ -3,6 +3,15 @@
 import * as jose from 'jose';
 import { Resource } from 'sst';
 
+export type JwtPayload = {
+  properties: {
+    email: string;
+    status: 'verified' | 'pending';
+    nickname?: string;
+    picture?: string;
+  };
+};
+
 export const createAccessTokenJwt = async (payload: {
   email: string;
   status: 'verified' | 'pending';
@@ -29,12 +38,14 @@ export const createAccessTokenJwt = async (payload: {
   return newAccessToken;
 };
 
-export const verifyJwt = async (token: string) => {
+export const verifyJwt = async (token: string): Promise<JwtPayload> => {
   const publicKey = await jose.importSPKI(Resource.JwtPublicKey.value, 'RS256');
 
   const { payload } = await jose.jwtVerify(token, publicKey, {
     algorithms: ['RS256'],
+    issuer: 'https://climbingtopos.com',
+    audience: 'climbing-topos-app',
   });
 
-  return payload;
+  return payload as JwtPayload;
 };

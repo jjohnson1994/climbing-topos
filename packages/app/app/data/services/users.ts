@@ -1,9 +1,7 @@
-'use server';
-
 import { update, getUserByEmail } from '@/app/data/models/users';
 import { UserPublicData } from '@climbingtopos/types';
 import { DateTime } from 'luxon';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 export const verifyUser = async (email: string, verificationCode: number) => {
   const user = await getUserByEmail(email);
@@ -12,15 +10,34 @@ export const verifyUser = async (email: string, verificationCode: number) => {
     throw new Error('User not found');
   }
 
-  if (user.verificationCode !== verificationCode) {
-    throw new Error('Verification code mismatch');
-  }
-
   if (DateTime.fromISO(user.verificationCodeExpiration) < DateTime.utc()) {
     throw new Error('Verification code expired');
   }
 
-  await patchUser(user.id, { status: 'verified' });
+  if (user.verificationCode !== verificationCode) {
+    throw new Error('Verification code mismatch');
+  }
+
+  try {
+    await update(user.id, {
+      UpdateExpression:
+        'SET #status = :status REMOVE #verificationCode, #verificationCodeExpiration',
+      ExpressionAttributeNames: {
+        '#status': 'status',
+        '#verificationCode': 'verificationCode',
+        '#verificationCodeExpiration': 'verificationCodeExpiration',
+      },
+      ExpressionAttributeValues: {
+        ':status': 'verified',
+      },
+      ConditionExpression: 'attribute_exists(#verificationCode)',
+    });
+  } catch (error) {
+    if (error?.name === 'ConditionalCheckFailedException') {
+      throw new Error('Verification code mismatch');
+    }
+    throw error;
+  }
 
   return {
     id: user.id,
@@ -33,20 +50,15 @@ export const verifyUser = async (email: string, verificationCode: number) => {
 };
 
 export const verifyLogin = async (email: string, password: string) => {
-  // Generic error message to prevent user enumeration attacks
   const GENERIC_ERROR = 'Invalid email or password. Please try again or reset your password.';
 
   const user = await getUserByEmail(email);
 
   if (!user) {
-    // Log internally for debugging, but show generic message to user
-    console.warn('Login attempt for non-existent email:', email);
     throw new Error(GENERIC_ERROR);
   }
 
   if (!user.hashedPassword) {
-    // Account exists but has no password (legacy account or setup incomplete)
-    console.warn('Login attempt for account without password:', email);
     throw new Error(GENERIC_ERROR);
   }
 
@@ -57,7 +69,6 @@ export const verifyLogin = async (email: string, password: string) => {
   const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
 
   if (!passwordMatch) {
-    console.warn('Failed login attempt for:', email);
     throw new Error(GENERIC_ERROR);
   }
 

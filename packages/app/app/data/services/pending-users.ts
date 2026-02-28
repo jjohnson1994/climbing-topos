@@ -1,11 +1,21 @@
 import { randomInt } from 'crypto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { createUser, getUserByEmail, update } from '@/app/data/models/users';
 import { sendTransactional } from '@/app/lib/email';
 import { DateTime } from 'luxon';
 
 export async function createPendingUser(email: string, password: string) {
-  const userExists = await getUserByEmail(email);
+  if (!password || password.length < 8) {
+    throw new Error('Password must be at least 8 characters');
+  }
+
+  if (Buffer.byteLength(password, 'utf8') > 72) {
+    throw new Error('Password must be 72 characters or fewer');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const userExists = await getUserByEmail(normalizedEmail);
 
   if (userExists) {
     throw new Error('User exists');
@@ -17,7 +27,7 @@ export async function createPendingUser(email: string, password: string) {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   await createUser({
-    email,
+    email: normalizedEmail,
     hashedPassword,
     verificationCode,
   });

@@ -3,19 +3,18 @@ import { Area, Crag, Topo } from '@climbingtopos/types';
 import { get as getCrags } from '@/app/data/actions/crags/get';
 import AreaRoutesTable from '@/app/components/AreaRoutesTable';
 import ButtonCopyCoordinates from '@/app/components/ButtonCopyCoordinates';
-import CragMap from '@/app/components/CragMap';
+import CragMap from '@/app/components/CragMapClient';
 import TopoImage from '@/app/components/TopoImage';
 import CragTitleImage from '@/app/components/CragTitleImage';
 import CragAdmin from '@/app/components/CragAdmin';
 import Head from 'next/head';
 import { auth } from '@/app/actions';
+import Button, { Size } from '@/app/elements/Button';
 
-async function CragView(
-  props: {
-    params: Promise<{ cragSlug: string }>;
-    searchParams: Promise<{ tab?: string }>;
-  }
-) {
+async function CragView(props: {
+  params: Promise<{ cragSlug: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const user = await auth();
@@ -90,7 +89,7 @@ async function CragView(
       </Head>
       <div className="columns is-gapless mb-0">
         <div className="column">
-          <CragTitleImage src={`${crag.image}`} />
+          <CragTitleImage src={`${crag.image}`} cragTitle={crag.title} />
         </div>
         <div className="column">
           <section className="section">
@@ -108,8 +107,9 @@ async function CragView(
                   <label className="tag is-capitalized is-warning">Admin</label>
                 )}
                 <label
-                  className={`tag is-capitalized ${crag?.access === 'banned' ? 'is-danger ' : 'is-primary'
-                    }`}
+                  className={`tag is-capitalized ${
+                    crag?.access === 'banned' ? 'is-danger ' : 'is-primary'
+                  }`}
                 >
                   Access {crag?.access}
                 </label>
@@ -199,8 +199,9 @@ async function CragView(
                   .map((topo) => (
                     <div
                       key={topo.slug}
-                      className={`columns ${topoRoutes(topo).length ? '' : 'is-hidden'
-                        }`}
+                      className={`columns ${
+                        topoRoutes(topo).length ? '' : 'is-hidden'
+                      }`}
                     >
                       <div className="column">
                         <TopoImage

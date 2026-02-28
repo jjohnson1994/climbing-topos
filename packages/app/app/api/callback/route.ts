@@ -1,4 +1,4 @@
-import { client, setTokens } from '../../auth';
+import { setTokens } from '../../auth';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

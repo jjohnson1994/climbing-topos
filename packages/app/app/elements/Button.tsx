@@ -24,20 +24,13 @@ export const enum Size {
   isLarge = 'is-large',
 }
 
-export const enum Style {
-  isOutlined = 'is-outlined',
-}
-
-interface ButtonProps {
-  onClick?: Function;
-  children?: any;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: Color;
   size?: Size;
   icon?: string;
   type?: ButtonType;
   loading?: boolean;
   disabled?: boolean;
-  style?: Style;
 }
 
 const Button: FunctionComponent<ButtonProps> = forwardRef(
@@ -45,16 +38,15 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
     const getClasses = (): string => {
       const color = props.color;
       const size = props.size;
-      const style = props.style;
 
-      return `button ${color ? color : ''} ${size ? size : ''} ${style ? style : ''} ${props.loading ? 'is-loading' : ''}`.trim();
+      return `button ${color ? color : ''} ${size ? size : ''} ${props.loading ? 'is-loading' : ''}`.trim();
     };
 
     const classes = getClasses();
 
     return (
       <button
-        className={classes}
+        className={[classes, props.className].filter(Boolean).join(' ')}
         ref={ref}
         {...(props.onClick && {
           onClick: (e) => props.onClick?.(e),
@@ -76,5 +68,7 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
     );
   },
 );
+
+Button.displayName = 'Button';
 
 export default Button;

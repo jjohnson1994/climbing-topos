@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { nanoid } from 'nanoid';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
+  GetCommand,
   PutCommand,
   UpdateCommand,
   DynamoDBDocumentClient,
@@ -17,6 +18,7 @@ export const update = async (
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
     ExpressionAttributeValues: Record<string, any>;
+    ConditionExpression?: string;
   },
 ) => {
   const params = {
@@ -61,6 +63,16 @@ export const createUser = async (
 
   await dynamodb.send(new PutCommand(params));
 };
+
+export async function getUserById(id: string) {
+  const result = await dynamodb.send(
+    new GetCommand({
+      TableName: Resource.climbingtopos2.name,
+      Key: { hk: id, sk: 'metadata#' },
+    }),
+  );
+  return result.Item;
+}
 
 export async function getUserByEmail(email: string) {
   const params = {

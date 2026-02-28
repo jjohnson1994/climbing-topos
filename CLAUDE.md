@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a serverless full-stack climbing topos application built with SST (Serverless Stack) on AWS. The application allows users to discover climbing areas (crags), browse routes, log climbs, create lists, and search climbing locations worldwide. It uses Next.js 14 for the frontend, AWS Lambda for the backend, DynamoDB for data storage, and Algolia for search.
+This is a serverless full-stack climbing topos application built with SST (Serverless Stack) on AWS. The application allows users to discover climbing areas (crags), browse routes, log climbs, create lists, and search climbing locations worldwide. It uses Next.js 16 for the frontend, AWS Lambda for the backend, DynamoDB for data storage, and Algolia for search.
 
 ## Development Commands
 
@@ -34,8 +34,9 @@ cd packages/schemas && npm run build
 ### Testing
 
 ```bash
-# No test suite currently configured
-# packages/api has jest dependencies but no tests written yet
+# No test runner configured yet
+# Jest test files exist in packages/app/app/data/ (services and actions)
+# but no jest config is set up - tests cannot run currently
 ```
 
 ### Linting & Formatting
@@ -59,18 +60,34 @@ This project uses Husky with lint-staged. Pre-commit hooks automatically run:
 
 ### Monorepo Structure
 
-This is a pnpm workspaces monorepo with the following packages:
+This is an npm workspaces monorepo with the following packages:
 
-- **packages/app** - Next.js 14 frontend (SSR + server actions)
+- **packages/app** - Next.js 16 frontend (SSR + server actions)
 - **packages/api** - Lambda handlers and backend logic
 - **packages/types** - Shared TypeScript type definitions
 - **packages/schemas** - Yup validation schemas (shared between frontend and backend)
 - **packages/globals** - Constants (grading systems, tags, rock types)
 - **infra/** - SST infrastructure definitions
 
+### Frontend Data Layer
+
+The Next.js app has its own data access layer that talks to DynamoDB directly (via SST resource linking), bypassing `packages/api` entirely for most operations:
+
+```
+Next.js Server Actions (packages/app/app/data/actions/)  ← entry points, auth checks
+    ↓
+Services (packages/app/app/data/services/)               ← business logic, data aggregation
+    ↓
+Models (packages/app/app/data/models/)                   ← DynamoDB operations
+    ↓
+DynamoDB (via SST Resource.Table)
+```
+
+This mirrors the backend architecture in `packages/api` but runs inside Next.js Server Actions instead of Lambda. The `packages/api` Lambda routes are used for external/non-server-action access patterns.
+
 ### Backend Architecture
 
-The API follows a layered architecture:
+The Lambda API follows a layered architecture:
 
 ```
 API Routes (packages/api/routes/)
@@ -215,7 +232,7 @@ Infrastructure is defined in `sst.config.ts` and `infra/` directory:
 
 ## Key Technologies
 
-- **Frontend**: Next.js 14, React 18, Bulma CSS, React Hook Form, Leaflet (maps)
+- **Frontend**: Next.js 16, React 19, Bulma CSS, React Hook Form, Leaflet (maps)
 - **Backend**: Hono (routing framework), AWS Lambda, DynamoDB, S3, SES, SNS
 - **Auth**: OpenAuth, JWT (RS256), bcrypt
 - **Search**: Algolia, React InstantSearch

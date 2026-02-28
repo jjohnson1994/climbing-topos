@@ -2,18 +2,24 @@
 
 import ProfileLogs from '@/app/components/ProfileLogs';
 import ProfileLists from '@/app/components/ProfileLists';
+import ProfileStats from '@/app/components/ProfileStats';
 import { auth, logout } from '@/app/actions';
+import { get as getUserLogs } from '@/app/data/actions/profile/logs/get';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-async function Profile(props) {
+async function Profile(props: { searchParams: Promise<{ tab?: string }> }) {
   const searchParams = await props.searchParams;
-  const activeTab = searchParams.tab || 'logs';
+  const activeTab = searchParams.tab || 'stats';
   const user = await auth();
 
   if (!user) {
     redirect('/login');
   }
+
+  const logs = await getUserLogs();
+  const safeLog = logs ?? [];
+  const uniqueCrags = new Set(safeLog.map((l) => l.cragSlug)).size;
 
   return (
     <>
@@ -48,12 +54,12 @@ async function Profile(props) {
                 <div className="is-flex is-flex-row">
                   <div className="mr-2">
                     <p>
-                      <b>0</b> Climbs Logged
+                      <b>{safeLog.length}</b> Climbs Logged
                     </p>
                   </div>{' '}
                   <div>
                     <p>
-                      <b>0</b> Crags Visited
+                      <b>{uniqueCrags}</b> Crags Visited
                     </p>
                   </div>
                 </div>
@@ -70,6 +76,9 @@ async function Profile(props) {
       <section className="section">
         <div className="tabs">
           <ul>
+            <li className={activeTab === 'stats' ? 'is-active' : ''}>
+              <Link href="?tab=stats">Stats</Link>
+            </li>
             <li className={activeTab === 'logs' ? 'is-active' : ''}>
               <Link href="?tab=logs">Logs</Link>
             </li>
@@ -79,7 +88,12 @@ async function Profile(props) {
           </ul>
         </div>
         <div className={`container ${activeTab === 'logs' ? '' : 'is-hidden'}`}>
-          {<ProfileLogs />}
+          <ProfileLogs logs={safeLog} />
+        </div>
+        <div
+          className={`container ${activeTab === 'stats' ? '' : 'is-hidden'}`}
+        >
+          <ProfileStats logs={safeLog} />
         </div>
         <div
           className={`container ${activeTab === 'lists' ? '' : 'is-hidden'}`}

@@ -53,6 +53,10 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
+    "climbingtopos2-admin": {
+      "type": "sst.aws.Nextjs"
+      "url": string
+    }
     "climbingtopos2-frontend": {
       "type": "sst.aws.Nextjs"
       "url": string
@@ -65,6 +69,10 @@ declare module "sst" {
     "climbingtopos2Images": {
       "name": string
       "type": "sst.aws.Bucket"
+    }
+    "climbingtopos2ImagesCdn": {
+      "type": "sst.aws.Router"
+      "url": string
     }
     "cragOnInsert": {
       "arn": string
