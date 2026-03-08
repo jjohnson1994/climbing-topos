@@ -138,9 +138,9 @@ export async function uploadCragImage(
     const arrayBuffer = await file.arrayBuffer();
 
     const image = await Jimp.read(Buffer.from(arrayBuffer));
-    await image.scaleToFit(800, 800);
-    await image.quality(85);
-    const processedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+    image.scaleToFit({ w: 2000, h: 2000 });
+
+    const processedBuffer = await image.getBuffer('image/webp', { quality: 80 });
 
     const s3 = new S3Client({ region });
     await s3.send(
@@ -148,7 +148,7 @@ export async function uploadCragImage(
         Bucket: bucketName,
         Key: key,
         Body: processedBuffer,
-        ContentType: 'image/jpeg',
+        ContentType: 'image/webp',
       }),
     );
 

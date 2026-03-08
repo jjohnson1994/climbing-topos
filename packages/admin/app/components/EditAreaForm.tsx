@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { rockTypes } from '@climbingtopos/globals';
 import { updateAreaFields } from '@/app/actions';
 import type { AreaEditFields, ActionResult } from '@/app/data/types';
@@ -25,6 +25,25 @@ export default function EditAreaForm({ hk, sk, slug, area }: Props) {
   });
   const [result, setResult] = useState<ActionResult | null>(null);
   const [isPending, startTransition] = useTransition();
+  const longitudeRef = useRef<HTMLInputElement>(null);
+
+  function latitudeOnPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const text = e.clipboardData.getData('text');
+    if (text.includes(',')) {
+      e.preventDefault();
+      const [lat, lng] = text.split(',');
+      set('latitude', lat.trim());
+      set('longitude', lng.trim());
+      longitudeRef.current?.focus();
+    }
+  }
+
+  function latitudeOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === ',') {
+      e.preventDefault();
+      longitudeRef.current?.focus();
+    }
+  }
 
   function set(key: keyof AreaEditFields, value: string) {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -134,6 +153,8 @@ export default function EditAreaForm({ hk, sk, slug, area }: Props) {
                   type="text"
                   value={fields.latitude}
                   onChange={(e) => set('latitude', e.target.value)}
+                  onPaste={latitudeOnPaste}
+                  onKeyDown={latitudeOnKeyDown}
                 />
               </div>
             </div>
@@ -145,6 +166,7 @@ export default function EditAreaForm({ hk, sk, slug, area }: Props) {
                 <input
                   className="input is-small"
                   type="text"
+                  ref={longitudeRef}
                   value={fields.longitude}
                   onChange={(e) => set('longitude', e.target.value)}
                 />
