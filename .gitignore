@@ -3,6 +3,7 @@ node_modules
 .terraform
 
 *.env
+*.env.local
 api/uploads/**
 
 # sst
