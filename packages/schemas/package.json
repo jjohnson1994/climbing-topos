@@ -2,10 +2,12 @@
   "name": "@climbingtopos/schemas",
   "version": "1.0.0",
   "description": "",
+  "main": "dist/index.js",
   "module": "dist/index.js",
+  "type": "module",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc index.ts --declaration --allowJs --outDir dist",
+    "build": "rm -rf dist && tsc index.ts --declaration --allowJs --outDir dist --module esnext --moduleResolution bundler",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

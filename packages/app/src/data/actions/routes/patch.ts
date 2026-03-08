@@ -1,0 +1,39 @@
+import { createServerFn } from '@tanstack/react-start'
+import { redirect } from '@tanstack/react-router'
+import type { RoutePatch } from '@climbingtopos/types'
+import { UpdateRouteScheme } from '@climbingtopos/schemas'
+import { crags, routes } from '@/data/services'
+import { getAuthUser } from '@/lib/auth'
+
+export const patchFn = createServerFn({ method: 'POST' })
+  .inputValidator(async (data: { routeSlug: string; body: RoutePatch }) => {
+    await UpdateRouteScheme().validate(data.body, { strict: true, abortEarly: false })
+    return data
+  })
+  .handler(async ({ data }) => {
+    const user = await getAuthUser()
+
+    if (!user) {
+      throw redirect({ to: '/login' })
+    }
+
+    const userSub = user.properties.sub || ''
+    const route = await routes.getRouteBySlug(data.routeSlug)
+    const crag = await crags.getCragBySlug(route.cragSlug, userSub)
+
+    if (crag.managedBy.sub !== userSub) {
+      throw new Error(
+        'Permission Error: You Do Not Have Permission to Patch this Route',
+      )
+    }
+
+    await routes.updateRoute(
+      route.cragSlug,
+      route.areaSlug,
+      route.topoSlug,
+      data.routeSlug,
+      data.body,
+    )
+
+    return { success: true }
+  })

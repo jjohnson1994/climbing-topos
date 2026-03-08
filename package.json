@@ -7,9 +7,15 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "sst dev"
+    "dev": "sst dev",
+    "test:e2e": "cd packages/app && npx playwright test",
+    "test:e2e:ui": "cd packages/app && npx playwright test --ui",
+    "test:e2e:report": "cd packages/app && npx playwright show-report",
+    "test:e2e:deploy": "sst deploy --stage e2e"
   },
   "dependencies": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "server-only": "^0.0.1"
   },
   "lint-staged": {
@@ -30,9 +36,13 @@
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "prettier": "3.3.3",
-    "sst": "^3.17.25",
+    "sst": "^4",
     "typescript": "^5",
     "typescript-eslint": "^8.8.1"
+  },
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "keywords": [],
   "author": "",

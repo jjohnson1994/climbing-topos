@@ -29,11 +29,7 @@ export default $config({
     } = await import('./infra/secrets');
     await import('./infra/sns');
 
-    const app2 = new sst.aws.TanStackStart('climbingtopos2-app', {
-      path: 'my-app/',
-    });
-
-    const app = new sst.aws.Nextjs('climbingtopos2-frontend', {
+    const app = new sst.aws.TanStackStart('climbingtopos2-app', {
       path: 'packages/app/',
       link: [
         table,
@@ -45,15 +41,16 @@ export default $config({
         jwtPrivateKey,
       ],
       environment: {
-        NEXT_PUBLIC_ALGOLIA_APP_ID: algoliaAppId.value,
-        NEXT_PUBLIC_ALGOLIA_INDEX: algoliaIndex.value,
-        NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: algoliaSearchApiKey.value,
-        NEXT_PUBLIC_POSTHOG_KEY: postHogKey.value,
-        NEXT_PUBLIC_POSTHOG_HOST: postHogHost.value,
+        VITE_ALGOLIA_APP_ID: algoliaAppId.value,
+        VITE_ALGOLIA_INDEX: algoliaIndex.value,
+        VITE_ALGOLIA_SEARCH_API_KEY: algoliaSearchApiKey.value,
+        VITE_POSTHOG_KEY: postHogKey.value,
+        VITE_POSTHOG_HOST: postHogHost.value,
         IMAGES_CDN_URL: imagesCdn.url,
       },
       dev: {
         autostart: true,
+        url: 'http://localhost:3000',
       },
     });
 
@@ -72,6 +69,6 @@ export default $config({
       return { app, admin, table, bucket };
     }
 
-    return { app };
+    return { app, appUrl: app.url };
   },
 });

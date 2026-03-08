@@ -1,0 +1,39 @@
+import { Crag } from '@climbingtopos/types';
+import { Link } from '@tanstack/react-router';
+
+function SearchResultCrag({ crag }: { crag: Crag }) {
+  return (
+    <Link
+      to="/crags/$cragSlug"
+      params={{ cragSlug: crag.slug }}
+      className="box p-0"
+      style={{ overflow: 'hidden' }}
+    >
+      <div className="columns is-mobile is-gapless">
+        <div className="column is-narrow">
+          <img
+            src={`${crag.image}`}
+            alt={crag.title}
+            className="image is-128x128"
+            style={{
+              objectFit: 'cover',
+              height: '100%',
+            }}
+          />
+        </div>
+        <div className="column m-3">
+          <p>
+            <span className="tag is-pulled-right">Crag</span>
+            <b>{crag.title} </b>
+            <br />
+            <small>
+              {(crag as any).county}, {(crag as any).country}
+            </small>
+          </p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export default SearchResultCrag;

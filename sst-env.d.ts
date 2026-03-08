@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /* deno-fmt-ignore-file */
+/* biome-ignore-all lint: auto-generated */
 
 declare module "sst" {
   export interface Resource {
@@ -57,8 +58,8 @@ declare module "sst" {
       "type": "sst.aws.Nextjs"
       "url": string
     }
-    "climbingtopos2-frontend": {
-      "type": "sst.aws.Nextjs"
+    "climbingtopos2-app": {
+      "type": "sst.aws.TanstackStart"
       "url": string
     }
     "climbingtopos2Email": {

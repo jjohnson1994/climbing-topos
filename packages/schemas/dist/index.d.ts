@@ -1,251 +1,634 @@
 import * as yup from 'yup';
 export * as yup from 'yup';
-export declare const NewCragSchema: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    tags: string[];
-    latitude: number;
-    longitude: number;
-    access: string;
-    carParks: {
-      title?: string;
-      description?: string;
-      latitude?: number;
-      longitude?: number;
-    }[];
-    accessLink: string;
-    acceptTerms: boolean;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    tags: '';
-    latitude: undefined;
-    longitude: undefined;
-    access: undefined;
-    carParks: '';
-    accessLink: undefined;
-    acceptTerms: undefined;
-  },
-  ''
->;
-export declare const UpdateCragSchema: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    newTags: string[];
-    removeTags: string[];
-    latitude: number;
-    longitude: number;
-    access: string;
-    accessLink: string;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    newTags: '';
-    removeTags: '';
-    latitude: undefined;
-    longitude: undefined;
-    access: undefined;
-    accessLink: undefined;
-  },
-  ''
->;
-export declare const NewAreaSchema: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    tags: string[];
-    latitude: number;
-    longitude: number;
-    access: string;
-    rockType: string;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    tags: '';
-    latitude: undefined;
-    longitude: undefined;
-    access: undefined;
-    rockType: undefined;
-  },
-  ''
->;
-export declare const UpdateAreaSchema: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    addTags: string[];
-    removeTags: string[];
-    latitude: number;
-    longitude: number;
-    access: string;
-    rockType: string;
-    verified: boolean;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    addTags: '';
-    removeTags: '';
-    latitude: undefined;
-    longitude: undefined;
-    access: undefined;
-    rockType: undefined;
-    verified: undefined;
-  },
-  ''
->;
-export declare const NewTopoSchema: () => yup.ObjectSchema<
-  {
-    orientation: string;
-    imageFileName: string;
-    image: string;
-    areaSlug: string;
-    cragSlug: string;
-  },
-  yup.AnyObject,
-  {
-    orientation: undefined;
-    imageFileName: undefined;
-    image: undefined;
-    areaSlug: undefined;
-    cragSlug: undefined;
-  },
-  ''
->;
-export declare const UpdateTopoSchema: () => yup.ObjectSchema<
-  {
-    orientation: string;
-    imageFileName: string;
-    image: string;
-    verified: boolean;
-  },
-  yup.AnyObject,
-  {
-    orientation: undefined;
-    imageFileName: undefined;
-    image: undefined;
-    verified: undefined;
-  },
-  ''
->;
-export declare const NewRouteScheme: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    tags: string[];
-    drawing: {
-      points?: any[];
-    };
-    routeType: string;
-    gradingSystem: string;
-    grade: string;
-    cragSlug: string;
-    areaSlug: string;
-    topoSlug: string;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    tags: '';
-    drawing: {
-      points: undefined;
-    };
-    routeType: undefined;
-    gradingSystem: undefined;
-    grade: undefined;
-    cragSlug: undefined;
-    areaSlug: undefined;
-    topoSlug: undefined;
-  },
-  ''
->;
-export declare const UpdateRouteScheme: () => yup.ObjectSchema<
-  {
-    title: string;
-    description: string;
-    newTags: string[];
-    removeTags: string[];
-    drawing: {
-      points?: any[];
-    };
-    routeType: string;
-    gradingSystem: string;
-    grade: string;
-    verified: boolean;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-    description: undefined;
-    newTags: '';
-    removeTags: '';
-    drawing: {
-      points: undefined;
-    };
-    routeType: undefined;
-    gradingSystem: undefined;
-    grade: undefined;
-    verified: undefined;
-  },
-  ''
->;
-export declare const NewLogsSchema: () => yup.ObjectSchema<
-  {
-    logs: {
-      tags?: string[];
-      areaSlug?: string;
-      cragSlug?: string;
-      routeType?: string;
-      gradingSystem?: string;
-      grade?: number;
-      attempts?: string;
-      comment?: string;
-      dateSent?: string;
-      gradeModal?: number;
-      gradeTaken?: number;
-      routeSlug?: string;
-      routeTitle?: string;
-      rating?: number;
-    }[];
-  },
-  yup.AnyObject,
-  {
-    logs: '';
-  },
-  ''
->;
-export declare const NewListSchema: () => yup.ObjectSchema<
-  {
-    title: string;
-  },
-  yup.AnyObject,
-  {
-    title: undefined;
-  },
-  ''
->;
-export declare const UpdateListSchema: () => yup.ObjectSchema<
-  {
-    routes: {
-      areaSlug?: string;
-      cragSlug?: string;
-      topoSlug?: string;
-      routeSlug?: string;
-    }[];
-  },
-  yup.AnyObject,
-  {
-    routes: '';
-  },
-  ''
->;
+export declare const NewCragSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    carParks: import("yup/lib/array").RequiredArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>[]>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    acceptTerms: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    carParks: import("yup/lib/array").RequiredArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>[]>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    acceptTerms: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    carParks: import("yup/lib/array").RequiredArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+        longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    }>>[]>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    acceptTerms: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>>;
+export declare const UpdateCragSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    accessLink: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+}>>>;
+export declare const NewAreaSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rockType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rockType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rockType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>>;
+export declare const UpdateAreaSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    addTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    rockType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    addTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    rockType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    addTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    latitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    longitude: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
+    access: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    rockType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>>;
+export declare const NewTopoSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    imageFileName: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    imageFileName: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    imageFileName: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>>;
+export declare const UpdateTopoSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    imageFileName: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    imageFileName: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    orientation: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    imageFileName: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    image: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>>;
+export declare const NewRouteScheme: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    gradingSystem: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    grade: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    gradingSystem: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    grade: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    gradingSystem: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    grade: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>>;
+export declare const UpdateRouteScheme: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    grade: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    grade: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        points: import("yup/lib/array").RequiredArraySchema<yup.AnySchema, import("yup/lib/types").AnyObject, any[]>;
+    }>>>;
+    routeType: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    grade: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    verified: yup.BooleanSchema<boolean, import("yup/lib/types").AnyObject, boolean>;
+}>>>;
+export declare const NewLogsSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    logs: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[]>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    logs: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[]>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    logs: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        attempts: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        comment: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        dateSent: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        grade: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeModal: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradeTaken: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        gradingSystem: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeTitle: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeType: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        rating: import("yup/lib/number").RequiredNumberSchema<number, import("yup/lib/types").AnyObject>;
+        tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
+    }>>[]>;
+}>>>;
+export declare const NewListSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+}>>>;
+export declare const UpdateListSchema: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    routes: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[]>;
+}>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    routes: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[]>;
+}>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+    routes: yup.ArraySchema<yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>>, import("yup/lib/types").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[], import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
+        cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+        routeSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    }>>[]>;
+}>>>;
