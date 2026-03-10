@@ -196,6 +196,10 @@ export const UpdateRouteScheme = () =>
     .shape({
       title: yup.string(),
       description: yup.string(),
+      tags: yup
+        .array()
+        .of(yup.string().oneOf(routeTags))
+        .typeError('Invalid Tags'),
       newTags: yup
         .array()
         .of(yup.string().oneOf(routeTags))

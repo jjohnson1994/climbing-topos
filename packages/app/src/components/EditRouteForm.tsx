@@ -1,14 +1,14 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { UpdateRouteScheme } from '@climbingtopos/schemas'
-import { Route, RoutePatch } from '@climbingtopos/types'
-import { gradingSystems, routeTypes } from '@climbingtopos/globals'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useNavigate, Link } from '@tanstack/react-router'
-import { popupError, popupSuccess } from '@/helpers/alerts'
-import { patchFn } from '@/data/actions/routes/patch'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { UpdateRouteScheme } from '@climbingtopos/schemas';
+import { Route, RoutePatch } from '@climbingtopos/types';
+import { gradingSystems, routeTypes, routeTags } from '@climbingtopos/globals';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useRouter, Link } from '@tanstack/react-router';
+import { popupError, popupSuccess } from '@/helpers/alerts';
+import { patchFn } from '@/data/actions/routes/patch';
 
-const schema = UpdateRouteScheme()
+const schema = UpdateRouteScheme();
 
 function EditRouteForm({
   route,
@@ -17,14 +17,15 @@ function EditRouteForm({
   topoSlug,
   routeSlug,
 }: {
-  route: Route
-  cragSlug: string
-  areaSlug: string
-  topoSlug: string
-  routeSlug: string
+  route: Route;
+  cragSlug: string;
+  areaSlug: string;
+  topoSlug: string;
+  routeSlug: string;
 }) {
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState<boolean>(false)
+  const navigate = useNavigate();
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -38,49 +39,61 @@ function EditRouteForm({
     defaultValues: {
       title: route.title,
       description: route.description,
+      tags: route.tags ?? [],
       routeType: route.routeType,
       gradingSystem: route.gradingSystem,
       grade: route.grade,
+      drawing: route.drawing,
     },
-  })
+  });
 
-  const watchGradingSystem = watch('gradingSystem', route.gradingSystem)
+  const watchGradingSystem = watch('gradingSystem', route.gradingSystem);
+  const watchTags = watch('tags');
 
   const getGradesFromGradingSystem = (gradingSystem: string) => {
     const grades = gradingSystems?.find(
       (_gradingSystem) => _gradingSystem.title === gradingSystem,
-    )?.grades
-    return Array.from(new Set(grades))
-  }
+    )?.grades;
+    return Array.from(new Set(grades));
+  };
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const routePatch: RoutePatch = {}
-      if (formData.title !== route.title) routePatch.title = formData.title
-      if (formData.description !== route.description) routePatch.description = formData.description
-      if (formData.routeType !== route.routeType) routePatch.routeType = formData.routeType
-      if (formData.gradingSystem !== route.gradingSystem) routePatch.gradingSystem = formData.gradingSystem
-      if (formData.grade !== route.grade) routePatch.grade = formData.grade
+      const routePatch: RoutePatch = {};
+      if (formData.title !== route.title) routePatch.title = formData.title;
+      if (formData.description !== route.description)
+        routePatch.description = formData.description;
+      if (JSON.stringify(formData.tags) !== JSON.stringify(route.tags ?? []))
+        routePatch.tags = formData.tags as string[];
+      if (formData.routeType !== route.routeType)
+        routePatch.routeType = formData.routeType;
+      if (formData.gradingSystem !== route.gradingSystem)
+        routePatch.gradingSystem = formData.gradingSystem;
+      if (formData.grade !== route.grade) routePatch.grade = formData.grade;
 
       if (Object.keys(routePatch).length === 0) {
-        popupError('No changes to save')
-        return
+        navigate({
+          to: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug',
+          params: { cragSlug, areaSlug, topoSlug, routeSlug },
+        });
+        return;
       }
 
-      await patchFn({ data: { routeSlug, body: routePatch } })
-      await popupSuccess('Route Updated!')
+      await patchFn({ data: { routeSlug, body: routePatch } });
+      await router.invalidate();
+      await popupSuccess('Route Updated!');
       navigate({
         to: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug',
         params: { cragSlug, areaSlug, topoSlug, routeSlug },
-      })
+      });
     } catch (error) {
-      popupError('Ahh, something has gone wrong...')
+      popupError('Ahh, something has gone wrong...');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  })
+  });
 
   return (
     <>
@@ -94,7 +107,10 @@ function EditRouteForm({
                 </Link>
               </li>
               <li>
-                <Link to="/crags/$cragSlug/areas/$areaSlug" params={{ cragSlug, areaSlug }}>
+                <Link
+                  to="/crags/$cragSlug/areas/$areaSlug"
+                  params={{ cragSlug, areaSlug }}
+                >
                   {route.areaTitle}
                 </Link>
               </li>
@@ -122,7 +138,9 @@ function EditRouteForm({
             autoComplete="off"
           >
             <div className="field">
-              <label className="label" htmlFor="title">Title</label>
+              <label className="label" htmlFor="title">
+                Title
+              </label>
               <div className="control">
                 <input className="input" type="text" {...register('title')} />
               </div>
@@ -130,11 +148,39 @@ function EditRouteForm({
             </div>
 
             <div className="field">
-              <label className="label" htmlFor="description">Description</label>
+              <label className="label" htmlFor="description">
+                Description
+              </label>
               <div className="control">
-                <textarea className="textarea" {...register('description')}></textarea>
+                <textarea
+                  className="textarea"
+                  {...register('description')}
+                ></textarea>
               </div>
               <p className="help is-danger">{errors.description?.message}</p>
+            </div>
+
+            <div className="field">
+              <label className="label">Tags</label>
+              <div className="field is-grouped is-grouped-multiline">
+                <div role="group" className="tags">
+                  {routeTags.map((tag) => (
+                    <label
+                      key={tag}
+                      className={`tag ${watchTags?.includes(tag) ? 'is-primary' : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        value={tag}
+                        {...register('tags')}
+                        style={{ display: 'none' }}
+                      />
+                      {tag}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <p className="help is-danger">{(errors.tags as any)?.message}</p>
             </div>
 
             <div className="field">
@@ -143,7 +189,9 @@ function EditRouteForm({
                 <div className="select is-fullwidth">
                   <select {...register('routeType')}>
                     {routeTypes.map((routeType) => (
-                      <option key={routeType} value={routeType}>{routeType}</option>
+                      <option key={routeType} value={routeType}>
+                        {routeType}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -157,7 +205,10 @@ function EditRouteForm({
                 <div className="select is-fullwidth">
                   <select {...register('gradingSystem')}>
                     {gradingSystems.map((gradingSystem) => (
-                      <option key={gradingSystem.title} value={gradingSystem.title}>
+                      <option
+                        key={gradingSystem.title}
+                        value={gradingSystem.title}
+                      >
                         {gradingSystem.title}
                       </option>
                     ))}
@@ -173,11 +224,13 @@ function EditRouteForm({
                 <div className="select is-fullwidth">
                   <select {...register('grade')}>
                     {watchGradingSystem &&
-                      getGradesFromGradingSystem(getValues('gradingSystem'))?.map(
-                        (grade, index) => (
-                          <option key={grade} value={index}>{grade}</option>
-                        ),
-                      )}
+                      getGradesFromGradingSystem(
+                        getValues('gradingSystem'),
+                      )?.map((grade, index) => (
+                        <option key={grade} value={index}>
+                          {grade}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -207,7 +260,7 @@ function EditRouteForm({
         </div>
       </section>
     </>
-  )
+  );
 }
 
-export default EditRouteForm
+export default EditRouteForm;

@@ -210,6 +210,7 @@ export interface Route extends RouteRequest {
 export interface RoutePatch {
   title?: string;
   description?: string;
+  tags?: string[];
   newTags?: string[];
   removeTags?: string[];
   drawing?: Pick<Route, 'drawing'>;

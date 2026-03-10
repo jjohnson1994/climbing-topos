@@ -265,6 +265,7 @@ export declare const NewRouteScheme: () => yup.ObjectSchema<import("yup/lib/obje
 export declare const UpdateRouteScheme: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
     description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
@@ -281,6 +282,7 @@ export declare const UpdateRouteScheme: () => yup.ObjectSchema<import("yup/lib/o
 }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
     description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
@@ -297,6 +299,7 @@ export declare const UpdateRouteScheme: () => yup.ObjectSchema<import("yup/lib/o
 }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
     description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
+    tags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     newTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     removeTags: yup.ArraySchema<yup.StringSchema<string, import("yup/lib/types").AnyObject, string>, import("yup/lib/types").AnyObject, string[], string[]>;
     drawing: yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {

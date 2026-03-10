@@ -8,6 +8,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   PutCommand,
   QueryCommand,
+  UpdateCommand,
   DynamoDBDocumentClient,
 } from '@aws-sdk/lib-dynamodb';
 
@@ -130,6 +131,72 @@ export async function getLogs(
   const response = await dynamodb.send(new QueryCommand(params));
 
   return response?.Items as Log[];
+}
+
+interface CragLog extends Log {
+  hk: string;
+  sk: string;
+  user: { sub: string; nickname: string; picture: string };
+}
+
+export async function getLogsForRoute(
+  cragSlug: string,
+  areaSlug: string,
+  topoSlug: string,
+  routeSlug: string,
+): Promise<CragLog[]> {
+  const allLogs: CragLog[] = [];
+  let lastEvaluatedKey: Record<string, any> | undefined;
+
+  do {
+    const params: any = {
+      TableName: Resource.climbingtopos2.name,
+      KeyConditionExpression: '#hk = :hk AND begins_with(#sk, :sk)',
+      ExpressionAttributeNames: { '#hk': 'hk', '#sk': 'sk' },
+      ExpressionAttributeValues: {
+        ':hk': cragSlug,
+        ':sk': `log#area#${areaSlug}#topo#${topoSlug}#route#${routeSlug}#`,
+      },
+    };
+
+    if (lastEvaluatedKey) {
+      params.ExclusiveStartKey = lastEvaluatedKey;
+    }
+
+    const response = await dynamodb.send(new QueryCommand(params));
+    allLogs.push(...((response.Items as CragLog[]) ?? []));
+    lastEvaluatedKey = response.LastEvaluatedKey;
+  } while (lastEvaluatedKey);
+
+  return allLogs;
+}
+
+export async function updateLog(
+  hk: string,
+  sk: string,
+  fields: Record<string, any>,
+) {
+  const expressionAttributeNames = Object.keys(fields).reduce(
+    (acc, key) => ({ ...acc, [`#${key}`]: key }),
+    {} as Record<string, string>,
+  );
+  const expressionAttributeValues = Object.entries(fields).reduce(
+    (acc, [key, value]) => ({ ...acc, [`:${key}`]: value }),
+    {} as Record<string, any>,
+  );
+  const updateExpression = Object.keys(fields)
+    .map((key) => `#${key} = :${key}`)
+    .join(', ');
+
+  return dynamodb.send(
+    new UpdateCommand({
+      TableName: Resource.climbingtopos2.name,
+      Key: { hk, sk },
+      UpdateExpression: `set ${updateExpression}`,
+      ExpressionAttributeNames: expressionAttributeNames,
+      ExpressionAttributeValues: expressionAttributeValues,
+    }),
+  );
 }
 
 export async function getLogsForUser(
