@@ -31,23 +31,45 @@ export const Route = createFileRoute('/crags/$cragSlug/')({
 
     return { crag, isAdmin, isAuthenticated: !!user, defaultTab: activeTab };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData?.crag
-      ? [
-          { title: `${loaderData.crag.title} | ClimbingTopos.com` },
-          {
-            name: 'description',
-            content: `${loaderData.crag.title} climbing guide and topo`,
-          },
-          { property: 'og:type', content: 'website' },
-          {
-            property: 'og:title',
-            content: `${loaderData.crag.title} | ClimbingTopos.com`,
-          },
-          { property: 'og:image', content: loaderData.crag.image as string },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData?.crag) return { meta: [], links: [] };
+    const { crag } = loaderData;
+    const canonicalUrl = `https://climbingtopos.com/crags/${crag.slug}`;
+    const description = [
+      crag.description,
+      `${crag.title} climbing guide, topos, and route information.`,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: crag.title,
+          item: canonicalUrl,
+        },
+      ],
+    };
+    return {
+      meta: [
+        { title: `${crag.title} | ClimbingTopos.com` },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'website' },
+        {
+          property: 'og:title',
+          content: `${crag.title} | ClimbingTopos.com`,
+        },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: canonicalUrl },
+        { property: 'og:image', content: crag.image as string },
+        { 'script:ld+json': jsonLd },
+      ],
+      links: [{ rel: 'canonical', href: canonicalUrl }],
+    };
+  },
   component: CragPage,
 });
 

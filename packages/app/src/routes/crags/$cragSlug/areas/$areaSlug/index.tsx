@@ -18,25 +18,53 @@ export const Route = createFileRoute('/crags/$cragSlug/areas/$areaSlug/')({
       isAuthenticated: !!context.user,
     };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData?.area
-      ? [
-          {
-            title: `${loaderData.area.title} | ${loaderData.area.cragTitle} | ClimbingTopos.com`,
-          },
-          {
-            name: 'description',
-            content: `${loaderData.area.title}, ${loaderData.area.cragTitle} climbing guide and topo`,
-          },
-          { property: 'og:type', content: 'website' },
-          {
-            property: 'og:title',
-            content: `${loaderData.area.title} | ${loaderData.area.cragTitle} | ClimbingTopos.com`,
-          },
-          { property: 'og:image', content: loaderData.crag?.image as string },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData?.area) return { meta: [], links: [] };
+    const { area, crag } = loaderData;
+    const canonicalUrl = `https://climbingtopos.com/crags/${area.cragSlug}/areas/${area.slug}`;
+    const description = [
+      area.description,
+      `${area.title} climbing area at ${area.cragTitle}. Routes, topos, and climbing guide.`,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: area.cragTitle,
+          item: `https://climbingtopos.com/crags/${area.cragSlug}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: area.title,
+          item: canonicalUrl,
+        },
+      ],
+    };
+    return {
+      meta: [
+        {
+          title: `${area.title} | ${area.cragTitle} | ClimbingTopos.com`,
+        },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'website' },
+        {
+          property: 'og:title',
+          content: `${area.title} | ${area.cragTitle} | ClimbingTopos.com`,
+        },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: canonicalUrl },
+        { property: 'og:image', content: crag?.image as string },
+        { 'script:ld+json': jsonLd },
+      ],
+      links: [{ rel: 'canonical', href: canonicalUrl }],
+    };
+  },
   component: AreaPage,
 });
 

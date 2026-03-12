@@ -129,9 +129,6 @@ function CreateCragPage() {
     const file = e.target.files?.[0]
     if (file) {
       processImageFile(file)
-    } else {
-      setValue('imageFileName', '')
-      setImageBase64(null)
     }
   }
 

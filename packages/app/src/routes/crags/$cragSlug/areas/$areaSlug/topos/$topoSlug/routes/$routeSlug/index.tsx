@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { gradingSystems } from '@climbingtopos/globals';
 import { getFn as getRouteFn } from '@/data/actions/routes/get';
 import { getFn as getCragFn } from '@/data/actions/crags/get';
 import { getFn as getRouteLogsFn } from '@/data/actions/routes/logs/get';
@@ -44,25 +45,65 @@ export const Route = createFileRoute(
       isAuthenticated,
     };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData?.route
-      ? [
-          {
-            title: `${loaderData.route.title} | ${loaderData.route.areaTitle} | ClimbingTopos.com`,
-          },
-          {
-            name: 'description',
-            content: `${loaderData.route.title}, ${loaderData.route.areaTitle}, ${loaderData.route.cragTitle} climbing guide and topo`,
-          },
-          { property: 'og:type', content: 'website' },
-          {
-            property: 'og:title',
-            content: `${loaderData.route.title} | ${loaderData.route.areaTitle} | ClimbingTopos.com`,
-          },
-          { property: 'og:image', content: loaderData.crag?.image },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData?.route) return { meta: [], links: [] };
+    const { route, crag } = loaderData;
+    const canonicalUrl = `https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.slug}/`;
+    const gradeLabel =
+      gradingSystems
+        .find(({ title }) => title === route.gradingSystem)
+        ?.grades[route.gradeModal as number] ?? route.gradeModal;
+    const description = [
+      gradeLabel,
+      route.routeType,
+      `at ${route.areaTitle}, ${route.cragTitle}.`,
+      route.description,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: route.cragTitle,
+          item: `https://climbingtopos.com/crags/${route.cragSlug}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: route.areaTitle,
+          item: `https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: route.title,
+          item: canonicalUrl,
+        },
+      ],
+    };
+    return {
+      meta: [
+        {
+          title: `${route.title} | ${route.areaTitle} | ClimbingTopos.com`,
+        },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'website' },
+        {
+          property: 'og:title',
+          content: `${route.title} | ${route.areaTitle} | ClimbingTopos.com`,
+        },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: canonicalUrl },
+        { property: 'og:image', content: crag?.image },
+        { 'script:ld+json': jsonLd },
+      ],
+      links: [{ rel: 'canonical', href: canonicalUrl }],
+    };
+  },
   component: RoutePage,
 });
 

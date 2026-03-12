@@ -60,6 +60,7 @@ export default defineConfig({
     awsLambda: {
       streaming: true,
     },
+    serverDir: 'server',
   },
   optimizeDeps: {
     exclude: [
