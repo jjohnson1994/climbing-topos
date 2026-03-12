@@ -11,11 +11,13 @@ import { BBox, Feature, Point } from 'geojson'
 
 type CragFeature = Feature<Point, { cluster: false; crag: CragBrief }>
 
-const cragIcon = leaflet.divIcon({
-  html: '<i class="fas fa-mountain fa-2x"></i>',
-  iconSize: [20, 20],
-  className: 'icon',
-})
+function cragIcon() {
+  return leaflet.divIcon({
+    html: '<i class="fas fa-mountain fa-2x"></i>',
+    iconSize: [20, 20],
+    className: 'icon',
+  })
+}
 
 function clusterIcon(count: number) {
   return leaflet.divIcon({
@@ -87,7 +89,7 @@ function ClusteredMarkers({ crags }: { crags: CragBrief[] }) {
 
         const { crag } = props
         return (
-          <Marker key={crag!.slug} icon={cragIcon} position={[latitude, longitude]}>
+          <Marker key={crag!.slug} icon={cragIcon()} position={[latitude, longitude]}>
             <Popup>
               <h5 className="subtitle is-5">{crag!.title}</h5>
               <img src={`${crag!.image}`} alt={crag!.title} />
