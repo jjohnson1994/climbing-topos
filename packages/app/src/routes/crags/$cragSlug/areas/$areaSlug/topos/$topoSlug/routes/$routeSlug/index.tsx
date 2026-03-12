@@ -47,7 +47,7 @@ export const Route = createFileRoute(
   },
   head: ({ loaderData }) => {
     if (!loaderData?.route) return { meta: [], links: [] };
-    const { route, crag } = loaderData;
+    const { route } = loaderData;
     const canonicalUrl = `https://climbingtopos.com/crags/${route.cragSlug}/areas/${route.areaSlug}/topos/${route.topoSlug}/routes/${route.slug}/`;
     const gradeLabel =
       gradingSystems
@@ -98,7 +98,7 @@ export const Route = createFileRoute(
         },
         { property: 'og:description', content: description },
         { property: 'og:url', content: canonicalUrl },
-        { property: 'og:image', content: crag?.image },
+        { property: 'og:image', content: route.topo?.image },
         { 'script:ld+json': jsonLd },
       ],
       links: [{ rel: 'canonical', href: canonicalUrl }],
