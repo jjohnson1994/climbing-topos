@@ -48,3 +48,11 @@ main {
 .navbar-burger:focus + .navbar-menu {
   display: block;
 }
+
+.is-sticky {
+  position: sticky;
+}
+
+.is-top {
+  top: 0;
+}

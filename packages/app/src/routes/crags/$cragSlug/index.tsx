@@ -240,7 +240,7 @@ function CragPage() {
                       key={topo.slug}
                       className={`columns ${topoRoutes(topo).length ? '' : 'is-hidden'}`}
                     >
-                      <div className="column">
+                      <div className="column is-sticky is-top">
                         <TopoImage
                           routes={topoRoutes(topo)}
                           background={String(topo.image)}

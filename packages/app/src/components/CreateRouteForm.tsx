@@ -44,6 +44,7 @@ function CreateRouteForm({
       drawing: { points: [] } as RouteDrawing,
       grade: '',
       gradingSystem: '',
+      rating: 0,
       routeType: '',
       tags: [] as string[],
       title: '',
@@ -257,6 +258,23 @@ function CreateRouteForm({
                 </div>
               </div>
               <p className="help is-danger">{errors.grade?.message}</p>
+            </div>
+
+            <div className="field">
+              <label className="label">Rating</label>
+              <div className="control is-expanded">
+                <div className="select is-fullwidth">
+                  <select {...register('rating')}>
+                    <option value="0">No rating</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+              </div>
+              <p className="help is-danger">{errors.rating?.message}</p>
             </div>
 
             <div className="field">

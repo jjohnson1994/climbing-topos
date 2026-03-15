@@ -140,7 +140,7 @@ function AreaPage() {
             area.topos.map((topo) => (
               <div key={topo.slug} id={topo.slug} className="container block">
                 <div className="columns">
-                  <div className="column">
+                  <div className="column is-sticky is-top">
                     <TopoImage
                       routes={area.routes?.filter(
                         (route) => route.topoSlug === topo.slug,

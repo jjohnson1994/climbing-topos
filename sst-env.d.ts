@@ -54,10 +54,6 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
-    "climbingtopos2-admin": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
     "climbingtopos2-app": {
       "type": "sst.aws.TanstackStart"
       "url": string

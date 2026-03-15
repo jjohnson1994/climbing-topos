@@ -1,5 +1,6 @@
 .area-topo-image {
-  position: relative;
+  position: sticky;
+  top: 8px;
   display: inline-block;
   width: 100%;
 }

@@ -187,6 +187,7 @@ export const NewRouteScheme = () =>
       cragSlug: yup.string().required('Required'),
       areaSlug: yup.string().required('Required'),
       topoSlug: yup.string().required('Required'),
+      rating: yup.number().min(0).max(5),
     })
     .noUnknown();
 

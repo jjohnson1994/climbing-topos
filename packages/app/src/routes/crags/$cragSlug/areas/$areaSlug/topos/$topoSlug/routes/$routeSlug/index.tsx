@@ -167,7 +167,7 @@ function RoutePage() {
                   <span> </span>
                   <RatingStarsDisplay stars={route.rating || 0} />
                 </h6>
-                <h6 className="subtitle is-6">{route.description}</h6>
+                <h6 className="subtitle is-6" style={{ whiteSpace: 'pre-wrap' }}>{route.description}</h6>
                 {isAdmin === true && (
                   <div className="buttons">
                     <Link

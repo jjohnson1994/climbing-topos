@@ -156,6 +156,7 @@ export interface RouteRequest {
     gradingSystem: string;
     latitude: string;
     longitude: string;
+    rating?: number;
     rockType: string;
     routeType: string;
     state: string;

@@ -227,6 +227,7 @@ export declare const NewRouteScheme: () => yup.ObjectSchema<import("yup/lib/obje
     cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rating: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
 }>, import("yup/lib/object").AnyObject, import("yup/lib/object").TypeOfShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
@@ -244,6 +245,7 @@ export declare const NewRouteScheme: () => yup.ObjectSchema<import("yup/lib/obje
     cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rating: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
 }>>, import("yup/lib/object").AssertsShape<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     description: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
@@ -261,6 +263,7 @@ export declare const NewRouteScheme: () => yup.ObjectSchema<import("yup/lib/obje
     cragSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     areaSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
     topoSlug: import("yup/lib/string").RequiredStringSchema<string, import("yup/lib/types").AnyObject>;
+    rating: yup.NumberSchema<number, import("yup/lib/types").AnyObject, number>;
 }>>>;
 export declare const UpdateRouteScheme: () => yup.ObjectSchema<import("yup/lib/object").Assign<import("yup/lib/object").ObjectShape, {
     title: yup.StringSchema<string, import("yup/lib/types").AnyObject, string>;
