@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { NewListSchema } from '@climbingtopos/schemas'
@@ -11,13 +12,18 @@ export const postFn = createServerFn({ method: 'POST' })
     return data
   })
   .handler(async ({ data }) => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      const newList = await lists.createList(user.properties as any, data)
+
+      return { success: true, ...newList }
+    } catch (err) {
+      logError('action:lists/post', err)
+      throw err
     }
-
-    const newList = await lists.createList(user.properties as any, data)
-
-    return { success: true, ...newList }
   })

@@ -77,9 +77,12 @@ export async function getAllCrags(
 export async function getCragBySlug(
   slug: string,
   userSub: string,
-): Promise<Crag> {
-  const [crag, cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
-    crags.getCragBySlug(slug),
+): Promise<Crag | null> {
+  const crag = await crags.getCragBySlug(slug);
+
+  if (!crag) return null;
+
+  const [cragAreas, cragRoutes, cragTopos, userLogs] = await Promise.all([
     areas.getAreasByCragSlug(slug),
     routes.listRoutes(slug),
     topos.getToposByCragSlug(slug),

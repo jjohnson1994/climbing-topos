@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
 import {
   createRootRouteWithContext,
   Outlet,
   HeadContent,
   Scripts,
   redirect,
+  ErrorComponent,
 } from '@tanstack/react-router'
 import type { JwtPayload } from '@/lib/jwt'
 import { getAuthUser } from '@/lib/auth'
@@ -18,6 +18,23 @@ interface RouterContext {
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
+  errorComponent: ({ error }) => {
+    return (
+      <html lang="en">
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <section className="section">
+            <div className="container">
+              <ErrorComponent error={error} />
+            </div>
+          </section>
+          <Scripts />
+        </body>
+      </html>
+    )
+  },
   beforeLoad: async ({ location }) => {
     const user = await getAuthUser()
 
@@ -76,10 +93,6 @@ function NotFoundComponent() {
 
 function RootComponent() {
   const { user } = Route.useRouteContext()
-
-  useEffect(() => {
-    console.log('hello from tanstack')
-  }, [])
 
   return (
     <html lang="en">

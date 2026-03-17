@@ -11,16 +11,22 @@ import { patchFn as updateUserFn } from '@/data/actions/profile/patch'
 import { compressImage, fileToBase64 } from '@/helpers/imageCompression'
 import { FileInput } from '@/components/FileInput'
 import { getAuthUser } from '@/lib/auth'
+import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/first-login')({
   loader: async () => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      return { user }
+    } catch (err) {
+      logError('loader:first-login', err)
+      throw err
     }
-
-    return { user }
   },
   component: FirstLoginPage,
 })

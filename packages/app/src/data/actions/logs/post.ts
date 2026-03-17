@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import type { LogRequest } from '@climbingtopos/types'
@@ -11,13 +12,18 @@ export const postFn = createServerFn({ method: 'POST' })
     return data
   })
   .handler(async ({ data }) => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      await logs.logRoutes(data, user.properties as any)
+
+      return { success: true }
+    } catch (err) {
+      logError('action:logs/post', err)
+      throw err
     }
-
-    await logs.logRoutes(data, user.properties as any)
-
-    return { success: true }
   })

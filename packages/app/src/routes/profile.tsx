@@ -4,23 +4,29 @@ import ProfileLists from '@/components/ProfileLists'
 import ProfileStats from '@/components/ProfileStats'
 import { getAuthUser, logoutFn } from '@/lib/auth'
 import { getFn as getUserLogsFn } from '@/data/actions/profile/logs/get'
+import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/profile')({
   validateSearch: (search: Record<string, unknown>): { tab?: string } => ({
     tab: search.tab as string | undefined,
   }),
   loader: async () => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      const logs = await getUserLogsFn()
+      const safeLog = logs ?? []
+      const uniqueCrags = new Set(safeLog.map((l) => l.cragSlug)).size
+
+      return { user, logs: safeLog, uniqueCrags }
+    } catch (err) {
+      logError('loader:profile', err)
+      throw err
     }
-
-    const logs = await getUserLogsFn()
-    const safeLog = logs ?? []
-    const uniqueCrags = new Set(safeLog.map((l) => l.cragSlug)).size
-
-    return { user, logs: safeLog, uniqueCrags }
   },
   component: ProfilePage,
 })

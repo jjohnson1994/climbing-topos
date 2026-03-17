@@ -1,13 +1,19 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getFn as getCragsFn } from '@/data/actions/crags/get'
+import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/crags/')({
   loader: async () => {
-    const response = await getCragsFn({ data: { limit: 100 } })
-    const crags = Array.isArray(response)
-      ? response.sort((a, b) => (a.title > b.title ? 1 : -1))
-      : []
-    return { crags }
+    try {
+      const response = await getCragsFn({ data: { limit: 100 } })
+      const crags = Array.isArray(response)
+        ? response.sort((a, b) => (a.title > b.title ? 1 : -1))
+        : []
+      return { crags }
+    } catch (err) {
+      logError('loader:crags-list', err)
+      throw err
+    }
   },
   component: CragsPage,
 })

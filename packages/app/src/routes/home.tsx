@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { getFn as getCragsFn } from '@/data/actions/crags/get'
+import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/home')({
   loader: async () => {
     const popularCrags = await getCragsFn({
       data: { sortBy: 'logCount', sortOrder: 'DESC' as const, limit: 3 },
-    }).catch(() => null) as any[] | null
+    }).catch((err) => { logError('loader:home', err); return null }) as any[] | null
 
     return { popularCrags }
   },

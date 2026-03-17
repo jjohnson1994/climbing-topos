@@ -12,6 +12,7 @@ export async function createArea(
   user: UserPublicData,
 ) {
   const crag = await crags.getCragBySlug(areaDetails.cragSlug, user.sub);
+  if (!crag) throw new Error('Crag not found')
   const areaVerified = crag.managedBy.sub === user.sub;
   const newArea = await areas.createArea(areaDetails, user, areaVerified);
 
@@ -21,8 +22,11 @@ export async function createArea(
 export async function getAreaBySlug(
   areaSlug: string,
   userSub?: string,
-): Promise<Area> {
+): Promise<Area | null> {
   const area = await areas.getAreaBySlug(areaSlug);
+
+  if (!area) return null;
+
   const [areaTopos, areaRoutes, userLogs] = await Promise.all([
     topos.getToposByCragArea(area.cragSlug, areaSlug),
     routes.listRoutes(area.cragSlug, areaSlug),

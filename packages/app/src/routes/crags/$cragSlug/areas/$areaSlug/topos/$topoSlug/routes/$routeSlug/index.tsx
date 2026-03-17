@@ -3,6 +3,7 @@ import { gradingSystems } from '@climbingtopos/globals';
 import { getFn as getRouteFn } from '@/data/actions/routes/get';
 import { getFn as getCragFn } from '@/data/actions/crags/get';
 import { getFn as getRouteLogsFn } from '@/data/actions/routes/logs/get';
+import { logError } from '@/lib/log';
 import { getListsContainingRouteFn } from '@/data/actions/lists/get';
 import { useGradeHelpers } from '@/api/grades';
 import RatingStarsDisplay from '@/components/RatingStarsDisplay';
@@ -17,33 +18,38 @@ export const Route = createFileRoute(
 )({
   loader: async ({ params, context }) => {
     const { cragSlug, areaSlug, topoSlug, routeSlug } = params;
-    const user = context.user;
+    try {
+      const user = context.user;
 
-    const [route, crag, routeLogs] = await Promise.all([
-      getRouteFn({ data: { cragSlug, areaSlug, topoSlug, routeSlug } }),
-      getCragFn({ data: { cragSlug } }),
-      getRouteLogsFn({ data: { cragSlug, areaSlug, topoSlug, routeSlug } }),
-    ]);
+      const [route, crag, routeLogs] = await Promise.all([
+        getRouteFn({ data: { cragSlug, areaSlug, topoSlug, routeSlug } }),
+        getCragFn({ data: { cragSlug } }),
+        getRouteLogsFn({ data: { cragSlug, areaSlug, topoSlug, routeSlug } }),
+      ]);
 
-    let listsContainingRoute: { listSlug: string; listTitle: string }[] = [];
-    if (user) {
-      listsContainingRoute = await getListsContainingRouteFn({
-        data: { routeSlug },
-      });
+      let listsContainingRoute: { listSlug: string; listTitle: string }[] = [];
+      if (user) {
+        listsContainingRoute = await getListsContainingRouteFn({
+          data: { routeSlug },
+        });
+      }
+
+      const userSub = user ? user.properties.sub : undefined;
+      const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
+      const isAuthenticated = !!user;
+
+      return {
+        route,
+        crag,
+        routeLogs,
+        listsContainingRoute,
+        isAdmin,
+        isAuthenticated,
+      };
+    } catch (err) {
+      logError('loader:route', err, { cragSlug, areaSlug, topoSlug, routeSlug })
+      throw err
     }
-
-    const userSub = user ? user.properties.sub : undefined;
-    const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
-    const isAuthenticated = !!user;
-
-    return {
-      route,
-      crag,
-      routeLogs,
-      listsContainingRoute,
-      isAdmin,
-      isAuthenticated,
-    };
   },
   head: ({ loaderData }) => {
     if (!loaderData?.route) return { meta: [], links: [] };

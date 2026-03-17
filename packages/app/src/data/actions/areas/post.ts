@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import type { AreaRequest } from '@climbingtopos/types'
@@ -12,15 +13,20 @@ export const postFn = createServerFn({ method: 'POST' })
     return data
   })
   .handler(async ({ data }) => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      await crags.getCragBySlug(data.cragSlug, user.properties.sub || '')
+
+      const resp = await areas.createArea(data, user.properties as any)
+
+      return { success: true, ...resp }
+    } catch (err) {
+      logError('action:areas/post', err)
+      throw err
     }
-
-    await crags.getCragBySlug(data.cragSlug, user.properties.sub || '')
-
-    const resp = await areas.createArea(data, user.properties as any)
-
-    return { success: true, ...resp }
   })

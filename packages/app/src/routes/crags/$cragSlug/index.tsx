@@ -6,7 +6,8 @@ import AreaRoutesTable from '@/components/AreaRoutesTable';
 import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates';
 import TopoImage from '@/components/TopoImage';
 import CragTitleImage from '@/components/CragTitleImage';
-import CragAdmin from '@/components/CragAdmin';
+import CragAdmin from '@/components/CragAdmin'
+import { logError } from '@/lib/log';
 
 const CragMap = lazy(() => import('@/components/CragMapClient'));
 
@@ -15,21 +16,26 @@ export const Route = createFileRoute('/crags/$cragSlug/')({
     tab: search.tab as string | undefined,
   }),
   loader: async ({ params, context }) => {
-    const crag = (await getCragFn({
-      data: { cragSlug: params.cragSlug },
-    })) as unknown as Crag;
-    const user = context.user;
-    const userSub = user ? user.properties.sub : undefined;
-    const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
+    try {
+      const crag = (await getCragFn({
+        data: { cragSlug: params.cragSlug },
+      })) as unknown as Crag;
+      const user = context.user;
+      const userSub = user ? user.properties.sub : undefined;
+      const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
 
-    let activeTab = '';
-    if (crag?.routes?.length) {
-      activeTab = 'guide';
-    } else {
-      activeTab = 'routes';
+      let activeTab = '';
+      if (crag?.routes?.length) {
+        activeTab = 'guide';
+      } else {
+        activeTab = 'routes';
+      }
+
+      return { crag, isAdmin, isAuthenticated: !!user, defaultTab: activeTab };
+    } catch (err) {
+      logError('loader:crag', err, { cragSlug: params.cragSlug })
+      throw err
     }
-
-    return { crag, isAdmin, isAuthenticated: !!user, defaultTab: activeTab };
   },
   head: ({ loaderData }) => {
     if (!loaderData?.crag) return { meta: [], links: [] };

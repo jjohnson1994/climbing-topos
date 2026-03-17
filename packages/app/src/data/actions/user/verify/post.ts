@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { setCookie } from '@tanstack/react-start/server'
 import { getAuthUser } from '@/lib/auth'

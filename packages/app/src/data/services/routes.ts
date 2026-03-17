@@ -42,13 +42,15 @@ export async function listRoutes(
   areaSlug: string,
   topoSlug: string,
   routeSlug: string,
-): Promise<Route> {
+): Promise<Route | null> {
   const [route] = await routes.listRoutes(
     cragSlug,
     areaSlug,
     topoSlug,
     routeSlug,
   );
+
+  if (!route) return null;
 
   const [topo, area, siblingRoutes, userLogs] = await Promise.all([
     topos.getTopoBySlug(route.topoSlug),
@@ -118,13 +120,9 @@ export async function updateMetricsOnLogInsert(
     sub: string;
   },
 ) {
-  const { ratingTally, gradeTally, recentLogs } = await listRoutes(
-    user.sub,
-    cragSlug,
-    areaSlug,
-    topoSlug,
-    routeSlug,
-  );
+  const route = await listRoutes(user.sub, cragSlug, areaSlug, topoSlug, routeSlug)
+  if (!route) throw new Error('Route not found')
+  const { ratingTally, gradeTally, recentLogs } = route
 
   // Calc new rating
   const existingRatingTally = ratingTally[rating];

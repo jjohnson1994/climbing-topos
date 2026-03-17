@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getAuthUser } from '@/lib/auth'
@@ -19,21 +20,26 @@ export const getFn = createServerFn({ method: 'GET' })
       routeSlug?: string
     }
   }) => {
-    const user = await getAuthUser()
-    const userSub = user ? user.properties.sub : undefined
+    try {
+      const user = await getAuthUser()
+      const userSub = user ? user.properties.sub : undefined
 
-    if (!userSub) {
-      throw redirect({ to: '/login' })
+      if (!userSub) {
+        throw redirect({ to: '/login' })
+      }
+
+      const data = ctx.data ?? {}
+
+      return await logs.getUserLogs(
+        userSub,
+        data.cragSlug,
+        data.areaSlug,
+        data.topoSlug,
+        data.routeSlug,
+      )
+    } catch (err) {
+      logError('action:profile/logs/get', err)
+      throw err
     }
-
-    const data = ctx.data ?? {}
-
-    return await logs.getUserLogs(
-      userSub,
-      data.cragSlug,
-      data.areaSlug,
-      data.topoSlug,
-      data.routeSlug,
-    )
   },
 )

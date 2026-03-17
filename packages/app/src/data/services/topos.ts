@@ -7,6 +7,7 @@ export async function createTopo(
   user: UserPublicData,
 ) {
   const crag = await crags.getCragBySlug(topoDetails.cragSlug, user.sub);
+  if (!crag) throw new Error('Crag not found')
   const topoVerified = crag.managedBy.sub === user.sub;
 
   return topos.createTopo(topoDetails, user, topoVerified);

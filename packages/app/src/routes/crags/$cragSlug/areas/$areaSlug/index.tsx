@@ -2,21 +2,27 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import type { Area, Crag } from '@climbingtopos/types';
 import { getFn as getAreaFn } from '@/data/actions/areas/get';
 import { getFn as getCragFn } from '@/data/actions/crags/get';
+import { logError } from '@/lib/log';
 import AreaRoutesTable from '@/components/AreaRoutesTable';
 import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates';
 import TopoImage from '@/components/TopoImage';
 
 export const Route = createFileRoute('/crags/$cragSlug/areas/$areaSlug/')({
   loader: async ({ params, context }) => {
-    const [area, crag] = await Promise.all([
-      getAreaFn({ data: { areaSlug: params.areaSlug } }),
-      getCragFn({ data: { cragSlug: params.cragSlug } }),
-    ]);
-    return {
-      area: area as unknown as Area,
-      crag: crag as unknown as Crag | null,
-      isAuthenticated: !!context.user,
-    };
+    try {
+      const [area, crag] = await Promise.all([
+        getAreaFn({ data: { areaSlug: params.areaSlug } }),
+        getCragFn({ data: { cragSlug: params.cragSlug } }),
+      ]);
+      return {
+        area: area as unknown as Area,
+        crag: crag as unknown as Crag | null,
+        isAuthenticated: !!context.user,
+      };
+    } catch (err) {
+      logError('loader:area', err, { cragSlug: params.cragSlug, areaSlug: params.areaSlug })
+      throw err
+    }
   },
   head: ({ loaderData }) => {
     if (!loaderData?.area) return { meta: [], links: [] };

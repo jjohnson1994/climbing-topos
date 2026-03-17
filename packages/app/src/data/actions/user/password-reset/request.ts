@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { requestPasswordReset } from '@/data/services/password-reset'
 import { sendTransactional } from '@/lib/email'

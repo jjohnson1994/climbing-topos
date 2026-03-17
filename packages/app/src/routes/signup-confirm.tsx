@@ -12,18 +12,24 @@ import { getFn as getVerificationCodeExpirationFn } from '@/data/actions/pending
 import { getFn as requestVerificationCodeFn } from '@/data/actions/pending-user/confirmation-code/get'
 import { postFn as confirmSignUpFn } from '@/data/actions/user/verify/post'
 import { getAuthUser } from '@/lib/auth'
+import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/signup-confirm')({
   loader: async () => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      const verificationCodeExpiration = await getVerificationCodeExpirationFn()
+
+      return { verificationCodeExpiration, email: user.properties.email }
+    } catch (err) {
+      logError('loader:signup-confirm', err)
+      throw err
     }
-
-    const verificationCodeExpiration = await getVerificationCodeExpirationFn()
-
-    return { verificationCodeExpiration, email: user.properties.email }
   },
   component: SignupConfirmPage,
 })

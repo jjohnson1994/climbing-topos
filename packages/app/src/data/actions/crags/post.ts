@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getAuthUser } from '@/lib/auth'
@@ -21,20 +22,25 @@ export const postFn = createServerFn({ method: 'POST' })
     imageBase64: string
   }) => data)
   .handler(async ({ data }) => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
+
+      const image = await files.uploadImage(data.imageBase64)
+
+      const { imageBase64: _, ...rest } = data
+      const cragData = { ...rest, image }
+
+      await NewCragSchema().validate(cragData, { stripUnknown: true, abortEarly: false })
+
+      const resp = await crags.createCrag(cragData as any, user.properties as any)
+
+      return { ...resp }
+    } catch (err) {
+      logError('action:crags/post', err)
+      throw err
     }
-
-    const image = await files.uploadImage(data.imageBase64)
-
-    const { imageBase64: _, ...rest } = data
-    const cragData = { ...rest, image }
-
-    await NewCragSchema().validate(cragData, { stripUnknown: true, abortEarly: false })
-
-    const resp = await crags.createCrag(cragData as any, user.properties as any)
-
-    return { ...resp }
   })

@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { confirmPasswordReset } from '@/data/services/password-reset'
 import { enforceRateLimit, clearRateLimit, RateLimitType } from '@/lib/rate-limit'

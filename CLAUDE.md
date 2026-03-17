@@ -279,7 +279,7 @@ Route types: boulder, sport, trad, aid, alpine, mixed
 ## Code Style Guidelines
 
 - **DO NOT** add code comments - code should be self-explanatory
-- **DO NOT** add console.log statements - use proper logging if needed
+- **DO NOT** add console.log statements - use `logError` from `@/lib/log` for error logging in server functions
 - Keep code clean and simple
 - Variable and function names should clearly describe their purpose
 - If code needs explanation, it should be refactored to be clearer

@@ -1,3 +1,4 @@
+import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import type { RoutePatch } from '@climbingtopos/types'
@@ -11,29 +12,35 @@ export const patchFn = createServerFn({ method: 'POST' })
     return data
   })
   .handler(async ({ data }) => {
-    const user = await getAuthUser()
+    try {
+      const user = await getAuthUser()
 
-    if (!user) {
-      throw redirect({ to: '/login' })
-    }
+      if (!user) {
+        throw redirect({ to: '/login' })
+      }
 
-    const userSub = user.properties.sub || ''
-    const route = await routes.getRouteBySlug(data.routeSlug)
-    const crag = await crags.getCragBySlug(route.cragSlug, userSub)
+      const userSub = user.properties.sub || ''
+      const route = await routes.getRouteBySlug(data.routeSlug)
+      const crag = await crags.getCragBySlug(route.cragSlug, userSub)
+      if (!crag) throw new Error('Crag not found')
 
-    if (crag.managedBy.sub !== userSub) {
-      throw new Error(
-        'Permission Error: You Do Not Have Permission to Patch this Route',
+      if (crag.managedBy.sub !== userSub) {
+        throw new Error(
+          'Permission Error: You Do Not Have Permission to Patch this Route',
+        )
+      }
+
+      await routes.updateRoute(
+        route.cragSlug,
+        route.areaSlug,
+        route.topoSlug,
+        data.routeSlug,
+        data.body,
       )
+
+      return { success: true }
+    } catch (err) {
+      logError('action:routes/patch', err)
+      throw err
     }
-
-    await routes.updateRoute(
-      route.cragSlug,
-      route.areaSlug,
-      route.topoSlug,
-      data.routeSlug,
-      data.body,
-    )
-
-    return { success: true }
   })
