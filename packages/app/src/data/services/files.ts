@@ -1,6 +1,6 @@
 import { Resource } from 'sst'
 import { nanoid } from 'nanoid'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import sharp from 'sharp'
 
 sharp.cache(false)
@@ -32,4 +32,17 @@ export const uploadImage = async (imageBase64: string): Promise<string> => {
   )
 
   return `${process.env.IMAGES_CDN_URL}/${key}`
+}
+
+export const deleteImage = async (imageUrl: string): Promise<void> => {
+  const prefix = `${process.env.IMAGES_CDN_URL}/`
+  const key = imageUrl.startsWith(prefix) ? imageUrl.slice(prefix.length) : null
+  if (!key) return
+
+  await s3.send(
+    new DeleteObjectCommand({
+      Bucket: Resource.climbingtopos2Images.name,
+      Key: key,
+    }),
+  )
 }

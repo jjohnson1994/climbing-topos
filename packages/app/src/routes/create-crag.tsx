@@ -1,37 +1,42 @@
 // @ts-nocheck
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { NewCragSchema } from '@climbingtopos/schemas'
-import { useRef, useTransition, useState } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { cragTags } from '@climbingtopos/globals'
-import Message, { Color } from '@/components/Message'
-import { popupError, popupSuccess } from '@/helpers/alerts'
-import { getCurrentPosition } from '@/helpers/geolocation'
-import { reverseLookup } from '@/helpers/nominatim'
-import { postFn } from '@/data/actions/crags/post'
-import { compressImage, fileToBase64 } from '@/helpers/imageCompression'
-import { FileInput } from '@/components/FileInput'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { NewCragSchema } from '@climbingtopos/schemas';
+import { useRef, useTransition, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { cragTags } from '@climbingtopos/globals';
+import Message, { Color } from '@/components/Message';
+import { popupError, popupSuccess } from '@/helpers/alerts';
+import { getCurrentPosition } from '@/helpers/geolocation';
+import { reverseLookup } from '@/helpers/nominatim';
+import { postFn } from '@/data/actions/crags/post';
+import { compressImage, fileToBase64 } from '@/helpers/imageCompression';
+import { FileInput } from '@/components/FileInput';
+import { ImageCropModal } from '@/components/ImageCropModal';
+import { flipImage } from '@/helpers/cropImage';
 
-const schema = NewCragSchema()
+const schema = NewCragSchema();
 
 export const Route = createFileRoute('/create-crag')({
   beforeLoad: async ({ context }) => {
-    if (!context.user) throw redirect({ to: '/login' })
+    if (!context.user) throw redirect({ to: '/login' });
   },
   component: CreateCragPage,
-})
+});
 
 function CreateCragPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [carParkLocationLoadingIndex, setCarParkLocationLoadingIndex] =
-    useState(-1)
-  const [cragLocationLoading, setCragLocationLoading] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [pending, startTransition] = useTransition()
-  const [imagePreview, setImagePreview] = useState('')
-  const [imageBase64, setImageBase64] = useState<string | null>(null)
-  const [compressing, setCompressing] = useState(false)
+    useState(-1);
+  const [cragLocationLoading, setCragLocationLoading] =
+    useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [pending, startTransition] = useTransition();
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [compressing, setCompressing] = useState(false);
+  const [originalSrc, setOriginalSrc] = useState<string | null>(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
 
   const {
     register,
@@ -64,72 +69,91 @@ function CreateCragPage() {
       imageFileName: '',
       acceptTerms: false,
     },
-  })
+  });
 
-  const watchImageFileName = watch('imageFileName')
+  const watchImageFileName = watch('imageFileName');
 
-  const carParkLongitudeRefs = useRef<(HTMLInputElement | null)[]>([])
-  const cragLongitudeRef = useRef<HTMLInputElement>(null)
-  const { ref: cragLongitudeRegisterRef, ...cragLongitudeRegisterRest } = register('longitude')
+  const carParkLongitudeRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const cragLongitudeRef = useRef<HTMLInputElement>(null);
+  const { ref: cragLongitudeRegisterRef, ...cragLongitudeRegisterRest } =
+    register('longitude');
 
   const cragLatitudeOnPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const text = e.clipboardData.getData('text')
+    const text = e.clipboardData.getData('text');
     if (text.includes(',')) {
-      e.preventDefault()
-      const [lat, lng] = text.split(',')
-      setValue('latitude', lat.trim())
-      setValue('longitude', lng.trim())
-      cragLongitudeRef.current?.focus()
+      e.preventDefault();
+      const [lat, lng] = text.split(',');
+      setValue('latitude', lat.trim());
+      setValue('longitude', lng.trim());
+      cragLongitudeRef.current?.focus();
     }
-  }
+  };
 
   const cragLatitudeOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === ',') {
-      e.preventDefault()
-      cragLongitudeRef.current?.focus()
+      e.preventDefault();
+      cragLongitudeRef.current?.focus();
     }
-  }
+  };
 
-  const carParkLatitudeOnPaste = (index: number) => (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const text = e.clipboardData.getData('text')
-    if (text.includes(',')) {
-      e.preventDefault()
-      const [lat, lng] = text.split(',')
-      setValue(`carParks.${index}.latitude`, lat.trim())
-      setValue(`carParks.${index}.longitude`, lng.trim())
-      carParkLongitudeRefs.current[index]?.focus()
-    }
-  }
+  const carParkLatitudeOnPaste =
+    (index: number) => (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const text = e.clipboardData.getData('text');
+      if (text.includes(',')) {
+        e.preventDefault();
+        const [lat, lng] = text.split(',');
+        setValue(`carParks.${index}.latitude`, lat.trim());
+        setValue(`carParks.${index}.longitude`, lng.trim());
+        carParkLongitudeRefs.current[index]?.focus();
+      }
+    };
 
-  const carParkLatitudeOnKeyDown = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === ',') {
-      e.preventDefault()
-      carParkLongitudeRefs.current[index]?.focus()
-    }
+  const carParkLatitudeOnKeyDown =
+    (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === ',') {
+        e.preventDefault();
+        carParkLongitudeRefs.current[index]?.focus();
+      }
+    };
+
+  function compressAndPreview(file: File) {
+    setCompressing(true);
+    compressImage(file, 2000, 2000)
+      .then(async (compressedFile) => {
+        const base64 = await fileToBase64(compressedFile);
+        setImageBase64(base64);
+        setImagePreview(URL.createObjectURL(compressedFile));
+        setCompressing(false);
+      })
+      .catch(() => {
+        setCompressing(false);
+        popupError('Image compression failed, please try again');
+      });
   }
 
   function processImageFile(file: File) {
-    setValue('imageFileName', file.name)
-    setCompressing(true)
-
-    compressImage(file, 2000, 2000)
-      .then(async (compressedFile) => {
-        const base64 = await fileToBase64(compressedFile)
-        setImageBase64(base64)
-        setImagePreview(URL.createObjectURL(compressedFile))
-        setCompressing(false)
-      })
-      .catch(() => {
-        setCompressing(false)
-        popupError('Image compression failed, please try again')
-      })
+    setValue('imageFileName', file.name);
+    setOriginalSrc(URL.createObjectURL(file));
+    compressAndPreview(file);
   }
 
   function onImageSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) {
-      processImageFile(file)
-    }
+    const file = e.target.files?.[0];
+    if (file) processImageFile(file);
+  }
+
+  function onCropComplete(croppedFile: File) {
+    setCropModalOpen(false);
+    compressAndPreview(croppedFile);
+    setOriginalSrc(URL.createObjectURL(croppedFile));
+  }
+
+  async function handleFlip(direction: 'horizontal' | 'vertical') {
+    if (!imagePreview) return;
+    const flipped = await flipImage(imagePreview, direction);
+    const flippedUrl = URL.createObjectURL(flipped);
+    setOriginalSrc(flippedUrl);
+    compressAndPreview(flipped);
   }
 
   const {
@@ -140,25 +164,25 @@ function CreateCragPage() {
   } = useFieldArray({
     control,
     name: 'carParks',
-  })
+  });
 
-  const watchAllFields = watch()
+  const watchAllFields = watch();
 
   const btnCragLocationFindMeOnClick = async () => {
-    setCragLocationLoading(true)
+    setCragLocationLoading(true);
 
     try {
-      const location = await getCurrentPosition()
-      setValue('latitude', `${location.coords.latitude}`)
-      setValue('longitude', `${location.coords.longitude}`)
+      const location = await getCurrentPosition();
+      setValue('latitude', `${location.coords.latitude}`);
+      setValue('longitude', `${location.coords.longitude}`);
     } finally {
-      setCragLocationLoading(false)
+      setCragLocationLoading(false);
     }
-  }
+  };
 
   const getCragNominatim = async (latitude: string, longitude: string) => {
-    return await reverseLookup(latitude, longitude)
-  }
+    return await reverseLookup(latitude, longitude);
+  };
 
   const btnAddCarParkOnClick = () => {
     appendCarPark({
@@ -166,38 +190,41 @@ function CreateCragPage() {
       latitude: '',
       longitude: '',
       description: '',
-    })
-  }
+    });
+  };
 
   const btnRemoveCarParkOnClick = (index: number) => {
-    removeCarPark(index)
-  }
+    removeCarPark(index);
+  };
 
   const btnCarParkFindMeOnClick = async (index: number) => {
-    setCarParkLocationLoadingIndex(index)
-    const location = await getCurrentPosition()
+    setCarParkLocationLoadingIndex(index);
+    const location = await getCurrentPosition();
     const newCarPark = {
       ...carParks[index],
       latitude: `${location.coords.latitude}`,
       longitude: `${location.coords.longitude}`,
-    }
+    };
 
-    removeCarPark(index)
-    insertCarPark(index, newCarPark)
+    removeCarPark(index);
+    insertCarPark(index, newCarPark);
 
-    setCarParkLocationLoadingIndex(-1)
-  }
+    setCarParkLocationLoadingIndex(-1);
+  };
 
   const formOnSubmit = handleSubmit(async (formData) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       if (!imageBase64) {
-        popupError('Please select an image')
-        return
+        popupError('Please select an image');
+        return;
       }
 
-      const osmData = await getCragNominatim(formData.latitude, formData.longitude)
+      const osmData = await getCragNominatim(
+        formData.latitude,
+        formData.longitude,
+      );
 
       startTransition(async () => {
         const result = await postFn({
@@ -216,28 +243,38 @@ function CreateCragPage() {
             osmData,
             imageBase64,
           },
-        })
+        });
 
         if (result?.slug) {
-          await popupSuccess('Crag Created!')
-          navigate({ to: '/crags/$cragSlug', params: { cragSlug: result.slug } })
+          await popupSuccess('Crag Created!');
+          navigate({
+            to: '/crags/$cragSlug',
+            params: { cragSlug: result.slug },
+          });
         }
-      })
+      });
     } catch (error: any) {
       if (error.error === 'Unable to geocode') {
         popupError(
           'Could not find geolocation data! Check the Crag location coordinates are correct and try again',
-        )
+        );
       } else {
-        popupError('Ahh, something has gone wrong...')
+        popupError('Ahh, something has gone wrong...');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  })
+  });
 
   return (
     <>
+      {cropModalOpen && originalSrc && (
+        <ImageCropModal
+          imageSrc={originalSrc}
+          onCropComplete={onCropComplete}
+          onCancel={() => setCropModalOpen(false)}
+        />
+      )}
       <section className="section">
         <div className="container box">
           <form
@@ -294,7 +331,7 @@ function CreateCragPage() {
                     />
                     <span className="file-cta">
                       <span className="file-icon">
-                        <i className="fas fa-upload"></i>
+                        <i className="fas fa-upload" aria-hidden="true"></i>
                       </span>
                       <span className="file-label">Choose a file…</span>
                     </span>
@@ -311,6 +348,40 @@ function CreateCragPage() {
                   <figure className="image">
                     <img src={imagePreview} alt="crag preview" />
                   </figure>
+                  <div className="buttons mt-2">
+                    <button
+                      type="button"
+                      className="button is-small"
+                      onClick={() => setCropModalOpen(true)}
+                    >
+                      <span className="icon is-small">
+                        <i className="fas fa-crop-alt" aria-hidden="true"></i>
+                      </span>
+                      <span>Crop</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="button is-small"
+                      disabled={compressing}
+                      onClick={() => handleFlip('horizontal')}
+                    >
+                      <span className="icon is-small">
+                        <i className="fas fa-arrows-alt-h" aria-hidden="true"></i>
+                      </span>
+                      <span>Flip</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="button is-small"
+                      disabled={compressing}
+                      onClick={() => handleFlip('vertical')}
+                    >
+                      <span className="icon is-small">
+                        <i className="fas fa-arrows-alt-v" aria-hidden="true"></i>
+                      </span>
+                      <span>Flip</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -387,8 +458,8 @@ function CreateCragPage() {
                       type="text"
                       placeholder="Longitude"
                       ref={(el) => {
-                        cragLongitudeRegisterRef(el)
-                        cragLongitudeRef.current = el
+                        cragLongitudeRegisterRef(el);
+                        cragLongitudeRef.current = el;
                       }}
                       {...cragLongitudeRegisterRest}
                     />
@@ -400,7 +471,7 @@ function CreateCragPage() {
                       onClick={() => btnCragLocationFindMeOnClick()}
                     >
                       <span className="icon">
-                        <i className="fas fa-map-marker-alt"></i>
+                        <i className="fas fa-map-marker-alt" aria-hidden="true"></i>
                       </span>
                       <span>Find Me</span>
                     </button>
@@ -432,7 +503,7 @@ function CreateCragPage() {
                           onClick={() => btnRemoveCarParkOnClick(index)}
                         >
                           <span className="icon">
-                            <i className="fas fa-trash-alt"></i>
+                            <i className="fas fa-trash-alt" aria-hidden="true"></i>
                           </span>
                         </button>
                       </div>
@@ -454,19 +525,21 @@ function CreateCragPage() {
                     </div>
                     <div className="control is-expanded has-icons-right">
                       {(() => {
-                        const { ref: lngRegRef, ...lngRest } = register(`carParks.${index}.longitude`)
+                        const { ref: lngRegRef, ...lngRest } = register(
+                          `carParks.${index}.longitude`,
+                        );
                         return (
                           <input
                             className="input"
                             type="text"
                             placeholder="Longitude"
                             ref={(el) => {
-                              lngRegRef(el)
-                              carParkLongitudeRefs.current[index] = el
+                              lngRegRef(el);
+                              carParkLongitudeRefs.current[index] = el;
                             }}
                             {...lngRest}
                           />
-                        )
+                        );
                       })()}
                     </div>
                     <div className="control">
@@ -476,7 +549,7 @@ function CreateCragPage() {
                         onClick={() => btnCarParkFindMeOnClick(index)}
                       >
                         <span className="icon">
-                          <i className="fas fa-map-marker-alt"></i>
+                          <i className="fas fa-map-marker-alt" aria-hidden="true"></i>
                         </span>
                         <span>Find Me</span>
                       </button>
@@ -509,7 +582,7 @@ function CreateCragPage() {
                   onClick={btnAddCarParkOnClick}
                 >
                   <span className="icon is-small">
-                    <i className="fas fa-plus"></i>
+                    <i className="fas fa-plus" aria-hidden="true"></i>
                   </span>
                   <span>Add Car Park</span>
                 </button>
@@ -586,5 +659,5 @@ function CreateCragPage() {
         </div>
       </section>
     </>
-  )
+  );
 }

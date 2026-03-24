@@ -3,11 +3,11 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import type { TopoPatch } from '@climbingtopos/types'
 import { UpdateTopoSchema } from '@climbingtopos/schemas'
-import { crags, topos } from '@/data/services'
+import { crags, topos, files } from '@/data/services'
 import { getAuthUser } from '@/lib/auth'
 
 export const patchFn = createServerFn({ method: 'POST' })
-  .inputValidator(async (data: { topoSlug: string; body: TopoPatch }) => {
+  .inputValidator(async (data: { topoSlug: string; body: TopoPatch; imageBase64?: string }) => {
     await UpdateTopoSchema().validate(data.body, { strict: true, abortEarly: false })
     return data
   })
@@ -30,7 +30,14 @@ export const patchFn = createServerFn({ method: 'POST' })
         )
       }
 
-      await topos.updateTopo(topo.cragSlug, topo.areaSlug, data.topoSlug, data.body)
+      const patch = { ...data.body }
+      if (data.imageBase64) {
+        const oldImageUrl = topo.image as string | undefined
+        patch.image = await files.uploadImage(data.imageBase64)
+        if (oldImageUrl) await files.deleteImage(oldImageUrl)
+      }
+
+      await topos.updateTopo(topo.cragSlug, topo.areaSlug, data.topoSlug, patch)
 
       return { success: true }
     } catch (err) {
