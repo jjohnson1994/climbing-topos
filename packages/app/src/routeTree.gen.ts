@@ -20,15 +20,23 @@ import { Route as FirstLoginRouteImport } from './routes/first-login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CreateCragRouteImport } from './routes/create-crag'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as CragsIndexRouteImport } from './routes/crags/index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password/confirm'
+import { Route as ProfileStatsRouteImport } from './routes/profile/stats'
+import { Route as ProfileLogsRouteImport } from './routes/profile/logs'
+import { Route as ProfileListsRouteImport } from './routes/profile/lists'
 import { Route as ApiCallbackRouteImport } from './routes/api/callback'
 import { Route as CragsCragSlugIndexRouteImport } from './routes/crags/$cragSlug/index'
 import { Route as CragsCragSlugCreateAreaRouteImport } from './routes/crags/$cragSlug/create-area'
 import { Route as CragsCragSlugCreateTopoAreaSlugRouteImport } from './routes/crags/$cragSlug/create-topo.$areaSlug'
 import { Route as CragsCragSlugAreasAreaSlugIndexRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/index'
+import { Route as CragsCragSlugAreasAreaSlugEditRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/edit'
+import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugEditRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
 import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
+import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
 import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/index'
+import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
 import { Route as CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRouteImport } from './routes/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
 
 const SignupConfirmRoute = SignupConfirmRouteImport.update({
@@ -86,6 +94,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRoute,
+} as any)
 const CragsIndexRoute = CragsIndexRouteImport.update({
   id: '/crags/',
   path: '/crags/',
@@ -95,6 +108,21 @@ const ResetPasswordConfirmRoute = ResetPasswordConfirmRouteImport.update({
   id: '/confirm',
   path: '/confirm',
   getParentRoute: () => ResetPasswordRoute,
+} as any)
+const ProfileStatsRoute = ProfileStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const ProfileLogsRoute = ProfileLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const ProfileListsRoute = ProfileListsRouteImport.update({
+  id: '/lists',
+  path: '/lists',
+  getParentRoute: () => ProfileRoute,
 } as any)
 const ApiCallbackRoute = ApiCallbackRouteImport.update({
   id: '/api/callback',
@@ -123,25 +151,54 @@ const CragsCragSlugAreasAreaSlugIndexRoute =
     path: '/crags/$cragSlug/areas/$areaSlug/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CragsCragSlugAreasAreaSlugEditRoute =
+  CragsCragSlugAreasAreaSlugEditRouteImport.update({
+    id: '/crags/$cragSlug/areas/$areaSlug/edit',
+    path: '/crags/$cragSlug/areas/$areaSlug/edit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute =
+  CragsCragSlugAreasAreaSlugToposTopoSlugEditRouteImport.update({
+    id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit',
+    path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute =
   CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRouteImport.update({
     id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route',
     path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute =
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteImport.update({
+    id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug',
+    path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute =
   CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRouteImport.update(
     {
-      id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/',
-      path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/',
-      getParentRoute: () => rootRouteImport,
+      id: '/',
+      path: '/',
+      getParentRoute: () =>
+        CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute,
+    } as any,
+  )
+const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute =
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRouteImport.update(
+    {
+      id: '/stats',
+      path: '/stats',
+      getParentRoute: () =>
+        CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute,
     } as any,
   )
 const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute =
   CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRouteImport.update({
-    id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit',
-    path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit',
-    getParentRoute: () => rootRouteImport,
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () =>
+      CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -151,20 +208,28 @@ export interface FileRoutesByFullPath {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/signup-confirm': typeof SignupConfirmRoute
   '/api/callback': typeof ApiCallbackRoute
+  '/profile/lists': typeof ProfileListsRoute
+  '/profile/logs': typeof ProfileLogsRoute
+  '/profile/stats': typeof ProfileStatsRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/crags/': typeof CragsIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/crags/$cragSlug/create-area': typeof CragsCragSlugCreateAreaRoute
   '/crags/$cragSlug/': typeof CragsCragSlugIndexRoute
   '/crags/$cragSlug/create-topo/$areaSlug': typeof CragsCragSlugCreateTopoAreaSlugRoute
+  '/crags/$cragSlug/areas/$areaSlug/edit': typeof CragsCragSlugAreasAreaSlugEditRoute
   '/crags/$cragSlug/areas/$areaSlug/': typeof CragsCragSlugAreasAreaSlugIndexRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route': typeof CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteWithChildren
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute
 }
 export interface FileRoutesByTo {
@@ -174,20 +239,26 @@ export interface FileRoutesByTo {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/signup-confirm': typeof SignupConfirmRoute
   '/api/callback': typeof ApiCallbackRoute
+  '/profile/lists': typeof ProfileListsRoute
+  '/profile/logs': typeof ProfileLogsRoute
+  '/profile/stats': typeof ProfileStatsRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/crags': typeof CragsIndexRoute
+  '/profile': typeof ProfileIndexRoute
   '/crags/$cragSlug/create-area': typeof CragsCragSlugCreateAreaRoute
   '/crags/$cragSlug': typeof CragsCragSlugIndexRoute
   '/crags/$cragSlug/create-topo/$areaSlug': typeof CragsCragSlugCreateTopoAreaSlugRoute
+  '/crags/$cragSlug/areas/$areaSlug/edit': typeof CragsCragSlugAreasAreaSlugEditRoute
   '/crags/$cragSlug/areas/$areaSlug': typeof CragsCragSlugAreasAreaSlugIndexRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route': typeof CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute
 }
 export interface FileRoutesById {
@@ -198,20 +269,28 @@ export interface FileRoutesById {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/signup-confirm': typeof SignupConfirmRoute
   '/api/callback': typeof ApiCallbackRoute
+  '/profile/lists': typeof ProfileListsRoute
+  '/profile/logs': typeof ProfileLogsRoute
+  '/profile/stats': typeof ProfileStatsRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/crags/': typeof CragsIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/crags/$cragSlug/create-area': typeof CragsCragSlugCreateAreaRoute
   '/crags/$cragSlug/': typeof CragsCragSlugIndexRoute
   '/crags/$cragSlug/create-topo/$areaSlug': typeof CragsCragSlugCreateTopoAreaSlugRoute
+  '/crags/$cragSlug/areas/$areaSlug/edit': typeof CragsCragSlugAreasAreaSlugEditRoute
   '/crags/$cragSlug/areas/$areaSlug/': typeof CragsCragSlugAreasAreaSlugIndexRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route': typeof CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteWithChildren
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute
+  '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute
   '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/': typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute
 }
 export interface FileRouteTypes {
@@ -229,14 +308,22 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-confirm'
     | '/api/callback'
+    | '/profile/lists'
+    | '/profile/logs'
+    | '/profile/stats'
     | '/reset-password/confirm'
     | '/crags/'
+    | '/profile/'
     | '/crags/$cragSlug/create-area'
     | '/crags/$cragSlug/'
     | '/crags/$cragSlug/create-topo/$areaSlug'
+    | '/crags/$cragSlug/areas/$areaSlug/edit'
     | '/crags/$cragSlug/areas/$areaSlug/'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -246,20 +333,26 @@ export interface FileRouteTypes {
     | '/first-login'
     | '/home'
     | '/login'
-    | '/profile'
     | '/reset-password'
     | '/search'
     | '/signup'
     | '/signup-confirm'
     | '/api/callback'
+    | '/profile/lists'
+    | '/profile/logs'
+    | '/profile/stats'
     | '/reset-password/confirm'
     | '/crags'
+    | '/profile'
     | '/crags/$cragSlug/create-area'
     | '/crags/$cragSlug'
     | '/crags/$cragSlug/create-topo/$areaSlug'
+    | '/crags/$cragSlug/areas/$areaSlug/edit'
     | '/crags/$cragSlug/areas/$areaSlug'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
   id:
     | '__root__'
@@ -275,14 +368,22 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-confirm'
     | '/api/callback'
+    | '/profile/lists'
+    | '/profile/logs'
+    | '/profile/stats'
     | '/reset-password/confirm'
     | '/crags/'
+    | '/profile/'
     | '/crags/$cragSlug/create-area'
     | '/crags/$cragSlug/'
     | '/crags/$cragSlug/create-topo/$areaSlug'
+    | '/crags/$cragSlug/areas/$areaSlug/edit'
     | '/crags/$cragSlug/areas/$areaSlug/'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
+    | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
     | '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/'
   fileRoutesById: FileRoutesById
 }
@@ -293,7 +394,7 @@ export interface RootRouteChildren {
   FirstLoginRoute: typeof FirstLoginRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
-  ProfileRoute: typeof ProfileRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRouteWithChildren
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
@@ -303,10 +404,11 @@ export interface RootRouteChildren {
   CragsCragSlugCreateAreaRoute: typeof CragsCragSlugCreateAreaRoute
   CragsCragSlugIndexRoute: typeof CragsCragSlugIndexRoute
   CragsCragSlugCreateTopoAreaSlugRoute: typeof CragsCragSlugCreateTopoAreaSlugRoute
+  CragsCragSlugAreasAreaSlugEditRoute: typeof CragsCragSlugAreasAreaSlugEditRoute
   CragsCragSlugAreasAreaSlugIndexRoute: typeof CragsCragSlugAreasAreaSlugIndexRoute
   CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute
-  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute
-  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute
+  CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -388,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRoute
+    }
     '/crags/': {
       id: '/crags/'
       path: '/crags'
@@ -401,6 +510,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password/confirm'
       preLoaderRoute: typeof ResetPasswordConfirmRouteImport
       parentRoute: typeof ResetPasswordRoute
+    }
+    '/profile/stats': {
+      id: '/profile/stats'
+      path: '/stats'
+      fullPath: '/profile/stats'
+      preLoaderRoute: typeof ProfileStatsRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/profile/logs': {
+      id: '/profile/logs'
+      path: '/logs'
+      fullPath: '/profile/logs'
+      preLoaderRoute: typeof ProfileLogsRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/profile/lists': {
+      id: '/profile/lists'
+      path: '/lists'
+      fullPath: '/profile/lists'
+      preLoaderRoute: typeof ProfileListsRouteImport
+      parentRoute: typeof ProfileRoute
     }
     '/api/callback': {
       id: '/api/callback'
@@ -437,6 +567,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CragsCragSlugAreasAreaSlugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crags/$cragSlug/areas/$areaSlug/edit': {
+      id: '/crags/$cragSlug/areas/$areaSlug/edit'
+      path: '/crags/$cragSlug/areas/$areaSlug/edit'
+      fullPath: '/crags/$cragSlug/areas/$areaSlug/edit'
+      preLoaderRoute: typeof CragsCragSlugAreasAreaSlugEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit': {
+      id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
+      path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
+      fullPath: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit'
+      preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route': {
       id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
       path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route'
@@ -444,22 +588,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug': {
+      id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
+      path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
+      fullPath: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
+      preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/': {
       id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/'
-      path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug'
+      path: '/'
       fullPath: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/'
       preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute
+    }
+    '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats': {
+      id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
+      path: '/stats'
+      fullPath: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/stats'
+      preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRouteImport
+      parentRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute
     }
     '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit': {
       id: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
-      path: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
+      path: '/edit'
       fullPath: '/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/routes/$routeSlug/edit'
       preLoaderRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute
     }
   }
 }
+
+interface ProfileRouteChildren {
+  ProfileListsRoute: typeof ProfileListsRoute
+  ProfileLogsRoute: typeof ProfileLogsRoute
+  ProfileStatsRoute: typeof ProfileStatsRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileListsRoute: ProfileListsRoute,
+  ProfileLogsRoute: ProfileLogsRoute,
+  ProfileStatsRoute: ProfileStatsRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
 
 interface ResetPasswordRouteChildren {
   ResetPasswordConfirmRoute: typeof ResetPasswordConfirmRoute
@@ -473,6 +648,27 @@ const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
   ResetPasswordRouteChildren,
 )
 
+interface CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteChildren {
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute: typeof CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute
+}
+
+const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteChildren: CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteChildren =
+  {
+    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute:
+      CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute,
+    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute:
+      CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugStatsRoute,
+    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute:
+      CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute,
+  }
+
+const CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteWithChildren =
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute._addFileChildren(
+    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateCragRoute: CreateCragRoute,
@@ -480,7 +676,7 @@ const rootRouteChildren: RootRouteChildren = {
   FirstLoginRoute: FirstLoginRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
-  ProfileRoute: ProfileRoute,
+  ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRouteWithChildren,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
@@ -490,13 +686,14 @@ const rootRouteChildren: RootRouteChildren = {
   CragsCragSlugCreateAreaRoute: CragsCragSlugCreateAreaRoute,
   CragsCragSlugIndexRoute: CragsCragSlugIndexRoute,
   CragsCragSlugCreateTopoAreaSlugRoute: CragsCragSlugCreateTopoAreaSlugRoute,
+  CragsCragSlugAreasAreaSlugEditRoute: CragsCragSlugAreasAreaSlugEditRoute,
   CragsCragSlugAreasAreaSlugIndexRoute: CragsCragSlugAreasAreaSlugIndexRoute,
   CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute:
     CragsCragSlugAreasAreaSlugToposTopoSlugCreateRouteRoute,
-  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute:
-    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugEditRoute,
-  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute:
-    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugIndexRoute,
+  CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute:
+    CragsCragSlugAreasAreaSlugToposTopoSlugEditRoute,
+  CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRoute:
+    CragsCragSlugAreasAreaSlugToposTopoSlugRoutesRouteSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

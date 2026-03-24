@@ -1,15 +1,9 @@
-import { createFileRoute, redirect, Link } from '@tanstack/react-router'
-import ProfileLogs from '@/components/ProfileLogs'
-import ProfileLists from '@/components/ProfileLists'
-import ProfileStats from '@/components/ProfileStats'
+import { createFileRoute, redirect, Link, Outlet, useMatch } from '@tanstack/react-router'
 import { getAuthUser, logoutFn } from '@/lib/auth'
 import { getFn as getUserLogsFn } from '@/data/actions/profile/logs/get'
 import { logError } from '@/lib/log'
 
 export const Route = createFileRoute('/profile')({
-  validateSearch: (search: Record<string, unknown>): { tab?: string } => ({
-    tab: search.tab as string | undefined,
-  }),
   loader: async () => {
     try {
       const user = await getAuthUser()
@@ -28,13 +22,15 @@ export const Route = createFileRoute('/profile')({
       throw err
     }
   },
-  component: ProfilePage,
+  component: ProfileLayout,
 })
 
-function ProfilePage() {
+function ProfileLayout() {
   const { user, logs: safeLog, uniqueCrags } = Route.useLoaderData()
-  const search = Route.useSearch()
-  const activeTab = search.tab || 'stats'
+
+  const statsMatch = useMatch({ from: '/profile/stats', shouldThrow: false })
+  const logsMatch = useMatch({ from: '/profile/logs', shouldThrow: false })
+  const listsMatch = useMatch({ from: '/profile/lists', shouldThrow: false })
 
   return (
     <>
@@ -79,10 +75,7 @@ function ProfilePage() {
                   </div>
                 </div>
                 <div className="is-flex is-justify-content-flex-end mt-2">
-                  <button
-                    className="button"
-                    onClick={() => logoutFn()}
-                  >
+                  <button className="button" onClick={() => logoutFn()}>
                     Logout
                   </button>
                 </div>
@@ -94,35 +87,37 @@ function ProfilePage() {
       <section className="section">
         <div className="tabs">
           <ul>
-            <li className={activeTab === 'stats' ? 'is-active' : ''}>
-              <Link to="/profile" search={{ tab: 'stats' }}>
+            <li className={statsMatch ? 'is-active' : ''}>
+              <Link
+                to="/profile/stats"
+                preload="intent"
+                activeProps={{ 'aria-current': 'page' }}
+              >
                 Stats
               </Link>
             </li>
-            <li className={activeTab === 'logs' ? 'is-active' : ''}>
-              <Link to="/profile" search={{ tab: 'logs' }}>
+            <li className={logsMatch ? 'is-active' : ''}>
+              <Link
+                to="/profile/logs"
+                preload="intent"
+                activeProps={{ 'aria-current': 'page' }}
+              >
                 Logs
               </Link>
             </li>
-            <li className={activeTab === 'lists' ? 'is-active' : ''}>
-              <Link to="/profile" search={{ tab: 'lists' }}>
+            <li className={listsMatch ? 'is-active' : ''}>
+              <Link
+                to="/profile/lists"
+                preload="intent"
+                activeProps={{ 'aria-current': 'page' }}
+              >
                 Lists
               </Link>
             </li>
           </ul>
         </div>
-        <div className={`container ${activeTab === 'logs' ? '' : 'is-hidden'}`}>
-          <ProfileLogs logs={safeLog} />
-        </div>
-        <div
-          className={`container ${activeTab === 'stats' ? '' : 'is-hidden'}`}
-        >
-          <ProfileStats logs={safeLog} />
-        </div>
-        <div
-          className={`container ${activeTab === 'lists' ? '' : 'is-hidden'}`}
-        >
-          <ProfileLists />
+        <div className="container">
+          <Outlet />
         </div>
       </section>
     </>
