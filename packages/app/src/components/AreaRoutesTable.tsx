@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Log, Route } from '@climbingtopos/types'
 import { useGradeHelpers } from '@/api/grades'
@@ -14,6 +14,8 @@ interface Props {
 
 function AreaRoutesTable({ routes, loggedRoutes, isAuthenticated }: Props) {
   const { convertGradeValueToGradeLabel } = useGradeHelpers()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   const hasUserLoggedRoute = (routeSlug: string) => {
     return loggedRoutes.findIndex((log) => log.routeSlug === routeSlug) !== -1
@@ -61,12 +63,14 @@ function AreaRoutesTable({ routes, loggedRoutes, isAuthenticated }: Props) {
               </div>
             </div>
             <div>
-              <Suspense fallback={null}>
-                <AreaRouteTableMenu
-                  isAuthenticated={isAuthenticated}
-                  route={route}
-                />
-              </Suspense>
+              {mounted && (
+                <Suspense fallback={null}>
+                  <AreaRouteTableMenu
+                    isAuthenticated={isAuthenticated}
+                    route={route}
+                  />
+                </Suspense>
+              )}
             </div>
           </div>
         ))}
