@@ -14,10 +14,13 @@ export const Route = createFileRoute('/crags/$cragSlug/areas/$areaSlug/')({
         getAreaFn({ data: { areaSlug: params.areaSlug } }),
         getCragFn({ data: { cragSlug: params.cragSlug } }),
       ]);
+      const userSub = (context.user as any)?.properties?.sub;
+      const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
       return {
         area: area as unknown as Area,
         crag: crag as unknown as Crag | null,
         isAuthenticated: !!context.user,
+        isAdmin,
       };
     } catch (err) {
       logError('loader:area', err, { cragSlug: params.cragSlug, areaSlug: params.areaSlug })
@@ -75,7 +78,7 @@ export const Route = createFileRoute('/crags/$cragSlug/areas/$areaSlug/')({
 });
 
 function AreaPage() {
-  const { area, crag, isAuthenticated } = Route.useLoaderData();
+  const { area, crag, isAuthenticated, isAdmin } = Route.useLoaderData();
   const { cragSlug, areaSlug } = Route.useParams();
 
   if (!area) return null;
@@ -124,13 +127,25 @@ function AreaPage() {
                   latitude={`${area.latitude}`}
                   longitude={`${area.longitude}`}
                 />
+                {isAdmin && (
+                  <Link
+                    to="/crags/$cragSlug/areas/$areaSlug/edit"
+                    params={{ cragSlug, areaSlug }}
+                    className="button is-rounded"
+                  >
+                    <span className="icon is-small">
+                      <i className="fas fa-edit" aria-hidden="true"></i>
+                    </span>
+                    <span>Edit Area</span>
+                  </Link>
+                )}
                 <Link
                   to="/crags/$cragSlug/create-topo/$areaSlug"
                   params={{ cragSlug, areaSlug }}
                   className="button is-rounded"
                 >
                   <span className="icon is-small">
-                    <i className="fas fa-plus"></i>
+                    <i className="fas fa-plus" aria-hidden="true"></i>
                   </span>
                   <span>Add Topo</span>
                 </Link>
@@ -159,20 +174,32 @@ function AreaPage() {
                       <span>
                         <span className="icon-text">
                           <span className="icon">
-                            <i className="fas fa-compass"></i>
+                            <i className="fas fa-compass" aria-hidden="true"></i>
                           </span>
                           <span className="is-capitalized">
                             {topo.orientation}
                           </span>
                         </span>
                       </span>
+                      {isAdmin && (
+                        <Link
+                          to="/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/edit"
+                          params={{ cragSlug, areaSlug, topoSlug: topo.slug! }}
+                          className="button is-rounded"
+                        >
+                          <span className="icon is-small">
+                            <i className="fas fa-edit" aria-hidden="true"></i>
+                          </span>
+                          <span>Edit Topo</span>
+                        </Link>
+                      )}
                       <Link
                         to="/crags/$cragSlug/areas/$areaSlug/topos/$topoSlug/create-route"
                         params={{ cragSlug, areaSlug, topoSlug: topo.slug! }}
                         className="button is-rounded"
                       >
                         <span className="icon is-small">
-                          <i className="fas fa-plus"></i>
+                          <i className="fas fa-plus" aria-hidden="true"></i>
                         </span>
                         <span>Add Route</span>
                       </Link>
