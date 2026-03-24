@@ -65,7 +65,7 @@ function Modal({
                     loading={confirmActionLoading}
                   >
                     <span className="icon">
-                      <i className="fas fa-check"></i>
+                      <i className="fas fa-check" aria-hidden="true"></i>
                     </span>
                     <span>{btnConfirmText}</span>
                   </Button>
@@ -77,7 +77,7 @@ function Modal({
                   <p className="control">
                     <Button loading={confirmActionLoading}>
                       <span className="icon">
-                        <i className="fas fa-check"></i>
+                        <i className="fas fa-check" aria-hidden="true"></i>
                       </span>
                       <span>{btnConfirmText}</span>
                     </Button>

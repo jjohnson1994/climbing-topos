@@ -39,14 +39,14 @@ export default function ButtonLogRoute({
       {hasUserLoggedRoute() ? (
         <>
           <span className="icon is-small">
-            <i className="fas fw fa-check"></i>
+            <i className="fas fw fa-check" aria-hidden="true"></i>
           </span>
           <span>Done</span>
         </>
       ) : (
         <>
           <span className="icon is-small">
-            <i className="fas fw fa-plus"></i>
+            <i className="fas fw fa-plus" aria-hidden="true"></i>
           </span>
           <span>Log Book</span>
         </>

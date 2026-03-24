@@ -60,7 +60,7 @@ const Button: FunctionComponent<ButtonProps> = forwardRef(
       >
         {props.icon && (
           <span className="icon" data-testid="iconWrapper">
-            <i className={props.icon} data-testid="icon" />
+            <i className={props.icon} aria-hidden="true" data-testid="icon" />
           </span>
         )}
         {props.children && <span data-testid="children">{props.children}</span>}

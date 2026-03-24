@@ -28,7 +28,7 @@ function ButtonCopyCoordinates({ latitude, longitude, className = '' }: Props) {
       onClick={copyCoordinatedToClipboard}
     >
       <span className="icon is-small">
-        <i className="fas fa-map-marker-alt"></i>
+        <i className="fas fa-map-marker-alt" aria-hidden="true"></i>
       </span>
       <span>
         {`${latitude}`.substring(0, 9)}, {`${longitude}`.substring(0, 9)}

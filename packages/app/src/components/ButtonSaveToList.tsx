@@ -25,7 +25,7 @@ export default function ButtonSaveToList({
   return (
     <button className="button" onClick={btnSaveToListOnClick}>
       <span className="icon is-small">
-        <i className="fas fw fa-list"></i>
+        <i className="fas fw fa-list" aria-hidden="true"></i>
       </span>
       <span>Save to List</span>
     </button>

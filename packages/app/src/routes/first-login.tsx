@@ -156,7 +156,7 @@ function FirstLoginPage() {
                   {!imagePreviewUrl && (
                     <span className="file-cta">
                       <span className="file-icon">
-                        <i className="fas fa-upload"></i>
+                        <i className="fas fa-upload" aria-hidden="true"></i>
                       </span>
                       <span className="file-label"> Choose a file… </span>
                     </span>
@@ -173,7 +173,7 @@ function FirstLoginPage() {
               </p>
               {compressing && (
                 <p className="help has-text-info">
-                  <i className="fas fa-spinner fa-spin"></i> Compressing
+                  <i className="fas fa-spinner fa-spin" aria-hidden="true"></i> Compressing
                   image...
                 </p>
               )}

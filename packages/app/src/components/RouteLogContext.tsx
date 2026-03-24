@@ -156,7 +156,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
                   onClick={btnSaveMultipleToListOnClick}
                 >
                   <span className="icon">
-                    <i className="fas fw fa-list"></i>
+                    <i className="fas fw fa-list" aria-hidden="true"></i>
                   </span>
                   <span>Save to List</span>
                 </button>
@@ -165,7 +165,7 @@ function RouteLog({ children }: React.HTMLAttributes<Element>) {
                   onClick={btnDoneMultipleOnClick}
                 >
                   <span className="icon">
-                    <i className="fas fw fa-check"></i>
+                    <i className="fas fw fa-check" aria-hidden="true"></i>
                   </span>
                   <span>Done</span>
                 </button>

@@ -62,7 +62,7 @@ function SavedToListsIndicator({
         onClick={() => setIsModalOpen(true)}
         style={{ cursor: 'pointer' }}
       >
-        <i className="fas fa-bookmark mr-1"></i>
+        <i className="fas fa-bookmark mr-1" aria-hidden="true"></i>
         Saved to {savedLists.length} list{savedLists.length > 1 ? 's' : ''}
       </span>
 

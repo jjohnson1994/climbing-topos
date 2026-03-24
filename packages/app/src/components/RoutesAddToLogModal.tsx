@@ -123,8 +123,8 @@ function RoutesAddToLogModal({
                 </span>
                 {routes.length > 1 && (
                   <>
-                    <i className="far fas fa-chevron-up checked"></i>
-                    <i className="far fas fa-chevron-down not-checked"></i>
+                    <i className="far fas fa-chevron-up checked" aria-hidden="true"></i>
+                    <i className="far fas fa-chevron-down not-checked" aria-hidden="true"></i>
                   </>
                 )}
               </label>

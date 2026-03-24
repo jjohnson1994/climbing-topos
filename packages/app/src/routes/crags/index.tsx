@@ -28,7 +28,7 @@ function CragsPage() {
           <div className="field is-grouped">
             <div className="control is-expanded has-icons-left">
               <span className="icon is-icon-left">
-                <i className="fas fa-search"></i>
+                <i className="fas fa-search" aria-hidden="true"></i>
               </span>
               <input
                 className="input is-rounded"
@@ -39,7 +39,7 @@ function CragsPage() {
             <div className="control">
               <Link to="/create-crag" className="button is-rounded">
                 <span className="icon is-small">
-                  <i className="fas fa-plus"></i>
+                  <i className="fas fa-plus" aria-hidden="true"></i>
                 </span>
                 <span>Add Crag</span>
               </Link>

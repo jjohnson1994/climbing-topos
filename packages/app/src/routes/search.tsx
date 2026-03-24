@@ -24,7 +24,7 @@ function SearchPage() {
           <div className="field is-grouped">
             <div className="control is-expanded has-icons-left">
               <span className="icon is-icon-left">
-                <i className="fas fa-search"></i>
+                <i className="fas fa-search" aria-hidden="true"></i>
               </span>
               <SearchBox
                 classNames={{

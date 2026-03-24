@@ -31,7 +31,7 @@ export default function Nav({ subject }: { subject: any }) {
         <div className="navbar-end">
           <NavbarItem>
             <Link to="/search" className="navbar-item">
-              <i className="fas fa-search"></i>
+              <i className="fas fa-search" aria-hidden="true"></i>
             </Link>
           </NavbarItem>
           <NavbarItem>

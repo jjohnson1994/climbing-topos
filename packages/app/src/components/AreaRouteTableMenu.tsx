@@ -72,7 +72,7 @@ function AreaRouteTableMenu({
                     }}
                   >
                     <span className="icon">
-                      <i className="fas fw fa-check"></i>
+                      <i className="fas fw fa-check" aria-hidden="true"></i>
                     </span>
                     <span>Done</span>
                   </button>
@@ -83,7 +83,7 @@ function AreaRouteTableMenu({
                     }}
                   >
                     <span className="icon">
-                      <i className="fas fw fa-list"></i>
+                      <i className="fas fw fa-list" aria-hidden="true"></i>
                     </span>
                     <span>Save to List</span>
                   </button>
@@ -93,7 +93,7 @@ function AreaRouteTableMenu({
                     onClick={() => context.onInitSelectMultiple(true, route)}
                   >
                     <span className="icon">
-                      <i className="far fw fa-check-square"></i>
+                      <i className="far fw fa-check-square" aria-hidden="true"></i>
                     </span>
                     <span>Select Multiple</span>
                   </button>
@@ -102,7 +102,7 @@ function AreaRouteTableMenu({
             </div>
           }
         >
-          <i className="fas fa-ellipsis-h"></i>
+          <i className="fas fa-ellipsis-h" aria-hidden="true"></i>
         </Tippy>
       )}
     </span>
