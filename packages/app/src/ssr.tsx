@@ -6,13 +6,14 @@ import { logError } from './lib/log'
 
 const handler = createStartHandler(defaultStreamHandler)
 
-export default async function (event: any) {
+export default async function (...args: [any, ...any[]]) {
+  const event = args[0]
   try {
-    return await handler(event)
+    return await handler(...args)
   } catch (err) {
     logError('server:unhandled', err, {
-      url: event?.node?.req?.url ?? event?.path,
-      method: event?.node?.req?.method,
+      url: event?.rawPath ?? event?.path,
+      method: event?.requestContext?.http?.method,
     })
     return new Response('Internal Server Error', { status: 500 })
   }
