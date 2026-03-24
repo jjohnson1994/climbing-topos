@@ -6,6 +6,7 @@ import type { Plugin } from 'vite';
 import { nitro } from 'nitro/vite';
 import viteReact from '@vitejs/plugin-react';
 import { devtools } from '@tanstack/devtools-vite';
+import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite';
 
 const SSR_STUB_ID = '\0ssr-client-only-stub';
 const CLIENT_ONLY_PACKAGES = [
@@ -54,6 +55,11 @@ export default defineConfig({
     // tanstackStart({ srcDirectory: 'src' }),
     // react(),
     // viteTsConfigPaths(),
+    sentryTanstackStart({
+      org: 'na-wt6',
+      project: 'climbingtopos',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
   ],
   nitro: {
     preset: 'aws-lambda',
@@ -61,6 +67,9 @@ export default defineConfig({
       streaming: true,
     },
     serverDir: 'server',
+    externals: {
+      external: ['require-in-the-middle'],
+    },
   },
   optimizeDeps: {
     exclude: [

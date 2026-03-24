@@ -34,3 +34,10 @@ export const jwtPublicKey = new sst.Secret(
   'JwtPublicKey',
   process.env.JWT_PUBLIC_KEY,
 );
+
+export const sentryDsn = new sst.Secret('SentryDsn', process.env.SENTRY_DSN);
+
+export const sentryAuthToken = new sst.Secret(
+  'SentryAuthToken',
+  process.env.SENTRY_AUTH_TOKEN,
+);

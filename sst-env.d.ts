@@ -38,6 +38,14 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "SentryAuthToken": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "SentryDsn": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "areaOnInsert": {
       "arn": string
       "type": "sst.aws.SnsTopic"
@@ -53,6 +61,10 @@ declare module "sst" {
     "climbingtopos2": {
       "name": string
       "type": "sst.aws.Dynamo"
+    }
+    "climbingtopos2-admin": {
+      "type": "sst.aws.Nextjs"
+      "url": string
     }
     "climbingtopos2-app": {
       "type": "sst.aws.TanstackStart"

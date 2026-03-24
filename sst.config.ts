@@ -26,11 +26,18 @@ export default $config({
       postHogKey,
       jwtPrivateKey,
       jwtPublicKey,
+      sentryDsn,
+      sentryAuthToken,
     } = await import('./infra/secrets');
     await import('./infra/sns');
 
     const app = new sst.aws.TanStackStart('climbingtopos2-app', {
       path: 'packages/app/',
+      domain: {
+        name: 'climbingtopos.com',
+        dns: false,
+        cert: 'arn:aws:acm:us-east-1:085474378228:certificate/c8a5b94e-63de-4984-a5a1-5f187430d735',
+      },
       link: [
         table,
         bucket,
@@ -47,6 +54,18 @@ export default $config({
         VITE_POSTHOG_KEY: postHogKey.value,
         VITE_POSTHOG_HOST: postHogHost.value,
         IMAGES_CDN_URL: imagesCdn.url,
+        VITE_SENTRY_DSN: sentryDsn.value,
+        SENTRY_AUTH_TOKEN: sentryAuthToken.value,
+      },
+      transform: {
+        cdn: (cdnArgs) => {
+          cdnArgs.customErrorResponses = [
+            { errorCode: 500, errorCachingMinTtl: 0 },
+            { errorCode: 502, errorCachingMinTtl: 0 },
+            { errorCode: 503, errorCachingMinTtl: 0 },
+            { errorCode: 504, errorCachingMinTtl: 0 },
+          ];
+        },
       },
       dev: {
         autostart: true,
