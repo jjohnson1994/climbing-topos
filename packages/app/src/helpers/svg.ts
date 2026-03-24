@@ -27,11 +27,13 @@ const controlPoint = (
   return [x, y];
 };
 
+const r = (n: number) => Math.round(n * 100) / 100;
+
 const bezierCommand = (point: number[], i: number, a: number[][]) => {
   const cps = controlPoint(a[i - 1], a[i - 2], point);
   const cpe = controlPoint(point, a[i - 1], a[i + 1], true);
 
-  return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point[0]},${point[1]}`;
+  return `C ${r(cps[0])},${r(cps[1])} ${r(cpe[0])},${r(cpe[1])} ${r(point[0])},${r(point[1])}`;
 };
 
 export const domToSvgPoint = (
@@ -50,7 +52,7 @@ export const smoothPath = (points: [number, number][]) => {
   const d = points.reduce(
     (acc, point, i, a) =>
       i === 0
-        ? `M ${point[0]},${point[1]}`
+        ? `M ${r(point[0])},${r(point[1])}`
         : `${acc} ${bezierCommand(point, i, a)}`,
     '',
   );
