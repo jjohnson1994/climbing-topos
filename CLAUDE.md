@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Spec
+
+`spec.md` at the repo root documents expected behaviour and acceptance criteria for all features.
+
+- Before making changes to any feature covered in `spec.md`, read the relevant section to ensure the implementation aligns with the spec
+- After adding or changing behaviour, update `spec.md` to reflect the new or modified acceptance criteria
+
 ## Project Overview
 
 This is a serverless full-stack climbing topos application built with SST (Serverless Stack) on AWS. The application allows users to discover climbing areas (crags), browse routes, log climbs, create lists, and search climbing locations worldwide. It uses Next.js 16 for the frontend, AWS Lambda for the backend, DynamoDB for data storage, and Algolia for search.
@@ -280,6 +287,7 @@ Route types: boulder, sport, trad, aid, alpine, mixed
 
 - **DO NOT** add code comments - code should be self-explanatory
 - **DO NOT** add console.log statements - use `logError` from `@/lib/log` for error logging in server functions
+- **DO NOT** add `eslint-disable` comments - fix the underlying issue instead
 - Keep code clean and simple
 - Variable and function names should clearly describe their purpose
 - If code needs explanation, it should be refactored to be clearer
