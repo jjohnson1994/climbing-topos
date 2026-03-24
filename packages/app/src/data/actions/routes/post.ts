@@ -7,9 +7,10 @@ import { routes } from '@/data/services'
 import { getAuthUser } from '@/lib/auth'
 
 export const postFn = createServerFn({ method: 'POST' })
-  .inputValidator(async (data: RouteRequest) => {
-    await NewRouteScheme().validate(data, { stripUnknown: true, abortEarly: false })
-    return data
+  .inputValidator(async (data: unknown) => {
+    const input = data as RouteRequest
+    await NewRouteScheme().validate(input, { stripUnknown: true, abortEarly: false })
+    return input
   })
   .handler(async ({ data }) => {
     try {

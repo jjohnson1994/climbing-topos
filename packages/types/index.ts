@@ -118,7 +118,7 @@ export interface AreaPatch {
   removeTags?: string[];
   latitude?: string;
   longitude?: string;
-  acess?: string;
+  access?: string;
   rockType?: string;
   verified?: boolean;
 }

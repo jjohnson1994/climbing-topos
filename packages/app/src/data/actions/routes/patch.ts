@@ -7,9 +7,10 @@ import { crags, routes } from '@/data/services'
 import { getAuthUser } from '@/lib/auth'
 
 export const patchFn = createServerFn({ method: 'POST' })
-  .inputValidator(async (data: { routeSlug: string; body: RoutePatch }) => {
-    await UpdateRouteScheme().validate(data.body, { strict: true, abortEarly: false })
-    return data
+  .inputValidator(async (data: unknown) => {
+    const input = data as { routeSlug: string; body: RoutePatch }
+    await UpdateRouteScheme().validate(input.body, { strict: true, abortEarly: false })
+    return input
   })
   .handler(async ({ data }) => {
     try {
