@@ -221,7 +221,7 @@ function CreateAreaForm({ crag }: { crag: Crag }) {
                 onClick={() => btnFindMeOnClick()}
               >
                 <span className="icon">
-                  <i className="fas fa-map-marker-alt"></i>
+                  <i className="fas fa-map-marker-alt" aria-hidden="true"></i>
                 </span>
                 <span>Find Me</span>
               </button>
