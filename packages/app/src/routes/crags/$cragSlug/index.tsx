@@ -3,10 +3,12 @@ import { Suspense, lazy } from 'react';
 import { Area, Crag, Topo } from '@climbingtopos/types';
 import { getFn as getCragFn } from '@/data/actions/crags/get';
 import AreaRoutesTable from '@/components/AreaRoutesTable';
+import CragRoutesTable from '@/components/CragRoutesTable';
 import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates';
 import TopoImage from '@/components/TopoImage';
 import CragTitleImage from '@/components/CragTitleImage';
-import CragAdmin from '@/components/CragAdmin'
+import CragAdmin from '@/components/CragAdmin';
+import CragStats from '@/components/CragStats';
 import { logError } from '@/lib/log';
 
 const CragMap = lazy(() => import('@/components/CragMapClient'));
@@ -41,33 +43,71 @@ export const Route = createFileRoute('/crags/$cragSlug/')({
     if (!loaderData?.crag) return { meta: [], links: [] };
     const { crag } = loaderData;
     const canonicalUrl = `https://climbingtopos.com/crags/${crag.slug}`;
-    const description = [
-      crag.description,
-      `${crag.title} climbing guide, topos, and route information.`,
-    ]
-      .filter(Boolean)
-      .join(' ');
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: crag.title,
-          item: canonicalUrl,
-        },
-      ],
-    };
+    const descriptionParts = [crag.description];
+    if (crag.routeCount) descriptionParts.push(`${crag.routeCount} routes`);
+    if (crag.areaCount) descriptionParts.push(`${crag.areaCount} areas`);
+    if (crag.tags?.length) descriptionParts.push(crag.tags.join(', '));
+    descriptionParts.push(`${crag.title} climbing guide with topos and route information.`);
+    const description = descriptionParts.filter(Boolean).join('. ');
+    const jsonLd = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Crags',
+            item: 'https://climbingtopos.com/crags',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: crag.title,
+            item: canonicalUrl,
+          },
+        ],
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': ['TouristAttraction', 'SportsActivityLocation'],
+        name: crag.title,
+        description: crag.description || undefined,
+        url: canonicalUrl,
+        image: crag.image || undefined,
+        sport: 'Rock Climbing',
+        ...(crag.latitude && crag.longitude
+          ? {
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: parseFloat(crag.latitude),
+                longitude: parseFloat(crag.longitude),
+              },
+            }
+          : {}),
+        additionalProperty: [
+          crag.routeCount
+            ? { '@type': 'PropertyValue', name: 'routeCount', value: crag.routeCount }
+            : null,
+          crag.areaCount
+            ? { '@type': 'PropertyValue', name: 'areaCount', value: crag.areaCount }
+            : null,
+        ].filter(Boolean),
+      },
+    ];
     return {
       meta: [
         { title: `${crag.title} | ClimbingTopos.com` },
         { name: 'description', content: description },
+        ...(crag.latitude && crag.longitude
+          ? [
+              { name: 'geo.position', content: `${crag.latitude};${crag.longitude}` },
+              { name: 'ICBM', content: `${crag.latitude}, ${crag.longitude}` },
+              { name: 'geo.placename', content: crag.title },
+            ]
+          : []),
         { property: 'og:type', content: 'website' },
-        {
-          property: 'og:title',
-          content: `${crag.title} | ClimbingTopos.com`,
-        },
+        { property: 'og:title', content: `${crag.title} | ClimbingTopos.com` },
         { property: 'og:description', content: description },
         { property: 'og:url', content: canonicalUrl },
         { property: 'og:image', content: crag.image as string },
@@ -146,6 +186,7 @@ function CragPage() {
                 to="/crags/$cragSlug"
                 params={{ cragSlug }}
                 search={{ tab: 'guide' }}
+                resetScroll={false}
               >
                 Guide
               </Link>
@@ -156,6 +197,7 @@ function CragPage() {
               to="/crags/$cragSlug"
               params={{ cragSlug }}
               search={{ tab: 'routes' }}
+              resetScroll={false}
             >
               Routes
             </Link>
@@ -165,6 +207,7 @@ function CragPage() {
               to="/crags/$cragSlug"
               params={{ cragSlug }}
               search={{ tab: 'areas' }}
+              resetScroll={false}
             >
               Areas
             </Link>
@@ -174,6 +217,7 @@ function CragPage() {
               to="/crags/$cragSlug"
               params={{ cragSlug }}
               search={{ tab: 'approach' }}
+              resetScroll={false}
             >
               Approach
             </Link>
@@ -183,8 +227,19 @@ function CragPage() {
               to="/crags/$cragSlug"
               params={{ cragSlug }}
               search={{ tab: 'map' }}
+              resetScroll={false}
             >
               Map
+            </Link>
+          </li>
+          <li className={activeTab === 'stats' ? 'is-active' : ''}>
+            <Link
+              to="/crags/$cragSlug"
+              params={{ cragSlug }}
+              search={{ tab: 'stats' }}
+              resetScroll={false}
+            >
+              Stats
             </Link>
           </li>
           {isAdmin === true && (
@@ -193,6 +248,7 @@ function CragPage() {
                 to="/crags/$cragSlug"
                 params={{ cragSlug }}
                 search={{ tab: 'admin' }}
+                resetScroll={false}
               >
                 Admin
               </Link>
@@ -202,8 +258,8 @@ function CragPage() {
       </div>
 
       <section className="section">
-        {activeTab === 'guide' &&
-          crag.areas?.map((area) => (
+        <div className={activeTab !== 'guide' ? 'is-hidden' : ''}>
+          {crag.areas?.map((area) => (
             <div key={area.slug} className="container">
               <div className="block">
                 <div className="columns">
@@ -256,7 +312,7 @@ function CragPage() {
                         <div className="is-flex is-justify-content-flex-end">
                           <span className="icon-text">
                             <span className="icon">
-                              <i className="fas fa-compass"></i>
+                              <i className="fas fa-compass" aria-hidden="true"></i>
                             </span>
                             <span className="is-capitalized">
                               {topo.orientation}
@@ -282,11 +338,12 @@ function CragPage() {
               <hr />
             </div>
           ))}
+        </div>
 
-        {activeTab === 'routes' && (
+        <div className={activeTab !== 'routes' ? 'is-hidden' : ''}>
           <div id="routes" className="container">
             {crag.routes.length ? (
-              <AreaRoutesTable
+              <CragRoutesTable
                 routes={crag.routes}
                 loggedRoutes={(crag && crag.userLogs) || []}
                 isAuthenticated={isAuthenticated}
@@ -300,94 +357,94 @@ function CragPage() {
               </p>
             )}
           </div>
-        )}
-        {activeTab === 'routes' && crag.routes.length ? (
-          <p className="has-text-centered">
-            <b>Hint: </b>New routes can be added from an <b>areas</b> page
-          </p>
-        ) : null}
+          {crag.routes.length ? (
+            <p className="has-text-centered mt-2">
+              <b>Hint: </b>New routes can be added from an <b>areas</b> page
+            </p>
+          ) : null}
+        </div>
 
-        {activeTab === 'areas' && (
-          <div id="areas" className="container box">
-            {crag.areas.length ? (
-              <table className="table is-fullwidth">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Routes</th>
-                    <th>Logs</th>
+        <div id="areas" className={`container box ${activeTab !== 'areas' ? 'is-hidden' : ''}`}>
+          {crag.areas.length ? (
+            <table className="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Routes</th>
+                  <th>Logs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {crag.areas?.map((area) => (
+                  <tr key={area.slug}>
+                    <td>
+                      <Link
+                        to="/crags/$cragSlug/areas/$areaSlug"
+                        params={{ cragSlug, areaSlug: area.slug }}
+                        className="is-capitalized"
+                      >
+                        {area.title}
+                      </Link>
+                    </td>
+                    <td>{area.routeCount}</td>
+                    <td>{area.logCount}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {crag.areas?.map((area) => (
-                    <tr key={area.slug}>
-                      <td>
-                        <Link
-                          to="/crags/$cragSlug/areas/$areaSlug"
-                          params={{ cragSlug, areaSlug: area.slug }}
-                          className="is-capitalized"
-                        >
-                          {area.title}
-                        </Link>
-                      </td>
-                      <td>{area.routeCount}</td>
-                      <td>{area.logCount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>
+              <b>This crag doesn't have any areas yet</b>
+              <br />
+              Click below to start adding one
+            </p>
+          )}
+          <div className="buttons is-centered">
+            <Link
+              to="/crags/$cragSlug/create-area"
+              params={{ cragSlug }}
+              className="button is-rounded"
+            >
+              <span className="icon is-small">
+                <i className="fas fa-plus" aria-hidden="true"></i>
+              </span>
+              <span>Add Area</span>
+            </Link>
+          </div>
+        </div>
+
+        <div id="approach" className={`container ${activeTab !== 'approach' ? 'is-hidden' : ''}`}>
+          <div className="box">
+            <h3 className="title">Approach</h3>
+            {(crag.approachNotes && <p>{crag.approachNotes}</p>) || (
               <p>
-                <b>This crag doesn't have any areas yet</b>
-                <br />
-                Click below to start adding one
+                No approach details have been given. Hopefully that means it's
+                an easy walk in 🤷‍♂️
               </p>
             )}
-            <div className="buttons is-centered">
-              <Link
-                to="/crags/$cragSlug/create-area"
-                params={{ cragSlug }}
-                className="button is-rounded"
-              >
-                <span className="icon is-small">
-                  <i className="fas fa-plus"></i>
-                </span>
-                <span>Add Area</span>
-              </Link>
-            </div>
           </div>
-        )}
-
-        {activeTab === 'approach' && (
-          <div id="approach" className="container">
-            <div className="box">
-              <h3 className="title">Approach</h3>
-              {(crag.approachNotes && <p>{crag.approachNotes}</p>) || (
-                <p>
-                  No approach details have been given. Hopefully that means it's
-                  an easy walk in 🤷‍♂️
-                </p>
-              )}
-            </div>
-            <div className="box">
-              <h3 className="title">
-                Access
-                <span className="ml-1"></span>
-                <span className="tag is-primary is-capitalized">
-                  {crag.access}
-                </span>
-              </h3>
-              {crag.accessDetails && <p>{crag.accessDetails}</p>}
-              {crag.accessLink && <p>{crag.accessLink}</p>}
-            </div>
+          <div className="box">
+            <h3 className="title">
+              Access
+              <span className="ml-1"></span>
+              <span className="tag is-primary is-capitalized">
+                {crag.access}
+              </span>
+            </h3>
+            {crag.accessDetails && <p>{crag.accessDetails}</p>}
+            {crag.accessLink && <p>{crag.accessLink}</p>}
           </div>
-        )}
+        </div>
 
         {activeTab === 'map' && crag && (
           <Suspense fallback={<div />}>
             <CragMap crag={crag} />
           </Suspense>
         )}
+
+        <div className={`container ${activeTab !== 'stats' ? 'is-hidden' : ''}`}>
+          <CragStats crag={crag} />
+        </div>
 
         {activeTab === 'admin' && crag && <CragAdmin crag={crag} />}
       </section>
