@@ -1,5 +1,3 @@
-
-
 import {
   AreaChart,
   Area,
@@ -34,6 +32,66 @@ const FALLBACK_COLORS = [
   '#2c3e50',
 ];
 
+function WrappedYAxisTick({
+  x,
+  y,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}) {
+  const text = payload?.value ?? '';
+  const maxWidth = 96;
+  const fontSize = 11;
+  const charWidth = fontSize * 0.56;
+  const charsPerLine = Math.floor(maxWidth / charWidth);
+  const maxLines = 2;
+
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    const test = currentLine ? `${currentLine} ${word}` : word;
+    if (test.length > charsPerLine && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+      if (lines.length >= maxLines) break;
+    } else {
+      currentLine = test;
+    }
+  }
+  if (currentLine && lines.length < maxLines) lines.push(currentLine);
+
+  const placed = lines.join(' ');
+  if (lines.length === maxLines && placed.length < text.length) {
+    let last = lines[maxLines - 1];
+    while ((last + '…').length > charsPerLine) last = last.slice(0, -1);
+    lines[maxLines - 1] = last + '…';
+  }
+
+  const lineHeight = 13;
+  const startDy = -((lines.length - 1) * lineHeight) / 2;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {lines.map((line, i) => (
+        <text
+          key={i}
+          x={0}
+          y={startDy + i * lineHeight}
+          textAnchor="end"
+          fontSize={fontSize}
+          fill="#666"
+        >
+          {line}
+        </text>
+      ))}
+    </g>
+  );
+}
+
 export interface DashboardData {
   totalLogs: number;
   uniqueCrags: number;
@@ -46,13 +104,7 @@ export interface DashboardData {
   ratingDistribution: Array<{ rating: string; count: number }>;
 }
 
-function StatCard({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) {
+function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="column">
       <div className="box has-text-centered" style={{ height: '100%' }}>
@@ -174,7 +226,7 @@ export default function ProfileDashboard({ data }: { data: DashboardData }) {
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart
                   data={data.gradeDistribution}
-                  margin={{ top: 5, right: 20, left: 0, bottom: 30 }}
+                  margin={{ top: 10, right: 20, left: -20, bottom: 30 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -262,7 +314,7 @@ export default function ProfileDashboard({ data }: { data: DashboardData }) {
                 <BarChart
                   data={data.topCrags}
                   layout="vertical"
-                  margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                  margin={{ top: 5, right: 10, left: -40, bottom: 0 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -279,9 +331,9 @@ export default function ProfileDashboard({ data }: { data: DashboardData }) {
                   <YAxis
                     type="category"
                     dataKey="crag"
-                    tick={{ fontSize: 11 }}
+                    tick={<WrappedYAxisTick />}
                     tickLine={false}
-                    width={110}
+                    width={140}
                   />
                   <Tooltip
                     contentStyle={{ borderRadius: '4px', fontSize: '13px' }}
@@ -294,7 +346,7 @@ export default function ProfileDashboard({ data }: { data: DashboardData }) {
           </div>
         )}
 
-        {data.ratingDistribution.length > 0 && (
+        {data.averageRating > 0 && (
           <div className="column is-half">
             <div className="box" style={{ height: '100%' }}>
               <h2 className="subtitle is-6 has-text-weight-semibold mb-4">

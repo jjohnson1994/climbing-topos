@@ -46,17 +46,21 @@ function computeDashboardData(logs: Log[]): DashboardData {
       count,
     }));
 
-  const gradeCounts: Record<string, number> = {};
+  const gradeCounts: Record<string, { label: string; gradeValue: number; count: number }> = {};
   for (const log of logs) {
     const label = convertGradeValueToLabel(log.gradeTaken, log.gradingSystem);
     if (label) {
-      gradeCounts[label] = (gradeCounts[label] || 0) + 1;
+      const key = `${log.gradingSystem}:${log.gradeTaken}`;
+      if (!gradeCounts[key]) {
+        gradeCounts[key] = { label, gradeValue: parseInt(log.gradeTaken), count: 0 };
+      }
+      gradeCounts[key].count += 1;
     }
   }
-  const gradeDistribution = Object.entries(gradeCounts)
-    .sort(([, a], [, b]) => b - a)
+  const gradeDistribution = Object.values(gradeCounts)
+    .sort((a, b) => a.gradeValue - b.gradeValue)
     .slice(0, 12)
-    .map(([grade, count]) => ({ grade, count }));
+    .map(({ label, count }) => ({ grade: label, count }));
 
   const routeTypeCounts: Record<string, number> = {};
   for (const log of logs) {
@@ -93,9 +97,9 @@ function computeDashboardData(logs: Log[]): DashboardData {
       ratingBuckets[key] = (ratingBuckets[key] || 0) + 1;
     }
   }
-  const ratingDistribution = Object.entries(ratingBuckets)
-    .filter(([, count]) => count > 0)
-    .map(([rating, count]) => ({ rating, count }));
+  const ratingDistribution = Object.entries(ratingBuckets).map(
+    ([rating, count]) => ({ rating, count }),
+  );
 
   return {
     totalLogs: logs.length,
