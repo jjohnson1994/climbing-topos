@@ -4,7 +4,7 @@ import { redirect } from '@tanstack/react-router'
 import type { TopoPatch } from '@climbingtopos/types'
 import { UpdateTopoSchema } from '@climbingtopos/schemas'
 import { crags, topos, files } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 
 export const patchFn = createServerFn({ method: 'POST' })
   .inputValidator(async (data: { topoSlug: string; body: TopoPatch; imageBase64?: string }) => {
@@ -13,7 +13,7 @@ export const patchFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

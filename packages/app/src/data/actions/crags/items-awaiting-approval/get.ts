@@ -1,14 +1,14 @@
 import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 import { crags } from '@/data/services'
 
 export const getFn = createServerFn({ method: 'GET' })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<any> => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

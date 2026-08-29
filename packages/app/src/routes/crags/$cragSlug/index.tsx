@@ -5,11 +5,13 @@ import { getFn as getCragFn } from '@/data/actions/crags/get';
 import AreaRoutesTable from '@/components/AreaRoutesTable';
 import CragRoutesTable from '@/components/CragRoutesTable';
 import ButtonCopyCoordinates from '@/components/ButtonCopyCoordinates';
+import ButtonSaveOffline from '@/components/ButtonSaveOffline';
 import TopoImage from '@/components/TopoImage';
 import CragTitleImage from '@/components/CragTitleImage';
 import CragAdmin from '@/components/CragAdmin';
 import CragStats from '@/components/CragStats';
 import { logError } from '@/lib/log';
+import { getOfflineCrag } from '@/lib/offline/crags';
 
 const CragMap = lazy(() => import('@/components/CragMapClient'));
 
@@ -18,26 +20,43 @@ export const Route = createFileRoute('/crags/$cragSlug/')({
     tab: search.tab as string | undefined,
   }),
   loader: async ({ params, context }) => {
+    let crag: Crag;
+    let isOfflineCopy = false;
     try {
-      const crag = (await getCragFn({
+      crag = (await getCragFn({
         data: { cragSlug: params.cragSlug },
       })) as unknown as Crag;
-      const user = context.user;
-      const userSub = user ? user.properties.sub : undefined;
-      const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
-
-      let activeTab = '';
-      if (crag?.routes?.length) {
-        activeTab = 'guide';
-      } else {
-        activeTab = 'routes';
-      }
-
-      return { crag, isAdmin, isAuthenticated: !!user, defaultTab: activeTab };
     } catch (err) {
-      logError('loader:crag', err, { cragSlug: params.cragSlug })
-      throw err
+      const offlineCrag =
+        typeof window !== 'undefined'
+          ? await getOfflineCrag(params.cragSlug)
+          : undefined;
+      if (!offlineCrag) {
+        logError('loader:crag', err, { cragSlug: params.cragSlug });
+        throw err;
+      }
+      crag = offlineCrag;
+      isOfflineCopy = true;
     }
+
+    const user = context.user;
+    const userSub = user ? user.properties.sub : undefined;
+    const isAdmin = !!(crag?.managedBy?.sub && crag.managedBy.sub === userSub);
+
+    let activeTab = '';
+    if (crag?.routes?.length) {
+      activeTab = 'guide';
+    } else {
+      activeTab = 'routes';
+    }
+
+    return {
+      crag,
+      isAdmin,
+      isAuthenticated: !!user,
+      defaultTab: activeTab,
+      isOfflineCopy,
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData?.crag) return { meta: [], links: [] };
@@ -120,7 +139,8 @@ export const Route = createFileRoute('/crags/$cragSlug/')({
 });
 
 function CragPage() {
-  const { crag, isAdmin, isAuthenticated, defaultTab } = Route.useLoaderData();
+  const { crag, isAdmin, isAuthenticated, defaultTab, isOfflineCopy } =
+    Route.useLoaderData();
   const search = Route.useSearch();
   const { cragSlug } = Route.useParams();
   const activeTab = search.tab || defaultTab;
@@ -143,6 +163,12 @@ function CragPage() {
         </div>
         <div className="column">
           <section className="section">
+            {isOfflineCopy && (
+              <div className="notification is-info">
+                You&apos;re offline — showing the last copy of this crag you
+                saved for offline viewing
+              </div>
+            )}
             {crag.access === 'banned' && (
               <div className="notification is-danger">
                 Climbing at this crag is <b>banned</b>, probably best to find
@@ -172,6 +198,7 @@ function CragPage() {
                   latitude={`${crag.latitude}`}
                   longitude={`${crag.longitude}`}
                 />
+                <ButtonSaveOffline crag={crag} />
               </div>
             </div>
           </section>

@@ -4,7 +4,7 @@ import { redirect } from '@tanstack/react-router'
 import type { RoutePatch } from '@climbingtopos/types'
 import { UpdateRouteScheme } from '@climbingtopos/schemas'
 import { crags, routes } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 
 export const patchFn = createServerFn({ method: 'POST' })
   .inputValidator(async (data: unknown) => {
@@ -14,7 +14,7 @@ export const patchFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

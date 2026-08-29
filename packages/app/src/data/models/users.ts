@@ -3,10 +3,10 @@ import { nanoid } from 'nanoid';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   GetCommand,
-  PutCommand,
   UpdateCommand,
   DynamoDBDocumentClient,
   QueryCommand,
+  TransactWriteCommand,
 } from '@aws-sdk/lib-dynamodb';
 
 import { Resource } from 'sst';
@@ -17,7 +17,7 @@ export const update = async (
   updateProps: {
     UpdateExpression: string;
     ExpressionAttributeNames: Record<string, string>;
-    ExpressionAttributeValues: Record<string, any>;
+    ExpressionAttributeValues: Record<string, unknown>;
     ConditionExpression?: string;
   },
 ) => {
@@ -44,24 +44,50 @@ export const createUser = async (
   const date = DateTime.utc().toString();
   const uid = nanoid();
 
-  const params = {
-    TableName: Resource.climbingtopos2.name,
-    Item: {
-      hk: uid,
-      sk: 'metadata#',
-      ...pendingUserData,
-      verificationCodeExpiration: DateTime.utc()
-        .plus({ minutes: 15 })
-        .toString(),
-      model: 'user',
-      status,
-      id: uid,
-      slug: pendingUserData.email,
-      createdAt: date,
-    },
-  };
-
-  await dynamodb.send(new PutCommand(params));
+  try {
+    await dynamodb.send(
+      new TransactWriteCommand({
+        TransactItems: [
+          {
+            Put: {
+              TableName: Resource.climbingtopos2.name,
+              Item: {
+                hk: `email-unique#${pendingUserData.email}`,
+                sk: 'metadata#',
+                model: 'email-unique',
+                userId: uid,
+                createdAt: date,
+              },
+              ConditionExpression: 'attribute_not_exists(hk)',
+            },
+          },
+          {
+            Put: {
+              TableName: Resource.climbingtopos2.name,
+              Item: {
+                hk: uid,
+                sk: 'metadata#',
+                ...pendingUserData,
+                verificationCodeExpiration: DateTime.utc()
+                  .plus({ minutes: 15 })
+                  .toString(),
+                model: 'user',
+                status,
+                id: uid,
+                slug: pendingUserData.email,
+                createdAt: date,
+              },
+            },
+          },
+        ],
+      }),
+    );
+  } catch (error) {
+    if ((error as { name?: string })?.name === 'TransactionCanceledException') {
+      throw new Error('User exists');
+    }
+    throw error;
+  }
 };
 
 export async function getUserById(id: string) {

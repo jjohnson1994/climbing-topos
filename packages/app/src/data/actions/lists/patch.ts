@@ -4,7 +4,7 @@ import { redirect } from '@tanstack/react-router'
 import * as yup from 'yup'
 import type { ListAddRouteRequest } from '@climbingtopos/types'
 import { lists, routes } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 
 const bodySchema = yup.array().of(
   yup.object().shape({
@@ -22,7 +22,7 @@ export const patchFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

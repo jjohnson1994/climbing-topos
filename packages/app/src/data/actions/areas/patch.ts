@@ -4,7 +4,7 @@ import { redirect } from '@tanstack/react-router'
 import type { AreaPatch } from '@climbingtopos/types'
 import { UpdateAreaSchema } from '@climbingtopos/schemas'
 import { areas, crags } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 
 export const patchFn = createServerFn({ method: 'POST' })
   .inputValidator(async (data: { areaSlug: string; body: AreaPatch }) => {
@@ -13,7 +13,7 @@ export const patchFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

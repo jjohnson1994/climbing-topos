@@ -15,7 +15,8 @@ export function getClientIp(): string {
 
   const forwardedFor = request.headers.get('x-forwarded-for')
   if (forwardedFor) {
-    const clientIp = forwardedFor.split(',')[0].trim()
+    const hops = forwardedFor.split(',')
+    const clientIp = hops[hops.length - 1].trim()
     if (clientIp) return clientIp
   }
 

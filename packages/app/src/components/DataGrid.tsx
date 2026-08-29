@@ -14,6 +14,7 @@ import {
   type ExpandedState,
   type FilterFn,
   type SortingFn,
+  type Row,
 } from '@tanstack/react-table';
 import {
   rankItem,
@@ -39,13 +40,20 @@ export interface GroupByOption {
   label: string;
 }
 
+export interface SortOption {
+  value: string;
+  label: string;
+}
+
 interface DataGridProps<T extends object> {
   data: T[];
   columns: ColumnDef<T, any>[];
   filterConfigs?: FilterConfig<T>[];
   groupByOptions?: GroupByOption[];
+  sortOptions?: SortOption[];
   getColumnVisibility?: (grouping: GroupingState) => Record<string, boolean>;
   renderGroupLabel?: (columnId: string, value: unknown) => ReactNode;
+  renderCard?: (row: Row<T>) => ReactNode;
   emptyMessage?: string;
   itemLabel?: string;
 }
@@ -73,8 +81,10 @@ function DataGrid<T extends object>({
   columns,
   filterConfigs = [],
   groupByOptions = [],
+  sortOptions = [],
   getColumnVisibility,
   renderGroupLabel,
+  renderCard,
   emptyMessage = 'No results match your filters',
   itemLabel = 'item',
 }: DataGridProps<T>) {
@@ -87,8 +97,10 @@ function DataGrid<T extends object>({
   );
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [groupOpen, setGroupOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
   const filtersRef = useRef<HTMLDivElement>(null);
   const groupRef = useRef<HTMLDivElement>(null);
+  const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -100,6 +112,9 @@ function DataGrid<T extends object>({
       }
       if (groupRef.current && !groupRef.current.contains(e.target as Node)) {
         setGroupOpen(false);
+      }
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -175,25 +190,21 @@ function DataGrid<T extends object>({
   return (
     <div>
       <div className="mb-4">
-        <div
-          className="field is-grouped is-flex-wrap-wrap"
-          style={{ gap: '0.5rem' }}
-        >
-          <div className="control is-expanded">
-            <div className="control has-icons-left">
-              <input
-                className="input"
-                type="search"
-                placeholder="Search…"
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                aria-label="Search"
-              />
-              <span className="icon is-left">
-                <i className="fas fa-search" aria-hidden="true" />
-              </span>
-            </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+          <div className="control has-icons-left" style={{ flex: '1 1 180px' }}>
+            <input
+              className="input"
+              type="search"
+              placeholder="Search…"
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              aria-label="Search"
+            />
+            <span className="icon is-left">
+              <i className="fas fa-search" aria-hidden="true" />
+            </span>
           </div>
+          <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '0.5rem' }}>
 
           {filterConfigs.length > 0 && (
             <div className="control" ref={filtersRef}>
@@ -208,6 +219,7 @@ function DataGrid<T extends object>({
                     onClick={() => {
                       setFiltersOpen((v) => !v);
                       setGroupOpen(false);
+                      setSortOpen(false);
                     }}
                   >
                     <span>Filter</span>
@@ -278,6 +290,92 @@ function DataGrid<T extends object>({
             </div>
           )}
 
+          {sortOptions.length > 0 && renderCard && (
+            <div className="control" ref={sortRef}>
+              <div className={`dropdown${sortOpen ? ' is-active' : ''}`}>
+                <div className="dropdown-trigger">
+                  <button
+                    type="button"
+                    className="button"
+                    aria-haspopup="true"
+                    aria-expanded={sortOpen}
+                    aria-controls="datagrid-sort-dropdown"
+                    onClick={() => {
+                      setSortOpen((v) => !v);
+                      setFiltersOpen(false);
+                      setGroupOpen(false);
+                    }}
+                  >
+                    <span>Sort</span>
+                    {sorting.length > 0 && (
+                      <span className="icon is-small ml-1">
+                        <i className={`fas fa-arrow-${sorting[0].desc ? 'down' : 'up'}`} aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="icon is-small ml-1">
+                      <i className="fas fa-angle-down" aria-hidden="true" />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  className="dropdown-menu"
+                  id="datagrid-sort-dropdown"
+                  role="dialog"
+                  aria-label="Sort"
+                >
+                  <div className="dropdown-content" style={{ minWidth: '180px' }}>
+                    <div className="dropdown-item">
+                      <fieldset>
+                        <legend className="label is-small mb-2">Sort by</legend>
+                        {sortOptions.map(({ value, label }) => (
+                          <div className="field" key={value}>
+                            <label className="radio">
+                              <input
+                                type="radio"
+                                name="datagrid-sort-by"
+                                className="mr-2"
+                                checked={sorting[0]?.id === value}
+                                onChange={() =>
+                                  setSorting([{ id: value, desc: sorting[0]?.id === value ? !sorting[0].desc : false }])
+                                }
+                              />
+                              {label}
+                            </label>
+                          </div>
+                        ))}
+                      </fieldset>
+                    </div>
+                    {sorting.length > 0 && (
+                      <>
+                        <hr className="dropdown-divider" />
+                        <div className="dropdown-item">
+                          <div className="buttons has-addons">
+                            <button
+                              type="button"
+                              className={`button is-small${!sorting[0].desc ? ' is-link is-selected' : ''}`}
+                              onClick={() => setSorting([{ id: sorting[0].id, desc: false }])}
+                            >
+                              <span className="icon is-small"><i className="fas fa-arrow-up" /></span>
+                              <span>Asc</span>
+                            </button>
+                            <button
+                              type="button"
+                              className={`button is-small${sorting[0].desc ? ' is-link is-selected' : ''}`}
+                              onClick={() => setSorting([{ id: sorting[0].id, desc: true }])}
+                            >
+                              <span className="icon is-small"><i className="fas fa-arrow-down" /></span>
+                              <span>Desc</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {groupByOptions.length > 0 && (
             <div className="control" ref={groupRef}>
               <div className={`dropdown${groupOpen ? ' is-active' : ''}`}>
@@ -291,6 +389,7 @@ function DataGrid<T extends object>({
                     onClick={() => {
                       setGroupOpen((v) => !v);
                       setFiltersOpen(false);
+                      setSortOpen(false);
                     }}
                   >
                     <span>Group</span>
@@ -343,6 +442,7 @@ function DataGrid<T extends object>({
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {hasFilters && (
@@ -352,111 +452,159 @@ function DataGrid<T extends object>({
         )}
       </div>
 
-      <div className="box" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table
-            className="table is-fullwidth is-hoverable is-striped"
-            style={{ marginBottom: 0 }}
-          >
-            <thead>
-              <tr>
-                {table.getFlatHeaders().map((header) => (
-                  <th
-                    key={header.id}
-                    onClick={
-                      header.column.getCanSort()
-                        ? header.column.getToggleSortingHandler()
-                        : undefined
-                    }
+      {renderCard ? (
+        <div className="box" style={{ padding: 0, overflow: 'hidden' }}>
+          {rows.length === 0 ? (
+            <p className="has-text-centered has-text-grey py-5 px-4">
+              {emptyMessage}
+            </p>
+          ) : (
+            rows.map((row) => {
+              if (row.getIsGrouped()) {
+                const groupedColId = grouping[0];
+                const value = row.getGroupingValue(groupedColId);
+                return (
+                  <div
+                    key={row.id}
+                    className="has-background-light px-4 py-3"
+                    onClick={row.getToggleExpandedHandler()}
                     style={{
-                      cursor: header.column.getCanSort()
-                        ? 'pointer'
-                        : 'default',
-                      whiteSpace: 'nowrap',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid #dbdbdb',
                     }}
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    {header.column.getIsSorted() === 'asc' && (
-                      <i className="fas fa-sort-up ml-1" aria-hidden="true" />
-                    )}
-                    {header.column.getIsSorted() === 'desc' && (
-                      <i className="fas fa-sort-down ml-1" aria-hidden="true" />
-                    )}
-                    {!header.column.getIsSorted() &&
-                      header.column.getCanSort() && (
+                    <span className="icon-text">
+                      <span className="icon">
                         <i
-                          className="fas fa-sort ml-1 has-text-grey-light"
+                          className={`fas fa-chevron-${row.getIsExpanded() ? 'down' : 'right'}`}
+                        />
+                      </span>
+                      <strong className="is-capitalized">
+                        {renderGroupLabel
+                          ? renderGroupLabel(groupedColId, value)
+                          : String(value)}
+                      </strong>
+                      <span className="ml-2 has-text-grey is-size-7">
+                        ({row.subRows.length})
+                      </span>
+                    </span>
+                  </div>
+                );
+              }
+              return renderCard(row);
+            })
+          )}
+        </div>
+      ) : (
+        <div className="box" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table
+              className="table is-fullwidth is-hoverable is-striped"
+              style={{ marginBottom: 0 }}
+            >
+              <thead>
+                <tr>
+                  {table.getFlatHeaders().map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={
+                        header.column.getCanSort()
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
+                      style={{
+                        cursor: header.column.getCanSort()
+                          ? 'pointer'
+                          : 'default',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      {header.column.getIsSorted() === 'asc' && (
+                        <i className="fas fa-sort-up ml-1" aria-hidden="true" />
+                      )}
+                      {header.column.getIsSorted() === 'desc' && (
+                        <i
+                          className="fas fa-sort-down ml-1"
                           aria-hidden="true"
                         />
                       )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={visibleColCount}
-                    className="has-text-centered has-text-grey py-5"
-                  >
-                    {emptyMessage}
-                  </td>
+                      {!header.column.getIsSorted() &&
+                        header.column.getCanSort() && (
+                          <i
+                            className="fas fa-sort ml-1 has-text-grey-light"
+                            aria-hidden="true"
+                          />
+                        )}
+                    </th>
+                  ))}
                 </tr>
-              ) : (
-                rows.map((row) => {
-                  if (row.getIsGrouped()) {
-                    const groupedColId = grouping[0];
-                    const value = row.getGroupingValue(groupedColId);
+              </thead>
+              <tbody>
+                {rows.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={visibleColCount}
+                      className="has-text-centered has-text-grey py-5"
+                    >
+                      {emptyMessage}
+                    </td>
+                  </tr>
+                ) : (
+                  rows.map((row) => {
+                    if (row.getIsGrouped()) {
+                      const groupedColId = grouping[0];
+                      const value = row.getGroupingValue(groupedColId);
+                      return (
+                        <tr
+                          key={row.id}
+                          className="has-background-light"
+                          onClick={row.getToggleExpandedHandler()}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <td colSpan={visibleColCount}>
+                            <span className="icon-text">
+                              <span className="icon">
+                                <i
+                                  className={`fas fa-chevron-${row.getIsExpanded() ? 'down' : 'right'}`}
+                                />
+                              </span>
+                              <strong className="is-capitalized">
+                                {renderGroupLabel
+                                  ? renderGroupLabel(groupedColId, value)
+                                  : String(value)}
+                              </strong>
+                              <span className="ml-2 has-text-grey is-size-7">
+                                ({row.subRows.length})
+                              </span>
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    }
+
                     return (
-                      <tr
-                        key={row.id}
-                        className="has-background-light"
-                        onClick={row.getToggleExpandedHandler()}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <td colSpan={visibleColCount}>
-                          <span className="icon-text">
-                            <span className="icon">
-                              <i
-                                className={`fas fa-chevron-${row.getIsExpanded() ? 'down' : 'right'}`}
-                              />
-                            </span>
-                            <strong className="is-capitalized">
-                              {renderGroupLabel
-                                ? renderGroupLabel(groupedColId, value)
-                                : String(value)}
-                            </strong>
-                            <span className="ml-2 has-text-grey is-size-7">
-                              ({row.subRows.length})
-                            </span>
-                          </span>
-                        </td>
+                      <tr key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </td>
+                        ))}
                       </tr>
                     );
-                  }
-
-                  return (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {!hasFilters && (
         <p className="has-text-grey is-size-7 mt-2">

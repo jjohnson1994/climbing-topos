@@ -3,14 +3,14 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { NewTopoSchema } from '@climbingtopos/schemas'
 import { areas, topos, files } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 import type { TopoRequest } from '@climbingtopos/types'
 
 export const postFn = createServerFn({ method: 'POST' })
   .inputValidator((data: Omit<TopoRequest, 'image'> & { imageBase64: string }) => data)
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

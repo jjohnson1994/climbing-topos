@@ -26,14 +26,14 @@ export const signInFn = createServerFn({ method: 'POST' })
         RateLimitType.LOGIN,
         normalizedEmail,
       )
-      const { windowBucket: ipBucket } = await enforceRateLimit(
-        RateLimitType.LOGIN_IP,
-        clientIp,
+      await enforceRateLimit(RateLimitType.LOGIN_IP, clientIp)
+
+      const { tokenVersion, ...user } = await verifyLogin(
+        normalizedEmail,
+        password,
       )
 
-      const user = await verifyLogin(normalizedEmail, password)
-
-      const newAccessToken = await createAccessTokenJwt(user)
+      const newAccessToken = await createAccessTokenJwt(user, { tokenVersion })
 
       setCookie('access_token', newAccessToken, {
         httpOnly: true,
@@ -43,10 +43,7 @@ export const signInFn = createServerFn({ method: 'POST' })
         maxAge: 14 * 24 * 60 * 60,
       })
 
-      await Promise.allSettled([
-        clearRateLimit(RateLimitType.LOGIN, normalizedEmail, loginBucket),
-        clearRateLimit(RateLimitType.LOGIN_IP, clientIp, ipBucket),
-      ])
+      await clearRateLimit(RateLimitType.LOGIN, normalizedEmail, loginBucket)
 
       return {}
     } catch (error) {

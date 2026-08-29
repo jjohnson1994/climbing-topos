@@ -1,7 +1,7 @@
 import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 import { logs } from '@/data/services'
 
 export const getFn = createServerFn({ method: 'GET' })
@@ -21,7 +21,7 @@ export const getFn = createServerFn({ method: 'GET' })
     }
   }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
       const userSub = user ? user.properties.sub : undefined
 
       if (!userSub) {

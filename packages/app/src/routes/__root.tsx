@@ -8,9 +8,12 @@ import {
 } from '@tanstack/react-router';
 import type { JwtPayload } from '@/lib/jwt';
 import { getAuthUser } from '@/lib/auth';
+import { readCachedUser, writeCachedUser } from '@/lib/offline/user-cache';
 import Nav from '@/components/Nav';
 import Providers from '@/components/providers';
 import Footer from '@/components/Footer';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import { logError } from '@/lib/log';
 import '../globals.scss';
 
 interface RouterContext {
@@ -54,7 +57,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     );
   },
   beforeLoad: async ({ location }) => {
-    const user = await getAuthUser();
+    let user: JwtPayload | false;
+    try {
+      user = await getAuthUser();
+      writeCachedUser(user);
+    } catch (err) {
+      if (typeof window === 'undefined') throw err;
+      logError('beforeLoad:root', err);
+      return { user: readCachedUser() };
+    }
 
     if (!user) return { user: false as const };
 
@@ -87,6 +98,27 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'ClimbingTopos' },
+      { name: 'theme-color', content: '#ffffff' },
+    ],
+    links: [
+      {
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: '/apple-touch-icon.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        href: '/favicon-32x32.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicon-16x16.png',
+      },
+      { rel: 'manifest', href: '/site.webmanifest' },
     ],
     scripts: [
       {
@@ -118,6 +150,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body>
+        <ServiceWorkerRegistration />
         <Nav subject={user || false} />
         <Providers>
           <Outlet />

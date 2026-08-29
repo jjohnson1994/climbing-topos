@@ -1,25 +1,31 @@
 import * as jose from 'jose'
 import { Resource } from 'sst'
 
-export type JwtPayload = {
-  properties: {
-    email: string
-    status: 'verified' | 'pending'
-    nickname?: string
-    picture?: string
-    sub?: string
-    id?: string
-  }
-}
-
-export const createAccessTokenJwt = async (payload: {
+export type JwtProperties = {
   email: string
   status: 'verified' | 'pending'
   nickname?: string
   picture?: string
   sub?: string
   id?: string
-}) => {
+}
+
+export type JwtPayload = {
+  properties: JwtProperties
+  tokenVersion?: number
+  authTime?: number
+  iat?: number
+}
+
+export type JwtSession = {
+  tokenVersion?: number
+  authTime?: number
+}
+
+export const createAccessTokenJwt = async (
+  payload: JwtProperties,
+  session?: JwtSession,
+) => {
   const privateKey = await jose.importPKCS8(
     Resource.JwtPrivateKey.value,
     'RS256',
@@ -29,6 +35,8 @@ export const createAccessTokenJwt = async (payload: {
     properties: {
       ...payload,
     },
+    tokenVersion: session?.tokenVersion ?? 0,
+    authTime: session?.authTime ?? Math.floor(Date.now() / 1000),
   })
     .setProtectedHeader({ alg: 'RS256' })
     .setIssuedAt()
@@ -49,5 +57,5 @@ export const verifyJwt = async (token: string): Promise<JwtPayload> => {
     audience: 'climbing-topos-app',
   })
 
-  return payload as JwtPayload
+  return payload as unknown as JwtPayload
 }

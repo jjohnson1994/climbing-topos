@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import Button, { Color } from '@/elements/Button';
 import NavbarItem from '@/elements/NavbarItem';
 import NavBurgerIcon from './NavBurgerIcon';
+import OfflineIndicator from './OfflineIndicator';
 
 export default function Nav({ subject }: { subject: any }) {
   return (
@@ -26,9 +27,15 @@ export default function Nav({ subject }: { subject: any }) {
           <Link className="navbar-item" to="/explore">
             Explore
           </Link>
+          <Link className="navbar-item" to="/offline">
+            Downloaded
+          </Link>
         </div>
 
         <div className="navbar-end">
+          <NavbarItem>
+            <OfflineIndicator />
+          </NavbarItem>
           <NavbarItem>
             <Link to="/search" className="navbar-item">
               <i className="fas fa-search" aria-hidden="true"></i>

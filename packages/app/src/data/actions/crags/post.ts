@@ -1,7 +1,7 @@
 import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 import { crags, files } from '@/data/services'
 import { NewCragSchema } from '@climbingtopos/schemas'
 
@@ -23,7 +23,7 @@ export const postFn = createServerFn({ method: 'POST' })
   }) => data)
   .handler(async ({ data }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
 
       if (!user) {
         throw redirect({ to: '/login' })

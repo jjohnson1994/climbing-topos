@@ -33,7 +33,10 @@ export const verifyUser = async (email: string, verificationCode: number) => {
       ConditionExpression: 'attribute_exists(#verificationCode)',
     });
   } catch (error) {
-    if ((error as any)?.name === 'ConditionalCheckFailedException') {
+    if (
+      error instanceof Error &&
+      error.name === 'ConditionalCheckFailedException'
+    ) {
       throw new Error('Verification code mismatch');
     }
     throw error;
@@ -45,24 +48,25 @@ export const verifyUser = async (email: string, verificationCode: number) => {
     email: user.email,
     nickname: user.nickname,
     picture: user.picture,
-    status: 'verified',
+    status: 'verified' as const,
+    tokenVersion: (user.tokenVersion as number | undefined) ?? 0,
   };
 };
+
+const TIMING_EQUALIZER_HASH =
+  '$2b$10$D9J9j8S7ji7ps0LUKKob3OUqfH0EmQR6B9Seck.h6NhO6KIYxgb5i';
 
 export const verifyLogin = async (email: string, password: string) => {
   const GENERIC_ERROR = 'Invalid email or password. Please try again or reset your password.';
 
+  if (!password) {
+    throw new Error(GENERIC_ERROR);
+  }
+
   const user = await getUserByEmail(email);
 
-  if (!user) {
-    throw new Error(GENERIC_ERROR);
-  }
-
-  if (!user.hashedPassword) {
-    throw new Error(GENERIC_ERROR);
-  }
-
-  if (!password) {
+  if (!user || !user.hashedPassword) {
+    await bcrypt.compare(password, TIMING_EQUALIZER_HASH);
     throw new Error(GENERIC_ERROR);
   }
 
@@ -79,6 +83,7 @@ export const verifyLogin = async (email: string, password: string) => {
     nickname: user.nickname,
     picture: user.picture,
     status: user.status,
+    tokenVersion: (user.tokenVersion as number | undefined) ?? 0,
   };
 };
 

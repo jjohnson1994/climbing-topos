@@ -1,8 +1,7 @@
-import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { setCookie } from '@tanstack/react-start/server'
 import { users, files } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 import { createAccessTokenJwt } from '@/lib/jwt'
 
 export interface AccountSetupForm {
@@ -14,7 +13,7 @@ export const patchFn = createServerFn({ method: 'POST' })
   .inputValidator((data: AccountSetupForm) => data)
   .handler(async ({ data }): Promise<{ error?: string }> => {
     try {
-      const subject = await getAuthUser()
+      const subject = await getVerifiedUser()
 
       if (!subject) {
         return { error: 'Not authorised' }
@@ -50,7 +49,10 @@ export const patchFn = createServerFn({ method: 'POST' })
         picture: profilePicture,
       }
 
-      const newAccessToken = await createAccessTokenJwt(newUserProperties)
+      const newAccessToken = await createAccessTokenJwt(newUserProperties, {
+        tokenVersion: subject.tokenVersion,
+        authTime: subject.authTime,
+      })
 
       setCookie('access_token', newAccessToken, {
         httpOnly: true,

@@ -39,6 +39,7 @@
     "bulma": "^0.9.4",
     "compressorjs": "^1.2.1",
     "hono": "^4.7.4",
+    "idb": "^8.0.3",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",

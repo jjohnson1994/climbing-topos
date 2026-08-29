@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as FirstLoginRouteImport } from './routes/first-login'
@@ -62,6 +63,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfflineRoute = OfflineRouteImport.update({
+  id: '/offline',
+  path: '/offline',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/offline': typeof OfflineRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
@@ -239,6 +246,7 @@ export interface FileRoutesByTo {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/offline': typeof OfflineRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/first-login': typeof FirstLoginRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/offline': typeof OfflineRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/search': typeof SearchRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/first-login'
     | '/home'
     | '/login'
+    | '/offline'
     | '/profile'
     | '/reset-password'
     | '/search'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/first-login'
     | '/home'
     | '/login'
+    | '/offline'
     | '/reset-password'
     | '/search'
     | '/signup'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/first-login'
     | '/home'
     | '/login'
+    | '/offline'
     | '/profile'
     | '/reset-password'
     | '/search'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   FirstLoginRoute: typeof FirstLoginRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  OfflineRoute: typeof OfflineRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRouteWithChildren
   SearchRoute: typeof SearchRoute
@@ -446,6 +459,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offline': {
+      id: '/offline'
+      path: '/offline'
+      fullPath: '/offline'
+      preLoaderRoute: typeof OfflineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -676,6 +696,7 @@ const rootRouteChildren: RootRouteChildren = {
   FirstLoginRoute: FirstLoginRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  OfflineRoute: OfflineRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRouteWithChildren,
   SearchRoute: SearchRoute,

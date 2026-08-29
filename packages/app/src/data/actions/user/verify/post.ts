@@ -1,4 +1,3 @@
-import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { setCookie } from '@tanstack/react-start/server'
 import { getAuthUser } from '@/lib/auth'
@@ -29,9 +28,14 @@ export const postFn = createServerFn({ method: 'POST' })
         normalizedEmail,
       )
 
-      const newUser = await verifyUser(normalizedEmail, verificationCodeAsInt)
+      const { tokenVersion, ...newUser } = await verifyUser(
+        normalizedEmail,
+        verificationCodeAsInt,
+      )
 
-      const newToken = await createAccessTokenJwt(newUser as any)
+      const newToken = await createAccessTokenJwt(newUser, {
+        tokenVersion,
+      })
 
       setCookie('access_token', newToken, {
         httpOnly: true,

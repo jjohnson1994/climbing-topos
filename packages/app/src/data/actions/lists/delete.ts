@@ -1,7 +1,7 @@
 import { logError } from '@/lib/log'
 import { createServerFn } from '@tanstack/react-start'
 import { lists } from '@/data/services'
-import { getAuthUser } from '@/lib/auth'
+import { getVerifiedUser } from '@/lib/auth'
 
 export const deleteRouteFromListFn = createServerFn({ method: 'POST' })
   .inputValidator((data: {
@@ -22,7 +22,7 @@ export const deleteRouteFromListFn = createServerFn({ method: 'POST' })
     }
   }) => {
     try {
-      const user = await getAuthUser()
+      const user = await getVerifiedUser()
       const userSub = user ? user.properties.sub : undefined
 
       if (!userSub) {
